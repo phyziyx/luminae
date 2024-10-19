@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { pricingCards } from "@/lib/constants";
-import { stripe } from "@/lib/stripe";
+// import { stripe } from "@/lib/stripe";
 import clsx from "clsx";
 import { Check } from "lucide-react";
 import Image from "next/image";
@@ -16,10 +16,19 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default async function Home() {
-  const prices = await stripe.prices.list({
-    product: process.env.NEXT_PLURA_PRODUCT_ID,
-    active: true,
-  });
+  // const prices = await stripe.prices.list({
+  //   product: process.env.NEXT_PLURA_PRODUCT_ID,
+  //   active: true,
+  // });
+
+  return (
+    <section className="dark:bg-black bg-white h-full w-full text-center flex flex-col justify-center">
+      <div>
+        <h1 className="text-9xl font-bold text-blue-700">Luminae</h1>
+        <p className="text-4xl">Run your agency, in one place</p>
+      </div>
+    </section>
+  );
 
   return (
     <>
@@ -93,7 +102,7 @@ export default async function Home() {
             </CardFooter>
           </Card>
 
-          {prices.data.map((card) => (
+          {/* {prices.data.map((card) => (
             //WIP: Wire up free product from stripe
             <Card
               key={card.nickname}
@@ -147,7 +156,7 @@ export default async function Home() {
                 </Link>
               </CardFooter>
             </Card>
-          ))}
+          ))} */}
         </div>
         <section className="flex justify-center items-center flex-col gap-4 w-full">
           <div className="bg-gradient-to-r from-primary to-secondary-foreground text-transparent bg-clip-text relative">

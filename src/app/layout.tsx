@@ -1,14 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
+import { ThemeProvider } from "next-themes";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,28 +21,56 @@ export const metadata: Metadata = {
   description: "Agency",
 };
 
-export default function Layout({
+// export default function RootLayout({
+//   children,
+// }: Readonly<{
+//   children: React.ReactNode;
+// }>) {
+//   return (
+//     <ClerkProvider appearance={{ baseTheme: dark }}>
+//       <ThemeProvider
+//         attribute="class"
+//         defaultTheme="system"
+//         enableSystem
+//         disableTransitionOnChange
+//       >
+//         <html lang="en" suppressHydrationWarning>
+//           <body
+//             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+//           >
+//             <main>{children}</main>
+//           </body>
+//         </html>
+//       </ThemeProvider>
+//     </ClerkProvider>
+//   );
+// }
+
+export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <ClerkProvider appearance={{ baseTheme: dark }}>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
         >
-          <header>
-            <SignedOut>
-              <SignInButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header>
-          <main>{children}</main>
-        </body>
-      </html>
-    </ClerkProvider>
+          <ClerkProvider appearance={{ baseTheme: dark }}>
+            {/* <ModalProvider> */}
+            {children}
+            {/* <Toaster /> */}
+            {/* <SonnarToaster position="bottom-left" /> */}
+            {/* </ModalProvider> */}
+          </ClerkProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }

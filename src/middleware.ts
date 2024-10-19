@@ -4,6 +4,9 @@ const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/forum(.*)"]);
 
 export default clerkMiddleware(
   (authFn, req) => {
+    const pathName = req.url.split("/")[0];
+    console.log(pathName);
+
     if (isProtectedRoute(req)) {
       authFn().redirectToSignIn();
     }
