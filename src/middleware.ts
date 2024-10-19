@@ -1,6 +1,17 @@
-import { clerkMiddleware } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-export default clerkMiddleware();
+const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/forum(.*)"]);
+
+export default clerkMiddleware(
+  (authFn, req) => {
+    if (isProtectedRoute(req)) {
+      authFn().redirectToSignIn();
+    }
+  },
+  {
+    debug: true,
+  }
+);
 
 export const config = {
   matcher: [
