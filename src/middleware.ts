@@ -12,7 +12,7 @@ export default clerkMiddleware(
     }
   },
   {
-    debug: true,
+    debug: false,
   }
 );
 
