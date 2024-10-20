@@ -1,23 +1,22 @@
 "use client";
 
-// import { ModeToggle } from "@/components/global/mode-toggle";
 import { UserButton } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/server";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 type Props = {
   user?: null | User;
 };
 
 const ModeToggle = () => {
-  const { theme, systemTheme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
 
   const onChange = () => {
-    console.log("onChange");
-    theme === "light" ? setTheme("dark") : setTheme("light");
+    setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (
@@ -28,6 +27,8 @@ const ModeToggle = () => {
 };
 
 const Navigation = ({ user }: Props) => {
+  const t = useTranslations();
+
   return (
     <div className="fixed top-0 right-0 left-0 p-4 flex items-center justify-between z-10">
       <aside className="flex items-center gap-2">
@@ -52,7 +53,7 @@ const Navigation = ({ user }: Props) => {
           href={"/agency"}
           className="bg-primary text-white p-2 px-4 rounded-md hover:bg-primary/80"
         >
-          Login
+          {t("SIGN_IN")}
         </Link>
         <UserButton />
         <ModeToggle />

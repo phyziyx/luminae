@@ -1,3 +1,6 @@
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
+
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -21,13 +24,15 @@ export const metadata: Metadata = {
   description: "Agency",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getLocale();
+  const messages = await getMessages();
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -37,13 +42,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ClerkProvider appearance={{ baseTheme: dark }}>
-            {/* <ModalProvider> */}
-            {children}
-            {/* <Toaster /> */}
-            {/* <SonnarToaster position="bottom-left" /> */}
-            {/* </ModalProvider> */}
-          </ClerkProvider>
+          <NextIntlClientProvider messages={messages}>
+            <ClerkProvider appearance={{ baseTheme: dark }}>
+              {/* <ModalProvider> */}
+              {children}
+              {/* <Toaster /> */}
+              {/* <SonnarToaster position="bottom-left" /> */}
+              {/* </ModalProvider> */}
+            </ClerkProvider>
+          </NextIntlClientProvider>
         </ThemeProvider>
       </body>
     </html>
