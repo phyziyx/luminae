@@ -1,3 +1,5 @@
+"use server";
+
 import {
   Card,
   CardContent,
@@ -16,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getTranslations } from "next-intl/server";
 import Footer from "@/components/site/footer";
+import PreviewImage from "./components/preview";
 
 export default async function Home() {
   // const prices = await stripe.prices.list({
@@ -51,13 +54,7 @@ export default async function Home() {
         />
       </div>
       <div>
-        <Image
-          className="rounded-lg mt-[-110px] border-2 border-blue-500 drop-shadow-xl shadow-blue-500"
-          src={"/assets/preview_light.png"}
-          alt={t("PREVIEW")}
-          width={1200}
-          height={1200}
-        />
+        <PreviewImage />
       </div>
       <Footer />
     </section>
