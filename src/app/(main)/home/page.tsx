@@ -14,6 +14,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { getTranslations } from "next-intl/server";
+import Footer from "@/components/site/footer";
 
 export default async function Home() {
   // const prices = await stripe.prices.list({
@@ -21,12 +23,43 @@ export default async function Home() {
   //   active: true,
   // });
 
+  const t = await getTranslations();
+
   return (
-    <section className="dark:bg-black bg-white h-full w-full text-center flex flex-col justify-center">
-      <div>
-        <h1 className="text-9xl font-bold text-blue-700">Luminae</h1>
-        <p className="text-4xl">Run your agency, in one place</p>
+    <section className="dark:bg-black items-center h-full w-full text-center flex flex-col justify-center">
+      <div className="center text-center flex flex-col justify-center">
+        <h1 className="mt-10 mb-[-70px] text-2xl font-bold text-center text-blue-300 animate-highlight bg-200">
+          {/* {t("MOTTO", {
+            workspace: t("MOTTO_WORKSPACE"),
+            process: t("MOTTO_PROCESS"),
+          })} */}
+          <span>{t("MOTTO_BRIGHTEN")}</span>
+          <span className="bg-radial-higlight bg-clip-text text-transparent animate-highlight bg-200">
+            {t("MOTTO_WORKSPACE")}
+          </span>
+          <span>{t("MOTTO_SIMPLIFY")}</span>
+          <span className="bg-radial-higlight bg-clip-text text-transparent animate-highlight bg-200">
+            {t("MOTTO_PROCESS")}
+          </span>
+        </h1>
+        <Image
+          className="sm:w-[300px] md:w-[800px] lg:w-[900px] xl:w-[900px] 2xl:w-[1200px]"
+          src={"/assets/logo.png"}
+          alt={t("LUMINAE")}
+          width={1200}
+          height={1200}
+        />
       </div>
+      <div>
+        <Image
+          className="rounded-lg mt-[-110px] border-2 border-blue-500 drop-shadow-xl shadow-blue-500"
+          src={"/assets/preview_light.png"}
+          alt={t("PREVIEW")}
+          width={1200}
+          height={1200}
+        />
+      </div>
+      <Footer />
     </section>
   );
 

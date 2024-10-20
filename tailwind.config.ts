@@ -22,6 +22,12 @@ const config: Config = {
       },
     },
     extend: {
+      backgroundImage: {
+        "radial-higlight": "radial-gradient(circle, dodgerblue, #eefbff)",
+      },
+      backgroundSize: {
+        "200": "200% 200%",
+      },
       colors: {
         tremor: {
           brand: {
@@ -148,6 +154,11 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        highlight: {
+          "0%": { backgroundPosition: "0% 0%" },
+          "50%": { backgroundPosition: "100% 100%" },
+          "100%": { backgroundPosition: "0% 0%" },
+        },
         "automation-zoom-in": {
           "0%": { transform: "translateY(-30px) scale(0.2)" },
           "100%": { transform: "transform: translateY(0px) scale(1)" },
@@ -157,6 +168,7 @@ const config: Config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "automation-zoom-in": "automation-zoom-in 0.5s",
+        highlight: "highlight 10s linear infinite",
       },
     },
   },

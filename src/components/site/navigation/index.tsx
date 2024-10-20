@@ -1,12 +1,21 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
+// import { UserButton } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/server";
-import { MoonIcon, SunIcon } from "lucide-react";
+import {
+  HouseIcon,
+  MoonIcon,
+  SunIcon,
+  User2Icon,
+  UserRoundPlus,
+} from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 type Props = {
   user?: null | User;
@@ -26,39 +35,76 @@ const ModeToggle = () => {
   );
 };
 
+const navbarLinks = [
+  {
+    name: "Pricing",
+    href: "/home",
+  },
+  {
+    name: "Documentation",
+    href: "/documentation",
+  },
+] as const;
+
 const Navigation = ({ user }: Props) => {
+  const pathName = usePathname();
+
   const t = useTranslations();
 
   return (
-    <div className="fixed top-0 right-0 left-0 p-4 flex items-center justify-between z-10">
-      <aside className="flex items-center gap-2">
+    <nav className="dark:bg-black flex flex-row gap-2 lg:text-base md:text-sm sm:text-xs text-center items-center justify-evenly mb-32 lg:mb-24">
+      <div className="flex flex-row gap-2 items-center">
         <Image
-          src={"./assets/luminae_logo.svg"}
-          width={40}
-          height={40}
+          src={"/assets/logo.png"}
+          width={200}
+          height={200}
           alt="luminae logo"
           className="text-blue-500"
         />
-        <span className="text-xl font-bold"> Luminae.</span>
-      </aside>
-      <nav className="hidden md:block absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%]">
-        <ul className="flex items-center justify-center gap-8">
-          <Link href={"#"}>Pricing</Link>
-          <Link href={"#"}>Documentation</Link>
-          <Link href={"/about"}>About</Link>
-        </ul>
-      </nav>
-      <aside className="flex gap-2 items-center">
-        <Link
-          href={"/agency"}
-          className="bg-primary text-white p-2 px-4 rounded-md hover:bg-primary/80"
-        >
-          {t("SIGN_IN")}
-        </Link>
-        <UserButton />
+      </div>
+
+      <ul className="flex flex-row gap-4">
+        {navbarLinks.map((link) => (
+          <li key={link.name}>
+            <Link
+              className={cn({
+                "font-bold text-blue-500 hover:text-blue-500":
+                  pathName === link.href,
+                "hover:text-blue-300": pathName !== link.href,
+              })}
+              href={link.href}
+            >
+              {link.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      <div className="flex flex-row items-center gap-2">
         <ModeToggle />
-      </aside>
-    </div>
+        {user ? (
+          <Button>
+            <HouseIcon />
+            <Link href="/agency">{t("DASHBOARD")}</Link>
+          </Button>
+        ) : (
+          <div className="flex flex-row gap-2">
+            <Button>
+              <User2Icon />
+              <Link className="" href="/agency/sign-in">
+                {t("SIGN_IN")}
+              </Link>
+            </Button>
+            <Button variant={"secondary"}>
+              <UserRoundPlus />
+              <Link className="" href="/agency/sign-up">
+                {t("SIGN_UP")}
+              </Link>
+            </Button>
+          </div>
+        )}
+      </div>
+    </nav>
   );
 };
 

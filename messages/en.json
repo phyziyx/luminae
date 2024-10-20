@@ -1,5 +1,13 @@
 {
   "LUMINAE": "Luminae",
+  "MOTTO": "Brighten Up Workspace, Simplify Your Process",
+  "MOTTO_BRIGHTEN": "Brighten Up Your ",
+  "MOTTO_WORKSPACE": "Workspace",
+  "MOTTO_SIMPLIFY": ", Simplify Your ",
+  "MOTTO_PROCESS": "Process",
   "SIGN_IN": "Sign In",
-  "SIGN_UP": "Sign Up"
+  "SIGN_UP": "Sign Up",
+  "PRICING": "Pricing",
+  "DOCUMENTATION": "Documentation",
+  "DASHBOARD": "Dashboard"
 }
