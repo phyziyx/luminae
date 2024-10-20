@@ -6,7 +6,7 @@ const nextConfig = {
 			'img.clerk.com'
 		]
 	},
-	reactStrictMode: 'true'
+	reactStrictMode: true
 };
 
 export default nextConfig;
