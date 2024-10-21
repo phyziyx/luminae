@@ -4,6 +4,7 @@
 import { User } from "@clerk/nextjs/server";
 import {
   HouseIcon,
+  MenuIcon,
   MoonIcon,
   SunIcon,
   User2Icon,
@@ -16,6 +17,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 type Props = {
   user?: null | User;
@@ -25,13 +27,14 @@ const ModeToggle = () => {
   const { theme, setTheme } = useTheme();
 
   const onChange = () => {
+    // Note: Theme can be undefined, "light", or "dark"
     setTheme(theme === "light" ? "dark" : "light");
   };
 
   return (
-    <button onClick={() => onChange()}>
+    <Button variant="ghost" onClick={() => onChange()}>
       {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-    </button>
+    </Button>
   );
 };
 
@@ -52,21 +55,22 @@ const Navigation = ({ user }: Props) => {
   const t = useTranslations();
 
   return (
-    <nav className="dark:bg-black flex flex-row gap-2 lg:text-base md:text-sm sm:text-xs text-center items-center justify-evenly mb-32 lg:mb-24">
-      <div className="flex flex-row gap-2 items-center">
-        <Image
-          src={"/assets/logo.png"}
-          width={200}
-          height={200}
-          alt="luminae logo"
-          className="text-blue-500"
-        />
-      </div>
+    <header className="sticky top-0 z-50 w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950">
+      <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
+        <Link href="#" className="flex items-center gap-2" prefetch={false}>
+          <Image
+            src={"/assets/logo.png"}
+            width={200}
+            height={200}
+            alt="luminae logo"
+            className="text-blue-500"
+          />
+        </Link>
 
-      <ul className="flex flex-row gap-4">
-        {navbarLinks.map((link) => (
-          <li key={link.name}>
+        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
+          {navbarLinks.map((link) => (
             <Link
+              key={link.name}
               className={cn({
                 "font-bold text-blue-500 hover:text-blue-500":
                   pathName === link.href,
@@ -76,35 +80,63 @@ const Navigation = ({ user }: Props) => {
             >
               {link.name}
             </Link>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </nav>
 
-      <div className="flex flex-row items-center gap-2">
-        <ModeToggle />
-        {user ? (
-          <Button>
-            <HouseIcon />
-            <Link href="/agency">{t("DASHBOARD")}</Link>
-          </Button>
-        ) : (
-          <div className="flex flex-row gap-2">
-            <Button>
-              <User2Icon />
-              <Link className="" href="/agency/sign-in">
-                {t("SIGN_IN")}
-              </Link>
-            </Button>
-            <Button variant={"secondary"}>
-              <UserRoundPlus />
-              <Link className="" href="/agency/sign-up">
-                {t("SIGN_UP")}
-              </Link>
-            </Button>
+        <div className="flex items-center gap-4">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full md:hidden"
+              >
+                <MenuIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+                <span className="sr-only">Toggle navigation menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="md:hidden">
+              <div className="grid gap-4 p-4">
+                {navbarLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                    prefetch={false}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+            </SheetContent>
+          </Sheet>
+          <ModeToggle />
+          <div>
+            {user ? (
+              <Button>
+                <HouseIcon />
+                <Link href="/agency">{t("DASHBOARD")}</Link>
+              </Button>
+            ) : (
+              <div className="flex flex-row gap-2">
+                <Button>
+                  <User2Icon />
+                  <Link className="" href="/agency/sign-in">
+                    {t("SIGN_IN")}
+                  </Link>
+                </Button>
+                <Button variant={"secondary"}>
+                  <UserRoundPlus />
+                  <Link className="" href="/agency/sign-up">
+                    {t("SIGN_UP")}
+                  </Link>
+                </Button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
-    </nav>
+    </header>
   );
 };
 
