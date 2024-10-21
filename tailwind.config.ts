@@ -29,6 +29,9 @@ const config: Config = {
         "200": "200% 200%",
       },
       colors: {
+        luminae: {
+          DEFAULT: "#f5f9ff",
+        },
         tremor: {
           brand: {
             faint: colors.blue[50],

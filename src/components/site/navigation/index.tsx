@@ -55,49 +55,28 @@ const Navigation = ({ user }: Props) => {
   const t = useTranslations();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950">
-      <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
-        <div className="flex flex-row gap-6">
+    <header className="w-full border-b bg-luminae dark:border-gray-800 dark:bg-gray-950">
+      <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between justify-items-center px-4 md:px-6">
+        {/* Logo */}
+        <div>
           <Link
             href="#"
             className="items-center gap-2 md:block hidden"
             prefetch={false}
           >
             <Image
-              src={"/assets/logo.png"}
+              src={"/assets/logo_big.svg"}
               width={200}
               height={200}
               alt="luminae logo"
-              className="text-blue-500"
+              className="fill-blue-500"
             />
           </Link>
 
-          <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-            {navbarLinks.map((link) => (
-              <Link
-                key={link.name}
-                className={cn({
-                  "font-bold text-blue-500 hover:text-blue-500":
-                    pathName === link.href,
-                  "hover:text-blue-300": pathName !== link.href,
-                })}
-                href={link.href}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </nav>
-        </div>
-        <div className="flex items-center gap-4">
           <Sheet>
             <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full md:hidden"
-              >
+              <Button variant="ghost" size="icon" className="md:hidden">
                 <MenuIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
-                <span className="sr-only">Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="md:hidden">
@@ -108,44 +87,82 @@ const Navigation = ({ user }: Props) => {
                 alt="luminae logo"
                 className="text-blue-500"
               />
+              <hr />
               <div className="grid gap-4 p-4">
                 {navbarLinks.map((link) => (
                   <Link
                     key={link.name}
                     href={link.href}
-                    className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                    className={cn({
+                      "font-bold text-blue-500 hover:text-blue-500":
+                        pathName === link.href,
+                      "hover:text-blue-300": pathName !== link.href,
+                    })}
                     prefetch={false}
                   >
                     {link.name}
                   </Link>
                 ))}
+                <hr />
+                {!user ? (
+                  <Button>
+                    <HouseIcon />
+                    <Link href="/agency">{t("DASHBOARD")}</Link>
+                  </Button>
+                ) : (
+                  <>
+                    <Button>
+                      <User2Icon />
+                      <Link href="/agency/sign-in">{t("SIGN_IN")}</Link>
+                    </Button>
+                    <Button variant={"secondary"}>
+                      <UserRoundPlus />
+                      <Link href="/agency/sign-up">{t("SIGN_UP")}</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </SheetContent>
           </Sheet>
+        </div>
+
+        {/* Navbar */}
+        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
+          {navbarLinks.map((link) => (
+            <Link
+              key={link.name}
+              className={cn("font-bold", {
+                "text-blue-500 hover:text-blue-500": pathName === link.href,
+                "text-gray-500 dark:text-gray-100 hover:text-blue-300":
+                  pathName !== link.href,
+              })}
+              href={link.href}
+            >
+              {link.name}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Options for Mode Toggle, Sign Up and Sign In  */}
+        <div className="flex flex-row gap-2">
           <ModeToggle />
-          <div>
-            {user ? (
+          {user ? (
+            <Button>
+              <HouseIcon />
+              <Link href="/agency">{t("DASHBOARD")}</Link>
+            </Button>
+          ) : (
+            <div className="md:flex flex-row gap-2 hidden">
               <Button>
-                <HouseIcon />
-                <Link href="/agency">{t("DASHBOARD")}</Link>
+                <User2Icon />
+                <Link href="/agency/sign-in">{t("SIGN_IN")}</Link>
               </Button>
-            ) : (
-              <div className="flex flex-row gap-2">
-                <Button>
-                  <User2Icon />
-                  <Link className="" href="/agency/sign-in">
-                    {t("SIGN_IN")}
-                  </Link>
-                </Button>
-                <Button variant={"secondary"}>
-                  <UserRoundPlus />
-                  <Link className="" href="/agency/sign-up">
-                    {t("SIGN_UP")}
-                  </Link>
-                </Button>
-              </div>
-            )}
-          </div>
+              <Button variant={"secondary"}>
+                <UserRoundPlus />
+                <Link href="/agency/sign-up">{t("SIGN_UP")}</Link>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </header>
