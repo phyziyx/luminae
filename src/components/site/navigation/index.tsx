@@ -2,15 +2,7 @@
 
 // import { UserButton } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/server";
-import {
-  HouseIcon,
-  MenuIcon,
-  MoonIcon,
-  SunIcon,
-  User2Icon,
-  UserRoundPlus,
-} from "lucide-react";
-import { useTheme } from "next-themes";
+import { HouseIcon, MenuIcon, User2Icon, UserRoundPlus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -18,24 +10,10 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import ModeToggle from "../mode-toggle";
 
 type Props = {
   user?: null | User;
-};
-
-const ModeToggle = () => {
-  const { theme, setTheme } = useTheme();
-
-  const onChange = () => {
-    // Note: Theme can be undefined, "light", or "dark"
-    setTheme(theme === "light" ? "dark" : "light");
-  };
-
-  return (
-    <Button variant="ghost" onClick={() => onChange()}>
-      {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-    </Button>
-  );
 };
 
 const navbarLinks = [
