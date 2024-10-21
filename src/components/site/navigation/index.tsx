@@ -57,32 +57,37 @@ const Navigation = ({ user }: Props) => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950">
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
-        <Link href="#" className="flex items-center gap-2" prefetch={false}>
-          <Image
-            src={"/assets/logo.png"}
-            width={200}
-            height={200}
-            alt="luminae logo"
-            className="text-blue-500"
-          />
-        </Link>
+        <div className="flex flex-row gap-6">
+          <Link
+            href="#"
+            className="items-center gap-2 md:block hidden"
+            prefetch={false}
+          >
+            <Image
+              src={"/assets/logo.png"}
+              width={200}
+              height={200}
+              alt="luminae logo"
+              className="text-blue-500"
+            />
+          </Link>
 
-        <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-          {navbarLinks.map((link) => (
-            <Link
-              key={link.name}
-              className={cn({
-                "font-bold text-blue-500 hover:text-blue-500":
-                  pathName === link.href,
-                "hover:text-blue-300": pathName !== link.href,
-              })}
-              href={link.href}
-            >
-              {link.name}
-            </Link>
-          ))}
-        </nav>
-
+          <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
+            {navbarLinks.map((link) => (
+              <Link
+                key={link.name}
+                className={cn({
+                  "font-bold text-blue-500 hover:text-blue-500":
+                    pathName === link.href,
+                  "hover:text-blue-300": pathName !== link.href,
+                })}
+                href={link.href}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
+        </div>
         <div className="flex items-center gap-4">
           <Sheet>
             <SheetTrigger asChild>
@@ -96,6 +101,13 @@ const Navigation = ({ user }: Props) => {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="md:hidden">
+              <Image
+                src={"/assets/logo.png"}
+                width={200}
+                height={200}
+                alt="luminae logo"
+                className="text-blue-500"
+              />
               <div className="grid gap-4 p-4">
                 {navbarLinks.map((link) => (
                   <Link
