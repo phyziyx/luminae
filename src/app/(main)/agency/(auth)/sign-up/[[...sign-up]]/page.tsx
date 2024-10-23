@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/ui/icons";
+import Logo from "@/components/logo";
 
 export default function SignUpPage() {
   const t = useTranslations();
@@ -28,6 +29,7 @@ export default function SignUpPage() {
         <Clerk.Loading>
           {(isGlobalLoading: boolean) => (
             <>
+              <Logo className="text-blue-500" />
               <SignUp.Step name="start">
                 <Card className="w-full sm:w-96">
                   <CardHeader>

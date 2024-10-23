@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/ui/icons";
 import { useTranslations } from "next-intl";
+import Logo from "@/components/logo";
 
 export default function SignInPage() {
   const t = useTranslations();
@@ -26,6 +27,7 @@ export default function SignInPage() {
         <Clerk.Loading>
           {(isGlobalLoading) => (
             <>
+              <Logo className="text-blue-500" />
               <SignIn.Step name="start">
                 <Card className="w-full sm:w-96">
                   <CardHeader>
