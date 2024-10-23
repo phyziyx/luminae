@@ -11,6 +11,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ModeToggle from "../mode-toggle";
+import Logo from "@/components/logo";
 
 type Props = {
   user?: null | User;
@@ -42,13 +43,7 @@ const Navigation = ({ user }: Props) => {
             className="items-center gap-2 md:block hidden"
             prefetch={false}
           >
-            <Image
-              src={"/assets/logo_big.svg"}
-              width={200}
-              height={200}
-              alt="luminae logo"
-              className="fill-blue-500"
-            />
+            <Logo className="text-blue-700" />
           </Link>
 
           <Sheet>
@@ -82,7 +77,7 @@ const Navigation = ({ user }: Props) => {
                   </Link>
                 ))}
                 <hr />
-                {!user ? (
+                {user ? (
                   <Button>
                     <HouseIcon />
                     <Link href="/agency">{t("DASHBOARD")}</Link>
