@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/elements": "^0.17.0",
     "@clerk/nextjs": "^5.7.5",
     "@clerk/themes": "^2.1.37",
     "@hookform/resolvers": "^3.9.0",
@@ -49,7 +50,7 @@
     "embla-carousel-react": "^8.3.0",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.453.0",
-    "next": "^15.0.0",
+    "next": "^15.0.1",
     "next-intl": "^3.21.1",
     "next-themes": "^0.3.0",
     "prisma": "^5.21.1",
