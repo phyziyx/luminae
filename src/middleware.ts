@@ -4,7 +4,9 @@ import { NextResponse } from "next/server";
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/forum(.*)"]);
 
 export default clerkMiddleware(
-  async (authFn, request) => {
+  async (auth, request) => {
+    const resolvedAuth = await auth();
+
     const url = request.nextUrl;
     const pathName = url.pathname;
 
@@ -16,7 +18,7 @@ export default clerkMiddleware(
     }
 
     if (isProtectedRoute(request)) {
-      authFn().redirectToSignIn();
+      resolvedAuth.redirectToSignIn();
     }
   },
   {
