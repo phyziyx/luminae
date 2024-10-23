@@ -17,11 +17,11 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getTranslations } from "next-intl/server";
-import Footer from "@/components/site/footer";
 import PreviewImage from "./components/preview";
-import Navigation from "@/components/site/navigation";
+import Navigation from "./components/navigation";
+import Footer from "./components/footer";
 
-export default async function Home() {
+export default async function Page() {
   // const prices = await stripe.prices.list({
   //   product: process.env.NEXT_PLURA_PRODUCT_ID,
   //   active: true,
