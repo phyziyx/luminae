@@ -1,13 +1,21 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/forum(.*)"]);
 
 export default clerkMiddleware(
-  async (authFn, req) => {
-    const pathName = req.url.split("/")[0];
-    console.log(pathName);
+  async (authFn, request) => {
+    const url = request.nextUrl;
+    const pathName = url.pathname;
 
-    if (isProtectedRoute(req)) {
+    console.log("pathName:", pathName);
+
+    // Fix: Redirect to /home, if the user goes to main page
+    if (pathName === "/" || pathName === "/") {
+      return NextResponse.redirect(new URL("/home", request.url));
+    }
+
+    if (isProtectedRoute(request)) {
       authFn().redirectToSignIn();
     }
   },
