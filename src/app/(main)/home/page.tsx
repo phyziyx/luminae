@@ -29,13 +29,9 @@ export default async function Home() {
   const t = await getTranslations();
 
   return (
-    <section className="dark:bg-black items-center h-full w-full text-center flex flex-col justify-center">
-      <div className="center text-center flex flex-col justify-center">
-        <h1 className="mt-10 mb-[-70px] text-2xl font-bold text-center text-blue-300 animate-highlight bg-200">
-          {/* {t("MOTTO", {
-            workspace: t("MOTTO_WORKSPACE"),
-            process: t("MOTTO_PROCESS"),
-          })} */}
+    <section className="dark:bg-black flex flex-col items-center h-full w-full text-center justify-center px-4 lg:px-20">
+      <div className="text-center text-xs flex flex-col justify-center">
+        <h1 className="mt-10 text-xs sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-blue-300 animate-highlight bg-200">
           <span>{t("MOTTO_BRIGHTEN")}</span>
           <span className="bg-radial-higlight bg-clip-text text-transparent animate-highlight bg-200">
             {t("MOTTO_WORKSPACE")}
@@ -45,16 +41,20 @@ export default async function Home() {
             {t("MOTTO_PROCESS")}
           </span>
         </h1>
+      </div>
+      <div className="mt-5 w-full flex justify-center sm:flex-col sm:items-center md:flex-row relative">
         <Image
-          className="sm:w-[300px] md:w-[800px] lg:w-[900px] xl:w-[900px] 2xl:w-[1200px]"
+          className="w-[250px] sm:w-[350px] md:w-[550px] lg:w-[650px] xl:w-[750px]"
           src={"/assets/logo.png"}
           alt={t("LUMINAE")}
           width={1200}
           height={1200}
         />
       </div>
-      <div>
-        <PreviewImage />
+      <div className="mt-10 w-full flex justify-center sm:flex-col sm:items-center md:flex-row relative z-10">
+        <div className="w-full sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%]">
+          <PreviewImage />
+        </div>
       </div>
       <Footer />
     </section>
