@@ -82,7 +82,7 @@ const Navigation = ({ user }: Props) => {
                   </Link>
                 ))}
                 <hr />
-                {!user ? (
+                {user ? (
                   <Button>
                     <HouseIcon />
                     <Link href="/agency">{t("DASHBOARD")}</Link>
