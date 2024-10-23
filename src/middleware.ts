@@ -1,5 +1,4 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
 
 const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/forum(.*)"]);
 
@@ -11,11 +10,6 @@ export default clerkMiddleware(
     const pathName = url.pathname;
 
     console.log("pathName:", pathName);
-
-    // Fix: Redirect to /home, if the user goes to main page
-    if (pathName === "/" || pathName === "/") {
-      return NextResponse.redirect(new URL("/home", request.url));
-    }
 
     if (isProtectedRoute(request)) {
       resolvedAuth.redirectToSignIn();

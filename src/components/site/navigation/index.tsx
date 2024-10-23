@@ -86,11 +86,11 @@ const Navigation = ({ user }: Props) => {
                   <>
                     <Button>
                       <User2Icon />
-                      <Link href="/agency/sign-in">{t("SIGN_IN")}</Link>
+                      <Link href="/sign-in">{t("SIGN_IN")}</Link>
                     </Button>
                     <Button variant={"secondary"}>
                       <UserRoundPlus />
-                      <Link href="/agency/sign-up">{t("SIGN_UP")}</Link>
+                      <Link href="/sign-up">{t("SIGN_UP")}</Link>
                     </Button>
                   </>
                 )}
@@ -128,11 +128,11 @@ const Navigation = ({ user }: Props) => {
             <div className="md:flex flex-row gap-2 hidden">
               <Button>
                 <User2Icon />
-                <Link href="/agency/sign-in">{t("SIGN_IN")}</Link>
+                <Link href="/sign-in">{t("SIGN_IN")}</Link>
               </Button>
               <Button variant={"secondary"}>
                 <UserRoundPlus />
-                <Link href="/agency/sign-up">{t("SIGN_UP")}</Link>
+                <Link href="/sign-up">{t("SIGN_UP")}</Link>
               </Button>
             </div>
           )}
