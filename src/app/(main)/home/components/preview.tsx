@@ -6,7 +6,7 @@ const PreviewImage = async () => {
 
   return (
     <ThemedImage
-      className="rounded-lg mt-[-110px] border-2 border-blue-500 drop-shadow-xl shadow-blue-500"
+      className="rounded-lg md:mt-[-110px] sm:mt-[-75px] mt-[-65px] border-2 border-blue-500 drop-shadow-xl shadow-blue-500"
       srcDark={`/assets/preview.png`}
       srcLight={`/assets/preview_light.png`}
       alt={t("PREVIEW")}
