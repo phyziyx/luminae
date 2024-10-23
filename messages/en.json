@@ -22,5 +22,16 @@
   "USERNAME": "Username",
   "VERIFY_EMAIL": "Verify your email",
   "VERIFICATION_EMAIL_SENT": "Use the verification link sent to your email address",
-  "DIDNT_RECEIVE_CODE_RESEND": "Didn't receive a code? Resend"
+  "DIDNT_RECEIVE_CODE_RESEND": "Didn't receive a code? Resend",
+  "SIGN_IN_HEADER": "Sign in to your account",
+  "SIGN_IN_DESCRIPTION": "Welcome back! Please sign in to continue",
+  "DONT_HAVE_AN_ACCOUNT": "Don't have an account? Sign up",
+  "USE_ANOTHER_METHOD": "Use another method",
+  "FACING_ISSUES_SIGNING_IN": "Facing issues? You can use any of these methods to sign in.",
+  "EMAIL_CODE": "Email code",
+  "GO_BACK": "Go back",
+  "WELCOME_BACK": "Welcome back",
+  "USE_VERIFICATION_CODE": "Enter the verification code sent to your email",
+  "CHECK_YOUR_EMAIL": "Check your email",
+  "EMAIL_VERIFICATION_CODE": "Email verification code"
 }

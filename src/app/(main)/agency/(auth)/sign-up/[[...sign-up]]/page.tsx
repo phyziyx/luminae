@@ -37,7 +37,7 @@ export default function SignUpPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="grid gap-y-4">
-                    <div className="grid grid-cols-2 gap-x-4">
+                    <div className="grid grid-cols-1 gap-x-4">
                       {/* <Clerk.Connection name="github" asChild>
                         <Button
                           size="sm"
