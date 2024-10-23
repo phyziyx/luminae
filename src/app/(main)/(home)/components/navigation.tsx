@@ -1,6 +1,5 @@
 "use client";
 
-// import { UserButton } from "@clerk/nextjs";
 import { User } from "@clerk/nextjs/server";
 import { HouseIcon, MenuIcon, User2Icon, UserRoundPlus } from "lucide-react";
 import Image from "next/image";
@@ -10,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import ModeToggle from "../mode-toggle";
+import ModeToggle from "@/components/site/mode-toggle";
 import Logo from "@/components/logo";
 
 type Props = {
