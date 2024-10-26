@@ -14,6 +14,12 @@ datasource db {
   relationMode = "foreignKeys"
 }
 
+enum Role {
+  AGENCY_OWNER
+  AGENCY_ADMIN
+  WORKSPACE_USER
+}
+
 model User {
   id        String   @id @default(uuid())
   name      String
@@ -21,4 +27,5 @@ model User {
   email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  role      Role
 }
