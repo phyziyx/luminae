@@ -18,10 +18,10 @@
 
 - If you have modified the Prisma data model/schema, please run `prisma generate` to update the typings.
 - Migrate the schema with `prisma migrate dev`.
-- More information here: [https://www.prisma.io/docs/orm/prisma-migrate/getting-started](Getting Started with Prisma Migrate)
-- MySQL/MariaDB type mapping to Prisma: [https://www.prisma.io/docs/orm/overview/databases/mysql#type-mapping-between-mysql-to-prisma-schema](Type Mappings)
+- More information here: [Getting Started with Prisma Migrate](https://www.prisma.io/docs/orm/prisma-migrate/getting-started)
+- MySQL/MariaDB type mapping to Prisma: [Type Mappings](https://www.prisma.io/docs/orm/overview/databases/mysql#type-mapping-between-mysql-to-prisma-schema)
 
 ## Credits
 
-- Mohammed Ali Khowaja [https://github.com/phyziyx](Phyziyx)
-- Mahad Hasan Asim [https://github.com/senenzo](Senenzo)
+- Mohammed Ali Khowaja [Phyziyx](https://github.com/phyziyx)
+- Mahad Hasan Asim [Senenzo](https://github.com/senenzo)
