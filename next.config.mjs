@@ -5,9 +5,15 @@ const withNextIntl = createNextIntlPlugin();
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	images: {
-		domains: [
-			'files.stripes.com',
-			'img.clerk.com'
+		remotePatterns: [
+			{
+				protocol: 'https',
+				hostname: 'files.stripes.com',
+			},
+			{
+				protocol: 'https',
+				hostname: 'img.clerk.com',
+			}
 		]
 	},
 	reactStrictMode: true

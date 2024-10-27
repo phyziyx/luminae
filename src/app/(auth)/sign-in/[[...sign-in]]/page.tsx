@@ -17,9 +17,15 @@ import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/ui/icons";
 import { useTranslations } from "next-intl";
 import Logo from "@/components/logo";
+import useIsMounted from "@/hooks/use-mounted";
 
 export default function SignInPage() {
+  const isMounted = useIsMounted();
   const t = useTranslations();
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <div className="grid w-full grow items-center px-4 sm:justify-center">

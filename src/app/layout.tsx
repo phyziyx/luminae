@@ -5,8 +5,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { Suspense } from "react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -43,13 +43,15 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider messages={messages}>
-            <ClerkProvider appearance={{ baseTheme: dark }}>
-              {/* <ModalProvider> */}
-              {children}
-              {/* <Toaster /> */}
-              {/* <SonnarToaster position="bottom-left" /> */}
-              {/* </ModalProvider> */}
-            </ClerkProvider>
+            <Suspense fallback={<div>Loading...</div>}>
+              <ClerkProvider>
+                {/* <ModalProvider> */}
+                {children}
+                {/* <Toaster /> */}
+                {/* <SonnarToaster position="bottom-left" /> */}
+                {/* </ModalProvider> */}
+              </ClerkProvider>
+            </Suspense>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>
