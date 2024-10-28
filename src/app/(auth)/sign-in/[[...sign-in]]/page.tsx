@@ -34,6 +34,8 @@ export default function SignInPage() {
           {(isGlobalLoading) => (
             <>
               <Logo className="text-blue-500" />
+
+              {/* Start */}
               <SignIn.Step name="start">
                 <Card className="w-full sm:w-96">
                   <CardHeader>
@@ -124,6 +126,7 @@ export default function SignInPage() {
                 </Card>
               </SignIn.Step>
 
+              {/* Choose Strategy */}
               <SignIn.Step name="choose-strategy">
                 <Card className="w-full sm:w-96">
                   <CardHeader>
@@ -172,6 +175,7 @@ export default function SignInPage() {
                 </Card>
               </SignIn.Step>
 
+              {/* Verification */}
               <SignIn.Step name="verifications">
                 <SignIn.Strategy name="password">
                   <Card className="w-full sm:w-96">

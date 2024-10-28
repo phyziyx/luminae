@@ -36,6 +36,8 @@ export default function SignUpPage() {
           {(isGlobalLoading: boolean) => (
             <>
               <Logo className="text-blue-500" />
+
+              {/* Start */}
               <SignUp.Step name="start">
                 <Card className="w-full sm:w-96">
                   <CardHeader>
@@ -137,6 +139,7 @@ export default function SignUpPage() {
                 </Card>
               </SignUp.Step>
 
+              {/* Continue */}
               <SignUp.Step name="continue">
                 <Card className="w-full sm:w-96">
                   <CardHeader>
@@ -173,6 +176,7 @@ export default function SignUpPage() {
                 </Card>
               </SignUp.Step>
 
+              {/* Verification */}
               <SignUp.Step name="verifications">
                 <SignUp.Strategy name="email_code">
                   <Card className="w-full sm:w-96">
