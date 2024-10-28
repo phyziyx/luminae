@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { Icons } from "@/components/ui/icons";
 import Logo from "@/components/logo";
 import useIsMounted from "@/hooks/use-mounted";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export default function SignUpPage() {
   const isMounted = useIsMounted();
@@ -108,7 +109,7 @@ export default function SignUpPage() {
                         <Label>{t("PASSWORD")}</Label>
                       </Clerk.Label>
                       <Clerk.Input type="password" required asChild>
-                        <Input />
+                        <PasswordInput required />
                       </Clerk.Input>
                       <Clerk.FieldError className="block text-sm text-destructive" />
                     </Clerk.Field>

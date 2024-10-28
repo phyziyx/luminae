@@ -27,6 +27,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
+import { PasswordInput } from "@/components/ui/password-input";
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -157,7 +158,7 @@ export default function Page() {
                     <FormItem>
                       <FormLabel htmlFor="password">Enter password</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <PasswordInput {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
