@@ -21,7 +21,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -36,58 +35,47 @@ export default function Page() {
 
   const { user } = useUser();
   const router = useRouter();
+  const token = useSearchParams().get("__clerk_ticket");
   const { isLoaded, signUp, setActive } = useSignUp();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      // firstName: "",
+      // lastName: "",
       password: "",
     },
   });
 
-  // Handle signed-in users visiting this page
-  // This will also redirect the user once they finish the sign-up process
   React.useEffect(() => {
     if (user?.id) {
       router.push("/");
     }
   }, [user]);
 
-  // Get the token from the query params
-  const token = useSearchParams().get("__clerk_ticket");
-
-  // If there is no invitation token, restrict access to this page
-  if (token) {
+  if (!token) {
     return <p>No invitation token found.</p>;
   }
 
-  // Handle submission of the sign-up form
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!isLoaded) return;
 
     try {
       if (!token) return null;
 
-      // Create a new sign-up with the supplied invitation token.
-      // Make sure you're also passing the ticket strategy.
-      // After the below call, the user's email address will be
-      // automatically verified because of the invitation token.
+      console.log(values);
+
       const signUpAttempt = await signUp.create({
         strategy: "ticket",
         ticket: token,
-        firstName: values.firstName,
-        lastName: values.lastName,
+        // firstName: values.firstName,
+        // lastName: values.lastName,
         password: values.password,
       });
 
-      // If the sign-up was completed, set the session to active
       if (signUpAttempt.status === "complete") {
         await setActive({ session: signUpAttempt.createdSessionId });
       } else {
-        // If the status is not complete, check why. User may need to
-        // complete further steps.
         console.error(JSON.stringify(signUpAttempt, null, 2));
       }
     } catch (err) {
@@ -101,8 +89,8 @@ export default function Page() {
 
       <Card className="w-full sm:w-96">
         <CardHeader>
-          <CardTitle>{t("CREATE_ACCOUNT_HEADER")}</CardTitle>
-          <CardDescription>{t("CREATE_ACCOUNT_DESCRIPTION")}</CardDescription>
+          <CardTitle>{t("INVITATION_HEADER")}</CardTitle>
+          <CardDescription>{t("INVITATION_DESCRIPTION")}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-y-4">
           <div className="grid w-full gap-y-4">
@@ -111,7 +99,7 @@ export default function Page() {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-2"
               >
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name="firstName"
                   render={({ field }) => (
@@ -139,7 +127,7 @@ export default function Page() {
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
 
                 <FormField
                   control={form.control}
@@ -160,7 +148,7 @@ export default function Page() {
         </CardContent>
         <CardFooter>
           <div className="grid w-full gap-y-4">
-            <Button type="submit">
+            <Button onClick={form.handleSubmit(onSubmit)} type="button">
               {false ? (
                 <Icons.spinner className="size-4 animate-spin" />
               ) : (
