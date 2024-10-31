@@ -1,6 +1,5 @@
 "use client";
 
-import { User } from "@clerk/nextjs/server";
 import { HouseIcon, MenuIcon, User2Icon, UserRoundPlus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,7 +12,7 @@ import ModeToggle from "@/components/site/mode-toggle";
 import Logo from "@/components/logo";
 
 type Props = {
-  user?: null | User;
+  user?: boolean;
 };
 
 const navbarLinks = [
@@ -121,7 +120,7 @@ const Navigation = ({ user }: Props) => {
           {user ? (
             <Button>
               <HouseIcon />
-              <Link href="/agency">{t("DASHBOARD")}</Link>
+              <Link href="/dashboard">{t("DASHBOARD")}</Link>
             </Button>
           ) : (
             <div className="md:flex flex-row gap-2 hidden">

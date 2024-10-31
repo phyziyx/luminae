@@ -4,38 +4,32 @@ import { WebhookEvent } from "@clerk/nextjs/server";
 import UserManager from "@/lib/managers/userManager";
 
 export async function POST(req: Request) {
-  // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
-  const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
+  const CLERK_WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
-  if (!WEBHOOK_SECRET) {
+  if (!CLERK_WEBHOOK_SECRET) {
     throw new Error(
-      "Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
+      "Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local"
     );
   }
 
-  // Get the headers
   const headerPayload = await headers();
   const svixId = headerPayload.get("svix-id");
   const svixTimestamp = headerPayload.get("svix-timestamp");
   const svixSignature = headerPayload.get("svix-signature");
 
-  // If there are no headers, error out
   if (!svixId || !svixTimestamp || !svixSignature) {
     return new Response("Error occured -- no svix headers", {
       status: 400,
     });
   }
 
-  // Get the body
   const payload = await req.json();
   const body = JSON.stringify(payload);
 
-  // Create a new Svix instance with your secret.
-  const wh = new Webhook(WEBHOOK_SECRET);
+  const wh = new Webhook(CLERK_WEBHOOK_SECRET);
 
   let event: WebhookEvent;
 
-  // Verify the payload with the headers
   try {
     event = wh.verify(body, {
       "svix-id": svixId,
@@ -49,8 +43,6 @@ export async function POST(req: Request) {
     });
   }
 
-  // Do something with the payload
-  // For this guide, you simply log the payload to the console
   const { id } = event.data;
   const eventType = event.type;
 

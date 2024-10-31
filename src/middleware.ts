@@ -11,13 +11,14 @@ const isProtectedRoute = createRouteMatcher([
 export default clerkMiddleware(
   async (auth, request) => {
     const resolvedAuth = await auth();
+    const isLoggedIn = resolvedAuth.userId;
 
     const url = request.nextUrl;
     const pathName = url.pathname;
 
     console.log("pathName:", pathName);
 
-    if (isProtectedRoute(request)) {
+    if (!isLoggedIn && isProtectedRoute(request)) {
       resolvedAuth.redirectToSignIn();
     }
   },
