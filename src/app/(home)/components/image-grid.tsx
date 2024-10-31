@@ -25,7 +25,7 @@ const images = [
 
 export default function ImageGrid() {
   return (
-    <div className="grid grid-cols-2 content-center place-items-center md:grid-cols-3 xl:grid-cols-5 gap-16">
+    <div className="grid grid-cols-2 place-items-center md:grid-cols-4 content-center items-center gap-6 md:gap-16">
       {images.map((image, index) => (
         <div key={index} className="flex flex-col items-center">
           <Image src={image.src} alt={image.alt} width={150} height={150} />

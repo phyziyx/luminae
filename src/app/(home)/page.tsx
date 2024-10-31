@@ -66,7 +66,7 @@ export default async function Page() {
 
       <section className="bg-primary text-primary-foreground">
         <div className="container py-16 flex flex-col gap-16 px-8 md:px-16 items-center">
-          <h2 className="text-3xl text-center text-balance">
+          <h2 className="text-3xl font-bold text-center text-balance">
             {t("TRUSTED_BY")}
           </h2>
           <ImageGrid />
