@@ -18,6 +18,7 @@ import { Icons } from "@/components/ui/icons";
 import { useTranslations } from "next-intl";
 import Logo from "@/components/logo";
 import useIsMounted from "@/hooks/use-mounted";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export default function SignInPage() {
   const isMounted = useIsMounted();
@@ -34,6 +35,8 @@ export default function SignInPage() {
           {(isGlobalLoading) => (
             <>
               <Logo className="text-blue-500" />
+
+              {/* Start */}
               <SignIn.Step name="start">
                 <Card className="w-full sm:w-96">
                   <CardHeader>
@@ -124,6 +127,7 @@ export default function SignInPage() {
                 </Card>
               </SignIn.Step>
 
+              {/* Choose Strategy */}
               <SignIn.Step name="choose-strategy">
                 <Card className="w-full sm:w-96">
                   <CardHeader>
@@ -172,6 +176,7 @@ export default function SignInPage() {
                 </Card>
               </SignIn.Step>
 
+              {/* Verification */}
               <SignIn.Step name="verifications">
                 <SignIn.Strategy name="password">
                   <Card className="w-full sm:w-96">
@@ -190,7 +195,7 @@ export default function SignInPage() {
                           <Label>{t("PASSWORD")}</Label>
                         </Clerk.Label>
                         <Clerk.Input type="password" asChild>
-                          <Input />
+                          <PasswordInput required />
                         </Clerk.Input>
                         <Clerk.FieldError className="block text-sm text-destructive" />
                       </Clerk.Field>
