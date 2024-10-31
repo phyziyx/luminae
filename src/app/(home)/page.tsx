@@ -20,6 +20,7 @@ import { getTranslations } from "next-intl/server";
 import PreviewImage from "./components/preview";
 import Navigation from "./components/navigation";
 import Footer from "./components/footer";
+import ImageGrid from "./components/image-grid";
 
 export default async function Page() {
   // const prices = await stripe.prices.list({
@@ -32,6 +33,8 @@ export default async function Page() {
   return (
     <main className="h-full">
       <Navigation />
+
+      {/* Hero Section */}
       <section className="dark:bg-black flex flex-col items-center h-full w-full text-center justify-center px-4 lg:px-20">
         <div className="text-center text-xs flex flex-col justify-center">
           <h1 className="mt-10 text-xs sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-blue-300 animate-highlight bg-200">
@@ -59,8 +62,18 @@ export default async function Page() {
             <PreviewImage />
           </div>
         </div>
-        <Footer />
       </section>
+
+      <section className="bg-primary text-primary-foreground">
+        <div className="container py-16 flex flex-col gap-16 px-8 md:px-16 items-center">
+          <h2 className="text-3xl text-center text-balance">
+            {t("TRUSTED_BY")}
+          </h2>
+          <ImageGrid />
+        </div>
+      </section>
+
+      <Footer />
     </main>
   );
 
