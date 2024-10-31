@@ -20,6 +20,7 @@ import { cn } from "@/lib/utils";
 import { Icons } from "@/components/ui/icons";
 import Logo from "@/components/logo";
 import useIsMounted from "@/hooks/use-mounted";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export default function SignUpPage() {
   const isMounted = useIsMounted();
@@ -36,6 +37,8 @@ export default function SignUpPage() {
           {(isGlobalLoading: boolean) => (
             <>
               <Logo className="text-blue-500" />
+
+              {/* Start */}
               <SignUp.Step name="start">
                 <Card className="w-full sm:w-96">
                   <CardHeader>
@@ -106,7 +109,7 @@ export default function SignUpPage() {
                         <Label>{t("PASSWORD")}</Label>
                       </Clerk.Label>
                       <Clerk.Input type="password" required asChild>
-                        <Input />
+                        <PasswordInput required />
                       </Clerk.Input>
                       <Clerk.FieldError className="block text-sm text-destructive" />
                     </Clerk.Field>
@@ -137,6 +140,7 @@ export default function SignUpPage() {
                 </Card>
               </SignUp.Step>
 
+              {/* Continue */}
               <SignUp.Step name="continue">
                 <Card className="w-full sm:w-96">
                   <CardHeader>
@@ -173,6 +177,7 @@ export default function SignUpPage() {
                 </Card>
               </SignUp.Step>
 
+              {/* Verification */}
               <SignUp.Step name="verifications">
                 <SignUp.Strategy name="email_code">
                   <Card className="w-full sm:w-96">
