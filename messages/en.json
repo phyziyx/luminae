@@ -36,5 +36,11 @@
   "WELCOME_BACK": "Welcome back",
   "USE_VERIFICATION_CODE": "Enter the verification code sent to your email",
   "CHECK_YOUR_EMAIL": "Check your email",
-  "EMAIL_VERIFICATION_CODE": "Email verification code"
+  "EMAIL_VERIFICATION_CODE": "Email verification code",
+
+  "SEARCH_IN_AGENCY": "Search in Agency...",
+  "NO_RESULTS_FOUND": "No results found",
+  "NO_WORKSPACES_FOUND": "No Workspaces Found",
+  "CREATE_WORKSPACE": "Create Workspace",
+  "WORKSPACES": "Workspaces"
 }
