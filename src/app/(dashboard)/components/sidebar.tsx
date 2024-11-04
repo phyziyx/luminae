@@ -311,6 +311,8 @@ const DashboardSidebar = ({ children }: { children: React.ReactNode }) => {
           </SidebarMenu>
         </SidebarHeader>
 
+        <hr />
+
         <SidebarContent>
           {/* Agency Switcher */}
           <SidebarGroup>
@@ -412,11 +414,12 @@ const DashboardSidebar = ({ children }: { children: React.ReactNode }) => {
         {/* Footer */}
         <SidebarFooter>
           <SidebarMenu>
-            <SidebarMenuItem className="flex items-center gap-2">
+            <SidebarMenuItem className="flex items-center place-content-evenly gap-2">
               <UserButton
                 showName
                 appearance={{
                   elements: {
+                    avatarBox: "rounded-lg",
                     rootBox: "flex overflow-hidden",
                     userButtonBox: "flex-row-reverse",
                     userButtonOuterIdentifier: "truncate pl-0 dark:text-white",
