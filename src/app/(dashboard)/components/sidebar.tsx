@@ -130,6 +130,42 @@ const data: NavData = {
   ],
 };
 
+const PickerItem = ({
+  isWorkspace,
+  id,
+  name,
+  logoUrl,
+  address,
+}: {
+  isWorkspace: boolean;
+  id: string;
+  name: string;
+  logoUrl: string;
+  address: string;
+}) => {
+  return (
+    <CommandItem className="my-2 text-primary border-[1px] border-border p-2 rounded-md cursor-pointer transition-all">
+      <Link
+        href={`/${isWorkspace ? "workspace" : "agency"}/${id}`}
+        className="flex gap-4 w-full h-full"
+      >
+        <div className="relative w-16">
+          <Image
+            src={logoUrl}
+            alt={name}
+            fill
+            className="rounded-md object-contain"
+          />
+        </div>
+        <div className="flex flex-col flex-1">
+          {name}
+          <span className="text-muted-foreground">{address}</span>
+        </div>
+      </Link>
+    </CommandItem>
+  );
+};
+
 const AgencyPicker = () => {
   const details = {
     name: "Agency Name",
@@ -205,29 +241,13 @@ const AgencyPicker = () => {
                 user?.role === "AGENCY_ADMIN") &&
                 user?.Agency && (
                   <CommandGroup heading="Agency">
-                    <CommandItem className="!bg-transparent my-2 text-primary border-[1px] border-border p-2 rounded-md cursor-pointer transition-all">
-                      {
-                        <Link
-                          href={`/agency/${user?.Agency?.id}`}
-                          className="flex gap-4 w-full h-full"
-                        >
-                          <div className="relative w-16">
-                            <Image
-                              src={user?.Agency?.logoUrl}
-                              alt={user?.Agency?.name}
-                              fill
-                              className="rounded-md object-contain"
-                            />
-                          </div>
-                          <div className="flex flex-col flex-1">
-                            {user?.Agency?.name}
-                            <span className="text-muted-foreground">
-                              {user?.Agency?.address}
-                            </span>
-                          </div>
-                        </Link>
-                      }
-                    </CommandItem>
+                    <PickerItem
+                      id={user.Agency.id}
+                      name={user.Agency.name}
+                      address={user.Agency.address}
+                      isWorkspace={false}
+                      logoUrl={user.Agency.logoUrl}
+                    />
                   </CommandGroup>
                 )}
 
@@ -236,32 +256,14 @@ const AgencyPicker = () => {
               <CommandGroup heading={t("WORKSPACES")}>
                 {workspaces
                   ? workspaces.map((e) => (
-                      <CommandItem
+                      <PickerItem
                         key={e.id}
-                        className="my-2 text-primary border-[1px] border-border p-2 rounded-md cursor-pointer transition-all"
-                      >
-                        {
-                          <Link
-                            href={`/workspace/${e.id}`}
-                            className="flex gap-4 w-full h-full"
-                          >
-                            <div className="relative w-16">
-                              <Image
-                                src={e.logoUrl}
-                                alt={e.name}
-                                fill
-                                className="rounded-md object-contain"
-                              />
-                            </div>
-                            <div className="flex flex-col flex-1">
-                              {e.name}
-                              <span className="text-muted-foreground">
-                                {e.address}
-                              </span>
-                            </div>
-                          </Link>
-                        }
-                      </CommandItem>
+                        id={e.id}
+                        name={e.name}
+                        address={e.address}
+                        isWorkspace={true}
+                        logoUrl={e.logoUrl}
+                      />
                     ))
                   : t("NO_WORKSPACES_FOUND")}
               </CommandGroup>
