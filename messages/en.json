@@ -42,5 +42,18 @@
   "NO_RESULTS_FOUND": "No results found",
   "NO_WORKSPACES_FOUND": "No Workspaces Found",
   "CREATE_WORKSPACE": "Create Workspace",
-  "WORKSPACES": "Workspaces"
+  "WORKSPACES": "Workspaces",
+  "FOR_THE_YEAR": "For the year {YEAR}",
+  "INCOME": "Income",
+  "INCOME_DESCRIPTION": "Total revenue generated as reflected in your stripe dashboard.",
+  "POTENTIAL_INCOME": "Potential Income",
+  "POTENTIAL_INCOME_DESCRIPTION": "This is how much you can close.",
+  "ACTIVE_WORKSPACES": "Active Workspaces",
+  "ACTIVE_WORKSPACES_DESCRIPTION": "Reflects the number of workspaces you own and manage.",
+  "AGENCY_GOAL": "Agency Goal",
+  "AGENCY_GOAL_DESCRIPTION": "This is the target you need to achieve to meet your goal.",
+  "CURRENT_GOAL_ACHIEVED": "Current: {GOAL}",
+  "CURRENT_GOAL": "Goal: {GOAL}",
+  "TRANSACTION_HISTORY": "Transaction History",
+  "CLOSING_RATE": "Closing Rate"
 }
