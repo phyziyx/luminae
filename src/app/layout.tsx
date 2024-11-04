@@ -13,11 +13,6 @@ const geistSans = localFont({
   variable: "--font-geist-sans",
   weight: "100 900",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
 
 export const metadata: Metadata = {
   title: "Luminae",
@@ -33,7 +28,7 @@ export default async function RootLayout({
   const messages = await getMessages();
   return (
     <html className="antialiased" lang={locale} suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${geistSans.className}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
