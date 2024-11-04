@@ -7,6 +7,7 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Suspense } from "react";
+import { ModalProvider } from "@/providers/modal-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -38,11 +39,11 @@ export default async function RootLayout({
           <NextIntlClientProvider messages={messages}>
             <Suspense fallback={<div>Loading...</div>}>
               <ClerkProvider>
-                {/* <ModalProvider> */}
-                {children}
-                {/* <Toaster /> */}
-                {/* <SonnarToaster position="bottom-left" /> */}
-                {/* </ModalProvider> */}
+                <ModalProvider>
+                  {children}
+                  {/* <Toaster /> */}
+                  {/* <SonnarToaster position="bottom-left" /> */}
+                </ModalProvider>
               </ClerkProvider>
             </Suspense>
           </NextIntlClientProvider>

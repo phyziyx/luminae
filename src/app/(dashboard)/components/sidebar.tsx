@@ -1,6 +1,7 @@
 "use client";
 
 import Logo from "@/components/logo";
+import CustomModal from "@/components/site/custom-modal";
 import ModeToggle from "@/components/site/mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,7 +36,9 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import useIsMounted from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
+import { useModal } from "@/providers/modal-provider";
 import { UserButton } from "@clerk/nextjs";
 import {
   Collapsible,
@@ -60,7 +63,6 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 
 interface Item {
   title: string;
@@ -197,12 +199,9 @@ const AgencyPicker = () => {
     },
   ];
 
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useIsMounted();
   const t = useTranslations();
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const { openModal } = useModal();
 
   if (!isMounted) return null;
 
@@ -275,7 +274,14 @@ const AgencyPicker = () => {
             <Button
               className="w-full flex gap-2"
               onClick={() => {
-                // TODO: Create Workspace Modal
+                openModal(
+                  <CustomModal
+                    title={t("CREATE_WORKSPACE")}
+                    caption={t("CREATE_WORKSPACE_CAPTION")}
+                  >
+                    <div>{/* TODO: Add workspace */}</div>
+                  </CustomModal>
+                );
               }}
             >
               <PlusCircleIcon size={15} />

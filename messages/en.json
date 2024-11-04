@@ -55,5 +55,6 @@
   "CURRENT_GOAL_ACHIEVED": "Current: {GOAL}",
   "CURRENT_GOAL": "Goal: {GOAL}",
   "TRANSACTION_HISTORY": "Transaction History",
-  "CLOSING_RATE": "Closing Rate"
+  "CLOSING_RATE": "Closing Rate",
+  "CREATE_WORKSPACE_CAPTION": "You can switch between your agency and workspaces from the sidebar"
 }
