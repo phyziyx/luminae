@@ -19,7 +19,7 @@ type Props = {
 const navbarLinks = [
   {
     name: "Pricing",
-    href: "/home",
+    href: "#pricing",
   },
   {
     name: "Documentation",

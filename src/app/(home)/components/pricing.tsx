@@ -125,7 +125,10 @@ export const Pricing = () => {
   const [isAnnual, setAnnual] = useState<boolean>(false);
 
   return (
-    <section className="py-24 flex flex-col items-center place-items-center justify-center">
+    <section
+      id="pricing"
+      className="py-24 flex flex-col items-center place-items-center justify-center"
+    >
       <Heading>{t("PRICING")}</Heading>
       <p className="text-center text-base dark:text-white text-black leading-[30px] tracking-tight mt-5 text-normal md:text-lg">
         {t("PRICING_DESCRIPTION")}
