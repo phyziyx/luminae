@@ -300,7 +300,7 @@ const DashboardSidebar = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <Sidebar className="bg-muted" variant="inset">
+      <Sidebar variant="inset">
         {/* Header */}
         <SidebarHeader>
           <SidebarMenu>
