@@ -32,7 +32,7 @@ const CustomModal = ({
           <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
           <DialogDescription>{caption}</DialogDescription>
         </DialogHeader>
-        {children}
+        <div>{children}</div>
       </DialogContent>
     </Dialog>
   );

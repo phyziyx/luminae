@@ -13,10 +13,12 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <SidebarProvider
-      style={{
-        "--sidebar-width": "18rem",
-        "--sidebar-width-mobile": "18rem",
-      }}
+      style={
+        {
+          "--sidebar-width": "18rem",
+          "--sidebar-width-mobile": "18rem",
+        } as React.CSSProperties
+      }
     >
       <DashboardSidebar>{children}</DashboardSidebar>
     </SidebarProvider>

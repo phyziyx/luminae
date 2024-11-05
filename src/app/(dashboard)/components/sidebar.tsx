@@ -89,31 +89,25 @@ const data: NavData = {
     },
     {
       title: "Billing",
-      url: "/billing",
+      url: "/dashboard/billing",
       icon: ChartNetworkIcon,
       items: [],
     },
     {
       title: "Team",
-      url: "/team",
+      url: "/dashboard/team",
       icon: UserCog2Icon,
       items: [],
     },
     {
       title: "Workspaces",
-      url: "/workspaces",
+      url: "/dashboard/workspace",
       icon: NetworkIcon,
       items: [],
     },
     {
-      title: "Documentation",
-      url: "/documentation",
-      icon: BookOpenIcon,
-      items: [],
-    },
-    {
       title: "Settings",
-      url: "/settings",
+      url: "/dashboard/settings",
       icon: Settings2Icon,
       items: [],
     },
@@ -123,6 +117,12 @@ const data: NavData = {
       title: "Support",
       url: "/support",
       icon: LifeBuoyIcon,
+    },
+    {
+      title: "Documentation",
+      url: "/documentation",
+      icon: BookOpenIcon,
+      items: [],
     },
     {
       title: "Feedback",
@@ -300,7 +300,7 @@ const DashboardSidebar = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <Sidebar variant="inset">
+      <Sidebar className="bg-muted" variant="inset">
         {/* Header */}
         <SidebarHeader>
           <SidebarMenu>
@@ -325,16 +325,6 @@ const DashboardSidebar = ({ children }: { children: React.ReactNode }) => {
             <SidebarGroupLabel>Agency</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                {/* {data.navSecondary.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild>
-                      <a href={item.url}>
-                        <item.icon />
-                        <span>{item.title}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))} */}
                 <AgencyPicker />
               </SidebarMenu>
             </SidebarGroupContent>
@@ -359,8 +349,10 @@ const DashboardSidebar = ({ children }: { children: React.ReactNode }) => {
                         asChild
                         tooltip={item.title}
                         className={cn({
-                          "bg-blue-500 hover:bg-blue-600 text-white": isActive,
-                          "hover:bg-blue-300 dark:hover:bg-blue-400": !isActive,
+                          "bg-blue-500 hover:bg-blue-600 text-white font-extrabold":
+                            isActive,
+                          "hover:bg-blue-300 dark:hover:bg-blue-400 font-normal":
+                            !isActive,
                         })}
                       >
                         <Link href={item.url}>
@@ -381,9 +373,9 @@ const DashboardSidebar = ({ children }: { children: React.ReactNode }) => {
                               {item.items?.map((subItem) => (
                                 <SidebarMenuSubItem key={subItem.title}>
                                   <SidebarMenuSubButton asChild>
-                                    <a href={subItem.url}>
-                                      <span>{subItem.title}</span>
-                                    </a>
+                                    <Link href={subItem.url}>
+                                      {subItem.title}
+                                    </Link>
                                   </SidebarMenuSubButton>
                                 </SidebarMenuSubItem>
                               ))}
@@ -405,10 +397,10 @@ const DashboardSidebar = ({ children }: { children: React.ReactNode }) => {
                 {data.navSecondary.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <a href={item.url}>
+                      <Link href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
