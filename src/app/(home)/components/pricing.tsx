@@ -1,15 +1,27 @@
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { CheckIcon } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+"use client";
 
-const pricingTiers = [
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
+import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import Heading from "./heading";
+
+interface PricingCard {
+  title: string;
+  monthlyPrice: number;
+  popular: boolean;
+  features: string[];
+}
+
+const pricingTiers: PricingCard[] = [
   {
     title: "Starter",
     monthlyPrice: 0,
-    buttonText: "Sign up now",
     popular: false,
-    inverse: false,
     features: [
       "Up to 3 team members",
       "Community Access",
@@ -21,9 +33,7 @@ const pricingTiers = [
   {
     title: "Professional",
     monthlyPrice: 29,
-    buttonText: "Sign up Now",
     popular: true,
-    inverse: true,
     features: [
       "Up to 15 team members",
       "Unlimited projects",
@@ -36,9 +46,7 @@ const pricingTiers = [
   {
     title: "Enterprise",
     monthlyPrice: 99,
-    buttonText: "Sign up Now",
     popular: false,
-    inverse: false,
     features: [
       "Unlimited team members",
       "Unlimited projects",
@@ -52,81 +60,105 @@ const pricingTiers = [
   },
 ];
 
+interface PricingCardProps {
+  data: PricingCard;
+}
 
-export const Pricing = async() => {
-  const t = await getTranslations();
-    return <section className="py-24">
-    <div className="container">
-      <div className="max-w-[540px] mx-auto">
-        <h2 className="section-title">{t("PRICING")}</h2>
-        <p className="section-description mt-5">
-          {t("PRICING_DESCRIPTION")}
-        </p>
-      </div>
-      <div className="flex flex-col gap-6 items-center mt-10 lg:flex-row lg:items-end lg:justify-center">
-        {pricingTiers.map(
-          ({
-            title,
-            monthlyPrice,
-            buttonText,
-            popular,
-            inverse,
-            features,
-          }) => (
-            <div
-              className={cn(
-                "p-10 border border-[#F1F1F1] rounded-3xl shadow-[0_7px_14px_#EAEAEA] max-w-xs w-full",
-                inverse === true &&
-                  "border-primary bg-primary text-primary-foreground"
-              )}
-            >
-              <div className="flex justify-between">
-                <h3
-                  className={cn(
-                    "text-lg font-bold text-black/50",
-                    inverse === true && "text-white"
-                  )}
-                >
-                  {title}
-                </h3>
-                {popular === true && (
-                  <div className="inline-flex text-sm px-4 py-1.5 rounded-xl border border-white">
-                    <span className="bg-[linear-gradient(to_right,#DD7DDF,#E1CD86,#BBCB92,#71C2EF,#3BFFFF,#DD7DDF)] text-transparent bg-clip-text font-bold">
-                      Popular
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div className="flex items-baseline gap-1 mt-[30px]">
-                <span className="text-4xl font-bold tracking-tighter leading-none">
-                  ${monthlyPrice}
+const PricingCard = ({ data }: PricingCardProps) => {
+  const t = useTranslations();
+
+  return (
+    <Card
+      className={cn(
+        "bg-white dark:bg-muted p-8 border-2 rounded-3xl shadow-md max-w-xs w-full flex flex-col justify-between",
+        {
+          "border-primary": data.popular,
+        }
+      )}
+    >
+      <CardHeader className="text-2xl font-bold ">
+        <CardTitle className="flex flex-col items-center -mt-6">
+          {data.popular && (
+            <div className="inline-flex text-sm px-4 py-1.5">
+              <Badge variant={"outline"} className="bg text-base font-bold">
+                <span className="bg-[linear-gradient(to_right,#DD7DDF,#E1CD86,#BBCB92,#71C2EF,#3BFFFF,#DD7DDF)] text-transparent bg-clip-text">
+                  Popular
                 </span>
-                <span className="tracking-tight font-bold text-black/50">
-                  /month
-                </span>
-              </div>
-              <Button
-                className={cn(
-                  "w-full mt-[30px] hover:bg-black hover:text-white",
-                  inverse === true && "bg-white text-black"
-                )}
-              >
-                {buttonText}
-              </Button>
-              <ul className="flex flex-col gap-5 mt-8">
-                {features.map((feature) => (
-                  <li className="text-sm flex items-center gap-4">
-                    <CheckIcon className="h-6 w-6" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
+              </Badge>
             </div>
-          )
-        )}
+          )}
+          {data.title}
+          <div className="flex items-center justify-center gap-1 mt-[30px]">
+            <span className="text-4xl font-bold tracking-tighter leading-none">
+              ${data.monthlyPrice}
+            </span>
+            <span className="text-base tracking-tight font-bold text-black/50 dark:text-gray-400">
+              /month
+            </span>
+          </div>
+          <Button
+            className={cn("w-full mt-[30px]")}
+            variant={data.popular ? "default" : "secondary"}
+          >
+            {t("CHOOSE_PLAN")} <ChevronRightIcon />
+          </Button>
+        </CardTitle>
+      </CardHeader>
+
+      <CardFooter>
+        <ul className="flex flex-col gap-5 mt-8">
+          {data.features.map((feature, index) => (
+            <li key={index} className="text-sm flex items-center gap-4">
+              <CheckIcon className="h-6 w-6" />
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
+      </CardFooter>
+    </Card>
+  );
+};
+
+export const Pricing = () => {
+  const t = useTranslations();
+
+  const [isAnnual, setAnnual] = useState<boolean>(false);
+
+  return (
+    <section className="py-24 flex flex-col items-center place-items-center justify-center">
+      <Heading>{t("PRICING")}</Heading>
+      <p className="text-center text-base dark:text-white text-black leading-[30px] tracking-tight mt-5 text-normal md:text-lg">
+        {t("PRICING_DESCRIPTION")}
+      </p>
+
+      <div className="flex flex-row items-center gap-2 mt-10">
+        <span
+          className={cn("font-bold", {
+            "text-primary": !isAnnual,
+          })}
+        >
+          Monthly
+        </span>
+        <Switch
+          checked={isAnnual}
+          onCheckedChange={(value) => setAnnual(value)}
+        />
+        <span
+          className={cn("font-bold", {
+            "text-primary": isAnnual,
+          })}
+        >
+          Annually
+        </span>
       </div>
-    </div>
-  </section>;
+
+      <div className="flex flex-col gap-6 items-center mt-10 lg:flex-row lg:items-end lg:justify-center">
+        {pricingTiers.map((data) => (
+          <PricingCard key={data.title} data={data} />
+        ))}
+      </div>
+    </section>
+  );
 };
 
 export default Pricing;

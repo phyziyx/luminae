@@ -8,7 +8,7 @@
   "SIGN_IN": "Sign In",
   "SIGN_UP": "Sign Up",
   "PRICING": "Pricing",
-  "PRICING_DESCRIPTION": "Choose the plan that suits your needs",
+  "PRICING_DESCRIPTION": "Simple plans. Simple prices. Only pay for what you really need. All plans come with our 24/7 customer support. Change or cancel your plan at any time.",
   "DOCUMENTATION": "Documentation",
   "DASHBOARD": "Dashboard",
   "PREVIEW": "Preview",
@@ -38,5 +38,6 @@
   "TRUSTED_BY": "Trusted by the Top Modern Agencies",
   "TESTIMONIALS_TAGLINE": "What our users say",
   "TESTIMONIALS_DESCRIPTION": "From a vibrant community to powerful features, our app has become an essential tool for users around the world.",
-  "TESTIMONIALS_HEADING": "Testimonials"
+  "TESTIMONIALS_HEADING": "Testimonials",
+  "CHOOSE_PLAN": "Choose Plan"
 }
