@@ -25,6 +25,10 @@ const navbarLinks = [
     name: "Documentation",
     href: "/documentation",
   },
+  {
+    name: "Support",
+    href: "/support",
+  },
 ] as const;
 
 const Navigation = ({ user }: Props) => {
@@ -33,7 +37,7 @@ const Navigation = ({ user }: Props) => {
   const t = useTranslations();
 
   return (
-    <header className="w-full border-b bg-luminae dark:border-gray-800 dark:bg-gray-950">
+    <header className="w-full border-b bg-muted dark:bg-muted/60 dark:border-gray-800 dark:bg-gray-950">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between justify-items-center px-4 md:px-6">
         {/* Logo */}
         <div>
