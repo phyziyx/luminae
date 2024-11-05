@@ -1,6 +1,10 @@
+"use client";
+
 import { cn } from "@/lib/utils";
-import { getTranslations } from "next-intl/server";
 import Image from "next/image";
+import { motion } from "framer-motion";
+import React from "react";
+import { useTranslations } from "next-intl";
 
 const testimonials = [
   {
@@ -59,8 +63,8 @@ const testimonials = [
   },
 ];
 
-const Testimonials = async () => {
-  const t = await getTranslations();
+const Testimonials = () => {
+  const t = useTranslations();
 
   const firstColumn = testimonials.slice(0, 3);
   const secondColumn = testimonials.slice(3, 6);
@@ -69,49 +73,68 @@ const Testimonials = async () => {
   const TestimonialsColumn = (props: {
     className?: string;
     testimonials: typeof testimonials;
+    duration?: number;
   }) => (
-    <div
-      className={cn(
-        "flex flex-col gap-6 mt-10 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]",
-        props.className
-      )}
-    >
-      {props.testimonials.map(({ text, imageSrc, name, username }) => (
-        <div className="card">
-          <div>{text}</div>
-          <div className="flex items-center gap-2 mt-5">
-            <Image src={imageSrc} alt={name} width={40} height={40} />
-            <div className="flex flex-col">
-              <div className="font-medium tracking-tight leading-5">{name}</div>
-              <div className="leading-5 tracking-tight">{username}</div>
-            </div>
-          </div>
-        </div>
-      ))}
+    <div className={props.className}>
+      <motion.div
+        animate={{
+          translateY: "-50%",
+        }}
+        transition={{
+          duration: props.duration || 10,
+          repeat: Infinity,
+          ease: "linear",
+          repeatType: "loop",
+        }}
+        className="flex flex-col gap-6 pb-6"
+      >
+        {[...new Array(2)].map((_, outerIndex) => (
+          <React.Fragment key={outerIndex}>
+            {props.testimonials.map(
+              ({ text, imageSrc, name, username }, innerIndex) => (
+                <div className="card" key={`${username}-${innerIndex}`}>
+                  <div>{text}</div>
+                  <div className="flex items-center gap-2 mt-5">
+                    <Image src={imageSrc} alt={name} width={40} height={40} />
+                    <div className="flex flex-col">
+                      <div className="font-medium tracking-tight leading-5">
+                        {name}
+                      </div>
+                      <div className="leading-5 tracking-tight">{username}</div>
+                    </div>
+                  </div>
+                </div>
+              )
+            )}
+          </React.Fragment>
+        ))}
+      </motion.div>
     </div>
   );
 
   return (
-    <section className="bg-white">
+    <section className="bg-white dark:bg-black">
       <div className="container">
         <div className="max-w-[540px] mx-auto">
           <div className="flex justify-center">
-            <div className="tag">{t("TESTIMONIALS_HEADING")}</div>
+            <div className="text-sm inline-flex border border-[#222]/10 px-3 py-1 rounded-lg tracking-tight mt-5">{t("TESTIMONIALS_HEADING")}</div>
           </div>
           <h2 className="section-title mt-5">{t("TESTIMONIALS_TAGLINE")}</h2>
           <p className="section-description mt-5">
             {t("TESTIMONIALS_DESCRIPTION")}
           </p>
         </div>
-        <div className="flex justify-center gap-6">
-          <TestimonialsColumn testimonials={firstColumn} />
+        <div className="flex justify-center gap-6 mt-10 [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]">
+          <TestimonialsColumn testimonials={firstColumn} duration={15} />
           <TestimonialsColumn
             testimonials={secondColumn}
-            className="hidden md:flex"
+            className="hidden md:block"
+            duration={19}
           />
           <TestimonialsColumn
             testimonials={thirdColumn}
-            className="hidden lg:flex"
+            className="hidden lg:block"
+            duration={17}
           />
         </div>
       </div>
