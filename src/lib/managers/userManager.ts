@@ -1,21 +1,21 @@
 import { User } from "@prisma/client";
 import prisma from "../db";
 
+type CreateUser = Pick<User, "id" | "email" | "name" | "avatarUrl">;
+
 class UserManager {
   /**
    * Creates the user in the database
    * @param user user object
    * @returns user
    */
-  public static async createUser(
-    user: Pick<User, "id" | "email" | "name" | "role" | "avatarUrl">
-  ) {
-    return await prisma.user.create({
+
+  public static async createUser(user: CreateUser) {
+    await prisma.user.create({
       data: {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role ?? "AGENCY_OWNER",
         avatarUrl: user.avatarUrl,
       },
     });
