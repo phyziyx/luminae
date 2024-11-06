@@ -82,7 +82,7 @@ const PricingCard = ({ data }: PricingCardProps) => {
             <div className="inline-flex text-sm px-4 py-1.5">
               <Badge variant={"outline"} className="bg text-base font-bold">
                 <span className="bg-[linear-gradient(to_right,#DD7DDF,#E1CD86,#BBCB92,#71C2EF,#3BFFFF,#DD7DDF)] text-transparent bg-clip-text">
-                  Popular
+                  {t("PRICING_POPULAR")}
                 </span>
               </Badge>
             </div>
@@ -93,7 +93,7 @@ const PricingCard = ({ data }: PricingCardProps) => {
               ${data.monthlyPrice}
             </span>
             <span className="text-base tracking-tight font-bold text-black/50 dark:text-gray-400">
-              /month
+              {t("PRICING_PER_MONTH")}
             </span>
           </div>
           <Button
@@ -140,7 +140,7 @@ export const Pricing = () => {
             "text-primary": !isAnnual,
           })}
         >
-          Monthly
+          {t("PRICING_BILLED_MONTHLY")}
         </span>
         <Switch
           checked={isAnnual}
@@ -151,7 +151,7 @@ export const Pricing = () => {
             "text-primary": isAnnual,
           })}
         >
-          Annually
+          {t("PRICING_BILLED_YEARLY")}
         </span>
       </div>
 

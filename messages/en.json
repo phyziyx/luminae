@@ -39,5 +39,10 @@
   "TESTIMONIALS_TAGLINE": "What our users say",
   "TESTIMONIALS_DESCRIPTION": "From a vibrant community to powerful features, our app has become an essential tool for users around the world.",
   "TESTIMONIALS_HEADING": "Testimonials",
-  "CHOOSE_PLAN": "Choose Plan"
+  "CHOOSE_PLAN": "Choose Plan",
+  "COPYRIGHT": "Luminae, All Rights Reserved.",
+  "PRICING_POPULAR": "Popular",
+  "PRICING_BILLED_MONTHLY": "Monthly",
+  "PRICING_BILLED_YEARLY": "Annually",
+  "PRICING_PER_MONTH": "/month"
 }

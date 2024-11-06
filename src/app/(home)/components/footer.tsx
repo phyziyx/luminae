@@ -1,7 +1,10 @@
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 
-const Footer = () => {
+const Footer = async () => {
   const date = new Date().getFullYear();
+
+  const t = await getTranslations();
 
   return (
     <footer className="bg-muted dark:bg-muted/60 text-[#BCBCBC] text-sm py-10 text-center">
@@ -25,7 +28,7 @@ const Footer = () => {
           </div>
         </div>
         <p className="text-black mt-6">
-          &copy; {date} Luminae, All Rights Reserved.
+          &copy; {date} {t("COPYRIGHT")}
         </p>
       </div>
     </footer>
