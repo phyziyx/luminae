@@ -17,19 +17,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import Footer from "@/app/(home)/components/footer";
-import Navigation from "@/app/(home)/components/navigation";
+import Logo from "../logo";
+import { useTranslations } from "next-intl";
 
 const formSchema = z.object({
-  email: z.string().email("This is not an email."),
-  subject: z.string().min(5, "This field is required."),
-  description: z.string().min(10, "This field is required."),
+  name: z.string().min(3, "This field is required.").max(64, "Too long."),
+  email: z
+    .string()
+    .email("This is not an email.")
+    .min(5, "This field is required.")
+    .max(64, "Too long."),
+  subject: z.string().min(5, "This field is required.").max(64, "Too long."),
+  description: z
+    .string()
+    .min(10, "This field is required.")
+    .max(1024, "Too long."),
 });
 
 const ContactForm = () => {
+  const t = useTranslations();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: "",
       email: "",
       subject: "",
       description: "",
@@ -43,21 +54,36 @@ const ContactForm = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <Navigation user={false} />
-      <h1 className="mt-5 text-3xl font-bold mb-6">Contact Us</h1>
+      <Logo className="text-blue-500 max-w-sm" />
+      <h1 className="mt-5 text-3xl font-bold mb-6">{t("CONTACT_US")}</h1>
       <Card className="w-full max-w-lg bg-white shadow-md rounded-lg p-6">
         <CardHeader>
-          <CardTitle className="text-xl font-semibold">Get in Touch</CardTitle>
+          <CardTitle className="text-xl font-semibold">
+            {t("GET_IN_TOUCH")}
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("NAME")}</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter your name" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("EMAIL")}</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Enter your email" />
                     </FormControl>
@@ -70,7 +96,7 @@ const ContactForm = () => {
                 name="subject"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Subject</FormLabel>
+                    <FormLabel>{t("SUBJECT")}</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Enter the subject" />
                     </FormControl>
@@ -83,7 +109,7 @@ const ContactForm = () => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{t("DESCRIPTION")}</FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}
@@ -99,13 +125,12 @@ const ContactForm = () => {
                 type="submit"
                 className="w-full bg-blue-500 hover:bg-blue-600 text-white"
               >
-                Submit
+                {t("SUBMIT")}
               </Button>
             </form>
           </Form>
         </CardContent>
       </Card>
-      <Footer />
     </div>
   );
 };

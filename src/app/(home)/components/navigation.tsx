@@ -45,7 +45,7 @@ const Navigation = ({ user }: Props) => {
             className="items-center gap-2 md:block hidden"
             prefetch={false}
           >
-            <Logo className="text-blue-700" />
+            <Logo className="text-blue-500" />
           </Link>
 
           <Sheet>

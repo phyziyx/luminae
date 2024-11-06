@@ -43,7 +43,7 @@
   "TESTIMONIALS_DESCRIPTION": "From a vibrant community to powerful features, our app has become an essential tool for users around the world.",
   "TESTIMONIALS_HEADING": "Testimonials",
   "CHOOSE_PLAN": "Choose Plan",
-  "COPYRIGHT": "Luminae, All Rights Reserved.",
+  "COPYRIGHT": "© {YEAR} Luminae, All Rights Reserved.",
   "PRICING_POPULAR": "Popular",
   "PRICING_BILLED_MONTHLY": "Monthly",
   "PRICING_BILLED_YEARLY": "Annually",
@@ -73,5 +73,12 @@
 
   "SETTINGS": "Settings",
 
-  "BILLING": "Billing"
+  "BILLING": "Billing",
+
+  "CONTACT_US": "Contact Us",
+  "GET_IN_TOUCH": "Get in Touch",
+  "NAME": "Name",
+  "SUBJECT": "Subject",
+  "DESCRIPTION": "Description",
+  "SUBMIT": "Submit"
 }
