@@ -9,21 +9,19 @@ import Footer from "./components/footer";
 import ImageGrid from "./components/image-grid";
 import Pricing from "./components/pricing";
 import Testimonials from "./components/testimonials";
+import { auth } from "@clerk/nextjs/server";
+
 
 export default async function Page() {
-  // const prices = await stripe.prices.list({
-  //   product: process.env.NEXT_PLURA_PRODUCT_ID,
-  //   active: true,
-  // });
-
+  const { userId } = await auth();
   const t = await getTranslations();
 
   return (
     <main className="h-full">
-      <Navigation />
-
       {/* Hero Section */}
-      <section className="dark:bg-black flex flex-col items-center w-full text-center justify-center px-4 lg:px-20">
+      <Navigation user={!!userId} />
+      <section className="dark:bg-black flex flex-col items-center h-full w-full text-center justify-center px-4 lg:px-20">
+
         <div className="text-center text-xs flex flex-col justify-center">
           <h1 className="mt-10 text-xs sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-blue-300 animate-highlight bg-200">
             <span>{t("MOTTO_BRIGHTEN")}</span>

@@ -12,6 +12,9 @@
   "DOCUMENTATION": "Documentation",
   "DASHBOARD": "Dashboard",
   "PREVIEW": "Preview",
+
+  "INVITATION_HEADER": "Create your Account",
+  "INVITATION_DESCRIPTION": "You've been invited to join Luminae. Please fill in the details to get started.",
   "GOOGLE": "Google",
   "CREATE_ACCOUNT_HEADER": "Create your account",
   "CREATE_ACCOUNT_DESCRIPTION": "Welcome! Please fill in the details to get started.",

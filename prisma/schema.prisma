@@ -16,17 +16,259 @@ datasource db {
 }
 
 enum Role {
-  AGENCY_OWNER
-  AGENCY_ADMIN
-  WORKSPACE_USER
+  AGENCY_OWNER // Creator and can change the agency information
+  AGENCY_ADMIN // Can manage the agency and workspace
+  AGENCY_USER // Dependent on the permissions
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String @id @default(uuid())
   name      String
-  avatarUrl String   @db.Text
-  email     String   @unique
+  avatarUrl String @db.Text
+  email     String @unique
+
+  stripeConnectAccountId String? @default("")
+  stripeCustomerId       String? @default("")
+
+  Notification  Notification[]
+  AgencyMembers AgencyMember?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  role      Role
+  Ticket    Ticket[]
+}
+
+model AgencyMember {
+  id       String @id @default(uuid())
+  email    String @unique
+  agencyId String
+  role     Role
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  User        User         @relation(fields: [email], references: [email])
+  Agency      Agency       @relation(fields: [agencyId], references: [id])
+  Permissions Permission[]
+
+  @@index([email])
+  @@index([agencyId])
+}
+
+model Permission {
+  id             String @id @default(uuid())
+  agencyMemberId String
+  workspaceId    String
+
+  AgencyMember AgencyMember @relation(fields: [agencyMemberId], references: [id])
+  Workspace    Workspace    @relation(fields: [workspaceId], references: [id])
+  access       Boolean
+  manager      Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([agencyMemberId])
+  @@index([workspaceId])
+}
+
+model Agency {
+  id String @id @default(uuid())
+
+  name         String
+  agencyLogo   String @db.Text
+  companyEmail String @db.Text
+  companyPhone String @db.Text
+
+  address String
+  city    String
+  zipCode String
+  state   String
+  country String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  AgencyMembers AgencyMember[]
+  Workspaces    Workspace[]
+  Invitations   Invitation[]
+  Notifications Notification[]
+  Subscriptions Subscription[]
+  Client        Client[]
+}
+
+model Workspace {
+  id          String @id @default(uuid()) // UUIDv7 for workspace ID
+  agencyId    String // Agency ID
+  name        String // Name of the workspace
+  description String @db.Text // Description of the workspace
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Agency       Agency         @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  Permissions  Permission[]
+  Notification Notification[]
+
+  @@index([agencyId])
+}
+
+enum ClientStatus {
+  LEAD
+  ONBOARDING
+  ACTIVE
+  INACTIVE
+  LOST
+}
+
+model Client {
+  id       String @id @default(uuid()) // UUIDv7 for client ID
+  agencyId String // Agency ID
+  name     String // Name of the client
+  email    String // Email of the client
+  phone    String // Phone number of the client
+
+  city    String // City of the client for the tracking
+  state   String // State of the client for the tracking
+  country String // Country of the client for the tracking
+
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  status    ClientStatus @default(LEAD) // Status of the client
+
+  Agency Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  Ticket Ticket[]
+
+  @@index([agencyId])
+}
+
+enum TicketTag {
+  High
+  Medium
+  Low
+}
+
+model Ticket {
+  id          String    @id @default(uuid()) // UUIDv7 for ticket ID
+  title       String // Title of the ticket
+  description String    @db.Text // Description of the ticket
+  value       Decimal // Value of the ticket (in currency)
+  open        Boolean // Indicates if the ticket is open or closed
+  tag         TicketTag // Tag for the ticket
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clientId String? // Client ID
+  Client   Client? @relation(fields: [clientId], references: [id])
+
+  assigneeUserId String? // User ID
+  assigneeUser   User?   @relation(fields: [assigneeUserId], references: [id])
+
+  @@index([clientId])
+  @@index([assigneeUserId])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model Invitation {
+  id       String           @id @default(uuid()) // UUIDv7 for invitation ID
+  email    String // Email of the user
+  agencyId String // Agency ID
+  role     Role // Role of the user
+  status   InvitationStatus @default(PENDING) // Status of the invitation
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Agency Agency @relation(fields: [agencyId], references: [id])
+
+  @@index([email])
+  @@index([agencyId])
+}
+
+model Notification {
+  id      String @id @default(uuid()) // UUIDv7 for notification ID
+  message String // Notification message
+
+  userId      String // User ID
+  agencyId    String // Agency ID
+  workspaceId String? // Workspace ID
+
+  createdAt DateTime @default(now()) // Creation date of the notification
+  updatedAt DateTime @updatedAt // Last update date of the notification
+
+  User      User       @relation(fields: [userId], references: [id])
+  Agency    Agency     @relation(fields: [agencyId], references: [id])
+  Workspace Workspace? @relation(fields: [workspaceId], references: [id])
+
+  @@index([userId])
+  @@index([agencyId])
+  @@index([workspaceId])
+}
+
+enum FeatureCode {
+  TEAM_MEMBERS
+  WORKSPACE
+  FILE_STORAGE
+  CUSTOM_URL
+}
+
+model Package {
+  id            String         @id @default(cuid()) // UUIDv7 for package ID
+  name          String // Unique name for the package
+  monthlyPrice  Decimal // Monthly price for the package
+  discountRate  Int? // Optional discount rate for the package
+  features      Feature[] // Features included in the package
+  subscriptions Subscription[] // Subscriptions for the package
+  retired       Boolean        @default(false) // Indicates if the package is retired
+}
+
+model Feature {
+  id        String      @id @default(cuid()) // UUIDv7 for feature ID
+  code      FeatureCode // Enum type for feature code
+  name      String // Descriptive name for the feature
+  maxLimit  Int? // Optional max limit, e.g., 3 team members
+  hasAccess Boolean? // Optional, represents access (true/false)
+  packageId String // Package ID that the feature belongs to
+  package   Package     @relation(fields: [packageId], references: [id])
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  TRIALING
+  CANCELED
+  PAST_DUE
+  UNPAID
+}
+
+model Subscription {
+  id        String  @id @default(cuid()) // UUIDv7 for subscription ID
+  packageId String // Package ID
+  price     String? // Price of the package
+  agencyId  String? @unique() // Agency ID
+
+  priceId              String // Price ID of the package
+  stripeSubscriptionId String   @unique // Stripe subscription ID
+  stripeCustomerId     String // Stripe customer ID for tracking user on Stripe
+  currentPeriodEnd     DateTime // End of the current billing period
+
+  active Boolean            @default(false) // Active status of the package
+  status SubscriptionStatus // Enum field to track subscription status
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Agency  Agency? @relation(fields: [agencyId], references: [id])
+  package Package @relation(fields: [packageId], references: [id])
+
+  @@index([agencyId])
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
 }
