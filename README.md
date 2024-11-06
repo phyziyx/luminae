@@ -12,7 +12,7 @@
 ## Environment Variables
 
 - Do not push the environment variables (`.env`) file to the Git or anywhere else.
-- Modify the `.env.local` to `.env`, and fill in your environment variables.
+- Modify the `.env.example` to `.env`, and fill in your environment variables.
 
 ## Prisma
 
@@ -23,5 +23,5 @@
 
 ## Credits
 
-- Mohammed Ali Khowaja [Phyziyx](https://github.com/phyziyx)
-- Mahad Hasan Asim [Senenzo](https://github.com/senenzo)
+- Mohammed Ali Khowaja ([Phyziyx](https://github.com/phyziyx))
+- Mahad Hasan Asim ([Senenzo](https://github.com/senenzo))
