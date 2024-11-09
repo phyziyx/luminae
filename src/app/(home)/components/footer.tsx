@@ -29,7 +29,7 @@ const Footer = () => {
             />
           </div>
         </div>
-        <p className="text-black mt-6">
+        <p className="text-black dark:text-white mt-6">
           {t("COPYRIGHT", {
             YEAR: date.toString(),
           })}
