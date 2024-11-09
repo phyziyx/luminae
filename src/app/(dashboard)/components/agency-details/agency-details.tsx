@@ -66,6 +66,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
     if (data) {
       form.reset({ ...data });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   return (
@@ -93,7 +94,6 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
           >
             <div className="flex md:flex-row gap-4">
               <FormField
-                // disabled={isLoading}
                 control={form.control}
                 name="name"
                 render={({ field }) => (
@@ -102,6 +102,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                     <FormControl>
                       <Input
                         placeholder={t("AGENCY_DETAILS.YOUR_AGENCY_NAME")}
+                        disabled={isLoading}
                         {...field}
                       />
                     </FormControl>
@@ -110,7 +111,6 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                 )}
               />
               <FormField
-                // disabled={isLoading}
                 control={form.control}
                 name="companyEmail"
                 render={({ field }) => (
@@ -119,6 +119,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                     <FormControl>
                       <Input
                         placeholder={t("AGENCY_DETAILS.AGENCY_EMAIL")}
+                        disabled={isLoading}
                         {...field}
                       />
                     </FormControl>
@@ -129,7 +130,6 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
             </div>
             <div className="flex md:flex-row gap-4">
               <FormField
-                // disabled={isLoading}
                 control={form.control}
                 name="companyPhone"
                 render={({ field }) => (
@@ -138,6 +138,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                     <FormControl>
                       <Input
                         placeholder={t("AGENCY_DETAILS.AGENCY_PHONE")}
+                        disabled={isLoading}
                         {...field}
                       />
                     </FormControl>
@@ -148,7 +149,6 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
             </div>
 
             <FormField
-              // disabled={isLoading}
               control={form.control}
               name="address"
               render={({ field }) => (
@@ -157,6 +157,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                   <FormControl>
                     <Input
                       placeholder={t("AGENCY_DETAILS.AGENCY_ADDRESS")}
+                      disabled={isLoading}
                       {...field}
                     />
                   </FormControl>
@@ -166,7 +167,6 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
             />
             <div className="flex md:flex-row gap-4">
               <FormField
-                // disabled={isLoading}
                 control={form.control}
                 name="city"
                 render={({ field }) => (
@@ -175,6 +175,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                     <FormControl>
                       <Input
                         placeholder={t("AGENCY_DETAILS.AGENCY_CITY")}
+                        disabled={isLoading}
                         {...field}
                       />
                     </FormControl>
@@ -183,7 +184,6 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                 )}
               />
               <FormField
-                // disabled={isLoading}
                 control={form.control}
                 name="state"
                 render={({ field }) => (
@@ -192,6 +192,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                     <FormControl>
                       <Input
                         placeholder={t("AGENCY_DETAILS.AGENCY_STATE")}
+                        disabled={isLoading}
                         {...field}
                       />
                     </FormControl>
@@ -200,7 +201,6 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                 )}
               />
               <FormField
-                // disabled={isLoading}
                 control={form.control}
                 name="zipCode"
                 render={({ field }) => (
@@ -209,6 +209,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                     <FormControl>
                       <Input
                         placeholder={t("AGENCY_DETAILS.AGENCY_ZIPCODE")}
+                        disabled={isLoading}
                         {...field}
                       />
                     </FormControl>
@@ -218,7 +219,6 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
               />
             </div>
             <FormField
-              // disabled={isLoading}
               control={form.control}
               name="country"
               render={({ field }) => (
@@ -226,6 +226,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                   <FormLabel>{t("AGENCY_DETAILS.AGENCY_COUNTRY")}</FormLabel>
                   <FormControl>
                     <Input
+                      disabled={isLoading}
                       placeholder={t("AGENCY_DETAILS.AGENCY_COUNTRY")}
                       {...field}
                     />
