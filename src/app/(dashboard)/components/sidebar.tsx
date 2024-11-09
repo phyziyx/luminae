@@ -40,6 +40,7 @@ import useIsMounted from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
 import { useModal } from "@/providers/modal-provider";
 import { UserButton } from "@clerk/nextjs";
+import { Workspace } from "@prisma/client";
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -151,17 +152,21 @@ const PickerItem = ({
         href={`/${isWorkspace ? "workspace" : "agency"}/${id}`}
         className="flex gap-4 w-full h-full"
       >
-        <div className="relative w-16">
-          <Image
-            src={logoUrl}
-            alt={name}
-            fill
-            className="rounded-md object-contain"
-          />
-        </div>
+        {!isWorkspace && (
+          <div className="relative w-16">
+            <Image
+              src={logoUrl}
+              alt={name}
+              fill
+              className="rounded-md object-contain"
+            />
+          </div>
+        )}
         <div className="flex flex-col flex-1">
           {name}
-          <span className="text-muted-foreground">{address}</span>
+          {!isWorkspace && (
+            <span className="text-muted-foreground">{address}</span>
+          )}
         </div>
       </Link>
     </CommandItem>
@@ -180,22 +185,26 @@ const AgencyPicker = () => {
       id: "1",
       name: "Agency Name",
       address: "Agency Address",
-      logoUrl: "/images/logo.png",
+      logoUrl: "/assets/logo.png",
     },
   };
 
-  const workspaces = [
+  const workspaces: Workspace[] = [
     {
       id: "1",
-      name: "Workspace Name",
-      address: "Workspace Address",
-      logoUrl: "/images/logo.png",
+      name: "Workspace 1",
+      description: "Workspace Description",
+      agencyId: "1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
     {
       id: "2",
-      name: "Workspace Name 2",
-      address: "Workspace Address 2",
-      logoUrl: "/images/logo.png",
+      name: "Workspace 2",
+      description: "Workspace Description",
+      agencyId: "1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
     },
   ];
 
@@ -259,9 +268,9 @@ const AgencyPicker = () => {
                         key={e.id}
                         id={e.id}
                         name={e.name}
-                        address={e.address}
                         isWorkspace={true}
-                        logoUrl={e.logoUrl}
+                        address=""
+                        logoUrl=""
                       />
                     ))
                   : t("NO_WORKSPACES_FOUND")}
