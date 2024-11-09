@@ -40,7 +40,7 @@ import useIsMounted from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
 import { useModal } from "@/providers/modal-provider";
 import { UserButton } from "@clerk/nextjs";
-import { Workspace } from "@prisma/client";
+import { Agency, Workspace, Role } from "@prisma/client";
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -64,6 +64,19 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+interface DashboardSidebarProps {
+  children: React.ReactNode;
+  role: Role;
+  agency: Pick<Agency, "id" | "name" | "address" | "agencyLogo">;
+  workspaces: Workspace[];
+}
+
+interface AgencyPickerProps {
+  role: Role;
+  agency: Pick<Agency, "id" | "name" | "address" | "agencyLogo">;
+  workspaces: Workspace[];
+}
 
 interface Item {
   title: string;
@@ -173,41 +186,7 @@ const PickerItem = ({
   );
 };
 
-const AgencyPicker = () => {
-  const details = {
-    name: "Agency Name",
-    address: "Agency Address",
-  };
-
-  const user = {
-    role: "AGENCY_OWNER",
-    Agency: {
-      id: "1",
-      name: "Agency Name",
-      address: "Agency Address",
-      logoUrl: "/assets/logo.png",
-    },
-  };
-
-  const workspaces: Workspace[] = [
-    {
-      id: "1",
-      name: "Workspace 1",
-      description: "Workspace Description",
-      agencyId: "1",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: "2",
-      name: "Workspace 2",
-      description: "Workspace Description",
-      agencyId: "1",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ];
-
+const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
   const isMounted = useIsMounted();
   const t = useTranslations();
   const { openModal } = useModal();
@@ -226,7 +205,7 @@ const AgencyPicker = () => {
             <div className="flex items-center text-left gap-2">
               <CompassIcon />
               <div className="flex flex-col">
-                {details.name}
+                {agency.name}
                 <span className="text-wrap text-xs text-muted-foreground">
                   {t("SEARCH_IN_AGENCY")}
                 </span>
@@ -245,16 +224,15 @@ const AgencyPicker = () => {
             <CommandList className="pb-16">
               <CommandEmpty>{t("NO_RESULTS_FOUND")}</CommandEmpty>
               {/* Agency */}
-              {(user?.role === "AGENCY_OWNER" ||
-                user?.role === "AGENCY_ADMIN") &&
-                user?.Agency && (
+              {(role === "AGENCY_OWNER" || role === "AGENCY_ADMIN") &&
+                agency && (
                   <CommandGroup heading="Agency">
                     <PickerItem
-                      id={user.Agency.id}
-                      name={user.Agency.name}
-                      address={user.Agency.address}
+                      id={agency.id}
+                      name={agency.name}
+                      address={agency.address}
                       isWorkspace={false}
-                      logoUrl={user.Agency.logoUrl}
+                      logoUrl={agency.agencyLogo || "/assets/logo.png"}
                     />
                   </CommandGroup>
                 )}
@@ -262,7 +240,7 @@ const AgencyPicker = () => {
               {/* Workspaces */}
               <CommandSeparator />
               <CommandGroup heading={t("WORKSPACES")}>
-                {workspaces
+                {workspaces.length > 0
                   ? workspaces.map((e) => (
                       <PickerItem
                         key={e.id}
@@ -279,7 +257,7 @@ const AgencyPicker = () => {
           </Command>
 
           {/* Create New Workspace */}
-          {(user?.role === "AGENCY_OWNER" || user?.role === "AGENCY_ADMIN") && (
+          {(role === "AGENCY_OWNER" || role === "AGENCY_ADMIN") && (
             <Button
               className="w-full flex gap-2"
               onClick={() => {
@@ -303,7 +281,12 @@ const AgencyPicker = () => {
   );
 };
 
-const DashboardSidebar = ({ children }: { children: React.ReactNode }) => {
+const DashboardSidebar = ({
+  role,
+  children,
+  agency,
+  workspaces,
+}: DashboardSidebarProps) => {
   const sidebar = useSidebar();
   const rawPathName = usePathname();
 
@@ -334,7 +317,11 @@ const DashboardSidebar = ({ children }: { children: React.ReactNode }) => {
             <SidebarGroupLabel>Agency</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
-                <AgencyPicker />
+                <AgencyPicker
+                  role={role}
+                  agency={agency}
+                  workspaces={workspaces}
+                />
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
