@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { DollarSign, Goal, UsersRoundIcon } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
+import { SampleChart } from "../components/chart/area-chart";
 
 const Dashboard = async () => {
   const { userId } = await auth();
@@ -122,7 +123,10 @@ const Dashboard = async () => {
             <CardHeader>
               <CardTitle>{t("TRANSACTION_HISTORY")}</CardTitle>
             </CardHeader>
-            <CardContent>{/* TODO: */}</CardContent>
+            <CardContent>
+              {/* TODO: */}
+              <SampleChart />
+            </CardContent>
           </Card>
           <Card className="bg-muted/50 dark:bg-muted flex-1 w-full">
             <CardHeader>
