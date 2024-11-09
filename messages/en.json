@@ -80,5 +80,33 @@
   "NAME": "Name",
   "SUBJECT": "Subject",
   "DESCRIPTION": "Description",
-  "SUBMIT": "Submit"
+  "SUBMIT": "Submit",
+
+  "AGENCY_DETAILS": {
+    "SAVE_AGENCY_INFORMATION": "Save Agency Information",
+    "CREATE_AGENCY": "Create Agency",
+    "CREATE_AGENCY_DESCRIPTION": "Lets create an agency for you business. You can edit agency settings later from the agency settings tab.",
+    "UPDATE_AGENCY_DESCRIPTION": "You can update the agency information here.",
+    "AGENCY_INFORMATION": "Agency Information",
+    "AGENCY_DELETE_DESCRIPTION": "This action cannot be undone. This will permanently delete the Agency and all related data.",
+    "AGENCY_DELETE_TITLE": "Are you absolutely sure?",
+    "DELETE_AGENCY": "Delete Agency",
+    "DELETING": "Deleting...",
+    "CANCEL": "Cancel",
+    "AGENCY_NAME": "Name",
+    "AGENCY_EMAIL": "Email",
+    "AGENCY_PHONE": "Phone",
+    "AGENCY_ADDRESS": "Address",
+    "AGENCY_CITY": "City",
+    "AGENCY_STATE": "State",
+    "AGENCY_COUNTRY": "Country",
+    "AGENCY_ZIPCODE": "Zip",
+    "AGENCY_LOGO": "Logo",
+    "AGENCY_LOGO_DESCRIPTION": "This is the logo of your agency.",
+    "YOUR_AGENCY_NAME": "Your agency name",
+    "FAILED_TO_CREATE_AGENCY": "Failed to create your agency",
+    "AGENCY_CREATED_SUCCESSFULLY": "Agency created successfully"
+  },
+
+  "AN_ERROR_OCCURRED": "An error occurred!"
 }
