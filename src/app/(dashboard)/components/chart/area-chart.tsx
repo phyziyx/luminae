@@ -1,89 +1,76 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
 import {
   ChartConfig,
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { month: "January", income: 186 },
+  { month: "February", income: 305 },
+  { month: "March", income: 237 },
+  { month: "April", income: 73 },
+  { month: "May", income: 209 },
+  { month: "June", income: 214 },
 ];
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
-  },
-  mobile: {
-    label: "Mobile",
+  income: {
+    label: "Income",
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig;
 
 export function SampleChart() {
   return (
-    <div className="flex-1">
-      <ChartContainer config={chartConfig}>
-        <AreaChart
-          accessibilityLayer
-          data={chartData}
-          margin={{
-            left: 12,
-            right: 12,
+    <ChartContainer config={chartConfig}>
+      <LineChart
+        accessibilityLayer
+        data={chartData}
+        margin={{
+          left: 12,
+          right: 12,
+        }}
+      >
+        {/* NOTE: 
+          To make the grid lines visible, we need to set the stroke color and opacity.
+          The `stroke` prop sets the color of the grid lines.
+          The `strokeOpacity` prop sets the opacity of the grid lines.
+          This is the base configuration for the grid lines, which is needed for the className to work.
+         */}
+        <CartesianGrid
+          stroke={"#000000"}
+          strokeOpacity={1}
+          vertical={false}
+          className="stroke-black/50 dark:stroke-white/50"
+        />
+        <XAxis
+          dataKey="month"
+          tickLine={true}
+          axisLine={true}
+          tickMargin={8}
+          tickFormatter={(value) => value.slice(0, 3)}
+        />
+        <ChartTooltip
+          cursor={false}
+          content={<ChartTooltipContent hideLabel />}
+        />
+        <Line
+          dataKey="income"
+          type="natural"
+          stroke="var(--color-income)"
+          strokeWidth={2}
+          dot={{
+            fill: "var(--color-income)",
           }}
-        >
-          <CartesianGrid vertical={false} />
-          <XAxis
-            dataKey="month"
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            tickFormatter={(value) => value.slice(0, 3)}
-          />
-          <ChartTooltip
-            cursor={false}
-            content={<ChartTooltipContent indicator="dot" />}
-          />
-          <Area
-            dataKey="mobile"
-            type="natural"
-            fill="var(--color-mobile)"
-            fillOpacity={0.4}
-            stroke="var(--color-mobile)"
-            stackId="a"
-          />
-          <Area
-            dataKey="desktop"
-            type="natural"
-            fill="var(--color-desktop)"
-            fillOpacity={0.4}
-            stroke="var(--color-desktop)"
-            stackId="a"
-          />
-          <ChartLegend content={<ChartLegendContent />} />
-        </AreaChart>
-      </ChartContainer>
-      <div className="flex w-full items-start gap-2 text-sm">
-        <div className="grid gap-2">
-          <div className="flex items-center gap-2 font-medium leading-none">
-            Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-          </div>
-          <div className="flex items-center gap-2 leading-none text-muted-foreground">
-            January - June 2024
-          </div>
-        </div>
-      </div>
-    </div>
+          activeDot={{
+            r: 6,
+          }}
+        />
+      </LineChart>
+    </ChartContainer>
   );
 }

@@ -19,7 +19,7 @@ export default async function Page() {
     <main className="h-full">
       {/* Hero Section */}
       <Navigation user={!!userId} />
-      <section className="dark:bg-black flex flex-col items-center h-5/6 w-full text-center justify-center px-4 lg:px-20">
+      <section className="dark:bg-black flex flex-col items-center h-5/6 w-full text-center justify-center px-4 lg:px-20 mb-8">
         <div className="text-center text-xs flex flex-col justify-center">
           <h1 className="mt-10 text-xs sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold text-blue-300 animate-highlight bg-200">
             <span>{t("MOTTO_BRIGHTEN")}</span>
@@ -32,7 +32,7 @@ export default async function Page() {
             </span>
           </h1>
         </div>
-        <div className="mt-5 w-full flex justify-center sm:flex-col sm:items-center md:flex-row relative">
+        <div className="mt-5 w-full flex justify-center items-center sm:flex-col sm:items-center md:flex-row relative">
           <Image
             className="w-[250px] sm:w-[350px] md:w-[550px] lg:w-[650px] xl:w-[750px]"
             src={"/assets/logo.png"}
@@ -41,7 +41,7 @@ export default async function Page() {
             height={1200}
           />
         </div>
-        <div className="mt-10 w-full flex justify-center sm:flex-col sm:items-center md:flex-row relative z-10">
+        <div className="mt-8 w-full flex justify-center sm:flex-col sm:items-center md:flex-row relative z-10">
           <div className="w-full sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%]">
             <PreviewImage />
           </div>

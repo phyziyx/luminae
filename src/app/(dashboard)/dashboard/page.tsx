@@ -16,6 +16,7 @@ import { DollarSign, Goal, UsersRoundIcon } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
 import { SampleChart } from "../components/chart/area-chart";
+import { ClosingRateChart } from "../components/chart/closing-rate-chart";
 
 const Dashboard = async () => {
   const { userId } = await auth();
@@ -118,21 +119,24 @@ const Dashboard = async () => {
             <Goal className="absolute right-4 top-4 text-muted-foreground" />
           </Card>
         </div>
-        <div className="grid auto-rows-min gap-4 md:grid-cols-4 grid-cols-2">
-          <Card className="bg-muted/50 dark:bg-muted md:col-span-3 flex-1">
+        <div className="grid auto-rows-min gap-4 md:grid-cols-4 grid-cols-1">
+          <Card className="bg-muted/50 dark:bg-muted md:col-span-3">
             <CardHeader>
-              <CardTitle>{t("TRANSACTION_HISTORY")}</CardTitle>
+              <CardTitle>{t("INCOME_TIMELINE")}</CardTitle>
             </CardHeader>
             <CardContent>
               {/* TODO: */}
               <SampleChart />
             </CardContent>
           </Card>
-          <Card className="bg-muted/50 dark:bg-muted flex-1 w-full">
+          <Card className="bg-muted/50 dark:bg-muted w-full">
             <CardHeader>
-              <CardTitle>{t("CLOSING_RATE")}</CardTitle>
+              <CardTitle>{t("SALES_PIPELINE")}</CardTitle>
             </CardHeader>
-            <CardContent>{/* TODO: */}</CardContent>
+            <CardContent>
+              {/* TODO: */}
+              <ClosingRateChart />
+            </CardContent>
           </Card>
         </div>
       </div>
