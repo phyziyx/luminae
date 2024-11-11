@@ -7,15 +7,12 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Suspense } from "react";
+import { ModalProvider } from "@/providers/modal-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
   weight: "100 900",
 });
 
@@ -32,10 +29,8 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html className="antialiased" lang={locale} suppressHydrationWarning>
+      <body className={`${geistSans.className}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -45,11 +40,11 @@ export default async function RootLayout({
           <NextIntlClientProvider messages={messages}>
             <Suspense fallback={<div>Loading...</div>}>
               <ClerkProvider>
-                {/* <ModalProvider> */}
-                {children}
-                {/* <Toaster /> */}
-                {/* <SonnarToaster position="bottom-left" /> */}
-                {/* </ModalProvider> */}
+                <ModalProvider>
+                  {children}
+                  <Toaster />
+                  {/* <SonnarToaster position="bottom-left" /> */}
+                </ModalProvider>
               </ClerkProvider>
             </Suspense>
           </NextIntlClientProvider>

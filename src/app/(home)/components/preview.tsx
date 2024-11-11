@@ -10,8 +10,8 @@ const PreviewImage = async () => {
       srcDark={`/assets/preview.png`}
       srcLight={`/assets/preview_light.png`}
       alt={t("PREVIEW")}
-      width={1200}
-      height={1200}
+      width={1080}
+      height={1080}
     />
   );
 };

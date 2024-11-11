@@ -45,7 +45,7 @@ const Navigation = ({ user }: Props) => {
             className="items-center gap-2 md:block hidden"
             prefetch={false}
           >
-            <Logo className="text-blue-700" />
+            <Logo className="text-blue-500" />
           </Link>
 
           <Sheet>
@@ -80,20 +80,26 @@ const Navigation = ({ user }: Props) => {
                 ))}
                 <hr />
                 {user ? (
-                  <Button>
-                    <HouseIcon />
-                    <Link href="/agency">{t("DASHBOARD")}</Link>
-                  </Button>
+                  <Link href="/agency">
+                    <Button>
+                      <HouseIcon />
+                      {t("DASHBOARD")}
+                    </Button>
+                  </Link>
                 ) : (
                   <>
-                    <Button>
-                      <User2Icon />
-                      <Link href="/sign-in">{t("SIGN_IN")}</Link>
-                    </Button>
-                    <Button variant={"secondary"}>
-                      <UserRoundPlus />
-                      <Link href="/sign-up">{t("SIGN_UP")}</Link>
-                    </Button>
+                    <Link href="/sign-in">
+                      <Button>
+                        <User2Icon />
+                        {t("SIGN_IN")}
+                      </Button>
+                    </Link>
+                    <Link href="/sign-up">
+                      <Button variant={"secondary"}>
+                        <UserRoundPlus />
+                        {t("SIGN_UP")}
+                      </Button>
+                    </Link>
                   </>
                 )}
               </div>
@@ -122,20 +128,26 @@ const Navigation = ({ user }: Props) => {
         <div className="flex flex-row gap-2">
           <ModeToggle />
           {user ? (
-            <Button>
-              <HouseIcon />
-              <Link href="/dashboard">{t("DASHBOARD")}</Link>
-            </Button>
+            <Link href="/dashboard">
+              <Button>
+                <HouseIcon />
+                {t("DASHBOARD")}
+              </Button>
+            </Link>
           ) : (
             <div className="md:flex flex-row gap-2 hidden">
-              <Button>
-                <User2Icon />
-                <Link href="/sign-in">{t("SIGN_IN")}</Link>
-              </Button>
-              <Button variant={"secondary"}>
-                <UserRoundPlus />
-                <Link href="/sign-up">{t("SIGN_UP")}</Link>
-              </Button>
+              <Link href="/sign-in">
+                <Button>
+                  <User2Icon />
+                  {t("SIGN_IN")}
+                </Button>
+              </Link>
+              <Link href="/sign-up">
+                <Button variant={"secondary"}>
+                  <UserRoundPlus />
+                  {t("SIGN_UP")}
+                </Button>
+              </Link>
             </div>
           )}
         </div>

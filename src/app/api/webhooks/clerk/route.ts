@@ -53,7 +53,6 @@ export async function POST(req: Request) {
           id: id,
           email: event.data.email_addresses[0].email_address,
           name: `${event.data.first_name} ${event.data.last_name}`,
-          role: "AGENCY_OWNER",
           avatarUrl: event.data.image_url,
         });
       }
