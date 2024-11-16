@@ -1,4 +1,10 @@
-import { Agency, Role } from "@prisma/client";
+import {
+  Agency,
+  AgencyMember,
+  Permission,
+  Role,
+  Workspace,
+} from "@prisma/client";
 import prisma from "../db";
 import { v7 } from "uuid";
 
@@ -74,6 +80,39 @@ class AgencyManager {
         agencyId,
       },
     });
+  }
+
+  public static async findAndFilterWorkspaces(email: string) {
+    const agencyMember = await AgencyManager.findUserAgency(email);
+    if (!agencyMember) return [];
+
+    const workspaces = await AgencyManager.findWorkspaces(
+      agencyMember.agencyId
+    );
+
+    return this.filterWorkspaces(workspaces, agencyMember);
+  }
+
+  public static filterWorkspaces(
+    workspaces: Workspace[],
+    agencyMember: AgencyMember & { Permissions: Permission[] }
+  ) {
+    if (!workspaces || workspaces.length === 0) return [];
+
+    if (
+      agencyMember.role === "AGENCY_ADMIN" ||
+      agencyMember.role === "AGENCY_OWNER"
+    ) {
+      // No need to filter workspaces
+    } else {
+      workspaces = workspaces.filter((workspace) =>
+        agencyMember.Permissions.some(
+          (permission) => permission.workspaceId === workspace.id
+        )
+      );
+    }
+
+    return workspaces;
   }
 
   /**
