@@ -107,9 +107,11 @@ class AgencyManager {
     const agencyMember = await AgencyManager.findUserAgency(email);
     if (!agencyMember) return [];
 
-    const workspaces = await AgencyManager.findWorkspaces(
-      agencyMember.agencyId
-    );
+    const workspaces = await prisma.workspace.findMany({
+      where: {
+        agencyId: agencyMember.agencyId,
+      },
+    });
 
     return this.filterWorkspaces(workspaces, agencyMember);
   }
