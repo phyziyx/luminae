@@ -57,8 +57,6 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
   const isLoading = form.formState.isSubmitting;
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("clicked 2");
-    console.log(values);
     await onSubmit(values);
   };
 

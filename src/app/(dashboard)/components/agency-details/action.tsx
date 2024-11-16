@@ -4,7 +4,7 @@ import { z } from "zod";
 import formSchema from "./schema";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 const onSubmit = async (values: z.infer<typeof formSchema>) => {
   const user = await currentUser();
@@ -51,7 +51,7 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
     //   description: t("AGENCY_DETAILS.AGENCY_CREATED_SUCCESSFULLY"),
     // });
 
-    redirect("/");
+    revalidatePath("/dashboard", "page");
   } catch (err) {
     console.log(err);
 

@@ -25,6 +25,7 @@ const Settings = async () => {
           <h1 className="text-3xl font-semibold">{t("SETTINGS")}</h1>
         </div>
       </header>
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">TO DO</div>
     </>
   );
 };
