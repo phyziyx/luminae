@@ -109,7 +109,8 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                 )}
               />
               <FormField
-                control={form.control}
+                defaultValue={form.control}
+                disabled={true}
                 name="companyEmail"
                 render={({ field }) => (
                   <FormItem className="flex-1">

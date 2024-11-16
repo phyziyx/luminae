@@ -57,6 +57,27 @@ class AgencyManager {
     return null;
   }
 
+  public static async updateAgency(
+    agency: Omit<Agency, "createdAt" | "updatedAt">
+  ) {
+    return await prisma.agency.update({
+      where: {
+        id: agency.id,
+      },
+      data: {
+        address: agency.address,
+        agencyLogo: agency.agencyLogo,
+        city: agency.city,
+        companyEmail: agency.companyEmail,
+        companyPhone: agency.companyPhone,
+        country: agency.country,
+        name: agency.name,
+        state: agency.state,
+        zipCode: agency.zipCode,
+      },
+    });
+  }
+
   /**
    * Find user agency
    * @param id agency id

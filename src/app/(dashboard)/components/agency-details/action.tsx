@@ -20,7 +20,25 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log(values);
 
     if (agencyId) {
-      // TODO: Update agency
+      // Update agency
+
+      const agency = await AgencyManager.updateAgency({
+        id: agencyId,
+        name: values.name,
+        address: values.address,
+        agencyLogo: values.agencyLogo || "",
+        state: values.state,
+        zipCode: values.zipCode,
+        city: values.city,
+        country: values.country,
+        companyEmail: values.companyEmail,
+        companyPhone: values.companyPhone,
+      });
+
+      if (!agency) {
+        console.log("Failed to update agency");
+        return;
+      }
     } else {
       // Create agency
 
