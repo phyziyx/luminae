@@ -6,14 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
 import { DataTable } from "./components/data-table";
-import { columns } from "./components/columns";
-
-type Payment = {
-  id: string;
-  amount: number;
-  status: "invited" | "member";
-  email: string;
-};
+import { Payment, columns } from "./components/columns";
 
 const data: Payment[] = [
   {
@@ -21,12 +14,14 @@ const data: Payment[] = [
     amount: 100,
     status: "invited",
     email: "new@gmail.com",
+    role: "member",
   },
   {
     id: "489e1d42",
     amount: 125,
     status: "member",
     email: "member@gmail.com",
+    role: "admin",
   },
 ];
 
