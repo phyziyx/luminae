@@ -85,7 +85,6 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((e) => {
-              console.log("clicked 1");
               return handleSubmit(e);
             })}
             className="space-y-4"
@@ -109,8 +108,7 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
                 )}
               />
               <FormField
-                defaultValue={form.control}
-                disabled={true}
+                control={form.control}
                 name="companyEmail"
                 render={({ field }) => (
                   <FormItem className="flex-1">
