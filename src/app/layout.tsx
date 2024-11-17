@@ -18,7 +18,14 @@ const geistSans = localFont({
 
 export const metadata: Metadata = {
   title: "Luminae",
-  description: "Agency",
+  description: "Your one-stop agency management platform",
+  creator: "Luminae",
+  openGraph: {
+    type: "website",
+    url: "https://luminae-one.vercel.app/",
+    title: "Luminae",
+    description: "Your one-stop agency management platform",
+  },
 };
 
 export default async function RootLayout({

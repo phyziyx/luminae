@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const formSchema = z.object({
   id: z.string().min(1).optional(),
-  agencyLogo: z.string().min(1).optional(),
+  agencyLogo: z.string().optional(),
   name: z.string().min(2, { message: "Agency name must be atleast 2 chars." }),
   companyEmail: z.string().min(1),
   companyPhone: z.string().min(1),
