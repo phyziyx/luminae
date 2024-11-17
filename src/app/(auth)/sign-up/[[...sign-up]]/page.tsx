@@ -19,16 +19,10 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/ui/icons";
 import Logo from "@/components/logo";
-import useIsMounted from "@/hooks/use-mounted";
 import { PasswordInput } from "@/components/ui/password-input";
 
 export default function SignUpPage() {
-  const isMounted = useIsMounted();
   const t = useTranslations();
-
-  if (!isMounted) {
-    return null;
-  }
 
   return (
     <div className="grid w-full grow items-center px-4 sm:justify-center">
