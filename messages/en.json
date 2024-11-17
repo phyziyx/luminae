@@ -117,5 +117,17 @@
     "EDIT": "Edit"
   },
 
+  "FORGOT_PASSWORD": {
+    "HEADER": "Forgot your password?",
+    "DESCRIPTION": "Enter your email address and we'll send you a link to reset your password.",
+    "SEND_RESET_CODE": "Send password reset code",
+    "RESET": "Reset",
+    "PLEASE_PROVIDE_EMAIL": "Please provide your email address",
+    "ENTER_NEW_PASSWORD": "Enter your new password",
+    "ENTER_RESET_CODE": "Enter the password reset code that was sent to your email address. If you didn't receive a code, you can request a new one.",
+    "SECOND_FA_REQUIRED": "2FA is required, but this UI does not handle that. Please ",
+    "PASSWORD_RESET_SUCCESS": "Password reset successful. You can now sign in with your new password."
+  },
+
   "AN_ERROR_OCCURRED": "An error occurred!"
 }
