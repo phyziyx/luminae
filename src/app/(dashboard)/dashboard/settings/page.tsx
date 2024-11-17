@@ -5,6 +5,8 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
+import AgencyDetails from "../../components/agency-details/agency-details";
+import AgencyManager from "@/lib/managers/agencyManager";
 
 const Settings = async () => {
   const { userId } = await auth();
@@ -16,6 +18,16 @@ const Settings = async () => {
     return <div>Not authenticated!</div>;
   }
 
+  const agencyMember = await AgencyManager.findUserAgency(
+    user.emailAddresses[0].emailAddress
+  );
+  const email = user.emailAddresses[0].emailAddress;
+  const agency = agencyMember?.Agency;
+
+  if (!agency) {
+    return <div>Agency not found!</div>;
+  }
+
   return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2">
@@ -25,6 +37,25 @@ const Settings = async () => {
           <h1 className="text-3xl font-semibold">{t("SETTINGS")}</h1>
         </div>
       </header>
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        {/* TODO: Implement a better design for this page */}
+        <AgencyDetails
+          data={{
+            id: agency.id,
+            name: agency.name,
+            address: agency.address,
+            agencyLogo: agency.agencyLogo,
+            city: agency.city,
+            companyPhone: agency.companyPhone,
+            country: agency.country,
+            createdAt: agency.createdAt,
+            state: agency.state,
+            updatedAt: agency.updatedAt,
+            zipCode: agency.zipCode,
+            companyEmail: email,
+          }}
+        />
+      </div>
     </>
   );
 };

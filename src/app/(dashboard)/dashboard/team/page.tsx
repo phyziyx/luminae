@@ -5,6 +5,25 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
+import { DataTable } from "./components/data-table";
+import { Payment, columns } from "./components/columns";
+
+const data: Payment[] = [
+  {
+    id: "728ed52f",
+    amount: 100,
+    status: "invited",
+    email: "new@gmail.com",
+    role: "member",
+  },
+  {
+    id: "489e1d42",
+    amount: 125,
+    status: "member",
+    email: "member@gmail.com",
+    role: "admin",
+  },
+];
 
 const Team = async () => {
   const { userId } = await auth();
@@ -25,6 +44,9 @@ const Team = async () => {
           <h1 className="text-3xl font-semibold">{t("TEAM")}</h1>
         </div>
       </header>
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+        <DataTable columns={columns} data={data} />
+      </div>
     </>
   );
 };

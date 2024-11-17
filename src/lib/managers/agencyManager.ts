@@ -1,4 +1,10 @@
-import { Agency, Role } from "@prisma/client";
+import {
+  Agency,
+  AgencyMember,
+  Permission,
+  Role,
+  Workspace,
+} from "@prisma/client";
 import prisma from "../db";
 import { v7 } from "uuid";
 
@@ -51,6 +57,27 @@ class AgencyManager {
     return null;
   }
 
+  public static async updateAgency(
+    agency: Omit<Agency, "createdAt" | "updatedAt">
+  ) {
+    return await prisma.agency.update({
+      where: {
+        id: agency.id,
+      },
+      data: {
+        address: agency.address,
+        agencyLogo: agency.agencyLogo,
+        city: agency.city,
+        companyEmail: agency.companyEmail,
+        companyPhone: agency.companyPhone,
+        country: agency.country,
+        name: agency.name,
+        state: agency.state,
+        zipCode: agency.zipCode,
+      },
+    });
+  }
+
   /**
    * Find user agency
    * @param id agency id
@@ -74,6 +101,41 @@ class AgencyManager {
         agencyId,
       },
     });
+  }
+
+  public static async findAndFilterWorkspaces(email: string) {
+    const agencyMember = await AgencyManager.findUserAgency(email);
+    if (!agencyMember) return [];
+
+    const workspaces = await prisma.workspace.findMany({
+      where: {
+        agencyId: agencyMember.agencyId,
+      },
+    });
+
+    return this.filterWorkspaces(workspaces, agencyMember);
+  }
+
+  public static filterWorkspaces(
+    workspaces: Workspace[],
+    agencyMember: AgencyMember & { Permissions: Permission[] }
+  ) {
+    if (!workspaces || workspaces.length === 0) return [];
+
+    if (
+      agencyMember.role === "AGENCY_ADMIN" ||
+      agencyMember.role === "AGENCY_OWNER"
+    ) {
+      // No need to filter workspaces
+    } else {
+      workspaces = workspaces.filter((workspace) =>
+        agencyMember.Permissions.some(
+          (permission) => permission.workspaceId === workspace.id
+        )
+      );
+    }
+
+    return workspaces;
   }
 
   /**

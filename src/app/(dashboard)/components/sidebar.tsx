@@ -408,7 +408,7 @@ const DashboardSidebar = ({
         {/* Footer */}
         <SidebarFooter>
           <SidebarMenu>
-            <SidebarMenuItem className="flex items-center place-content-evenly gap-2">
+            <SidebarMenuItem className="flex items-center place-content-between gap-2">
               <UserButton
                 showName
                 appearance={{

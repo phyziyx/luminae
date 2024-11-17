@@ -107,6 +107,15 @@
     "FAILED_TO_CREATE_AGENCY": "Failed to create your agency",
     "AGENCY_CREATED_SUCCESSFULLY": "Agency created successfully"
   },
+  "WORKSPACE_DETAILS": {
+    "CREATE_A_WORKSPACE": "Create a new workspace",
+    "QUANTITY_LEFT": "{QUANTITY} LEFT!",
+    "NO_QUANTITY_LEFT": "LIMIT REACHED!",
+    "CREATE_WORKSACE_DESCRIPTION": "Create a new workspace to collaborate with your team.",
+    "VIEW": "View",
+    "DELETE": "Delete",
+    "EDIT": "Edit"
+  },
 
   "FORGOT_PASSWORD": {
     "HEADER": "Forgot your password?",
