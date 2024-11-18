@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const images = [
   {
-    src: "/assets/TrustedAgencies/Overheadoptimised.png",
+    src: "/assets/TrustedAgencies/overhead-optimised.png",
     alt: "",
     heading: "Overhead Optimize",
   },
