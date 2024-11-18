@@ -42,7 +42,7 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
     } else {
       // Create agency
 
-      const agency = AgencyManager.createAgency(
+      const agency = await AgencyManager.createAgency(
         {
           name: values.name,
           address: values.address,

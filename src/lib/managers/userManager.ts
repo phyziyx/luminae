@@ -9,12 +9,15 @@ class UserManager {
    * @param user user object
    * @returns user
    */
-
   public static async createUser(user: CreateUser) {
-    await prisma.user.create({
-      data: {
-        id: user.id,
+    await prisma.user.upsert({
+      where: {
         email: user.email,
+      },
+      update: {},
+      create: {
+        email: user.email,
+        id: user.id,
         name: user.name,
         avatarUrl: user.avatarUrl,
       },
@@ -22,7 +25,7 @@ class UserManager {
   }
 
   /**
-   * Updates the user in the database
+   * Deletes the user in the database
    * @param id user id
    * @returns user
    */
@@ -32,6 +35,23 @@ class UserManager {
         id: userId,
       },
     });
+  }
+
+  /**
+   * Deletes the user from the database, ignoring if it exists or not
+   * @param userIds user ids
+   * @returns number of users deleted
+   */
+  public static async deleteUsers(userIds: string[]) {
+    return (
+      await prisma.user.deleteMany({
+        where: {
+          id: {
+            in: userIds,
+          },
+        },
+      })
+    ).count;
   }
 }
 
