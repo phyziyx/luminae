@@ -122,20 +122,20 @@ class AgencyManager {
   ) {
     if (!workspaces || workspaces.length === 0) return [];
 
+    // If the user is an agency admin or owner, return all workspaces
     if (
-      agencyMember.role === "AGENCY_ADMIN" ||
-      agencyMember.role === "AGENCY_OWNER"
+      [Role.AGENCY_ADMIN as string, Role.AGENCY_OWNER as string].includes(
+        agencyMember.role
+      )
     ) {
-      // No need to filter workspaces
-    } else {
-      workspaces = workspaces.filter((workspace) =>
-        agencyMember.Permissions.some(
-          (permission) => permission.workspaceId === workspace.id
-        )
-      );
+      return workspaces;
     }
 
-    return workspaces;
+    return workspaces.filter((workspace) =>
+      agencyMember.Permissions.some(
+        (permission) => permission.workspaceId === workspace.id
+      )
+    );
   }
 
   /**
