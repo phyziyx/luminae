@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import React, { useEffect } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { NumberInput } from "@tremor/react";
 
 import {
   Card,
@@ -29,6 +28,7 @@ import { LoadingSpinner } from "@/components/site/loading-spinner";
 
 import formSchema from "./schema";
 import onSubmit from "./action";
+import { useToast } from "@/hooks/use-toast";
 
 type AgencyDetailsProps = {
   data?: Partial<Agency>;
@@ -36,6 +36,7 @@ type AgencyDetailsProps = {
 
 const AgencyDetails = ({ data }: AgencyDetailsProps) => {
   const t = useTranslations();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     mode: "onChange",
@@ -57,7 +58,16 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
   const isLoading = form.formState.isSubmitting;
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    await onSubmit(values);
+    try {
+      await onSubmit(values);
+      toast({
+        title: "Agency information saved successfully",
+      });
+    } catch {
+      toast({
+        title: "An error occurred while saving the agency information",
+      });
+    }
   };
 
   useEffect(() => {

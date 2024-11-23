@@ -79,6 +79,42 @@ class AgencyManager {
   }
 
   /**
+   * Create workspace
+   * @param workspace workspace data
+   * @returns created workspace
+   */
+  public static async createWorkspace(
+    workspace: Omit<Workspace, "id" | "createdAt" | "updatedAt">
+  ) {
+    return await prisma.workspace.create({
+      data: {
+        name: workspace.name,
+        agencyId: workspace.agencyId,
+        description: workspace.description,
+      },
+    });
+  }
+
+  /**
+   * Update workspace
+   * @param workspace workspace data
+   * @returns updated workspace
+   */
+  public static async updateWorkspace(
+    workspace: Omit<Workspace, "createdAt" | "updatedAt">
+  ) {
+    return await prisma.workspace.update({
+      where: {
+        id: workspace.id,
+      },
+      data: {
+        name: workspace.name,
+        description: workspace.description,
+      },
+    });
+  }
+
+  /**
    * Find user agency
    * @param id agency id
    * @returns agency

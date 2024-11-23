@@ -114,7 +114,13 @@
     "CREATE_WORKSACE_DESCRIPTION": "Create a new workspace to collaborate with your team.",
     "VIEW": "View",
     "DELETE": "Delete",
-    "EDIT": "Edit"
+    "EDIT": "Edit",
+    "WORKSPACE_INFORMATION": "Workspace Information",
+    "UPDATE_WORKSPACE_DESCRIPTION": "You can update the workspace information here.",
+    "CREATE_WORKSPACE": "Create Workspace",
+    "SAVE_WORKSPACE_INFORMATION": "Save Workspace Information",
+    "WORKSPACE_DESCRIPTION": "Description",
+    "WORKSPACE_NAME": "Name"
   },
 
   "FORGOT_PASSWORD": {

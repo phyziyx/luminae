@@ -20,6 +20,7 @@ const Workspaces = async () => {
   }
 
   const email = user.emailAddresses[0].emailAddress;
+  const agencyMember = await AgencyManager.findUserAgency(email);
   const workspaces = await AgencyManager.findAndFilterWorkspaces(email);
 
   // workspaces = [
@@ -83,7 +84,11 @@ const Workspaces = async () => {
           workspaces.map((workspace) => (
             <WorkspaceCard key={workspace.id} workspace={workspace} />
           ))}
-        <CreateWorkspaceCard created={created} max={max} />
+
+        {(agencyMember?.role === "AGENCY_ADMIN" ||
+          agencyMember?.role === "AGENCY_OWNER") && (
+          <CreateWorkspaceCard created={created} max={max} />
+        )}
       </div>
     </>
   );

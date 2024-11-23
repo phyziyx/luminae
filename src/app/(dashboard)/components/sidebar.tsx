@@ -64,6 +64,7 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import WorkspaceDetails from "./workspace-details/workspace-details";
 
 interface DashboardSidebarProps {
   children: React.ReactNode;
@@ -266,7 +267,13 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
                     title={t("CREATE_WORKSPACE")}
                     caption={t("CREATE_WORKSPACE_CAPTION")}
                   >
-                    <div>{/* TODO: Add workspace */}</div>
+                    <div>
+                      <WorkspaceDetails
+                        data={{
+                          agencyId: agency.id,
+                        }}
+                      />
+                    </div>
                   </CustomModal>
                 );
               }}
