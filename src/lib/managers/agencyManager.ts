@@ -150,6 +150,19 @@ class AgencyManager {
       },
     });
   }
+
+  /**
+   * Find agency by the Stripe customer ID
+   * @param customerId Stripe Customer ID associated with the agency
+   * @returns the associated agency
+   */
+  public static async findAgencyByStripeCustomerId(customerId: string) {
+    return await prisma.agency.findFirst({
+      where: {
+        stripeCustomerId: customerId,
+      },
+    });
+  }
 }
 
 export default AgencyManager;

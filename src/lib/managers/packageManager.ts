@@ -45,74 +45,89 @@ import prisma from "../db";
 // ];
 
 class PackageManager {
-    /**
-     * Get all the non-retired packages from the databases
-     */
-    public static async getPackages() {
-        // Dummy packages for the testing
+  /**
+   * Get the package from the database from the provided Stripe's Product Price ID
+   * @param priceId The Stripe Stripe Produce Price ID
+   */
+  public static async getPackageByPriceId(priceId: string) {
+    return await prisma.package.findFirst({
+      where: {
+        OR: {
+          stripePriceIdMonthly: priceId,
+          stripePriceIdAnnually: priceId,
+        },
+      },
+    });
+  }
 
-        return [
-            {
-                id: '1',
-                name: 'Starter',
-                monthlyPrice: new Decimal(0),
-                discountRate: 0,
-                retired: false,
-                features: [
-                    {
-                        id: '1',
-                        code: 'WORKSPACE',
-                        name: 'Workspace',
-                        maxLimit: 3,
-                        hasAccess: true,
-                        packageId: '1'
-                    },
-                    {
-                        id: '2',
-                        code: 'TEAM_MEMBERS',
-                        name: 'Team Members',
-                        maxLimit: 3,
-                        hasAccess: true,
-                        packageId: '1'
-                    }
-                ]
-            },
-            {
-                id: '2',
-                name: 'Professional',
-                monthlyPrice: new Decimal(29),
-                discountRate: 0,
-                retired: false,
-                features: [
-                    {
-                        id: '1',
-                        code: 'WORKSPACE',
-                        name: 'Workspace',
-                        maxLimit: 10,
-                        hasAccess: true,
-                        packageId: '1'
-                    },
-                    {
-                        id: '2',
-                        code: 'TEAM_MEMBERS',
-                        name: 'Team Members',
-                        maxLimit: 15,
-                        hasAccess: true,
-                        packageId: '1'
-                    }
-                ]
-            }
-        ];
+  /**
+   * Get all the non-retired packages from the databases
+   */
+  public static async getPackages() {
+    // Dummy packages for the testing
 
-        return await prisma.package.findMany({
-            where: {
-                retired: false
-            },
-            include: {
-                features: true
-            }
-        });
-    }
+    return [
+      {
+        id: "1",
+        name: "Starter",
+        monthlyPrice: new Decimal(0),
+        discountRate: 0,
+        retired: false,
+        features: [
+          {
+            id: "1",
+            code: "WORKSPACE",
+            name: "Workspace",
+            maxLimit: 3,
+            hasAccess: true,
+            packageId: "1",
+          },
+          {
+            id: "2",
+            code: "TEAM_MEMBERS",
+            name: "Team Members",
+            maxLimit: 3,
+            hasAccess: true,
+            packageId: "1",
+          },
+        ],
+      },
+      {
+        id: "2",
+        name: "Professional",
+        monthlyPrice: new Decimal(29),
+        discountRate: 0,
+        retired: false,
+        features: [
+          {
+            id: "1",
+            code: "WORKSPACE",
+            name: "Workspace",
+            maxLimit: 10,
+            hasAccess: true,
+            packageId: "1",
+          },
+          {
+            id: "2",
+            code: "TEAM_MEMBERS",
+            name: "Team Members",
+            maxLimit: 15,
+            hasAccess: true,
+            packageId: "1",
+          },
+        ],
+      },
+    ];
+
+    return await prisma.package.findMany({
+      where: {
+        retired: false,
+      },
+      include: {
+        features: true,
+      },
+    });
+  }
 }
 
 export default PackageManager;

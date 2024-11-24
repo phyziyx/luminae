@@ -75,10 +75,11 @@ model Permission {
 model Agency {
   id String @id @default(uuid())
 
-  name         String
-  agencyLogo   String @db.Text
-  companyEmail String @db.Text
-  companyPhone String @db.Text
+  name             String
+  agencyLogo       String @db.Text
+  companyEmail     String @db.Text
+  companyPhone     String @db.Text
+  stripeCustomerId String @default("")
 
   address String
   city    String
