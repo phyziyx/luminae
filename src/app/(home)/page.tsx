@@ -10,10 +10,15 @@ import ImageGrid from "./components/image-grid";
 import Pricing from "./components/pricing";
 import Testimonials from "./components/testimonials";
 import { auth } from "@clerk/nextjs/server";
+import PackageManager from "@/lib/managers/packageManager";
 
+// This is a server-side component, which means it is rendered on the server and handled by Next.js internally.
+// We can perform server-side operations over here and then pass the information off to the clients as props...
 export default async function Page() {
   const { userId } = await auth();
   const t = await getTranslations();
+
+  const packages = await PackageManager.getPackages();
 
   return (
     <main className="h-full">
@@ -57,7 +62,7 @@ export default async function Page() {
         </div>
       </section>
 
-      <Pricing />
+      <Pricing packages={packages.map((p) => ({ ...p, monthlyPrice: Number(p.monthlyPrice) }))} />
 
       <Testimonials />
 
