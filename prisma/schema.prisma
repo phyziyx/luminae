@@ -47,9 +47,9 @@ model AgencyMember {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  User        User         @relation(fields: [email], references: [email])
-  Agency      Agency       @relation(fields: [agencyId], references: [id])
-  Permissions Permission[]
+  user        User         @relation(fields: [email], references: [email])
+  agency      Agency       @relation(fields: [agencyId], references: [id])
+  permissions Permission[]
 
   @@index([email])
   @@index([agencyId])
@@ -60,8 +60,8 @@ model Permission {
   agencyMemberId String
   workspaceId    String
 
-  AgencyMember AgencyMember @relation(fields: [agencyMemberId], references: [id])
-  Workspace    Workspace    @relation(fields: [workspaceId], references: [id])
+  agencyMember AgencyMember @relation(fields: [agencyMemberId], references: [id])
+  workspace    Workspace    @relation(fields: [workspaceId], references: [id])
   access       Boolean
   manager      Boolean
 
@@ -90,12 +90,12 @@ model Agency {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  AgencyMembers AgencyMember[]
-  Workspaces    Workspace[]
-  Invitations   Invitation[]
-  Notifications Notification[]
-  Client        Client[]
-  Subscription  Subscription[]
+  agencyMembers AgencyMember[]
+  workspaces    Workspace[]
+  invitations   Invitation[]
+  notifications Notification[]
+  clients       Client[]
+  subscription  Subscription?
 }
 
 model Workspace {
@@ -107,9 +107,9 @@ model Workspace {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Agency       Agency         @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  Permissions  Permission[]
-  Notification Notification[]
+  agency        Agency         @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  permissions   Permission[]
+  notifications Notification[]
 
   @@index([agencyId])
 }
@@ -137,8 +137,8 @@ model Client {
   updatedAt DateTime     @updatedAt
   status    ClientStatus @default(LEAD) // Status of the client
 
-  Agency Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  Ticket Ticket[]
+  agency  Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  tickets Ticket[]
 
   @@index([agencyId])
 }
@@ -186,7 +186,7 @@ model Invitation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Agency Agency @relation(fields: [agencyId], references: [id])
+  agency Agency @relation(fields: [agencyId], references: [id])
 
   @@index([email])
   @@index([agencyId])
@@ -203,9 +203,9 @@ model Notification {
   createdAt DateTime @default(now()) // Creation date of the notification
   updatedAt DateTime @updatedAt // Last update date of the notification
 
-  User      User       @relation(fields: [userId], references: [id])
-  Agency    Agency     @relation(fields: [agencyId], references: [id])
-  Workspace Workspace? @relation(fields: [workspaceId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
+  agency    Agency     @relation(fields: [agencyId], references: [id])
+  workspace Workspace? @relation(fields: [workspaceId], references: [id])
 
   @@index([userId])
   @@index([agencyId])
