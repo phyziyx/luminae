@@ -94,8 +94,8 @@ model Agency {
   Workspaces    Workspace[]
   Invitations   Invitation[]
   Notifications Notification[]
-  Subscriptions Subscription[]
   Client        Client[]
+  Subscription  Subscription[]
 }
 
 model Workspace {
@@ -255,7 +255,7 @@ model Subscription {
   id        String  @id @default(cuid()) // UUIDv7 for subscription ID
   packageId String // Package ID
   price     String? // Price of the package
-  agencyId  String? @unique() // Agency ID
+  agencyId  String  @unique() // Agency ID
 
   priceId              String // Price ID of the package
   stripeSubscriptionId String   @unique // Stripe subscription ID
@@ -268,8 +268,8 @@ model Subscription {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Agency  Agency? @relation(fields: [agencyId], references: [id])
   package Package @relation(fields: [packageId], references: [id])
+  agency  Agency  @relation(fields: [agencyId], references: [id])
 
   @@index([agencyId])
   @@index([stripeCustomerId])
