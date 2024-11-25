@@ -67,8 +67,6 @@
 
   "SETTINGS": "Settings",
 
-  "BILLING": "Billing",
-
   "CONTACT_US": "Contact Us",
   "GET_IN_TOUCH": "Get in Touch",
   "NAME": "Name",
@@ -135,6 +133,13 @@
     "SAVE_AMOUNT": "Save ${AMOUNT}",
     "ANNUAL_TOTAL": "${AMOUNT} annually"
   },
+
+  "BILLING": {
+    "HEADER": "Billing",
+    "BILLING_DESCRIPTION": "View your plan information or switch plans according to your needs.",
+    "CURRENT_PLAN": "Current Plan"
+  },
+
   "PACKAGE_FEATURES": {
     "ACCESS": "Access {FEATURE_CODE}",
     "QUANTITY": "Upto {QUANTITY} {FEATURE_CODE}",

@@ -2,6 +2,7 @@ import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import UserManager from "@/lib/managers/userManager";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
     console.log("svixSignature", svixSignature);
 
     if (!svixId || !svixTimestamp || !svixSignature) {
-      return new Response("Error occured -- no svix headers", {
+      return new NextResponse("Error occured -- no svix headers", {
         status: 400,
       });
     }
@@ -85,9 +86,9 @@ export async function POST(req: Request) {
     console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
     console.log("Webhook body:", body);
 
-    return new Response("", { status: 200 });
+    return new NextResponse("", { status: 200 });
   } catch (e) {
     console.error("Error processing webhook", e);
-    return new Response("Error occurred", { status: 400 });
+    return new NextResponse("Error occurred", { status: 400 });
   }
 }

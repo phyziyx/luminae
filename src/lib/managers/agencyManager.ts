@@ -89,8 +89,8 @@ class AgencyManager {
         email: userEmail,
       },
       include: {
-        Agency: true,
-        Permissions: true,
+        agency: true,
+        permissions: true,
       },
     });
   }
@@ -118,7 +118,7 @@ class AgencyManager {
 
   public static filterWorkspaces(
     workspaces: Workspace[],
-    agencyMember: AgencyMember & { Permissions: Permission[] }
+    agencyMember: AgencyMember & { permissions: Permission[] }
   ) {
     if (!workspaces || workspaces.length === 0) return [];
 
@@ -129,7 +129,7 @@ class AgencyManager {
       // No need to filter workspaces
     } else {
       workspaces = workspaces.filter((workspace) =>
-        agencyMember.Permissions.some(
+        agencyMember.permissions.some(
           (permission) => permission.workspaceId === workspace.id
         )
       );
@@ -156,10 +156,16 @@ class AgencyManager {
    * @param customerId Stripe Customer ID associated with the agency
    * @returns the associated agency
    */
-  public static async findAgencyByStripeCustomerId(customerId: string) {
+  public static async findAgencyByStripeCustomerId(
+    customerId: string,
+    includeSubscription = false
+  ) {
     return await prisma.agency.findFirst({
       where: {
         stripeCustomerId: customerId,
+      },
+      include: {
+        subscription: includeSubscription,
       },
     });
   }

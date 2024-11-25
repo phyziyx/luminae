@@ -45,6 +45,8 @@ import prisma from "../db";
 // ];
 
 class PackageManager {
+  public static FREE_PLAN_PRICE_ID = "FREE";
+
   /**
    * Get the package from the database from the provided Stripe's Product Price ID
    * @param priceId The Stripe Stripe Produce Price ID
@@ -52,10 +54,12 @@ class PackageManager {
   public static async getPackageByPriceId(priceId: string) {
     return await prisma.package.findFirst({
       where: {
-        OR: {
-          stripePriceIdMonthly: priceId,
-          stripePriceIdAnnually: priceId,
-        },
+        OR: [
+          {
+            stripePriceIdMonthly: priceId,
+            stripePriceIdAnnually: priceId,
+          },
+        ],
       },
     });
   }
