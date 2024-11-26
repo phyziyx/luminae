@@ -109,7 +109,7 @@ const Billing = async () => {
                 ? t("BILLING.YOUR_PLAN_EXPIRES_ON_FREE")
                 : !data.isExpired
                   ? t("BILLING.YOUR_PLAN_EXPIRES_ON", {
-                    DATE: "December 31st, 2024",
+                    DATE: data.expiryDate,
                   })
                   : t("BILLING.YOUR_PLAN_HAS_EXPIRED_ON", {
                     DATE: data.expiryDate,
@@ -143,16 +143,6 @@ const Billing = async () => {
                     max={feature.maxLimit}
                   />
                 ))}
-
-                {/* {usages.map((usage) => (
-                  <UsageCard
-                    key={usage.feature}
-                    icon={usage.icon}
-                    feature={t(`BILLING.${usage.feature}`)}
-                    value={usage.value}
-                    max={usage.max}
-                  />
-                ))} */}
               </div>
             </CardContent>
           </Card>
