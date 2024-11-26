@@ -21,6 +21,7 @@ import {
   CircleAlertIcon,
   DotIcon,
   FileCog2Icon,
+  InfinityIcon,
   LinkIcon,
   NetworkIcon,
   UsersRoundIcon,
@@ -168,8 +169,9 @@ interface UsageCardProps {
   max: number | null;
 }
 
-const UsageCard = ({ icon, feature, value, max }: UsageCardProps) => {
-  // TODO: Infinite max value support and true/false for max value needed
+const UsageCard = async ({ icon, feature, value, max }: UsageCardProps) => {
+  const t = await getTranslations();
+
   const maxValue = max || value + 1;
   const percentage = Math.floor((value / maxValue) * 100);
 
@@ -183,14 +185,16 @@ const UsageCard = ({ icon, feature, value, max }: UsageCardProps) => {
       <CardContent className="items-center">
         {max === 0 ? (
           <div className="flex flex-row justify-between">
-            Upgrade to get access to {feature}
+            {t("BILLING.UPGRADE_TO_ACCESS", {
+              FEATURE: feature
+            })}
             <ArrowBigUpDashIcon className="w-16 h-16 text-muted-foreground" />
           </div>
         ) : (
           <div className="flex flex-row gap-4 items-center">
             <Progress value={percentage} />
             <span className="font-bold text-lg">
-              {value}/{maxValue}
+              {max === -1 ? <InfinityIcon /> : `${value}/${maxValue}`}
             </span>
           </div>
         )}

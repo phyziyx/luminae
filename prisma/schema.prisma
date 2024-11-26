@@ -222,11 +222,14 @@ enum FeatureCode {
 }
 
 model Package {
-  id                    String  @id @default(cuid()) // UUIDv7 for package ID
-  name                  String // Unique name for the package
-  monthlyPrice          Decimal // Monthly price for the package
-  stripePriceIdMonthly  String  @default("")
-  stripePriceIdAnnually String  @default("")
+  id           String  @id @default(cuid()) // UUIDv7 for package ID
+  name         String // Unique name for the package
+  monthlyPrice Decimal // Monthly price for the package
+
+  stripePriceIdMonthly  String @default("")
+  stripeLinkMonthly     String @default("")
+  stripePriceIdAnnually String @default("")
+  stripeLinkAnnually    String @default("")
 
   features      Feature[] // Features included in the package
   subscriptions Subscription[] // Subscriptions for the package

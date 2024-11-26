@@ -64,11 +64,28 @@ class StripeManager {
     return undefined;
   }
 
-  // TODO: Setup the webhook endpoint here, and then use that function in the "api/webhhooks/stripe"
   public async createSubscription(subscription: Stripe.Subscription) {
     const customerId = this.unwrapStripeCustomer(subscription.customer);
 
-    const agency = await AgencyManager.findAgencyByStripeCustomerId(customerId);
+    const customer = await this.stripe.customers.retrieve(customerId);
+
+    if (customer.deleted) {
+      throw new Error(
+        `Attempt to create subscription for a deleted Stripe customer! [customerId: ${customerId}]`
+      );
+    }
+
+    const customerEmail = customer.email;
+
+    if (!customerEmail) {
+      throw new Error(
+        `Attempt to create subscription for an empty email! [customerId: ${customerId}]`
+      );
+    }
+
+    const agency = await AgencyManager.findAgencyByStripeCustomer(
+      customerEmail
+    );
     if (!agency) {
       throw new Error(
         `Attempt to create subscription for non-existent agency! [customerId: ${customerId}]`
@@ -100,7 +117,7 @@ class StripeManager {
 
     const data: Omit<Subscription, "id" | "createdAt" | "updatedAt"> = {
       packageId: pricingPackage.id,
-      price: "0", // TODO: Figure this out if this is even needed over here or not?
+      price: subscription.items.data[0].plan.amount_decimal,
       agencyId: agency.id,
       priceId,
       stripeSubscriptionId: subscription.id,

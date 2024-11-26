@@ -159,17 +159,24 @@ class AgencyManager {
   }
 
   /**
-   * Find agency by the Stripe customer ID
-   * @param customerId Stripe Customer ID associated with the agency
+   * Find agency by the Stripe customer ID or Email
+   * @param customerId Stripe Customer ID or Email associated with the agency
    * @returns the associated agency
    */
-  public static async findAgencyByStripeCustomerId(
-    customerId: string,
+  public static async findAgencyByStripeCustomer(
+    customerIdOrEmail: string,
     includeSubscription = false
   ) {
     return await prisma.agency.findFirst({
       where: {
-        stripeCustomerId: customerId,
+        OR: [
+          {
+            companyEmail: customerIdOrEmail,
+          },
+          {
+            stripeCustomerId: customerIdOrEmail,
+          },
+        ],
       },
       include: {
         subscription: includeSubscription,

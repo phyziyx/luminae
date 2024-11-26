@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import Heading from "./heading";
 import { PricingPackage } from "@/lib/types";
+import { useUser } from "@clerk/clerk-react";
 
 interface PricingCardProps {
   data: PricingPackage;
@@ -64,15 +65,15 @@ const PricingCard = ({ data, isAnnual }: PricingCardProps) => {
                 {monthlyPrice === 0
                   ? 0
                   : isAnnual
-                  ? discountedYearlyPrice.toFixed(2)
-                  : monthlyPrice.toFixed(2)}
+                    ? discountedYearlyPrice.toFixed(2)
+                    : monthlyPrice.toFixed(2)}
               </span>
               <span className="text-base tracking-tight font-bold text-black/50 dark:text-gray-400">
                 {monthlyPrice === 0
                   ? t("PRICING.LIFETIME")
                   : isAnnual
-                  ? t("PRICING.PRICING_PER_YEAR")
-                  : t("PRICING.PRICING_PER_MONTH")}
+                    ? t("PRICING.PRICING_PER_YEAR")
+                    : t("PRICING.PRICING_PER_MONTH")}
               </span>
             </div>
             {monthlyPrice > 0 && (
@@ -80,24 +81,26 @@ const PricingCard = ({ data, isAnnual }: PricingCardProps) => {
                 <span className="text-base text-black/50 dark:text-gray-400">
                   {isAnnual
                     ? t("PRICING.SAVE_AMOUNT", {
-                        AMOUNT: (yearlyPrice - discountedYearlyPrice).toFixed(
-                          2
-                        ),
-                      })
+                      AMOUNT: (yearlyPrice - discountedYearlyPrice).toFixed(
+                        2
+                      ),
+                    })
                     : t("PRICING.ANNUAL_TOTAL", {
-                        AMOUNT: yearlyPrice,
-                      })}
+                      AMOUNT: yearlyPrice,
+                    })}
                 </span>
               </>
             )}
-            <Button
-              className={cn("w-full mt-[30px]", {
-                "dark:bg-slate-500": !popular,
-              })}
-              variant={popular ? "default" : "secondary"}
-            >
-              {t("CHOOSE_PLAN")} <ChevronRightIcon />
-            </Button>
+            <a target='_blank' href={isAnnual ? data.stripeLinkAnnually : data.stripeLinkMonthly}>
+              <Button
+                className={cn("w-full mt-[30px]", {
+                  "dark:bg-slate-500": !popular,
+                })}
+                variant={popular ? "default" : "secondary"}
+              >
+                {t("CHOOSE_PLAN")} <ChevronRightIcon />
+              </Button>
+            </a>
           </CardTitle>
         </CardHeader>
 
@@ -107,14 +110,14 @@ const PricingCard = ({ data, isAnnual }: PricingCardProps) => {
               <li key={index} className="text-sm flex items-center gap-4">
                 <CheckIcon className="h-6 w-6" />
                 <span>
-                  {feature.maxLimit === 0
+                  {(feature.maxLimit === 0 || feature.maxLimit && feature.maxLimit === -1)
                     ? t(`PACKAGE_FEATURES.ACCESS`, {
-                        FEATURE_CODE: t(`PACKAGE_FEATURES.${feature.code}`),
-                      })
+                      FEATURE_CODE: t(`PACKAGE_FEATURES.${feature.code}`),
+                    })
                     : t(`PACKAGE_FEATURES.QUANTITY`, {
-                        QUANTITY: feature.maxLimit,
-                        FEATURE_CODE: t(`PACKAGE_FEATURES.${feature.code}`),
-                      })}
+                      QUANTITY: feature.maxLimit,
+                      FEATURE_CODE: t(`PACKAGE_FEATURES.${feature.code}`),
+                    })}
                 </span>
               </li>
             ))}
@@ -131,8 +134,13 @@ interface PricingProps {
 
 export const Pricing = ({ packages }: PricingProps) => {
   const t = useTranslations();
+  const { user } = useUser();
 
   const [isAnnual, setAnnual] = useState<boolean>(false);
+
+  const getProductLink = (link: string) => !user
+    ? '/sign-in'
+    : link + '?prefilled_email=' + user.emailAddresses[0].emailAddress;
 
   return (
     <section
@@ -171,6 +179,8 @@ export const Pricing = ({ packages }: PricingProps) => {
             key={p.id}
             data={{
               ...p,
+              stripeLinkAnnually: getProductLink(p.stripeLinkAnnually),
+              stripeLinkMonthly: getProductLink(p.stripeLinkMonthly),
             }}
             isAnnual={isAnnual}
           />

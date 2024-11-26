@@ -57,8 +57,8 @@ class UserManager {
   public static async findUser(email: string) {
     return await prisma.user.findFirst({
       where: {
-        email: email
-      }
+        email: email,
+      },
     });
   }
 }

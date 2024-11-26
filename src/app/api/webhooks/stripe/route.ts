@@ -19,11 +19,13 @@ const stripeWebhookEvents = new Set([
 
 export async function POST(req: NextRequest) {
   try {
-    const webhookSecret =
+    console.log("\n\nNEW STRIPE WEBHOOK\n");
+
+    const WEBHOOK_SECRET =
       process.env.STRIPE_WEBHOOK_SECRET_LIVE ??
       process.env.STRIPE_WEBHOOK_SECRET;
 
-    if (!webhookSecret) {
+    if (!WEBHOOK_SECRET) {
       throw new Error(
         "Please add STRIPE_WEBHOOK_SECRET(_LIVE) from Stripe Dashboard to .env or .env.local"
       );
@@ -32,7 +34,7 @@ export async function POST(req: NextRequest) {
     const headerPayload = await headers();
     const signature = headerPayload.get("Stripe-Signature");
 
-    if (!signature || !webhookSecret) {
+    if (!signature || !WEBHOOK_SECRET) {
       return new NextResponse("Error occured -- no stripe headers", {
         status: 400,
       });
@@ -46,7 +48,7 @@ export async function POST(req: NextRequest) {
       event = stripeManager.stripe.webhooks.constructEvent(
         payload,
         signature,
-        webhookSecret
+        WEBHOOK_SECRET
       );
     } catch (err) {
       console.error("Error verifying webhook:", err);
@@ -64,7 +66,7 @@ export async function POST(req: NextRequest) {
     }
 
     const subscription = event.data.object as Stripe.Subscription;
-    console.log(subscription);
+    // console.log(subscription);
 
     if (
       !subscription.metadata.connectAccountPayments &&
@@ -74,7 +76,7 @@ export async function POST(req: NextRequest) {
         case "customer.subscription.created":
         case "customer.subscription.updated": {
           if (subscription.status === "active") {
-            console.log("Creating subscription", subscription);
+            console.log("Creating subscription");
             await stripeManager.createSubscription(subscription);
           } else {
             console.log(
@@ -83,6 +85,10 @@ export async function POST(req: NextRequest) {
             );
           }
           break;
+        }
+        case "customer.subscription.deleted": {
+          // TODO: When the subscription expires or is canceled by the customer mark as 'inactive'...
+          // break;
         }
         default:
           console.log("Unhandled stripe event:", eventType);
