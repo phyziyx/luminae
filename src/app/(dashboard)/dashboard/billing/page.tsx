@@ -127,7 +127,7 @@ const Billing = async () => {
           </div>
           <Separator className="my-4" />
 
-          <Card>
+          <Card className="bg-muted/50 dark:bg-muted">
             <CardHeader>
               <CardTitle>{t("BILLING.USAGE_DETAILS")}</CardTitle>
             </CardHeader>
@@ -174,7 +174,7 @@ const UsageCard = ({ icon, feature, value, max }: UsageCardProps) => {
   const percentage = Math.floor((value / maxValue) * 100);
 
   return (
-    <Card className="bg-white dark:bg-muted/90">
+    <Card>
       <CardHeader>
         <CardTitle className="flex flex-row gap-4 items-center">
           {icon} {feature}
