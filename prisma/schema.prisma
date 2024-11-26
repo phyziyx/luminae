@@ -96,6 +96,8 @@ model Agency {
   notifications Notification[]
   clients       Client[]
   subscription  Subscription?
+
+  @@index([id])
 }
 
 model Workspace {
@@ -229,6 +231,8 @@ model Package {
   features      Feature[] // Features included in the package
   subscriptions Subscription[] // Subscriptions for the package
   retired       Boolean        @default(false) // Indicates if the package is retired
+
+  @@index([id])
 }
 
 model Feature {
@@ -271,6 +275,7 @@ model Subscription {
   package Package @relation(fields: [packageId], references: [id])
   agency  Agency  @relation(fields: [agencyId], references: [id])
 
+  @@index([id])
   @@index([agencyId])
   @@index([stripeCustomerId])
   @@index([stripeSubscriptionId])
