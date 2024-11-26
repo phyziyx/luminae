@@ -106,7 +106,7 @@ class StripeManager {
       stripeSubscriptionId: subscription.id,
       stripeCustomerId: customerId,
       currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-      active: subscription.status === "active",
+      active: subscriptionActive,
       status: subscriptionStatus,
     };
 
