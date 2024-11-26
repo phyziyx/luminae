@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "stripe:login": "stripe login",
+    "stripe:listen": "stripe listen --forward-to localhost:4242/webhook"
   },
   "overrides": {
     "react-is": "^19.0.0-rc-69d4b800-20241021",
