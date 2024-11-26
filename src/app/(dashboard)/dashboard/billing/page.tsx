@@ -75,7 +75,7 @@ const Billing = async () => {
   );
   if (!pricingPackage) {
     // This code should never be reachable... so let's narrow down the type inference.
-    return <></>;
+    return <>Invalid pricing package! Please contact the developers... {subscription?.priceId}</>;
   }
 
   const data = {
@@ -107,10 +107,10 @@ const Billing = async () => {
               {data.isFree
                 ? t("BILLING.YOUR_PLAN_EXPIRES_ON_FREE")
                 : !data.isExpired
-                ? t("BILLING.YOUR_PLAN_EXPIRES_ON", {
+                  ? t("BILLING.YOUR_PLAN_EXPIRES_ON", {
                     DATE: "December 31st, 2024",
                   })
-                : t("BILLING.YOUR_PLAN_HAS_EXPIRED_ON", {
+                  : t("BILLING.YOUR_PLAN_HAS_EXPIRED_ON", {
                     DATE: data.expiryDate,
                   })}
             </div>

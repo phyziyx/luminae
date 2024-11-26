@@ -56,6 +56,8 @@ class PackageManager {
         OR: [
           {
             stripePriceIdMonthly: priceId,
+          },
+          {
             stripePriceIdAnnually: priceId,
           },
         ],
