@@ -40,26 +40,37 @@ export async function POST(req: NextRequest) {
 
     const payload = await req.text();
 
-    const stripeEvent = stripeManager.stripe.webhooks.constructEvent(
-      payload,
-      signature,
-      webhookSecret
-    );
+    let event: Stripe.Event;
 
-    if (!stripeWebhookEvents.has(stripeEvent.type)) {
+    try {
+      event = stripeManager.stripe.webhooks.constructEvent(
+        payload,
+        signature,
+        webhookSecret
+      );
+    } catch (err) {
+      console.error("Error verifying webhook:", err);
+      return new Response("Error occurred", {
+        status: 400,
+      });
+    }
+
+    const eventType = event.type;
+
+    if (!stripeWebhookEvents.has(eventType)) {
       return new NextResponse("Error occured -- invalid stripe event", {
         status: 400,
       });
     }
 
-    const subscription = stripeEvent.data.object as Stripe.Subscription;
+    const subscription = event.data.object as Stripe.Subscription;
     console.log(subscription);
 
     if (
       !subscription.metadata.connectAccountPayments &&
       !subscription.metadata.connectAccountSubscriptions
     ) {
-      switch (stripeEvent.type) {
+      switch (eventType) {
         case "customer.subscription.created":
         case "customer.subscription.updated": {
           if (subscription.status === "active") {
@@ -74,7 +85,7 @@ export async function POST(req: NextRequest) {
           break;
         }
         default:
-          console.log("Unhandled stripe event:", stripeEvent.type);
+          console.log("Unhandled stripe event:", eventType);
       }
     } else {
       console.log(

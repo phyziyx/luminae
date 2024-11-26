@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     const { id } = event.data;
     const eventType = event.type;
 
-    switch (event.type) {
+    switch (eventType) {
       case "user.created":
         if (!!id) {
           await UserManager.createUser({
