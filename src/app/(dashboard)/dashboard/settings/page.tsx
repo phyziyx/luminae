@@ -22,7 +22,7 @@ const Settings = async () => {
     user.emailAddresses[0].emailAddress
   );
   const email = user.emailAddresses[0].emailAddress;
-  const agency = agencyMember?.Agency;
+  const agency = agencyMember?.agency;
 
   if (!agency) {
     return <div>Agency not found!</div>;
