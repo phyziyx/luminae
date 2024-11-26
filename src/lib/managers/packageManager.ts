@@ -60,6 +60,9 @@ class PackageManager {
           },
         ],
       },
+      include: {
+        features: true,
+      },
     });
   }
 

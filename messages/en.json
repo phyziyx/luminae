@@ -137,7 +137,16 @@
   "BILLING": {
     "HEADER": "Billing",
     "BILLING_DESCRIPTION": "View your plan information or switch plans according to your needs.",
-    "CURRENT_PLAN": "Current Plan"
+    "CURRENT_PLAN": "Current Plan",
+    "EXPLORE_PLANS": "Explore Plans",
+    "YOUR_PLAN_EXPIRES_ON": "Your plan expires on {DATE}.",
+    "YOUR_PLAN_EXPIRES_ON_FREE": "You are using the Free plan.  Upgrade to unlock more features.",
+    "YOUR_PLAN_HAS_EXPIRED_ON": "Your plan has expired on {DATE}.  Please renew your plan to continue using Luminae.",
+    "USAGE_DETAILS": "Usage Details",
+    "TEAM_MEMBERS": "Team Members",
+    "WORKSPACE": "Workspaces",
+    "FILE_STORAGE": "File Storage",
+    "CUSTOM_URL": "Custom URL"
   },
 
   "PACKAGE_FEATURES": {
