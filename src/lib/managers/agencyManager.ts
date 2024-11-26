@@ -8,7 +8,15 @@ import {
 import prisma from "../db";
 import { v7 } from "uuid";
 
-type CreateAgency = Omit<Agency, "id" | "createdAt" | "updatedAt">;
+type CreateAgency = Omit<
+  Agency,
+  "id" | "createdAt" | "updatedAt" | "stripeCustomerId"
+>;
+
+type UpdateAgency = Omit<
+  Agency,
+  "createdAt" | "updatedAt" | "stripeCustomerId"
+>;
 
 class AgencyManager {
   public static async createAgency(agency: CreateAgency, ownerEmail?: string) {
@@ -57,9 +65,7 @@ class AgencyManager {
     return null;
   }
 
-  public static async updateAgency(
-    agency: Omit<Agency, "createdAt" | "updatedAt">
-  ) {
+  public static async updateAgency(agency: UpdateAgency) {
     return await prisma.agency.update({
       where: {
         id: agency.id,
