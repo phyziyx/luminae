@@ -54,7 +54,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     >
       <DashboardSidebar
         role={agencyMember.role}
-        agency={agencyMember.Agency}
+        agency={agencyMember.agency}
         workspaces={workspaces}
       >
         {children}

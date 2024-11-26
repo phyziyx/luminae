@@ -61,30 +61,36 @@ const PricingCard = ({ data, isAnnual }: PricingCardProps) => {
             {data.name}
             <div className="flex items-center justify-center gap-1 mt-[30px]">
               <span className="text-4xl font-bold tracking-tighter leading-none">
-                ${monthlyPrice > 0 ? monthlyPrice.toFixed(2) : monthlyPrice}
+                $
+                {monthlyPrice === 0
+                  ? 0
+                  : isAnnual
+                  ? discountedYearlyPrice.toFixed(2)
+                  : monthlyPrice.toFixed(2)}
               </span>
               <span className="text-base tracking-tight font-bold text-black/50 dark:text-gray-400">
-                {monthlyPrice === 0 ?
-                  t("PRICING.LIFETIME")
-                  :
-                  isAnnual ?
-                    t("PRICING.PRICING_PER_YEAR")
-                    :
-                    t("PRICING.PRICING_PER_MONTH")
-                }
+                {monthlyPrice === 0
+                  ? t("PRICING.LIFETIME")
+                  : isAnnual
+                  ? t("PRICING.PRICING_PER_YEAR")
+                  : t("PRICING.PRICING_PER_MONTH")}
               </span>
             </div>
-            {monthlyPrice > 0 &&
+            {monthlyPrice > 0 && (
               <>
-                <span className="text-base text-black/50 dark:text-gray-400">{
-                  isAnnual ? t("PRICING.SAVE_AMOUNT", {
-                    AMOUNT: (yearlyPrice - discountedYearlyPrice).toFixed(2)
-                  }) : t("PRICING.ANNUAL_TOTAL", {
-                    AMOUNT: yearlyPrice
-                  })
-                }</span>
+                <span className="text-base text-black/50 dark:text-gray-400">
+                  {isAnnual
+                    ? t("PRICING.SAVE_AMOUNT", {
+                        AMOUNT: (yearlyPrice - discountedYearlyPrice).toFixed(
+                          2
+                        ),
+                      })
+                    : t("PRICING.ANNUAL_TOTAL", {
+                        AMOUNT: yearlyPrice,
+                      })}
+                </span>
               </>
-            }
+            )}
             <Button
               className={cn("w-full mt-[30px]", {
                 "dark:bg-slate-500": !popular,
@@ -102,16 +108,15 @@ const PricingCard = ({ data, isAnnual }: PricingCardProps) => {
               <li key={index} className="text-sm flex items-center gap-4">
                 <CheckIcon className="h-6 w-6" />
                 <span>
-                  {
-                    feature.maxLimit === 0
-                      ? t(`PACKAGE_FEATURES.ACCESS`, {
-                        FEATURE_CODE: t(`PACKAGE_FEATURES.${feature.code}`)
+                  {feature.maxLimit === 0
+                    ? t(`PACKAGE_FEATURES.ACCESS`, {
+                        FEATURE_CODE: t(`PACKAGE_FEATURES.${feature.code}`),
                       })
-                      : t(`PACKAGE_FEATURES.QUANTITY`, {
+                    : t(`PACKAGE_FEATURES.QUANTITY`, {
                         QUANTITY: feature.maxLimit,
-                        FEATURE_CODE: t(`PACKAGE_FEATURES.${feature.code}`)
-                      })
-                  }</span>
+                        FEATURE_CODE: t(`PACKAGE_FEATURES.${feature.code}`),
+                      })}
+                </span>
               </li>
             ))}
           </ul>
@@ -162,13 +167,15 @@ export const Pricing = ({ packages }: PricingProps) => {
       </div>
 
       <div className="flex flex-col gap-6 items-center mt-10 lg:flex-row lg:items-end lg:justify-center">
-        {
-          packages.map((p) => (
-            <PricingCard key={p.id} data={{
-              ...p
-            }} isAnnual={isAnnual} />
-          ))
-        }
+        {packages.map((p) => (
+          <PricingCard
+            key={p.id}
+            data={{
+              ...p,
+            }}
+            isAnnual={isAnnual}
+          />
+        ))}
       </div>
     </section>
   );

@@ -70,58 +70,58 @@ class PackageManager {
   public static async getPackages() {
     // Dummy packages for the testing
 
-    return [
-      {
-        id: "1",
-        name: "Starter",
-        monthlyPrice: new Decimal(0),
-        discountRate: 0,
-        retired: false,
-        features: [
-          {
-            id: "1",
-            code: "WORKSPACE",
-            name: "Workspace",
-            maxLimit: 3,
-            hasAccess: true,
-            packageId: "1",
-          },
-          {
-            id: "2",
-            code: "TEAM_MEMBERS",
-            name: "Team Members",
-            maxLimit: 3,
-            hasAccess: true,
-            packageId: "1",
-          },
-        ],
-      },
-      {
-        id: "2",
-        name: "Professional",
-        monthlyPrice: new Decimal(29),
-        discountRate: 0,
-        retired: false,
-        features: [
-          {
-            id: "1",
-            code: "WORKSPACE",
-            name: "Workspace",
-            maxLimit: 10,
-            hasAccess: true,
-            packageId: "1",
-          },
-          {
-            id: "2",
-            code: "TEAM_MEMBERS",
-            name: "Team Members",
-            maxLimit: 15,
-            hasAccess: true,
-            packageId: "1",
-          },
-        ],
-      },
-    ];
+    // return [
+    //   {
+    //     id: "1",
+    //     name: "Starter",
+    //     monthlyPrice: new Decimal(0),
+    //     discountRate: 0,
+    //     retired: false,
+    //     features: [
+    //       {
+    //         id: "1",
+    //         code: "WORKSPACE",
+    //         name: "Workspace",
+    //         maxLimit: 3,
+    //         hasAccess: true,
+    //         packageId: "1",
+    //       },
+    //       {
+    //         id: "2",
+    //         code: "TEAM_MEMBERS",
+    //         name: "Team Members",
+    //         maxLimit: 3,
+    //         hasAccess: true,
+    //         packageId: "1",
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     id: "2",
+    //     name: "Professional",
+    //     monthlyPrice: new Decimal(29),
+    //     discountRate: 0,
+    //     retired: false,
+    //     features: [
+    //       {
+    //         id: "1",
+    //         code: "WORKSPACE",
+    //         name: "Workspace",
+    //         maxLimit: 10,
+    //         hasAccess: true,
+    //         packageId: "1",
+    //       },
+    //       {
+    //         id: "2",
+    //         code: "TEAM_MEMBERS",
+    //         name: "Team Members",
+    //         maxLimit: 15,
+    //         hasAccess: true,
+    //         packageId: "1",
+    //       },
+    //     ],
+    //   },
+    // ];
 
     return await prisma.package.findMany({
       where: {
