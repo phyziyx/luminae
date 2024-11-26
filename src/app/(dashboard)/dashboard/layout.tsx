@@ -41,20 +41,9 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  let workspaces = await AgencyManager.findWorkspaces(agencyMember.agencyId);
-
-  if (
-    agencyMember.role === "AGENCY_ADMIN" ||
-    agencyMember.role === "AGENCY_OWNER"
-  ) {
-    // No need to filter workspaces
-  } else {
-    workspaces = workspaces.filter((workspace) =>
-      agencyMember.Permissions.some(
-        (permission) => permission.workspaceId === workspace.id
-      )
-    );
-  }
+  const workspaces = await AgencyManager.findAndFilterWorkspaces(
+    agencyMember.agencyId
+  );
 
   return (
     <SidebarProvider
