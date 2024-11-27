@@ -47,9 +47,9 @@ model AgencyMember {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  User        User         @relation(fields: [email], references: [email])
-  Agency      Agency       @relation(fields: [agencyId], references: [id])
-  Permissions Permission[]
+  user        User         @relation(fields: [email], references: [email])
+  agency      Agency       @relation(fields: [agencyId], references: [id])
+  permissions Permission[]
 
   @@index([email])
   @@index([agencyId])
@@ -60,8 +60,8 @@ model Permission {
   agencyMemberId String
   workspaceId    String
 
-  AgencyMember AgencyMember @relation(fields: [agencyMemberId], references: [id])
-  Workspace    Workspace    @relation(fields: [workspaceId], references: [id])
+  agencyMember AgencyMember @relation(fields: [agencyMemberId], references: [id])
+  workspace    Workspace    @relation(fields: [workspaceId], references: [id])
   access       Boolean
   manager      Boolean
 
@@ -75,10 +75,11 @@ model Permission {
 model Agency {
   id String @id @default(uuid())
 
-  name         String
-  agencyLogo   String @db.Text
-  companyEmail String @db.Text
-  companyPhone String @db.Text
+  name             String
+  agencyLogo       String @db.Text
+  companyEmail     String @db.Text
+  companyPhone     String @db.Text
+  stripeCustomerId String @default("")
 
   address String
   city    String
@@ -89,12 +90,14 @@ model Agency {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  AgencyMembers AgencyMember[]
-  Workspaces    Workspace[]
-  Invitations   Invitation[]
-  Notifications Notification[]
-  Subscriptions Subscription[]
-  Client        Client[]
+  agencyMembers AgencyMember[]
+  workspaces    Workspace[]
+  invitations   Invitation[]
+  notifications Notification[]
+  clients       Client[]
+  subscription  Subscription?
+
+  @@index([id])
 }
 
 model Workspace {
@@ -106,9 +109,9 @@ model Workspace {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Agency       Agency         @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  Permissions  Permission[]
-  Notification Notification[]
+  agency        Agency         @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  permissions   Permission[]
+  notifications Notification[]
 
   @@index([agencyId])
 }
@@ -136,8 +139,8 @@ model Client {
   updatedAt DateTime     @updatedAt
   status    ClientStatus @default(LEAD) // Status of the client
 
-  Agency Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  Ticket Ticket[]
+  agency  Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  tickets Ticket[]
 
   @@index([agencyId])
 }
@@ -185,7 +188,7 @@ model Invitation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Agency Agency @relation(fields: [agencyId], references: [id])
+  agency Agency @relation(fields: [agencyId], references: [id])
 
   @@index([email])
   @@index([agencyId])
@@ -202,9 +205,9 @@ model Notification {
   createdAt DateTime @default(now()) // Creation date of the notification
   updatedAt DateTime @updatedAt // Last update date of the notification
 
-  User      User       @relation(fields: [userId], references: [id])
-  Agency    Agency     @relation(fields: [agencyId], references: [id])
-  Workspace Workspace? @relation(fields: [workspaceId], references: [id])
+  user      User       @relation(fields: [userId], references: [id])
+  agency    Agency     @relation(fields: [agencyId], references: [id])
+  workspace Workspace? @relation(fields: [workspaceId], references: [id])
 
   @@index([userId])
   @@index([agencyId])
@@ -219,13 +222,20 @@ enum FeatureCode {
 }
 
 model Package {
-  id            String         @id @default(cuid()) // UUIDv7 for package ID
-  name          String // Unique name for the package
-  monthlyPrice  Decimal // Monthly price for the package
-  discountRate  Int? // Optional discount rate for the package
+  id           String  @id @default(cuid()) // UUIDv7 for package ID
+  name         String // Unique name for the package
+  monthlyPrice Decimal // Monthly price for the package
+
+  stripePriceIdMonthly  String @default("")
+  stripeLinkMonthly     String @default("")
+  stripePriceIdAnnually String @default("")
+  stripeLinkAnnually    String @default("")
+
   features      Feature[] // Features included in the package
   subscriptions Subscription[] // Subscriptions for the package
   retired       Boolean        @default(false) // Indicates if the package is retired
+
+  @@index([id])
 }
 
 model Feature {
@@ -252,7 +262,7 @@ model Subscription {
   id        String  @id @default(cuid()) // UUIDv7 for subscription ID
   packageId String // Package ID
   price     String? // Price of the package
-  agencyId  String? @unique() // Agency ID
+  agencyId  String  @unique() // Agency ID
 
   priceId              String // Price ID of the package
   stripeSubscriptionId String   @unique // Stripe subscription ID
@@ -265,9 +275,10 @@ model Subscription {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Agency  Agency? @relation(fields: [agencyId], references: [id])
   package Package @relation(fields: [packageId], references: [id])
+  agency  Agency  @relation(fields: [agencyId], references: [id])
 
+  @@index([id])
   @@index([agencyId])
   @@index([stripeCustomerId])
   @@index([stripeSubscriptionId])

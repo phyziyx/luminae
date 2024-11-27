@@ -1,6 +1,7 @@
 import {
   Agency,
   AgencyMember,
+  FeatureCode,
   Permission,
   Role,
   Workspace,
@@ -8,7 +9,15 @@ import {
 import prisma from "../db";
 import { v7 } from "uuid";
 
-type CreateAgency = Omit<Agency, "id" | "createdAt" | "updatedAt">;
+type CreateAgency = Omit<
+  Agency,
+  "id" | "createdAt" | "updatedAt" | "stripeCustomerId"
+>;
+
+type UpdateAgency = Omit<
+  Agency,
+  "createdAt" | "updatedAt" | "stripeCustomerId"
+>;
 
 class AgencyManager {
   public static async createAgency(agency: CreateAgency, ownerEmail?: string) {
@@ -57,9 +66,7 @@ class AgencyManager {
     return null;
   }
 
-  public static async updateAgency(
-    agency: Omit<Agency, "createdAt" | "updatedAt">
-  ) {
+  public static async updateAgency(agency: UpdateAgency) {
     return await prisma.agency.update({
       where: {
         id: agency.id,
@@ -89,8 +96,8 @@ class AgencyManager {
         email: userEmail,
       },
       include: {
-        Agency: true,
-        Permissions: true,
+        agency: true,
+        permissions: true,
       },
     });
   }
@@ -118,7 +125,7 @@ class AgencyManager {
 
   public static filterWorkspaces(
     workspaces: Workspace[],
-    agencyMember: AgencyMember & { Permissions: Permission[] }
+    agencyMember: AgencyMember & { permissions: Permission[] }
   ) {
     if (!workspaces || workspaces.length === 0) return [];
 
@@ -129,7 +136,7 @@ class AgencyManager {
       // No need to filter workspaces
     } else {
       workspaces = workspaces.filter((workspace) =>
-        agencyMember.Permissions.some(
+        agencyMember.permissions.some(
           (permission) => permission.workspaceId === workspace.id
         )
       );
@@ -149,6 +156,94 @@ class AgencyManager {
         id: agencyId,
       },
     });
+  }
+
+  /**
+   * Find agency by the Stripe customer ID or Email
+   * @param customerId Stripe Customer ID or Email associated with the agency
+   * @returns the associated agency
+   */
+  public static async findAgencyByStripeCustomer(
+    customerIdOrEmail: string,
+    includeSubscription = false
+  ) {
+    return await prisma.agency.findFirst({
+      where: {
+        OR: [
+          {
+            companyEmail: customerIdOrEmail,
+          },
+          {
+            stripeCustomerId: customerIdOrEmail,
+          },
+        ],
+      },
+      include: {
+        subscription: includeSubscription,
+      },
+    });
+  }
+
+  /**
+   * Check if the agency can use the feature
+   * @param agencyId agency id
+   * @param featureCode feature code
+   * @returns true if the agency can use the feature, false otherwise.
+   */
+
+  public static async canUseFeature(
+    agencyId: string,
+    featureCode: FeatureCode
+  ) {
+    const agency = await prisma.agency.findUnique({
+      where: { id: agencyId },
+      include: {
+        subscription: {
+          include: {
+            package: {
+              include: {
+                features: true,
+              },
+            },
+          },
+        },
+        agencyMembers: true,
+        invitations: true,
+        workspaces: true,
+      },
+    });
+
+    if (!agency || !agency.subscription) {
+      throw new Error("Agency or subscription not found");
+    }
+
+    const feature = agency.subscription.package.features.find(
+      (feature) => feature.code === featureCode
+    );
+
+    if (!feature) {
+      throw new Error(`${featureCode} feature not found in the package`);
+    }
+
+    switch (featureCode) {
+      case "TEAM_MEMBERS":
+        const currentMemberCount = agency.agencyMembers.filter(
+          (member) => !!member
+        ).length;
+
+        const pendingInvitesCount = agency.invitations.filter(
+          (invite) => invite.status === "ACCEPTED"
+        ).length;
+        const totalMembers = currentMemberCount + pendingInvitesCount;
+        return totalMembers < (feature.maxLimit || 0);
+
+      case "WORKSPACE":
+        const currentWorkspaceCount = agency.workspaces.length;
+        return currentWorkspaceCount < (feature.maxLimit || 0);
+
+      default:
+        throw new Error(`Feature code ${featureCode} is not supported`);
+    }
   }
 }
 
