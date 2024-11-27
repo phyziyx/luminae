@@ -70,6 +70,7 @@ export default function Page() {
         identifier: form.getValues("email"),
       })
       .then(() => {
+        form.setValue("email", "");
         setSuccessfulCreation(true);
         setError("");
       })
