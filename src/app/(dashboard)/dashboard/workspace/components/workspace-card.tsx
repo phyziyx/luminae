@@ -18,7 +18,10 @@ const WorkspaceCard = async ({ workspace }: WorkspaceCardProps) => {
   const t = await getTranslations();
 
   return (
-    <Card key={workspace.id} className="flex flex-col gap-2 max-w-sm bg-white">
+    <Card
+      key={workspace.id}
+      className="flex flex-col gap-2 max-w-sm bg-white dark:bg-muted/90"
+    >
       <CardHeader>
         <CardTitle className="flex flex-row place-content-between">
           {workspace.name}
