@@ -4,7 +4,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import {
   Card,
   CardContent,
@@ -53,6 +53,7 @@ const Billing = async () => {
   const user = await currentUser();
 
   const t = await getTranslations();
+  const locale = await getLocale();
 
   if (!userId || !user) {
     return <div>Not authenticated!</div>;
@@ -76,7 +77,12 @@ const Billing = async () => {
   );
   if (!pricingPackage) {
     // This code should never be reachable... so let's narrow down the type inference.
-    return <>Invalid pricing package! Please contact the developers... {subscription?.priceId}</>;
+    return (
+      <>
+        Invalid pricing package! Please contact the developers...{" "}
+        {subscription?.priceId}
+      </>
+    );
   }
 
   const data = {
@@ -85,7 +91,10 @@ const Billing = async () => {
       subscription.packageId === PackageManager.FREE_PLAN_PRICE_ID,
     isExpired:
       Date.now() > (subscription?.currentPeriodEnd.valueOf() || Date.now()),
-    expiryDate: subscription?.currentPeriodEnd.toLocaleDateString() || "N/A",
+    expiryDate:
+      new Intl.DateTimeFormat(locale, {
+        dateStyle: "long",
+      }).format(subscription?.currentPeriodEnd) || "N/A",
   };
 
   return (
@@ -108,10 +117,10 @@ const Billing = async () => {
               {data.isFree
                 ? t("BILLING.YOUR_PLAN_EXPIRES_ON_FREE")
                 : !data.isExpired
-                  ? t("BILLING.YOUR_PLAN_EXPIRES_ON", {
+                ? t("BILLING.YOUR_PLAN_EXPIRES_ON", {
                     DATE: data.expiryDate,
                   })
-                  : t("BILLING.YOUR_PLAN_HAS_EXPIRED_ON", {
+                : t("BILLING.YOUR_PLAN_HAS_EXPIRED_ON", {
                     DATE: data.expiryDate,
                   })}
             </div>
@@ -176,7 +185,7 @@ const UsageCard = async ({ icon, feature, value, max }: UsageCardProps) => {
         {max === 0 ? (
           <div className="flex flex-row justify-between">
             {t("BILLING.UPGRADE_TO_ACCESS", {
-              FEATURE: feature
+              FEATURE: feature,
             })}
             <ArrowBigUpDashIcon className="w-16 h-16 text-muted-foreground" />
           </div>
