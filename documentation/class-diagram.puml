@@ -1,0 +1,122 @@
+@startuml
+class Luminae {
+  + manageAgencies()
+  + trackPerformance()
+  + fosterCollaboration()
+}
+
+enum Role {
+  AgencyOwner
+  AgencyAdmin
+  AgencyMember
+}
+
+class User {
+  - String name
+  - String email
+  - String password
+  - Role Role
+  + login()
+  + logout()
+}
+
+class Agency {
+  - String name
+  - String description
+  - String industry
+  + manageAgencyDetails()
+  + addWorkspace()
+  + onboardClients()
+}
+
+class AgencyOwner {
+  + manageTeam()
+  + trackAgencyPerformance()
+  + subscribePlan()
+}
+
+class TeamMember {
+  + executeTasks()
+  + collaborate()
+}
+
+class Admin {
+  + manageUsers()
+  + monitorActivity()
+  + configurePlatform()
+}
+
+class Workspace {
+  - String name
+  - String description
+  + manageTasks()
+  + manageClients()
+  + assignRoles()
+}
+
+class Task {
+  - String title
+  - String status
+  - String assignee
+  + updateStatus()
+  + add()
+  + delete()
+}
+
+class Client {
+  - String name
+  - String contactInfo
+  + manageClientDetails()
+}
+
+class Community {
+  - List<Forum> forums
+  + interact()
+  + shareKnowledge()
+}
+
+class Forum {
+  - String name
+  + postMessage()
+  + editMessage()
+  + deleteMessage()
+}
+
+class Payment {
+  - Double amount
+  - String paymentMethod
+  + processPayment()
+  + issueRefund()
+}
+
+class Notification {
+  - String message
+  - Date timestamp
+  + sendNotification()
+}
+
+class Media {
+  - String fileName
+  - String fileType
+  + upload()
+  + share()
+}
+
+Luminae -- User : "serves"
+User <|-- AgencyOwner
+User <|-- TeamMember
+User <|-- Admin
+AgencyOwner -- Agency : "owns"
+Agency -- Workspace : "contains"
+Agency -- Client : "manages"
+Agency -- Notification : "receives"
+Agency -- Payment : "handles"
+Workspace -- Task : "contains"
+Workspace -- TeamMember : "assigns"
+Workspace -- Client : "manages"
+Luminae -- Payment : "integrates"
+Luminae -- Community : "hosts"
+Community -- Forum : "contains"
+Luminae -- Notification : "sends"
+Luminae -- Media : "manages"
+@enduml

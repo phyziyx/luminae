@@ -1,0 +1,33 @@
+@startuml
+component "Platform Admin Dashboard" as PlatformAdmin
+
+package "Platform Admin Dashboard" {
+    component "Authentication" as Authentication
+    component "Agency Management" as AgencyManagement
+    component "Package Management" as SubscriptionManagement
+    component "Notification Management" as NotificationManagement
+    component "User Management" as UserManagement
+}
+
+database "Database" as DB
+
+package "External Services" {
+  component "Clerk" as Clerk
+  component "Stripe" as Stripe
+}
+
+PlatformAdmin ..(0-- Authentication : Authenticates
+PlatformAdmin ..(0-- AgencyManagement : Manages
+PlatformAdmin ..(0-- SubscriptionManagement : Manages
+PlatformAdmin ..(0-- NotificationManagement : Manages
+PlatformAdmin ..(0-- UserManagement : Manages
+
+Authentication --(0-- DB : Fetch/Store Data
+Authentication --(0-- Clerk : Fetch/Store Data
+AgencyManagement --(0-- DB : Fetch/Store Data
+SubscriptionManagement --(0-- DB : Fetch/Store Data
+SubscriptionManagement --(0-- Stripe : Fetch Package Details
+NotificationManagement --(0-- DB : Fetch/Store Data
+UserManagement --(0-- DB : Fetch/Store Data
+
+@enduml

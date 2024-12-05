@@ -1,0 +1,13 @@
+@startuml
+hide empty description
+
+[*] --> ManageAssignedTasks : Open Assigned Tasks
+
+state "ManageAssignedTasks" as ManageAssignedTasks {
+    [*] --> TaskList : Display Tasks
+    TaskList --> CompleteTask : Mark Task as Completed
+    CompleteTask --> TaskList : Update Status
+}
+
+ManageAssignedTasks --> [*] : Exit Task Management
+@enduml

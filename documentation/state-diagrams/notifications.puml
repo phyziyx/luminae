@@ -1,0 +1,15 @@
+@startuml
+hide empty description
+
+[*] --> ViewNotifications : Open Notifications
+
+state "ViewNotifications" as ViewNotifications {
+    [*] --> NotificationList : Display Notifications
+    NotificationList --> MarkRead : Mark Notification as Read
+    MarkRead --> ArchiveNotification : Archive Notification (Optional)
+    ArchiveNotification --> NotificationList : Return to List
+    MarkRead --> NotificationList : Return to List
+}
+
+ViewNotifications --> [*] : Exit Notifications
+@enduml

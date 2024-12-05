@@ -1,0 +1,28 @@
+@startuml
+component "Team Member Dashboard" as TeamMember
+
+package "Team Member Dashboard" {
+    component "Authentication" as Authentication
+    component "Notifications" as Notifications
+    component "Task Management" as TaskManagement
+    component "Workspace Management" as WorkspaceManagement
+}
+
+database "Database" as DB
+
+package "External Services" {
+  component "Clerk" as Clerk
+}
+
+TeamMember ..(0-- Authentication : Authenticates
+TeamMember ..(0-- Notifications : View
+TeamMember ..(0-- TaskManagement : Manages
+TeamMember ..(0-- WorkspaceManagement : Manages
+
+Authentication --(0-- DB : Fetch/Store Data
+Authentication --(0-- Clerk : Fetch/Store Data
+Notifications --(0-- DB : Fetch/Store Data
+TaskManagement --(0-- DB : Fetch/Store Data
+WorkspaceManagement --(0-- DB : Fetch/Store Data
+
+@enduml

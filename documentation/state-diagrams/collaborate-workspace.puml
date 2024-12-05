@@ -1,0 +1,26 @@
+@startuml
+hide empty description
+
+[*] --> CollaborateOnWorkspace : Open Workspace Collaboration
+
+state "CollaborateOnWorkspace" as CollaborateOnWorkspace {
+    [*] --> ViewKanbanBoard : View Kanban Board
+    ViewKanbanBoard --> AddTask : Add New Task
+    AddTask --> SaveTask : Save Task to Board
+    SaveTask --> ViewKanbanBoard : Return to Kanban
+
+    ViewKanbanBoard --> UpdateTask : Update Existing Task
+    UpdateTask --> SaveChanges : Save Changes to Task
+    SaveChanges --> ViewKanbanBoard : Return to Kanban
+
+    ViewKanbanBoard --> AssignTask : Assign Task to Team Member
+    AssignTask --> ConfirmAssignment : Confirm Task Assignment
+    ConfirmAssignment --> ViewKanbanBoard : Return to Kanban
+
+    ViewKanbanBoard --> ChangeTaskStatus : Change Task Status
+    ChangeTaskStatus --> StatusUpdated : Update Status
+    StatusUpdated --> ViewKanbanBoard : Return to Kanban
+}
+
+CollaborateOnWorkspace --> [*] : Exit Workspace Collaboration
+@enduml

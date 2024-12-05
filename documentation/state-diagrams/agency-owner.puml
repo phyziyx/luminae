@@ -1,0 +1,18 @@
+@startuml
+hide empty description
+
+[*] --> Dashboard : Access Agency Owner Dashboard
+
+state "Agency Owner Dashboard" as Dashboard {
+    [*] --> ChooseAction : Decide Action
+    ChooseAction --> ViewKPIs : View Key Performance Indicators
+    ChooseAction --> ManageClients : Manage Clients
+    ChooseAction --> ManageTeam : Manage Team
+    ChooseAction --> ManageWorkspaces : Manage Workspaces
+    ChooseAction --> ViewNotifications : Check Notifications
+    ChooseAction --> ManageSubscription : Manage Subscription
+}
+
+Dashboard --> Logout : Exit Dashboard
+Logout --> [*]
+@enduml
