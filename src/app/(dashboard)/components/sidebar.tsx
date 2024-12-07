@@ -1,7 +1,6 @@
 "use client";
 
 import Logo from "@/components/logo";
-import CustomModal from "@/components/site/custom-modal";
 import ModeToggle from "@/components/site/mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +37,6 @@ import {
 } from "@/components/ui/sidebar";
 import useIsMounted from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
-import { useModal } from "@/providers/modal-provider";
 import { UserButton } from "@clerk/nextjs";
 import { Agency, Workspace, Role } from "@prisma/client";
 import {
@@ -54,7 +52,6 @@ import {
   CompassIcon,
   LifeBuoyIcon,
   NetworkIcon,
-  PlusCircleIcon,
   SendIcon,
   Settings2Icon,
   SquareTerminalIcon,
@@ -64,7 +61,6 @@ import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import WorkspaceDetails from "./workspace-details/workspace-details";
 
 interface DashboardSidebarProps {
   children: React.ReactNode;
@@ -190,7 +186,7 @@ const PickerItem = ({
 const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
   const isMounted = useIsMounted();
   const t = useTranslations();
-  const { openModal } = useModal();
+  // const { openModal } = useModal();
 
   if (!isMounted) return null;
 
@@ -258,7 +254,7 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
           </Command>
 
           {/* Create New Workspace */}
-          {(role === "AGENCY_OWNER" || role === "AGENCY_ADMIN") && (
+          {/* {(role === "AGENCY_OWNER" || role === "AGENCY_ADMIN") && (
             <Button
               className="w-full flex gap-2"
               onClick={() => {
@@ -279,7 +275,7 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
               <PlusCircleIcon size={15} />
               {t("CREATE_WORKSPACE")}
             </Button>
-          )}
+          )} */}
         </PopoverContent>
       </Popover>
     </>
