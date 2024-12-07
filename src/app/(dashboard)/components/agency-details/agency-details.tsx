@@ -2,7 +2,7 @@
 
 import { Agency } from "@prisma/client";
 import { useForm } from "react-hook-form";
-import React, { useEffect } from "react";
+import React from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -70,12 +70,12 @@ const AgencyDetails = ({ data }: AgencyDetailsProps) => {
     }
   };
 
-  useEffect(() => {
-    if (data) {
-      form.reset({ ...data });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     form.reset({ ...data });
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [data]);
 
   return (
     <Card className="w-full bg-white dark:bg-muted/90">

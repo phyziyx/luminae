@@ -7,6 +7,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  console.log("values", values);
+
   const user = await currentUser();
 
   if (!user) {
@@ -19,7 +21,9 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
   try {
     console.log(values);
 
-    const agency = await AgencyManager.findUserAgency(user.id);
+    const agency = await AgencyManager.findUserAgency(
+      user.emailAddresses[0].emailAddress
+    );
 
     // There is no agency associated with this account,
     // so this action cannot take place.
@@ -28,7 +32,7 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
       return;
     }
 
-    const agencyId = agency.id;
+    const agencyId = agency.agency.id;
 
     if (workspaceId) {
       // Update workspace
@@ -41,10 +45,19 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
       });
 
       if (!workspace) {
-        console.log("Failed to update workspace");
+        console.error("Failed to update workspace");
         return;
       }
     } else {
+      const available = await AgencyManager.canUseFeature(
+        agencyId,
+        "WORKSPACE"
+      );
+      if (!available) {
+        console.error("User does not have permission to create a workspace.");
+        return;
+      }
+
       const workspace = await AgencyManager.createWorkspace({
         name: values.name,
         description: values.description,
@@ -52,7 +65,7 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
       });
 
       if (!workspace) {
-        console.log("Failed to create workspace");
+        console.error("Failed to create workspace");
         return;
       }
     }

@@ -13,7 +13,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import { Input } from "@/components/ui/input";
 import {
   Card,
@@ -22,13 +21,13 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import formSchema from "./schema";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/hooks/use-toast";
 import { Workspace } from "@prisma/client";
-import { useEffect } from "react";
-import onSubmit from "./action";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
+
+import formSchema from "./schema";
+import onSubmit from "./action";
 
 type WorkspaceDetailsProps = {
   data?: Partial<Workspace>;
@@ -39,10 +38,9 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
+    mode: "onChange",
     resolver: zodResolver(formSchema),
     defaultValues: {
-      id: data?.id || "",
-      agencyId: data?.agencyId || "",
       name: data?.name || "",
       description: data?.description || "",
     },
@@ -53,6 +51,7 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
+      console.log("clicked 2", values);
       await onSubmit(values);
       toast({
         title: "Workspace information saved successfully",
@@ -64,12 +63,12 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
     }
   }
 
-  useEffect(() => {
-    if (data) {
-      form.reset({ ...data });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     form.reset({ ...data });
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [data]);
 
   return (
     <Card className="w-full bg-white dark:bg-muted/90">
@@ -89,13 +88,13 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((e) => {
+              console.log("clicked", e);
               return handleSubmit(e);
             })}
             className="space-y-4"
           >
             <div className="flex md:flex-row gap-4">
               <FormField
-                disabled={isLoading}
                 control={form.control}
                 name="name"
                 render={({ field }) => (
@@ -118,7 +117,6 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
             </div>
 
             <FormField
-              disabled={isLoading}
               control={form.control}
               name="description"
               render={({ field }) => (
@@ -138,6 +136,26 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
                 </FormItem>
               )}
             />
+
+            {/* <FormField
+              control={form.control}
+              name="id"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel>{"id"}</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={isLoading}
+                      required
+                      placeholder={"id"}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            /> */}
+
             <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <LoadingSpinner />

@@ -267,13 +267,11 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
                     title={t("CREATE_WORKSPACE")}
                     caption={t("CREATE_WORKSPACE_CAPTION")}
                   >
-                    <div>
-                      <WorkspaceDetails
-                        data={{
-                          agencyId: agency.id,
-                        }}
-                      />
-                    </div>
+                    <WorkspaceDetails
+                      data={{
+                        agencyId: agency.id,
+                      }}
+                    />
                   </CustomModal>
                 );
               }}

@@ -231,6 +231,8 @@ class AgencyManager {
     agencyId: string,
     featureCode: FeatureCode
   ) {
+    const INFINITE = -1;
+
     const agency = await prisma.agency.findUnique({
       where: { id: agencyId },
       include: {
@@ -271,11 +273,21 @@ class AgencyManager {
           (invite) => invite.status === "ACCEPTED"
         ).length;
         const totalMembers = currentMemberCount + pendingInvitesCount;
-        return totalMembers < (feature.maxLimit || 0);
+        return (
+          feature.maxLimit === INFINITE ||
+          totalMembers < (feature.maxLimit || 0)
+        );
 
       case "WORKSPACE":
         const currentWorkspaceCount = agency.workspaces.length;
-        return currentWorkspaceCount < (feature.maxLimit || 0);
+
+        console.log("currentWorkspaceCount", currentWorkspaceCount);
+        console.log("feature.maxLimit", feature.maxLimit);
+
+        return (
+          feature.maxLimit === INFINITE ||
+          currentWorkspaceCount < (feature.maxLimit || 0)
+        );
 
       default:
         throw new Error(`Feature code ${featureCode} is not supported`);

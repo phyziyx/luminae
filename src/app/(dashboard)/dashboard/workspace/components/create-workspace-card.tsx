@@ -1,5 +1,6 @@
+"use server";
+
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
+import { CreateWorkspaceButton } from "./create-workspace-button";
 
 interface CreateWorkspaceCardProps {
   created: number;
@@ -47,13 +49,7 @@ const CreateWorkspaceCard = async ({
         </CardDescription>
       </CardContent>
       <CardFooter className="gap-2">
-        <Button
-          variant={"default"}
-          disabled={isLimitReached}
-          className="w-full"
-        >
-          {t("CREATE_WORKSPACE")}
-        </Button>
+        <CreateWorkspaceButton disabled={isLimitReached} />
       </CardFooter>
     </Card>
   );
