@@ -41,6 +41,7 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
     mode: "onChange",
     resolver: zodResolver(formSchema),
     defaultValues: {
+      id: data?.id || "",
       name: data?.name || "",
       description: data?.description || "",
     },
@@ -51,7 +52,6 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
-      console.log("clicked 2", values);
       await onSubmit(values);
       toast({
         title: "Workspace information saved successfully",
@@ -88,7 +88,6 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((e) => {
-              console.log("clicked", e);
               return handleSubmit(e);
             })}
             className="space-y-4"

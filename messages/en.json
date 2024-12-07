@@ -106,6 +106,7 @@
     "CREATE_WORKSACE_DESCRIPTION": "Create a new workspace to collaborate with your team.",
     "VIEW": "View",
     "DELETE": "Delete",
+    "DELETING": "Deleting...",
     "EDIT": "Edit",
     "WORKSPACE_INFORMATION": "Workspace Information",
     "UPDATE_WORKSPACE_DESCRIPTION": "You can update the workspace information here.",

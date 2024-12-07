@@ -35,7 +35,6 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import useIsMounted from "@/hooks/use-mounted";
 import { cn } from "@/lib/utils";
 import { UserButton } from "@clerk/nextjs";
 import { Agency, Workspace, Role } from "@prisma/client";
@@ -184,11 +183,7 @@ const PickerItem = ({
 };
 
 const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
-  const isMounted = useIsMounted();
   const t = useTranslations();
-  // const { openModal } = useModal();
-
-  if (!isMounted) return null;
 
   return (
     <>
@@ -237,7 +232,7 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
               {/* Workspaces */}
               <CommandSeparator />
               <CommandGroup heading={t("WORKSPACES")}>
-                {workspaces.length > 0
+                {workspaces && workspaces.length > 0
                   ? workspaces.map((e) => (
                       <PickerItem
                         key={e.id}

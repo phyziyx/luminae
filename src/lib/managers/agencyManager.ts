@@ -122,6 +122,19 @@ class AgencyManager {
   }
 
   /**
+   * @param workspaceId workspace id
+   * @returns deleted workspace
+   */
+  public static async deleteWorkspace(agencyId: string, workspaceId: string) {
+    return await prisma.workspace.delete({
+      where: {
+        id: workspaceId,
+        agencyId: agencyId,
+      },
+    });
+  }
+
+  /**
    * Find user agency
    * @param id agency id
    * @returns agency

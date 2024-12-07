@@ -7,8 +7,6 @@ import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
 const onSubmit = async (values: z.infer<typeof formSchema>) => {
-  console.log("values", values);
-
   const user = await currentUser();
 
   if (!user) {
@@ -19,8 +17,6 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
   const workspaceId = values.id;
 
   try {
-    console.log(values);
-
     const agency = await AgencyManager.findUserAgency(
       user.emailAddresses[0].emailAddress
     );
