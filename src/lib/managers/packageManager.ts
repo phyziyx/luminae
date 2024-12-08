@@ -1,48 +1,5 @@
 import prisma from "../db";
 
-// const pricingTiers: PricingCard[] = [
-//   {
-//     title: "Starter",
-//     monthlyPrice: 0,
-//     popular: false,
-//     features: [
-//       "Up to 3 team members",
-//       "Community Access",
-//       "5GB storage",
-//       "Basic integrations",
-//       "Email support",
-//     ],
-//   },
-//   {
-//     title: "Professional",
-//     monthlyPrice: 29,
-//     popular: true,
-//     features: [
-//       "Up to 15 team members",
-//       "Unlimited projects",
-//       "50GB storage",
-//       "Advanced integrations",
-//       "Priority email support",
-//       "Task automation",
-//     ],
-//   },
-//   {
-//     title: "Enterprise",
-//     monthlyPrice: 99,
-//     popular: false,
-//     features: [
-//       "Unlimited team members",
-//       "Unlimited projects",
-//       "500GB storage",
-//       "All integrations",
-//       "Dedicated account manager",
-//       "Phone support",
-//       "Custom onboarding",
-//       "API access",
-//     ],
-//   },
-// ];
-
 class PackageManager {
   public static FREE_PLAN_PRICE_ID = "FREE";
 

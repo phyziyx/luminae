@@ -239,7 +239,6 @@ class AgencyManager {
    * @param featureCode feature code
    * @returns true if the agency can use the feature, false otherwise.
    */
-
   public static async canUseFeature(
     agencyId: string,
     featureCode: FeatureCode
@@ -301,6 +300,52 @@ class AgencyManager {
           feature.maxLimit === INFINITE ||
           currentWorkspaceCount < (feature.maxLimit || 0)
         );
+
+      default:
+        throw new Error(`Feature code ${featureCode} is not supported`);
+    }
+  }
+
+  public static async getFeatureMaxCount(
+    agencyId: string,
+    featureCode: FeatureCode
+  ) {
+    const agency = await prisma.agency.findUnique({
+      where: { id: agencyId },
+      include: {
+        subscription: {
+          include: {
+            package: {
+              include: {
+                features: true,
+              },
+            },
+          },
+        },
+        agencyMembers: true,
+        invitations: true,
+        workspaces: true,
+      },
+    });
+
+    if (!agency || !agency.subscription) {
+      throw new Error("Agency or subscription not found");
+    }
+
+    const feature = agency.subscription.package.features.find(
+      (feature) => feature.code === featureCode
+    );
+
+    if (!feature) {
+      throw new Error(`${featureCode} feature not found in the package`);
+    }
+
+    switch (featureCode) {
+      case "TEAM_MEMBERS":
+        return feature.maxLimit;
+
+      case "WORKSPACE":
+        return feature.maxLimit;
 
       default:
         throw new Error(`Feature code ${featureCode} is not supported`);

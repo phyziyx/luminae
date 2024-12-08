@@ -52,9 +52,13 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
-      await onSubmit(values);
+      const result = await onSubmit(values);
+
+      console.log(result);
+
       toast({
-        title: "Workspace information saved successfully",
+        title: result?.error || "Workspace information saved successfully",
+        variant: result?.error ? "destructive" : "default",
       });
     } catch {
       toast({

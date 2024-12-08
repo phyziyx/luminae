@@ -8,6 +8,7 @@ import { getTranslations } from "next-intl/server";
 import AgencyManager from "@/lib/managers/agencyManager";
 import WorkspaceCard from "./components/workspace-card";
 import CreateWorkspaceCard from "./components/create-workspace-card";
+import SubscriptionManager from "@/lib/managers/subscriptionManager";
 
 const Workspaces = async () => {
   const { userId } = await auth();
@@ -21,7 +22,15 @@ const Workspaces = async () => {
 
   const email = user.emailAddresses[0].emailAddress;
   const agencyMember = await AgencyManager.findUserAgency(email);
+
+  if (!agencyMember) {
+    return <div>You are not a member of any agency.</div>;
+  }
+
   const workspaces = await AgencyManager.findAndFilterWorkspaces(email);
+  const subscribedPackage = await SubscriptionManager.findByAgency(
+    agencyMember.agencyId
+  );
 
   // workspaces = [
   //   {
@@ -66,8 +75,21 @@ const Workspaces = async () => {
   //   },
   // ];
 
+  if (!subscribedPackage) {
+    console.error("Unreachable code");
+    return (
+      <div>
+        If you are seeing this, something went wrong terribly! (Just Kidding)
+      </div>
+    );
+  }
+
   const created = workspaces.length;
-  const max = 5;
+  const max =
+    (await AgencyManager.getFeatureMaxCount(
+      agencyMember.agencyId,
+      "WORKSPACE"
+    )) || -1;
 
   return (
     <>

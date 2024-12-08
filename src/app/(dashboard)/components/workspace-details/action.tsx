@@ -9,6 +9,8 @@ import { revalidatePath } from "next/cache";
 const onSubmit = async (values: z.infer<typeof formSchema>) => {
   const user = await currentUser();
 
+  let error = "An error occurred while saving the workspace information";
+
   if (!user) {
     console.error("A user who is not authenticated tried to create an agency.");
     return;
@@ -24,8 +26,9 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // There is no agency associated with this account,
     // so this action cannot take place.
     if (!agency) {
-      console.error("User does not have an agency.");
-      return;
+      error = "User does not have an agency.";
+
+      return { error };
     }
 
     const agencyId = agency.agency.id;
@@ -41,8 +44,8 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
       });
 
       if (!workspace) {
-        console.error("Failed to update workspace");
-        return;
+        error = "Failed to update workspace";
+        return { error };
       }
     } else {
       const available = await AgencyManager.canUseFeature(
@@ -50,8 +53,8 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
         "WORKSPACE"
       );
       if (!available) {
-        console.error("User does not have permission to create a workspace.");
-        return;
+        error = `You can not create more workspaces.  Limit reached.`;
+        return { error };
       }
 
       const workspace = await AgencyManager.createWorkspace({
@@ -61,18 +64,24 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
       });
 
       if (!workspace) {
-        console.error("Failed to create workspace");
-        return;
+        error = "Failed to create workspace";
+        return { error };
       }
     }
 
-    // Revalidate the cache
-    revalidatePath("/dashboard", "page");
-  } catch (error) {
-    console.error("Failed to update agency", error);
+    error = "";
+  } catch (err) {
+    error =
+      "An error occurred while attempting to create or update the workspace.";
+    console.error(err);
   }
 
-  return;
+  // Revalidate the cache
+  revalidatePath("/dashboard", "page");
+
+  return {
+    error,
+  };
 };
 
 export default onSubmit;
