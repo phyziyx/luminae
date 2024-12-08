@@ -12,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontalIcon } from "lucide-react";
+import { useModal } from "@/providers/modal-provider"; // Import modal hook
+import CustomModal from "@/components/site/custom-modal"; // Import custom modal
 
 // Define team member data type
 export type TeamMember = {
@@ -66,6 +68,7 @@ export const columns: ColumnDef<TeamMember>[] = [
     header: "Actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const { openModal } = useModal(); // Access modal functions
       const member = row.original;
 
       return (
@@ -79,12 +82,25 @@ export const columns: ColumnDef<TeamMember>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
+              onClick={() =>
+                openModal(
+                  <CustomModal
+                    title="Edit Details"
+                    caption="View or edit the details of the selected team member."
+                  >
+                    <div>{/* TODO: Add form fields here in the future */}</div>
+                  </CustomModal>
+                )
+              }
+            >
+              View details
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(member.email)}
             >
               Copy email
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
