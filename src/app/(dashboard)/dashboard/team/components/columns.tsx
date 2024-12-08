@@ -89,49 +89,11 @@ export const columns: ColumnDef<TeamMember>[] = [
                     caption="Manage workspaces and roles for this team member."
                   >
                     <div className="space-y-4">
-                      {/* Workspaces Section */}
-                      <p>Workspaces: 3</p>  
-                      <input
-                        type="text"
-                        placeholder="Search workspaces..."
-                        className="w-full p-2 border rounded"
-                      />
-                      <div className="h-48 overflow-y-auto border rounded p-2">
-                        {["Workspace 1", "Workspace 2", "Workspace 3", "Workspace 4", "Workspace 5"].map(
-                          (workspace) => (
-                            <div
-                              key={workspace}
-                              className="flex justify-between items-center p-2 border-b"
-                            >
-                              <span>{workspace}</span>
-                              <label className="flex items-center gap-2">
-                                Manager?
-                                <input type="checkbox" />
-                              </label>
-                            </div>
-                          )
-                        )}
-                      </div>
-
-                      {/* Horizontal Line */}
-                      <hr className="border-t border-gray-300" />
-
-                      {/* Assign Workspace Section */}
-                      <div className="space-y-2">
-                        <h2 className="text-lg font-semibold">
-                          Assign Workspace
-                        </h2>
-                        <p>Select workspace</p>
-                      </div>
-
-                      {/* Horizontal Line */}
-                      <hr className="border-t border-gray-300" />
-
                       {/* Assign Role Section */}
                       <div className="space-y-2">
                         <h2 className="text-lg font-semibold">Assign Role</h2>
                         <div className="flex items-center justify-between">
-                          <p>Select role</p>
+                          <p>Select Role:</p>
                           <select
                             className="p-2 border rounded"
                             defaultValue=""
@@ -143,6 +105,48 @@ export const columns: ColumnDef<TeamMember>[] = [
                             <option value="Team Member">Team Member</option>
                           </select>
                         </div>
+                      </div>
+
+                      {/* Horizontal Line */}
+                      <hr className="border-t border-gray-300" />
+
+                      {/* Workspaces Section */}
+                      <p>Workspaces Assigned: 3</p>
+                      <input
+                        type="text"
+                        placeholder="Search workspaces..."
+                        className="w-full p-2 border rounded"
+                      />
+                      <div className="h-48 overflow-y-auto border rounded p-2">
+                        {[
+                          "Workspace 1",
+                          "Workspace 2",
+                          "Workspace 3",
+                          "Workspace 4",
+                          "Workspace 5",
+                        ].map((workspace) => (
+                          <div
+                            key={workspace}
+                            className="flex justify-between items-center p-2 border-b"
+                          >
+                            <span>{workspace}</span>
+                            <label className="flex items-center gap-2 text-xs">
+                              Is Workspace Manager?
+                              <input type="checkbox" />
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Horizontal Line */}
+                      <hr className="border-t border-gray-300" />
+
+                      {/* Assign Workspace Section */}
+                      <div className="space-y-2">
+                        <h2 className="text-lg font-semibold">
+                          Assign Workspace
+                        </h2>
+                        <p>Select Workspace:</p>
                       </div>
                     </div>
                   </CustomModal>
