@@ -4,7 +4,7 @@ import AgencyManager from "@/lib/managers/agencyManager";
 import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-export const deleteWorkspace = async (workspaceId: string, _prevState: any) => {
+export const deleteWorkspace = async (workspaceId: string) => {
   try {
     const user = await currentUser();
 
