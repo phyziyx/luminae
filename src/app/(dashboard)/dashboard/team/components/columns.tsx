@@ -86,9 +86,65 @@ export const columns: ColumnDef<TeamMember>[] = [
                 openModal(
                   <CustomModal
                     title="Edit Details"
-                    caption="View or edit the details of the selected team member."
+                    caption="Manage workspaces and roles for this team member."
                   >
-                    <div>{/* TODO: Add form fields here in the future */}</div>
+                    <div className="space-y-4">
+                      {/* Workspaces Section */}
+                      <p>Workspaces: 3</p>  
+                      <input
+                        type="text"
+                        placeholder="Search workspaces..."
+                        className="w-full p-2 border rounded"
+                      />
+                      <div className="h-48 overflow-y-auto border rounded p-2">
+                        {["Workspace 1", "Workspace 2", "Workspace 3", "Workspace 4", "Workspace 5"].map(
+                          (workspace) => (
+                            <div
+                              key={workspace}
+                              className="flex justify-between items-center p-2 border-b"
+                            >
+                              <span>{workspace}</span>
+                              <label className="flex items-center gap-2">
+                                Manager?
+                                <input type="checkbox" />
+                              </label>
+                            </div>
+                          )
+                        )}
+                      </div>
+
+                      {/* Horizontal Line */}
+                      <hr className="border-t border-gray-300" />
+
+                      {/* Assign Workspace Section */}
+                      <div className="space-y-2">
+                        <h2 className="text-lg font-semibold">
+                          Assign Workspace
+                        </h2>
+                        <p>Select workspace</p>
+                      </div>
+
+                      {/* Horizontal Line */}
+                      <hr className="border-t border-gray-300" />
+
+                      {/* Assign Role Section */}
+                      <div className="space-y-2">
+                        <h2 className="text-lg font-semibold">Assign Role</h2>
+                        <div className="flex items-center justify-between">
+                          <p>Select role</p>
+                          <select
+                            className="p-2 border rounded"
+                            defaultValue=""
+                          >
+                            <option value="" disabled>
+                              Choose a role
+                            </option>
+                            <option value="Agency Admin">Agency Admin</option>
+                            <option value="Team Member">Team Member</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
                   </CustomModal>
                 )
               }
