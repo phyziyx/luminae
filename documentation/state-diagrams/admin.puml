@@ -1,0 +1,14 @@
+@startuml
+hide empty description
+
+[*] --> Dashboard
+
+state "Admin Dashboard" as Dashboard {
+    [*] --> ChooseAction : Decide Action
+    ChooseAction --> ManageAgencies : Manage Agencies
+    ChooseAction --> UserManagement : Manage Users
+}
+
+Dashboard --> Logout : Exit Admin Panel
+Logout --> [*]
+@enduml

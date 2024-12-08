@@ -1,0 +1,39 @@
+@startuml
+component "Agency Owner Dashboard" as AgencyOwner
+
+package "Agency Owner Dashboard" {
+    component "Authentication" as Authentication
+    component "KPI Viewer" as KPIs
+    component "Notifications" as Notifications
+    component "Subscription Manager" as SubscriptionManager
+    component "Client Management" as ClientManagement
+    component "Team Management" as TeamManagement
+    component "Workspace Management" as WorkspaceManagement
+}
+
+database "Database" as DB
+
+package "External Services" {
+  component "Clerk" as Clerk
+  component "Stripe" as Stripe
+}
+
+AgencyOwner ..(0-- Authentication: Authenticates
+AgencyOwner ..(0-- KPIs : View
+AgencyOwner ..(0-- Notifications : View
+AgencyOwner ..(0-- SubscriptionManager : Manages
+AgencyOwner ..(0-- ClientManagement : Manages 
+AgencyOwner ..(0-- TeamManagement : Manages
+AgencyOwner ..(0-- WorkspaceManagement : Manages
+
+Authentication --(0-- DB: Fetch/Store Data
+Authentication --(0-- Clerk: Fetch/Store Data
+KPIs --(0-- DB : Fetch Data
+Notifications --(0-- DB : Fetch/Store Data
+SubscriptionManager --(0-- Stripe : Process Payment
+SubscriptionManager --(0-- DB : Fetch/Store Data
+ClientManagement --(0-- DB : Fetch/Store Data
+TeamManagement --(0-- DB : Fetch/Store Data
+WorkspaceManagement --(0-- DB : Fetch/Store Data
+
+@enduml

@@ -1,0 +1,12 @@
+@startuml
+[*] --> GuestDashboard : Access Guest Dashboard
+
+state "Guest Dashboard" as GuestDashboard {
+    [*] --> BrowseForums : View Forum List
+    BrowseForums --> ViewPost : Open a Forum Post
+    ViewPost --> BrowseForums : Return to Forum List
+}
+
+GuestDashboard --> Logout : Exit Guest Session
+Logout --> [*]
+@enduml

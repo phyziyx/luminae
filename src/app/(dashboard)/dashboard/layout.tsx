@@ -42,8 +42,10 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   }
 
   const workspaces = await AgencyManager.findAndFilterWorkspaces(
-    agencyMember.agencyId
+    agencyMember.email
   );
+
+  console.log("workspaces", workspaces);
 
   return (
     <SidebarProvider

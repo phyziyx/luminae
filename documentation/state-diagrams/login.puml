@@ -1,0 +1,18 @@
+@startuml
+hide empty description
+
+[*] --> Login
+
+state "Login" as Login {
+    [*] --> EnterCredentials
+    EnterCredentials --> Authenticated : Valid Credentials
+    EnterCredentials --> LoginFailed : Invalid Credentials
+    LoginFailed --> EnterCredentials : Retry
+}
+
+Login --> AgencyOwnerDashboard : If Agency Owner
+Login --> TeamMemberDashboard : If Agency Team Member
+Login --> GuestDashboard : If Guest
+Login --> AdminDashboard : If (Luminae) Platform Admin
+
+@enduml

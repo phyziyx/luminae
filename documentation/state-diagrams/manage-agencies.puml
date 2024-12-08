@@ -1,0 +1,19 @@
+@startuml
+hide empty description
+
+[*] --> ManageAgencies : Access Agency Management Panel
+
+state "Manage Agencies" as ManageAgencies {
+    [*] --> ChooseAction : Decide Action
+    
+    ChooseAction --> ViewAgencies : View List of Agencies
+    ViewAgencies --> EditAgency : Edit Agency Details
+    ViewAgencies --> DeleteAgency : Delete an Agency
+    
+    ChooseAction --> VerificationRequests : Manage Verification Requests
+    VerificationRequests --> ApproveVerification : Approve Request
+    VerificationRequests --> RejectVerification : Reject Request
+}
+
+ManageAgencies --> [*] : Exit Agency Management
+@enduml
