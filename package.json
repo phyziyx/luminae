@@ -22,7 +22,7 @@
     "@clerk/clerk-react": "^5.15.5",
     "@clerk/elements": "^0.19.3",
     "@clerk/nextjs": "^6.3.4",
-    "@clerk/shared": "^2.14.0",
+    "@clerk/shared": "^2.19.3",
     "@clerk/themes": "^2.1.45",
     "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "^5.22.0",
