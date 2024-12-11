@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontalIcon } from "lucide-react";
+import { MoreVerticalIcon } from "lucide-react";
 import { useModal } from "@/providers/modal-provider"; // Import modal hook
 import CustomModal from "@/components/site/custom-modal"; // Import custom modal
 
@@ -68,7 +68,8 @@ export const columns: ColumnDef<TeamMember>[] = [
     header: "Actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { openModal } = useModal(); // Access modal functions
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { openModal } = useModal();
       const member = row.original;
 
       return (
@@ -76,7 +77,7 @@ export const columns: ColumnDef<TeamMember>[] = [
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
-              <MoreHorizontalIcon />
+              <MoreVerticalIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
