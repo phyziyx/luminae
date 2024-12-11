@@ -161,6 +161,17 @@ export const columns: ColumnDef<TeamMember>[] = [
             >
               Copy email
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              Set as On Break
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              Set as Removed
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              Remove from table
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
