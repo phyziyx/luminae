@@ -20,6 +20,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { UserPlus } from "lucide-react"; // Importing the icon
 import * as React from "react";
 import { DataTablePagination } from "@/components/site/pagination";
 
@@ -54,7 +56,8 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center justify-between py-4">
+        {/* Search Bar */}
         <Input
           placeholder="Filter by name or email..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
@@ -63,6 +66,13 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        {/* Invite Team Member Button */}
+        <Button
+          className="ml-4"
+          onClick={() => console.log("Invite Team Member clicked!")}
+        >
+          <UserPlus className="mr-2 h-4 w-4" /> Invite Team Member
+        </Button>
       </div>
       <div className="rounded-md border">
         <Table>
