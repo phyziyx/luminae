@@ -12,8 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVerticalIcon } from "lucide-react";
-import { useModal } from "@/providers/modal-provider"; // Import modal hook
-import CustomModal from "@/components/site/custom-modal"; // Import custom modal
+import { useModal } from "@/providers/modal-provider";
+import CustomModal from "@/components/site/custom-modal";
 
 // Define team member data type
 export type TeamMember = {
@@ -171,7 +171,7 @@ export const columns: ColumnDef<TeamMember>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              Remove from table
+              Delete from table
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

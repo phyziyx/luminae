@@ -19,9 +19,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { UserPlus } from "lucide-react"; // Importing the icon
+import { UserPlus } from "lucide-react";
+import { useModal } from "@/providers/modal-provider";
+import CustomModal from "@/components/site/custom-modal";
 import * as React from "react";
 import { DataTablePagination } from "@/components/site/pagination";
 
@@ -39,6 +48,8 @@ export function DataTable<TData, TValue>({
     []
   );
 
+  const { openModal } = useModal();
+
   const table = useReactTable({
     data,
     columns,
@@ -54,6 +65,46 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const handleInviteTeamMember = () => {
+    openModal(
+      <CustomModal
+        title="Invite a Team Member To Join"
+        caption="Send an invitation to a team member by email and assign their role in the agency."
+      >
+        <div className="space-y-4">
+          {/* Enter Email Field */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium">Enter Email:</label>
+            <Input type="email" placeholder="Enter team member's email" />
+          </div>
+
+          {/* Select Role Field */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium">Select Role:</label>
+            <Select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Choose a role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Agency Admin">Agency Admin</SelectItem>
+                <SelectItem value="Team Member">Team Member</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Send Invite Button */}
+          <div className="flex justify-end">
+            <Button
+              onClick={() => console.log("Invite Sent!")} // Add your logic here
+            >
+              Send Invite
+            </Button>
+          </div>
+        </div>
+      </CustomModal>
+    );
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between py-4">
@@ -67,10 +118,7 @@ export function DataTable<TData, TValue>({
           className="max-w-sm"
         />
         {/* Invite Team Member Button */}
-        <Button
-          className="ml-4"
-          onClick={() => console.log("Invite Team Member clicked!")}
-        >
+        <Button className="ml-4" onClick={handleInviteTeamMember}>
           <UserPlus className="mr-2 h-4 w-4" /> Invite Team Member
         </Button>
       </div>
