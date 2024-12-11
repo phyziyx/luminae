@@ -1,5 +1,6 @@
+"use server";
+
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getTranslations } from "next-intl/server";
+import { CreateWorkspaceButton } from "./create-workspace-button";
 
 interface CreateWorkspaceCardProps {
   created: number;
@@ -21,24 +23,26 @@ const CreateWorkspaceCard = async ({
 }: CreateWorkspaceCardProps) => {
   const t = await getTranslations();
 
-  const isLimitReached = created >= max;
+  const isInfinite = max === -1;
+  const isLimitReached = !isInfinite && created >= max;
 
   return (
     <Card className="gap-2 max-w-sm max-h-sm bg-white">
       <CardHeader>
         <CardTitle className="flex flex-row place-content-between">
           {t("WORKSPACE_DETAILS.CREATE_A_WORKSPACE")}
-          {isLimitReached ? (
-            <Badge variant={"destructive"}>
-              {t("WORKSPACE_DETAILS.NO_QUANTITY_LEFT")}
-            </Badge>
-          ) : (
-            <Badge variant={"default"}>
-              {t("WORKSPACE_DETAILS.QUANTITY_LEFT", {
-                QUANTITY: max - created,
-              })}
-            </Badge>
-          )}
+          {!isInfinite &&
+            (isLimitReached ? (
+              <Badge variant={"destructive"}>
+                {t("WORKSPACE_DETAILS.NO_QUANTITY_LEFT")}
+              </Badge>
+            ) : (
+              <Badge variant={"default"}>
+                {t("WORKSPACE_DETAILS.QUANTITY_LEFT", {
+                  QUANTITY: max - created,
+                })}
+              </Badge>
+            ))}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -47,13 +51,7 @@ const CreateWorkspaceCard = async ({
         </CardDescription>
       </CardContent>
       <CardFooter className="gap-2">
-        <Button
-          variant={"default"}
-          disabled={isLimitReached}
-          className="w-full"
-        >
-          {t("CREATE_WORKSPACE")}
-        </Button>
+        <CreateWorkspaceButton disabled={isLimitReached} />
       </CardFooter>
     </Card>
   );

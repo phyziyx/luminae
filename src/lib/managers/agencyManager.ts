@@ -86,6 +86,55 @@ class AgencyManager {
   }
 
   /**
+   * Create workspace
+   * @param workspace workspace data
+   * @returns created workspace
+   */
+  public static async createWorkspace(
+    workspace: Omit<Workspace, "id" | "createdAt" | "updatedAt">
+  ) {
+    return await prisma.workspace.create({
+      data: {
+        name: workspace.name,
+        agencyId: workspace.agencyId,
+        description: workspace.description,
+      },
+    });
+  }
+
+  /**
+   * Update workspace
+   * @param workspace workspace data
+   * @returns updated workspace
+   */
+  public static async updateWorkspace(
+    workspace: Omit<Workspace, "createdAt" | "updatedAt">
+  ) {
+    return await prisma.workspace.update({
+      where: {
+        id: workspace.id,
+      },
+      data: {
+        name: workspace.name,
+        description: workspace.description,
+      },
+    });
+  }
+
+  /**
+   * @param workspaceId workspace id
+   * @returns deleted workspace
+   */
+  public static async deleteWorkspace(agencyId: string, workspaceId: string) {
+    return await prisma.workspace.delete({
+      where: {
+        id: workspaceId,
+        agencyId: agencyId,
+      },
+    });
+  }
+
+  /**
    * Find user agency
    * @param id agency id
    * @returns agency
@@ -129,20 +178,20 @@ class AgencyManager {
   ) {
     if (!workspaces || workspaces.length === 0) return [];
 
+    // If the user is an agency admin or owner, return all workspaces
     if (
-      agencyMember.role === "AGENCY_ADMIN" ||
-      agencyMember.role === "AGENCY_OWNER"
+      [Role.AGENCY_ADMIN as string, Role.AGENCY_OWNER as string].includes(
+        agencyMember.role
+      )
     ) {
-      // No need to filter workspaces
-    } else {
-      workspaces = workspaces.filter((workspace) =>
-        agencyMember.permissions.some(
-          (permission) => permission.workspaceId === workspace.id
-        )
-      );
+      return workspaces;
     }
 
-    return workspaces;
+    return workspaces.filter((workspace) =>
+      agencyMember.permissions.some(
+        (permission) => permission.workspaceId === workspace.id
+      )
+    );
   }
 
   /**
@@ -190,11 +239,12 @@ class AgencyManager {
    * @param featureCode feature code
    * @returns true if the agency can use the feature, false otherwise.
    */
-
   public static async canUseFeature(
     agencyId: string,
     featureCode: FeatureCode
   ) {
+    const INFINITE = -1;
+
     const agency = await prisma.agency.findUnique({
       where: { id: agencyId },
       include: {
@@ -235,11 +285,67 @@ class AgencyManager {
           (invite) => invite.status === "ACCEPTED"
         ).length;
         const totalMembers = currentMemberCount + pendingInvitesCount;
-        return totalMembers < (feature.maxLimit || 0);
+        return (
+          feature.maxLimit === INFINITE ||
+          totalMembers < (feature.maxLimit || 0)
+        );
 
       case "WORKSPACE":
         const currentWorkspaceCount = agency.workspaces.length;
-        return currentWorkspaceCount < (feature.maxLimit || 0);
+
+        console.log("currentWorkspaceCount", currentWorkspaceCount);
+        console.log("feature.maxLimit", feature.maxLimit);
+
+        return (
+          feature.maxLimit === INFINITE ||
+          currentWorkspaceCount < (feature.maxLimit || 0)
+        );
+
+      default:
+        throw new Error(`Feature code ${featureCode} is not supported`);
+    }
+  }
+
+  public static async getFeatureMaxCount(
+    agencyId: string,
+    featureCode: FeatureCode
+  ) {
+    const agency = await prisma.agency.findUnique({
+      where: { id: agencyId },
+      include: {
+        subscription: {
+          include: {
+            package: {
+              include: {
+                features: true,
+              },
+            },
+          },
+        },
+        agencyMembers: true,
+        invitations: true,
+        workspaces: true,
+      },
+    });
+
+    if (!agency || !agency.subscription) {
+      throw new Error("Agency or subscription not found");
+    }
+
+    const feature = agency.subscription.package.features.find(
+      (feature) => feature.code === featureCode
+    );
+
+    if (!feature) {
+      throw new Error(`${featureCode} feature not found in the package`);
+    }
+
+    switch (featureCode) {
+      case "TEAM_MEMBERS":
+        return feature.maxLimit;
+
+      case "WORKSPACE":
+        return feature.maxLimit;
 
       default:
         throw new Error(`Feature code ${featureCode} is not supported`);

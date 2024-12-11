@@ -1,0 +1,15 @@
+@startuml
+hide empty description
+
+[*] --> Dashboard : Access Team Member Dashboard
+
+state "Dashboard" as Dashboard {
+    [*] --> ChooseAction : Decide Action
+    ChooseAction --> ViewNotifications : Check Notifications
+    ChooseAction --> CollaborateOnWorkspace : Collaborate in Workspaces
+    ChooseAction --> ManageAssignedTasks : Manage Assigned Tasks
+}
+
+Dashboard --> Logout : Exit Dashboard
+Logout --> [*]
+@enduml

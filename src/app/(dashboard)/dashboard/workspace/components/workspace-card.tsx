@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+"use server";
+
 import {
   Card,
   CardContent,
@@ -8,17 +9,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Workspace } from "@prisma/client";
-import { getTranslations } from "next-intl/server";
+import { WorkspaceButtons } from "./workspace-buttons";
 
 interface WorkspaceCardProps {
   workspace: Pick<Workspace, "id" | "name" | "description">;
 }
 
 const WorkspaceCard = async ({ workspace }: WorkspaceCardProps) => {
-  const t = await getTranslations();
-
   return (
-    <Card key={workspace.id} className="flex flex-col gap-2 max-w-sm bg-white">
+    <Card
+      key={workspace.id}
+      className="flex flex-col gap-2 max-w-sm bg-white dark:bg-muted/90"
+    >
       <CardHeader>
         <CardTitle className="flex flex-row place-content-between">
           {workspace.name}
@@ -28,15 +30,7 @@ const WorkspaceCard = async ({ workspace }: WorkspaceCardProps) => {
         <CardDescription>{workspace.description}</CardDescription>
       </CardContent>
       <CardFooter className="gap-2">
-        <Button variant={"default"} className="w-full">
-          {t("WORKSPACE_DETAILS.VIEW")}
-        </Button>
-        <Button variant={"secondary"} className="w-full">
-          {t("WORKSPACE_DETAILS.EDIT")}
-        </Button>
-        <Button variant={"destructive"} className="w-full">
-          {t("WORKSPACE_DETAILS.DELETE")}
-        </Button>
+        <WorkspaceButtons workspace={workspace} />
       </CardFooter>
     </Card>
   );

@@ -1,0 +1,23 @@
+@startuml
+hide empty description
+
+[*] --> ClientManagement : Open Client Management
+
+state "Client Management" as ClientManagement {
+    [*] --> ViewClientList : View List of Clients
+
+    ViewClientList --> AddNewClient : Add a New Client
+    AddNewClient --> SaveClientDetails : Save Client Information
+    SaveClientDetails --> ViewClientList : Return to Client List
+
+    ViewClientList --> EditClientDetails : Update Client Information
+    EditClientDetails --> SaveChanges : Save Updated Information
+    SaveChanges --> ViewClientList : Return to Client List
+
+    ViewClientList --> RemoveClient : Delete Client
+    RemoveClient --> ConfirmRemoval : Confirm Deletion
+    ConfirmRemoval --> ViewClientList : Return to Client List
+}
+
+ClientManagement --> [*] : Exit Client Management
+@enduml
