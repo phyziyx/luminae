@@ -19,13 +19,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { UserPlus } from "lucide-react";
@@ -33,6 +26,9 @@ import { useModal } from "@/providers/modal-provider";
 import CustomModal from "@/components/site/custom-modal";
 import * as React from "react";
 import { DataTablePagination } from "@/components/site/pagination";
+
+import { useTranslations } from "next-intl";
+import TeamInviteForm from "./team-invite/team-invite-form";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -47,6 +43,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const t = useTranslations();
 
   const { openModal } = useModal();
 
@@ -71,36 +68,7 @@ export function DataTable<TData, TValue>({
         title="Invite a Team Member To Join"
         caption="Send an invitation to a team member by email and assign their role in the agency."
       >
-        <div className="space-y-4">
-          {/* Enter Email Field */}
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">Enter Email:</label>
-            <Input type="email" placeholder="Enter team member's email" />
-          </div>
-
-          {/* Select Role Field */}
-          <div className="space-y-2">
-            <label className="block text-sm font-medium">Select Role:</label>
-            <Select>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Choose a role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Agency Admin">Agency Admin</SelectItem>
-                <SelectItem value="Team Member">Team Member</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Send Invite Button */}
-          <div className="flex justify-end">
-            <Button
-              onClick={() => console.log("Invite Sent!")} // Add your logic here
-            >
-              Send Invite
-            </Button>
-          </div>
-        </div>
+        <TeamInviteForm />
       </CustomModal>
     );
   };

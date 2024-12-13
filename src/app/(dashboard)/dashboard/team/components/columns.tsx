@@ -11,16 +11,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import { MoreVerticalIcon } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import CustomModal from "@/components/site/custom-modal";
+import { Input } from "@/components/ui/input";
+import { AgencyMember } from "@prisma/client";
+import { useTranslations } from "next-intl";
 
 // Define team member data type
 export type TeamMember = {
   id: string;
   name: string;
   email: string;
-  role: "Agency Admin" | "Team Member";
+  role: AgencyMember["role"];
   workspacesAssigned: number;
   status: "Active" | "On Break" | "Removed";
 };
@@ -52,6 +66,13 @@ export const columns: ColumnDef<TeamMember>[] = [
   {
     accessorKey: "role",
     header: "Role",
+    cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const t = useTranslations();
+      const role = row.getValue<TeamMember["role"]>("role");
+
+      return <span>{t(`ROLES.${role}`)}</span>;
+    },
   },
   {
     accessorKey: "status",
@@ -95,16 +116,23 @@ export const columns: ColumnDef<TeamMember>[] = [
                         <h2 className="text-lg font-semibold">Assign Role</h2>
                         <div className="flex items-center justify-between">
                           <p>Select Role:</p>
-                          <select
-                            className="p-2 border rounded"
-                            defaultValue=""
-                          >
-                            <option value="" disabled>
-                              Choose a role
-                            </option>
-                            <option value="Agency Admin">Agency Admin</option>
-                            <option value="Team Member">Team Member</option>
-                          </select>
+
+                          <Select>
+                            <SelectTrigger className="w-2/3">
+                              <SelectValue placeholder="Choose a role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>Roles</SelectLabel>
+                                <SelectItem value="agency_admin">
+                                  Agency Admin
+                                </SelectItem>
+                                <SelectItem value="team_member">
+                                  Team Member
+                                </SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
 
@@ -112,8 +140,11 @@ export const columns: ColumnDef<TeamMember>[] = [
                       <hr className="border-t border-gray-300" />
 
                       {/* Workspaces Section */}
-                      <p>Workspaces Assigned: 3</p>
-                      <input
+                      <div className="flex flex-row justify-between">
+                        <p>Workspaces Assigned:</p>
+                        <p className="font-semibold">3</p>
+                      </div>
+                      <Input
                         type="text"
                         placeholder="Search workspaces..."
                         className="w-full p-2 border rounded"
@@ -163,16 +194,10 @@ export const columns: ColumnDef<TeamMember>[] = [
               Copy email
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              Set as On Break
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              Set as Removed
-            </DropdownMenuItem>
+            <DropdownMenuItem>Set as On Break</DropdownMenuItem>
+            <DropdownMenuItem>Set as Removed</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              Delete from table
-            </DropdownMenuItem>
+            <DropdownMenuItem>Delete from table</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

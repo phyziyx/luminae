@@ -5,13 +5,14 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DataTable } from "./components/data-table";
 import { TeamMember, columns } from "./components/columns";
+import AgencyManager from "@/lib/managers/agencyManager";
 
 const data: TeamMember[] = [
   {
     id: "1",
     name: "Alice Johnson",
     email: "alice@example.com",
-    role: "Agency Admin",
+    role: "AGENCY_ADMIN",
     workspacesAssigned: 3,
     status: "Active",
   },
@@ -19,7 +20,7 @@ const data: TeamMember[] = [
     id: "2",
     name: "Bob Smith",
     email: "bob@example.com",
-    role: "Team Member",
+    role: "AGENCY_OWNER",
     workspacesAssigned: 5,
     status: "On Break",
   },
@@ -27,7 +28,7 @@ const data: TeamMember[] = [
     id: "3",
     name: "Charlie Davis",
     email: "charlie@example.com",
-    role: "Agency Admin",
+    role: "AGENCY_USER",
     workspacesAssigned: 2,
     status: "Removed",
   },
@@ -35,7 +36,7 @@ const data: TeamMember[] = [
     id: "4",
     name: "Diana Prince",
     email: "diana@example.com",
-    role: "Team Member",
+    role: "AGENCY_USER",
     workspacesAssigned: 4,
     status: "Active",
   },
@@ -44,7 +45,7 @@ const data: TeamMember[] = [
     id: "5",
     name: "Alice Johnson",
     email: "alice@example.com",
-    role: "Agency Admin",
+    role: "AGENCY_ADMIN",
     workspacesAssigned: 3,
     status: "Active",
   },
@@ -52,7 +53,7 @@ const data: TeamMember[] = [
     id: "6",
     name: "Bob Smith",
     email: "bob@example.com",
-    role: "Team Member",
+    role: "AGENCY_USER",
     workspacesAssigned: 5,
     status: "On Break",
   },
@@ -60,7 +61,7 @@ const data: TeamMember[] = [
     id: "7",
     name: "Charlie Davis",
     email: "charlie@example.com",
-    role: "Agency Admin",
+    role: "AGENCY_ADMIN",
     workspacesAssigned: 2,
     status: "Removed",
   },
@@ -68,7 +69,7 @@ const data: TeamMember[] = [
     id: "8",
     name: "Diana Prince",
     email: "diana@example.com",
-    role: "Team Member",
+    role: "AGENCY_USER",
     workspacesAssigned: 4,
     status: "Active",
   },
@@ -77,7 +78,7 @@ const data: TeamMember[] = [
     id: "9",
     name: "Alice Johnson",
     email: "alice@example.com",
-    role: "Agency Admin",
+    role: "AGENCY_ADMIN",
     workspacesAssigned: 3,
     status: "Active",
   },
@@ -85,7 +86,7 @@ const data: TeamMember[] = [
     id: "10",
     name: "Bob Smith",
     email: "bob@example.com",
-    role: "Team Member",
+    role: "AGENCY_USER",
     workspacesAssigned: 5,
     status: "On Break",
   },
@@ -93,7 +94,7 @@ const data: TeamMember[] = [
     id: "11",
     name: "Charlie Davis",
     email: "charlie@example.com",
-    role: "Agency Admin",
+    role: "AGENCY_ADMIN",
     workspacesAssigned: 2,
     status: "Removed",
   },
@@ -101,7 +102,7 @@ const data: TeamMember[] = [
     id: "12",
     name: "Diana Prince",
     email: "diana@example.com",
-    role: "Team Member",
+    role: "AGENCY_USER",
     workspacesAssigned: 4,
     status: "Active",
   },
@@ -110,7 +111,7 @@ const data: TeamMember[] = [
     id: "13",
     name: "Alice Johnson",
     email: "alice@example.com",
-    role: "Agency Admin",
+    role: "AGENCY_ADMIN",
     workspacesAssigned: 3,
     status: "Active",
   },
@@ -118,7 +119,7 @@ const data: TeamMember[] = [
     id: "14",
     name: "Bob Smith",
     email: "bob@example.com",
-    role: "Team Member",
+    role: "AGENCY_USER",
     workspacesAssigned: 5,
     status: "On Break",
   },
@@ -126,7 +127,7 @@ const data: TeamMember[] = [
     id: "15",
     name: "Charlie Davis",
     email: "charlie@example.com",
-    role: "Agency Admin",
+    role: "AGENCY_ADMIN",
     workspacesAssigned: 2,
     status: "Removed",
   },
@@ -134,7 +135,7 @@ const data: TeamMember[] = [
     id: "16",
     name: "Diana Prince",
     email: "diana@example.com",
-    role: "Team Member",
+    role: "AGENCY_USER",
     workspacesAssigned: 4,
     status: "Active",
   },
@@ -147,6 +148,22 @@ const Team = async () => {
   if (!userId || !user) {
     return <div>Not authenticated!</div>;
   }
+
+  const email = user.emailAddresses[0].emailAddress;
+  const agencyMember = await AgencyManager.findUserAgency(email);
+
+  if (!agencyMember) {
+    return <div>Not part of an agency!</div>;
+  }
+
+  const members = await AgencyManager.findAgencyMembers(agencyMember?.agencyId);
+  const data = members.map((member) => ({
+    id: member.id,
+    name: "to-do",
+    email: member.email,
+    role: member.role,
+    status: "ACTIVE",
+  }));
 
   return (
     <>
