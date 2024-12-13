@@ -17,9 +17,13 @@ const onCreateInvite = async (values: z.infer<typeof formSchema>) => {
     return;
   }
 
-  if (!values || !values.email || !values.role) {
-    return;
+  const validatedFields = formSchema.safeParse(values);
+  if (!validatedFields.success) {
+    error = "Invalid fields provided.";
+    return { error };
   }
+
+  const { email, role } = validatedFields.data;
 
   const agency = await AgencyManager.findUserAgency(
     user.emailAddresses[0].emailAddress
@@ -29,8 +33,6 @@ const onCreateInvite = async (values: z.infer<typeof formSchema>) => {
     error = "User does not have an agency.";
     return { error };
   }
-
-  const { email, role } = values;
 
   try {
     const invitation = await AgencyManager.isInvitationCreated(email);
