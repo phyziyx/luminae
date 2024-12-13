@@ -8,6 +8,7 @@ import {
 } from "@prisma/client";
 import prisma from "../db";
 import { v7 } from "uuid";
+import { clerkClient } from "@clerk/nextjs/server";
 
 type CreateAgency = Omit<
   Agency,
@@ -64,6 +65,34 @@ class AgencyManager {
     }
 
     return null;
+  }
+
+  public static async createInvitation(
+    email: string,
+    agencyId: string,
+    role: Role
+  ) {
+    const clerk = await clerkClient();
+
+    const response = await clerk.invitations.createInvitation({
+      emailAddress: email,
+      redirectUrl: `${process.env.NEXT_PUBLIC_URL}${process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL}`,
+      notify: true,
+      ignoreExisting: true,
+    });
+
+    if (!response) {
+      throw new Error("An error occurred while sending an invite.");
+    }
+
+    return await prisma.invitation.create({
+      data: {
+        email,
+        agencyId,
+        role,
+        status: "PENDING",
+      },
+    });
   }
 
   public static async updateAgency(agency: UpdateAgency) {
@@ -147,6 +176,14 @@ class AgencyManager {
       include: {
         agency: true,
         permissions: true,
+      },
+    });
+  }
+
+  public static async findAgencyMembers(agencyId: string) {
+    return await prisma.agencyMember.findMany({
+      where: {
+        agencyId,
       },
     });
   }
@@ -304,6 +341,16 @@ class AgencyManager {
       default:
         throw new Error(`Feature code ${featureCode} is not supported`);
     }
+  }
+
+  public static async isInvitationCreated(email: string) {
+    const invitation = await prisma.invitation.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    return !!invitation;
   }
 
   public static async getFeatureMaxCount(

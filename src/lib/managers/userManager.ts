@@ -54,6 +54,11 @@ class UserManager {
     ).count;
   }
 
+  /**
+   * Find if the user exists in the database
+   * @param email user email
+   * @returns user
+   */
   public static async findUser(email: string) {
     return await prisma.user.findFirst({
       where: {

@@ -164,5 +164,15 @@
     "TEAM_MEMBERS": "Team Members"
   },
 
+  "ROLES": {
+    "AGENCY_OWNER": "Agency Owner",
+    "AGENCY_ADMIN": "Agency Admin",
+    "AGENCY_USER": "Team Member"
+  },
+
+  "INVITATION": {
+    "SEND_INVITE": "Send Invite"
+  },
+
   "AN_ERROR_OCCURRED": "An error occurred!"
 }
