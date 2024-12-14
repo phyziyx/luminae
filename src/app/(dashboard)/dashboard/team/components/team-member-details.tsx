@@ -1,113 +1,41 @@
 "use client";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { useTranslations } from "next-intl";
+import { useState } from "react";
+import TeamMemberDetailsForm from "./team-member-details/form";
+import { LoadingSpinner } from "@/components/site/loading-spinner";
 
 interface TeamMemberDetailsProps {
-  member: TeamMember;
+  memberId: string;
 }
 
-export default function TeamMemberDetails({ member }: TeamMemberDetailsProps) {
-  const t = useTranslations();
+export default function TeamMemberDetails({
+  memberId,
+}: TeamMemberDetailsProps) {
+  // fake data over here
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState({
+    id: "123",
+    name: "John Doe",
+    email: "",
+    workspaces: [
+      { id: "abc", name: "Workspace 1" },
+      { id: "abcd", name: "Workspace 2" },
+      { id: "abcde", name: "Workspace 3" },
+      { id: "abcdef", name: "Workspace 4" },
+      { id: "abcdefg", name: "Workspace 5" },
+    ],
+  });
 
-  const workspaces = await getWorkspaces();
+  // const { data, error } = useSWR("/api/team-member-details", {
+  //   body: JSON.stringify({ memberId }),
+  // });
+
+  // if (error) return <div>Failed to load</div>
+  // if (!data) return <div>Loading...</div>
 
   return (
-    <div className="space-y-4">
-      {/* Assign Role Section */}
-      <div className="space-y-2">
-        <h2 className="text-lg font-semibold">Assign Role</h2>
-        <div className="flex items-center justify-between">
-          <p>Select Role:</p>
-
-          <Select>
-            <SelectTrigger className="w-2/3">
-              <SelectValue placeholder="Choose a role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Roles</SelectLabel>
-                <SelectItem value="agency_admin">Agency Admin</SelectItem>
-                <SelectItem value="team_member">Team Member</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {/* Horizontal Line */}
-      <hr className="border-t border-gray-300" />
-
-      {/* Workspaces Section */}
-      <div className="flex flex-row justify-between">
-        <p>Workspaces Assigned:</p>
-        <p className="font-semibold">3</p>
-      </div>
-      <Input
-        type="text"
-        placeholder="Search workspaces..."
-        className="w-full p-2 border rounded"
-      />
-      <div className="h-48 overflow-y-auto border rounded p-2">
-        {[
-          "Workspace 1",
-          "Workspace 2",
-          "Workspace 3",
-          "Workspace 4",
-          "Workspace 5",
-        ].map((workspace) => (
-          <div
-            key={workspace}
-            className="flex justify-between items-center p-2 border-b"
-          >
-            <span>{workspace}</span>
-            <label className="flex items-center gap-2 text-xs">
-              Is Workspace Manager?
-              <input type="checkbox" />
-            </label>
-          </div>
-        ))}
-      </div>
-
-      {/* Horizontal Line */}
-      <hr className="border-t border-gray-300" />
-
-      {/* Assign Workspace Section */}
-      <div className="space-y-2">
-        <h2 className="text-lg font-semibold">Assign Workspace</h2>
-        <p>Select Workspace:</p>
-        <Command>
-          <CommandInput placeholder={t("SEARCH_IN_AGENCY")} />
-          <CommandList className="pb-16">
-            <CommandEmpty>{t("NO_RESULTS_FOUND")}</CommandEmpty>
-
-            <CommandGroup heading={t("WORKSPACES")}>
-              {workspaces && workspaces.length > 0
-                ? workspaces.map((e) => (
-                    <CommandItem key={e.id}>{e.name}</CommandItem>
-                  ))
-                : t("NO_WORKSPACES_FOUND")}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </div>
-    </div>
+    <>
+      {isLoading ? <LoadingSpinner /> : <TeamMemberDetailsForm data={data} />}
+    </>
   );
 }

@@ -12,22 +12,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 import { MoreVerticalIcon } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import CustomModal from "@/components/site/custom-modal";
-import { Input } from "@/components/ui/input";
 import { AgencyMember } from "@prisma/client";
 import { useTranslations } from "next-intl";
+import TeamMemberDetails from "./team-member-details";
 
 // Define team member data type
 export type TeamMember = {
@@ -110,77 +100,7 @@ export const columns: ColumnDef<TeamMember>[] = [
                     title="Edit Details"
                     caption="Manage workspaces and roles for this team member."
                   >
-                    <div className="space-y-4">
-                      {/* Assign Role Section */}
-                      <div className="space-y-2">
-                        <h2 className="text-lg font-semibold">Assign Role</h2>
-                        <div className="flex items-center justify-between">
-                          <p>Select Role:</p>
-
-                          <Select>
-                            <SelectTrigger className="w-2/3">
-                              <SelectValue placeholder="Choose a role" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectLabel>Roles</SelectLabel>
-                                <SelectItem value="agency_admin">
-                                  Agency Admin
-                                </SelectItem>
-                                <SelectItem value="team_member">
-                                  Team Member
-                                </SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-
-                      {/* Horizontal Line */}
-                      <hr className="border-t border-gray-300" />
-
-                      {/* Workspaces Section */}
-                      <div className="flex flex-row justify-between">
-                        <p>Workspaces Assigned:</p>
-                        <p className="font-semibold">3</p>
-                      </div>
-                      <Input
-                        type="text"
-                        placeholder="Search workspaces..."
-                        className="w-full p-2 border rounded"
-                      />
-                      <div className="h-48 overflow-y-auto border rounded p-2">
-                        {[
-                          "Workspace 1",
-                          "Workspace 2",
-                          "Workspace 3",
-                          "Workspace 4",
-                          "Workspace 5",
-                        ].map((workspace) => (
-                          <div
-                            key={workspace}
-                            className="flex justify-between items-center p-2 border-b"
-                          >
-                            <span>{workspace}</span>
-                            <label className="flex items-center gap-2 text-xs">
-                              Is Workspace Manager?
-                              <input type="checkbox" />
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Horizontal Line */}
-                      <hr className="border-t border-gray-300" />
-
-                      {/* Assign Workspace Section */}
-                      <div className="space-y-2">
-                        <h2 className="text-lg font-semibold">
-                          Assign Workspace
-                        </h2>
-                        <p>Select Workspace:</p>
-                      </div>
-                    </div>
+                    <TeamMemberDetails memberId={member.id} />
                   </CustomModal>
                 )
               }
