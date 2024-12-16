@@ -12,12 +12,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { getTranslations } from "next-intl/server";
+
 import { MoreVerticalIcon } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import CustomModal from "@/components/site/custom-modal";
 import { AgencyMember } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import TeamMemberDetails from "./team-member-details";
+
+const t = await getTranslations();
 
 // Define team member data type
 export type TeamMember = {
@@ -87,12 +91,12 @@ export const columns: ColumnDef<TeamMember>[] = [
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
               <MoreVerticalIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() =>
                 openModal(
@@ -105,19 +109,19 @@ export const columns: ColumnDef<TeamMember>[] = [
                 )
               }
             >
-              View details
+              {t("ACTIONS.VIEW_DETAILS")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(member.email)}
             >
-              Copy email
+              {t("ACTIONS.COPY_EMAIL")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Set as On Break</DropdownMenuItem>
-            <DropdownMenuItem>Set as Removed</DropdownMenuItem>
+            <DropdownMenuItem>{t("ACTIONS.SET_AS_ON_BREAK")}</DropdownMenuItem>
+            <DropdownMenuItem>{t("ACTIONS.SET_AS_REMOVED")}</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Delete from table</DropdownMenuItem>
+            <DropdownMenuItem>{t("ACTIONS.DELETE_FROM_TABLE")}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

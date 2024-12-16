@@ -6,6 +6,10 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DataTable } from "./components/data-table";
 import { TeamMember, columns } from "./components/columns";
 import AgencyManager from "@/lib/managers/agencyManager";
+import { getTranslations } from "next-intl/server";
+
+
+const t = await getTranslations({ locale: "en" });
 
 const data: TeamMember[] = [
   {
@@ -146,14 +150,14 @@ const Team = async () => {
   const user = await currentUser();
 
   if (!userId || !user) {
-    return <div>Not authenticated!</div>;
+    return <div>{t("ERROR_MESSAGES.NOT_AUTHENTICATED")}</div>;
   }
 
   const email = user.emailAddresses[0].emailAddress;
   const agencyMember = await AgencyManager.findUserAgency(email);
 
   if (!agencyMember) {
-    return <div>Not part of an agency!</div>;
+    return <div>{t("ERROR_MESSAGES.NOT_PART_OF_AGENCY")}</div>;
   }
 
   const members = await AgencyManager.findAgencyMembers(agencyMember?.agencyId);
@@ -170,7 +174,7 @@ const Team = async () => {
       <header className="flex h-16 items-center px-4">
         <SidebarTrigger />
         <Separator orientation="vertical" className="mx-2 h-4" />
-        <h1 className="text-3xl font-semibold">Team Members</h1>
+        <h1 className="text-3xl font-semibold">{t("INVITE_TEAM_MEMBER.TEAM_MEMBER")}</h1>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4">
         <DataTable columns={columns} data={data} />

@@ -87,7 +87,7 @@ export function DataTable<TData, TValue>({
         />
         {/* Invite Team Member Button */}
         <Button className="ml-4" onClick={handleInviteTeamMember}>
-          <UserPlus className="mr-2 h-4 w-4" /> Invite Team Member
+          <UserPlus className="mr-2 h-4 w-4" /> {t("INVITE_TEAM_MEMBER.HEADER")}
         </Button>
       </div>
       <div className="rounded-md border">
