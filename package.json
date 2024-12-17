@@ -16,12 +16,11 @@
     "react-is": "^19.0.0"
   },
   "dependencies": {
-    "@clerk/backend": "^1.21.0",
-    "@clerk/clerk-react": "^5.20.0",
-    "@clerk/elements": "^0.19.9",
-    "@clerk/nextjs": "^6.9.0",
-    "@clerk/shared": "^2.20.0",
-    "@clerk/themes": "^2.2.0",
+    "@clerk/backend": "^1.21.2",
+    "@clerk/elements": "^0.22.2",
+    "@clerk/nextjs": "^6.9.3",
+    "@clerk/shared": "^2.20.2",
+    "@clerk/themes": "^2.2.2",
     "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-accordion": "^1.2.1",
@@ -86,7 +85,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@clerk/types": "^4.39.2",
+    "@clerk/types": "^4.39.4",
     "@types/node": "^22",
     "@types/react": "npm:types-react@^19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@^19.0.0-rc.1",
