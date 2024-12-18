@@ -8,6 +8,7 @@ import { TeamMember, columns } from "./components/columns";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { getTranslations } from "next-intl/server";
 
+import { Suspense } from "react";
 
 const t = await getTranslations({ locale: "en" });
 
@@ -174,10 +175,14 @@ const Team = async () => {
       <header className="flex h-16 items-center px-4">
         <SidebarTrigger />
         <Separator orientation="vertical" className="mx-2 h-4" />
-        <h1 className="text-3xl font-semibold">{t("INVITE_TEAM_MEMBER.TEAM_MEMBER")}</h1>
+        <h1 className="text-3xl font-semibold">
+          {t("INVITE_TEAM_MEMBER.TEAM_MEMBER")}
+        </h1>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <DataTable columns={columns} data={data} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <DataTable columns={columns} data={data} />
+        </Suspense>
       </div>
     </>
   );

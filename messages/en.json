@@ -180,11 +180,6 @@
     "ROLES": "Roles"
   },
 
-  "WORKSPACES_MANAGER": {
-    "WORKSPACES_ASSIGNED": "Workspaces Assigned:",
-    "IS_WORKSPACE_MANAGER": "Is Workspace Manager?"
-  },
-
   "ASSIGN_WORKSPACE": {
     "HEADER": "Assign Workspace",
     "SELECT_WORKSPACE": "Select Workspace:"
@@ -214,7 +209,9 @@
 
   "INVITE_TEAM_MEMBER": {
     "HEADER": "Invite Team Member",
-    "TEAM_MEMBER": "Team Member"
+    "TEAM_MEMBER": "Team Member",
+    "WORKSPACES_ASSIGNED": "Workspaces Assigned:",
+    "IS_WORKSPACE_MANAGER": "Is Workspace Manager?"
   },
 
   "ERROR_MESSAGES": {
