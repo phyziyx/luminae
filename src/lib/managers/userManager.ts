@@ -66,6 +66,22 @@ class UserManager {
       },
     });
   }
+
+  /**
+   * Find if user is admin
+   * @returns boolean
+   */
+  public static async isUserAdmin(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    // TODO: UPDATE SCHEMA, ADD IS ADMIN
+
+    return true;
+  }
 }
 
 export default UserManager;

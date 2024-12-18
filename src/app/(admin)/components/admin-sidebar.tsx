@@ -94,24 +94,24 @@ const data: NavData = {
   navMain: [
     {
       title: "Overview",
-      url: "/dashboard",
+      url: "/admin-dashboard",
       icon: SquareTerminalIcon,
     },
     {
       title: "Agencies",
-      url: "/dashboard/billing",
+      url: "/admin-dashboard/agencies",
       icon: ChartNetworkIcon,
       items: [],
     },
     {
       title: "Users",
-      url: "/dashboard/team",
+      url: "/admin-dashboard/users",
       icon: UserCog2Icon,
       items: [],
     },
     {
       title: "Packages",
-      url: "/dashboard/workspace",
+      url: "/admin-dashboard/packages",
       icon: NetworkIcon,
       items: [],
     },

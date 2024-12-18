@@ -11,12 +11,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+// import { toast } from "@/components/ui/use-toast";
 import { MoreVerticalIcon } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import CustomModal from "@/components/site/custom-modal";
 import { Agency } from "@prisma/client";
 import { useTranslations } from "next-intl";
+
+import UpdateAgencyModal from "./modals/update-agency-modal"; // Import the UpdateAgencyModal component
+import { toast } from "@/hooks/use-toast";
 
 // Define agency data type
 export type AgencyData = {
@@ -65,7 +68,29 @@ export const columns: ColumnDef<AgencyData>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const { openModal } = useModal();
+      const t = useTranslations();
       const agency = row.original;
+
+      const handleDelete = async () => {
+        try {
+          // Perform delete operation here (e.g., API call)
+          // Assuming a function deleteAgency(id: string) exists
+          await fetch(`/api/agencies/${agency.id}`, {
+            method: "DELETE",
+          });
+
+          toast({
+            title: "Agency Deleted",
+            description: `${agency.name} has been successfully deleted.`,
+          });
+        } catch (error) {
+          toast({
+            variant: "destructive",
+            title: "Error Deleting Agency",
+            description: "There was an issue deleting the agency. Please try again.",
+          });
+        }
+      };
 
       return (
         <DropdownMenu>
@@ -81,15 +106,15 @@ export const columns: ColumnDef<AgencyData>[] = [
               onClick={() =>
                 openModal(
                   <CustomModal
-                    title="Edit Agency"
-                    caption="Modify agency details and status."
+                    title="Edit Agency Details"
+                    caption="Modify agency information as needed."
                   >
-                    <div>Edit details for {agency.name}</div>
+                    <UpdateAgencyModal agencyId={agency.id} />
                   </CustomModal>
                 )
               }
             >
-              View Details
+              Edit Details
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -98,11 +123,9 @@ export const columns: ColumnDef<AgencyData>[] = [
               Copy Email
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              Set as {agency.status === "Active" ? "Inactive" : "Active"}
+            <DropdownMenuItem onClick={handleDelete}>
+              Delete
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
