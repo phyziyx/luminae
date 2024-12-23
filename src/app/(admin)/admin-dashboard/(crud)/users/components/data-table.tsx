@@ -27,7 +27,7 @@ import CustomModal from "@/components/site/custom-modal";
 import * as React from "react";
 import { DataTablePagination } from "@/components/site/pagination";
 import { useTranslations } from "next-intl";
-import CreateAgencyModal from "./modals/create-agency-modal";
+// import CreateUserModal from "./modals/create-user-modal";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -46,16 +46,16 @@ export function DataTable<TData, TValue>({
 
   const { openModal } = useModal();
 
-  const handleCreateAgency = () => {
-    openModal(
-      <CustomModal
-        title="Create New Agency"
-        caption="Fill out the form below to create a new agency."
-      >
-        <CreateAgencyModal />
-      </CustomModal>
-    );
-  };
+//   const handleCreateUser = () => {
+//     openModal(
+//       <CustomModal
+//         title="Create New User"
+//         caption="Fill out the form below to create a new user."
+//       >
+//         <CreateUserModal />
+//       </CustomModal>
+//     );
+//   };
 
   const table = useReactTable({
     data,
@@ -84,10 +84,10 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        {/* Create Agency Button */}
-        <Button className="ml-4" onClick={handleCreateAgency}>
-          <UserPlus className="mr-2 h-4 w-4" /> {t("CREATE_AGENCY.HEADER")}
-        </Button>
+        {/* Create User Button */}
+        {/* <Button className="ml-4" onClick={handleCreateUser}>
+          <UserPlus className="mr-2 h-4 w-4" /> {t("CREATE_USER.HEADER")}
+        </Button> */}
       </div>
       <div className="rounded-md border">
         <Table>

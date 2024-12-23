@@ -131,6 +131,7 @@ const UpdateAgencyModal: React.FC<UpdateAgencyModalProps> = ({ agencyId }) => {
               />
             </div>
 
+            {/* TODO: */}
             <div className="space-y-2">
               <FormField
                 control={form.control}
@@ -139,7 +140,7 @@ const UpdateAgencyModal: React.FC<UpdateAgencyModalProps> = ({ agencyId }) => {
                   <FormItem>
                     <FormLabel>Agency Logo</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} disabled />
                     </FormControl>
                   </FormItem>
                 )}

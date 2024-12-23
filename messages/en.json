@@ -190,6 +190,23 @@
     "SELECT_WORKSPACE": "Select Workspace:"
   },
 
+  "CREATE_AGENCY": {
+    "HEADER": "Create Agency",
+    "AGENCY_NAME": "Agency Name",
+    "AGENCY_EMAIL": "Agency Email",
+    "AGENCY_PHONE": "Agency Phone",
+    "AGENCY_ADDRESS": "Agency Address",
+    "AGENCY_CITY": "Agency City",
+    "AGENCY_STATE": "Agency State",
+    "AGENCY_COUNTRY": "Agency Country",
+    "AGENCY_ZIPCODE": "Agency Zipcode",
+    "AGENCY_LOGO": "Agency Logo",
+    "AGENCY_LOGO_DESCRIPTION": "This is the logo of your agency.",
+    "YOUR_AGENCY_NAME": "Your agency name",
+    "FAILED_TO_CREATE_AGENCY": "Failed to create your agency",
+    "AGENCY_CREATED_SUCCESSFULLY": "Agency created successfully"
+  },
+
   "BUTTONS": {
     "SAVE_CHANGES": "Save Changes",
     "SUBMIT": "Submit",

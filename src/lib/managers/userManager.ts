@@ -2,6 +2,7 @@ import { User } from "@prisma/client";
 import prisma from "../db";
 
 type CreateUser = Pick<User, "id" | "email" | "name" | "avatarUrl">;
+type UpdateUser = Partial<CreateUser>;  // Allow partial updates
 
 class UserManager {
   /**
@@ -64,6 +65,19 @@ class UserManager {
       where: {
         email: email,
       },
+    });
+  }
+
+  /**
+   * Update a user's details in the database
+   * @param userId user id
+   * @param userUpdates updated user data
+   * @returns updated user
+   */
+  public static async updateUser(id: string, userUpdates: { name: string; email: string; avatarUrl: string }) {
+    return await prisma.user.update({
+      where: { id },
+      data: userUpdates,
     });
   }
 

@@ -11,37 +11,36 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-// import { toast } from "@/components/ui/use-toast";
 import { MoreVerticalIcon } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import CustomModal from "@/components/site/custom-modal";
-import { Agency } from "@prisma/client";
+import { User } from "@prisma/client";
 import { useTranslations } from "next-intl";
 
-import UpdateAgencyModal from "./modals/update-agency-modal"; // Import the UpdateAgencyModal component
+import UpdateUserModal from "./modals/update-user-modal"; // Import the UpdateUserModal component
 import { toast } from "@/hooks/use-toast";
-import deleteAgency from "./actions/agency-delete";
+import deleteUser from "./actions/delete-user"; // Import the deleteUser action
 
-// Define agency data type
-export type AgencyData = {
+// Define user data type
+export type UserData = {
   id: string;
   name: string;
   email: string;
-  status: "Active" | "Inactive" | "No Members";
+  role: string;
+  status: string;
 };
 
 // Map status to badge variants
 const statusBadgeMap: Record<
-  AgencyData["status"],
+  UserData["status"],
   "default" | "destructive" | "secondary"
 > = {
   Active: "default",
   Inactive: "destructive",
-  "No Members": "secondary",
 };
 
-// Define the columns for the agency table
-export const columns: ColumnDef<AgencyData>[] = [
+// Define the columns for the user table
+export const columns: ColumnDef<UserData>[] = [
   {
     accessorKey: "id",
     header: "#",
@@ -55,10 +54,18 @@ export const columns: ColumnDef<AgencyData>[] = [
     header: "Email",
   },
   {
+    accessorKey: "role",
+    header: "Role",
+    cell: ({ row }) => {
+      const role = row.getValue<UserData["role"]>("role");
+      return <span>{role}</span>;
+    },
+  },
+  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue<AgencyData["status"]>("status");
+      const status = row.getValue<UserData["status"]>("status");
       const badgeVariant = statusBadgeMap[status];
 
       return <Badge variant={badgeVariant}>{status}</Badge>;
@@ -71,31 +78,31 @@ export const columns: ColumnDef<AgencyData>[] = [
     cell: ({ row }) => {
       const { openModal } = useModal();
       const t = useTranslations();
-      const agency = row.original;
+      const user = row.original;
 
       const handleDeleteClick = async () => {
         try {
-          const result = await deleteAgency({ id: agency.id });
+          const result = await deleteUser({ id: user.id });
           if (result.error) {
             toast({
               variant: "destructive",
-              title: "Error Deleting Agency",
+              title: "Error Deleting User",
               description: result.error,
             });
           } else {
             toast({
-              title: "Agency Deleted",
-              description: `${agency.name} has been successfully deleted.`,
+              title: "User Deleted",
+              description: `${user.name} has been successfully deleted.`,
             });
           }
         } catch (error) {
           toast({
             variant: "destructive",
-            title: "Error Deleting Agency",
-            description: "There was an issue deleting the agency. Please try again.",
+            title: "Error Deleting User",
+            description: "There was an issue deleting the user. Please try again.",
           });
         }
-      };
+      };      
 
       return (
         <DropdownMenu>
@@ -111,10 +118,10 @@ export const columns: ColumnDef<AgencyData>[] = [
               onClick={() =>
                 openModal(
                   <CustomModal
-                    title="Edit Agency Details"
-                    caption="Modify agency information as needed."
+                    title="Edit User Details"
+                    caption="Modify user information as needed."
                   >
-                    <UpdateAgencyModal agencyId={agency.id} />
+                    <UpdateUserModal userId={user.id} />
                   </CustomModal>
                 )
               }
@@ -123,14 +130,12 @@ export const columns: ColumnDef<AgencyData>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(agency.email)}
+              onClick={() => navigator.clipboard.writeText(user.email)}
             >
               Copy Email
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleDeleteClick}>
-              Delete
-            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDeleteClick}>Delete</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -11,12 +11,11 @@ import { getTranslations } from "next-intl/server";
 
 const t = await getTranslations({ locale: "en" });
 
-// Fetch agencies based on agencyId
-const fetchAgencies = async (agencyId: string): Promise<AgencyData[]> => {
+// Fetch agencies, including those with no members
+const fetchAgencies = async (): Promise<AgencyData[]> => {
   const agencies = await prisma.agency.findMany({
-    where: { id: agencyId },  // Use `id` for the agency ID in query
     include: {
-      agencyMembers: true,  // Optional: include associated members if needed
+      agencyMembers: true,  // Include members, even if there are none
     },
   });
 
@@ -24,7 +23,7 @@ const fetchAgencies = async (agencyId: string): Promise<AgencyData[]> => {
   return agencies.map((agency) => ({
     id: agency.id,
     name: agency.name,
-    status: "Active",  // Example: You can add dynamic status logic here if needed
+    status: agency.agencyMembers.length > 0 ? "Active" : "No Members",  // Adjust status based on membership
     logo: agency.agencyLogo,  // Include other fields as required
     email: agency.companyEmail,  // Example of additional data to display
   }));
@@ -48,8 +47,8 @@ const AgencyPage = async () => {
     return <div>{t("ERROR_MESSAGES.NOT_PART_OF_AGENCY")}</div>;
   }
 
-  // Fetch agencies based on the agencyId from the agencyMember
-  const data = await fetchAgencies(agencyMember.agencyId);
+  // Fetch all agencies
+  const data = await fetchAgencies();
 
   return (
     <>
