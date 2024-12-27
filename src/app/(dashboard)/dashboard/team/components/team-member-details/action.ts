@@ -80,22 +80,28 @@ const onUpdateMember = async (values: z.infer<typeof formSchema>) => {
         },
       });
 
-      if (workspace.access || workspace.manager) {
-        await prisma.permission.upsert({
+      // Three possible cases:
+      // 1. The user is not a member of the workspace, but the user is being added.
+      // 2. The user is a member of the workspace, and the user is being updated.
+      // 3. The user is a member of the workspace, but the user is being removed.
+
+      if (!workspaceMember && (workspace.access || workspace.manager)) {
+        await prisma.permission.create({
+          data: {
+            access: workspace.access || workspace.manager,
+            manager: workspace.manager,
+            agencyMemberId: agencyMember.id,
+            workspaceId: workspace.id,
+          },
+        });
+      } else if (workspaceMember && (workspace.access || workspace.manager)) {
+        await prisma.permission.update({
           where: {
-            id: workspaceMember?.id,
-            agencyMemberId: agencyMember.id,
-            workspaceId: workspace.id,
+            id: workspaceMember.id,
           },
-          update: {
+          data: {
             access: workspace.access || workspace.manager,
             manager: workspace.manager,
-          },
-          create: {
-            access: workspace.access || workspace.manager,
-            manager: workspace.manager,
-            agencyMemberId: agencyMember.id,
-            workspaceId: workspace.id,
           },
         });
       } else if (workspaceMember) {
