@@ -9,7 +9,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { Suspense } from "react";
 import { ModalProvider } from "@/providers/modal-provider";
 import { Toaster } from "@/components/ui/toaster";
-import { LoadingSpinner } from "@/components/site/loading-spinner";
+import FallbackSpinner from "@/components/site/fallback-spinner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -46,13 +46,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider messages={messages}>
-            <Suspense
-              fallback={
-                <div className="flex items-center justify-center h-screen w-screen text-blue-500">
-                  <LoadingSpinner />
-                </div>
-              }
-            >
+            <Suspense fallback={<FallbackSpinner />}>
               <ClerkProvider>
                 <ModalProvider>
                   {children}

@@ -6,6 +6,7 @@ import AgencyDetails from "../components/agency-details/agency-details";
 import Logo from "@/components/logo";
 import UserManager from "@/lib/managers/userManager";
 import { Suspense } from "react";
+import FallbackSpinner from "@/components/site/fallback-spinner";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await currentUser();
@@ -67,7 +68,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
         agency={agencyMember.agency}
         workspaces={workspaces}
       >
-        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+        <Suspense fallback={<FallbackSpinner />}>{children}</Suspense>
       </DashboardSidebar>
     </SidebarProvider>
   );
