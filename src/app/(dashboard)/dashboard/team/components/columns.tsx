@@ -12,26 +12,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { getTranslations } from "next-intl/server";
-
 import { MoreVerticalIcon } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import CustomModal from "@/components/site/custom-modal";
 import { AgencyMember } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import TeamMemberDetails from "./team-member-details";
-
-const t = await getTranslations();
-
-// Define team member data type
-export type TeamMember = {
-  id: string;
-  name: string;
-  email: string;
-  role: AgencyMember["role"];
-  workspacesAssigned: number;
-  status: "Active" | "On Break" | "Removed";
-};
 
 // Map status to badge variants
 const statusBadgeMap: Record<
@@ -41,6 +27,15 @@ const statusBadgeMap: Record<
   Active: "default",
   "On Break": "secondary",
   Removed: "destructive",
+};
+
+// Define team member data type
+export type TeamMember = {
+  id: string;
+  name: string;
+  email: string;
+  role: AgencyMember["role"];
+  status: "Active" | "On Break" | "Removed";
 };
 
 // Define the columns for the table
@@ -84,6 +79,8 @@ export const columns: ColumnDef<TeamMember>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
+      const t = useTranslations();
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const { openModal } = useModal();
       const member = row.original;
 
@@ -104,7 +101,7 @@ export const columns: ColumnDef<TeamMember>[] = [
                     title="Edit Details"
                     caption="Manage workspaces and roles for this team member."
                   >
-                    <TeamMemberDetails memberId={member.id} />
+                    <TeamMemberDetails memberId={member.email} />
                   </CustomModal>
                 )
               }
@@ -121,7 +118,9 @@ export const columns: ColumnDef<TeamMember>[] = [
             <DropdownMenuItem>{t("ACTIONS.SET_AS_ON_BREAK")}</DropdownMenuItem>
             <DropdownMenuItem>{t("ACTIONS.SET_AS_REMOVED")}</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>{t("ACTIONS.DELETE_FROM_TABLE")}</DropdownMenuItem>
+            <DropdownMenuItem>
+              {t("ACTIONS.DELETE_FROM_TABLE")}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -156,7 +156,7 @@ const PickerItem = ({
   address: string;
 }) => {
   return (
-    <CommandItem className="my-2 text-primary border-[1px] border-border p-2 rounded-md cursor-pointer transition-all">
+    <CommandItem className="my-2 text-primary dark:text-white border-[1px] border-border p-2 rounded-md cursor-pointer transition-all">
       <Link
         href={`/${isWorkspace ? "workspace" : "agency"}/${id}`}
         className="flex gap-4 w-full h-full"
@@ -213,7 +213,7 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
         <PopoverContent className="rounded-lg w-80 mt-4 z-[200]">
           <Command>
             <CommandInput placeholder={t("SEARCH_IN_AGENCY")} />
-            <CommandList className="pb-16">
+            <CommandList>
               <CommandEmpty>{t("NO_RESULTS_FOUND")}</CommandEmpty>
               {/* Agency */}
               {(role === "AGENCY_OWNER" || role === "AGENCY_ADMIN") &&

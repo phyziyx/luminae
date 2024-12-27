@@ -67,6 +67,22 @@ class AgencyManager {
     return null;
   }
 
+  public static async updateAgencyMemberRole(
+    agencyId: string,
+    email: string,
+    role: Role
+  ) {
+    return await prisma.agencyMember.update({
+      where: {
+        agencyId,
+        email,
+      },
+      data: {
+        role,
+      },
+    });
+  }
+
   public static async createInvitation(
     email: string,
     agencyId: string,

@@ -180,31 +180,9 @@
     "ROLES": "Roles"
   },
 
-  "WORKSPACES_MANAGER": {
-    "WORKSPACES_ASSIGNED": "Workspaces Assigned:",
-    "IS_WORKSPACE_MANAGER": "Is Workspace Manager?"
-  },
-
   "ASSIGN_WORKSPACE": {
     "HEADER": "Assign Workspace",
     "SELECT_WORKSPACE": "Select Workspace:"
-  },
-
-  "CREATE_AGENCY": {
-    "HEADER": "Create Agency",
-    "AGENCY_NAME": "Agency Name",
-    "AGENCY_EMAIL": "Agency Email",
-    "AGENCY_PHONE": "Agency Phone",
-    "AGENCY_ADDRESS": "Agency Address",
-    "AGENCY_CITY": "Agency City",
-    "AGENCY_STATE": "Agency State",
-    "AGENCY_COUNTRY": "Agency Country",
-    "AGENCY_ZIPCODE": "Agency Zipcode",
-    "AGENCY_LOGO": "Agency Logo",
-    "AGENCY_LOGO_DESCRIPTION": "This is the logo of your agency.",
-    "YOUR_AGENCY_NAME": "Your agency name",
-    "FAILED_TO_CREATE_AGENCY": "Failed to create your agency",
-    "AGENCY_CREATED_SUCCESSFULLY": "Agency created successfully"
   },
 
   "BUTTONS": {
@@ -231,7 +209,10 @@
 
   "INVITE_TEAM_MEMBER": {
     "HEADER": "Invite Team Member",
-    "TEAM_MEMBER": "Team Member"
+    "TEAM_MEMBER": "Team Member",
+    "WORKSPACES_ASSIGNED": "Workspaces Assigned:",
+    "IS_WORKSPACE_MANAGER": "Manager?",
+    "HAS_ACCESS": "Has Access?"
   },
 
   "ERROR_MESSAGES": {
