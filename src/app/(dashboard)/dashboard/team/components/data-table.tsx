@@ -11,8 +11,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -21,8 +19,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import * as React from "react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { UserPlus } from "lucide-react";
+import { useModal } from "@/providers/modal-provider";
+import CustomModal from "@/components/site/custom-modal";
+import * as React from "react";
+import { DataTablePagination } from "@/components/site/pagination";
+
+import { useTranslations } from "next-intl";
+import TeamInviteForm from "./team-invite/team-invite-form";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -37,6 +43,9 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const t = useTranslations();
+
+  const { openModal } = useModal();
 
   const table = useReactTable({
     data,
@@ -53,45 +62,56 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const handleInviteTeamMember = () => {
+    openModal(
+      <CustomModal
+        title="Invite a Team Member To Join"
+        caption="Send an invitation to a team member by email and assign their role in the agency."
+      >
+        <TeamInviteForm />
+      </CustomModal>
+    );
+  };
+
   return (
     <div>
-      <div className="flex items-center py-4">
+      <div className="flex items-center justify-between py-4">
+        {/* Search Bar */}
         <Input
-          placeholder="Filter emails..."
+          placeholder="Filter by name or email..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
+        {/* Invite Team Member Button */}
+        <Button className="ml-4" onClick={handleInviteTeamMember}>
+          <UserPlus className="mr-2 h-4 w-4" /> {t("INVITE_TEAM_MEMBER.HEADER")}
+        </Button>
       </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
@@ -115,23 +135,8 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+      <div className="space-x-2 py-4">
+        <DataTablePagination table={table} />
       </div>
     </div>
   );

@@ -75,7 +75,7 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
 
     // toast({
     //   variant: "destructive",
-    //   title: t("AN_ERROR_OCCURRED"),
+    //   title: {t("ERROR_MESSAGES.AN_ERROR_OCCURRED")},
     //   description: t("AGENCY_DETAILS.FAILED_TO_CREATE_AGENCY"),
     // });
   }

@@ -164,5 +164,62 @@
     "TEAM_MEMBERS": "Team Members"
   },
 
-  "AN_ERROR_OCCURRED": "An error occurred!"
+  "ROLES": {
+    "AGENCY_OWNER": "Agency Owner",
+    "AGENCY_ADMIN": "Agency Admin",
+    "AGENCY_USER": "Team Member"
+  },
+
+  "INVITATION": {
+    "SEND_INVITE": "Send Invite"
+  },
+
+  "ASSIGN_ROLE": {
+    "HEADER": "Assign Role",
+    "SELECT_ROLE": "Select Role:",
+    "ROLES": "Roles"
+  },
+
+  "ASSIGN_WORKSPACE": {
+    "HEADER": "Assign Workspace",
+    "SELECT_WORKSPACE": "Select Workspace:"
+  },
+
+  "BUTTONS": {
+    "SAVE_CHANGES": "Save Changes",
+    "SUBMIT": "Submit",
+    "CREATE": "Create",
+    "DELETE": "Delete",
+    "CANCEL": "Cancel",
+    "CONFIRM": "Confirm"
+  },
+
+  "MENU": {
+    "OPEN_MENU": "Open menu"
+  },
+
+  "ACTIONS": {
+    "HEADER": "Actions",
+    "VIEW_DETAILS": "View details",
+    "COPY_EMAIL": "Copy email",
+    "SET_AS_ON_BREAK": "Set as On Break",
+    "SET_AS_REMOVED": "Set as Removed",
+    "DELETE_FROM_TABLE": "Delete from table"
+  },
+
+  "INVITE_TEAM_MEMBER": {
+    "HEADER": "Invite Team Member",
+    "TEAM_MEMBER": "Team Member",
+    "WORKSPACES_ASSIGNED": "Workspaces Assigned:",
+    "IS_WORKSPACE_MANAGER": "Manager?",
+    "HAS_ACCESS": "Has Access?"
+  },
+
+  "ERROR_MESSAGES": {
+    "AN_ERROR_OCCURRED": "An error occurred!",
+    "PLEASE_TRY_AGAIN": "Please try again.",
+    "SUCCESS": "Success",
+    "NOT_AUTHENTICATED": "Not authenticated!",
+    "NOT_PART_OF_AGENCY": "Not part of an agency!"
+  }
 }

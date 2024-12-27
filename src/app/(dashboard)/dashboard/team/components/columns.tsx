@@ -1,8 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDownIcon, MoreHorizontalIcon } from "lucide-react";
-
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,71 +12,115 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Payment = {
-  id: string;
-  amount: number;
-  status: "invited" | "member";
-  role: "admin" | "member" | "owner";
-  email: string;
+import { MoreVerticalIcon } from "lucide-react";
+import { useModal } from "@/providers/modal-provider";
+import CustomModal from "@/components/site/custom-modal";
+import { AgencyMember } from "@prisma/client";
+import { useTranslations } from "next-intl";
+import TeamMemberDetails from "./team-member-details";
+
+// Map status to badge variants
+const statusBadgeMap: Record<
+  TeamMember["status"],
+  "default" | "destructive" | "secondary"
+> = {
+  Active: "default",
+  "On Break": "secondary",
+  Removed: "destructive",
 };
 
-export const columns: ColumnDef<Payment>[] = [
+// Define team member data type
+export type TeamMember = {
+  id: string;
+  name: string;
+  email: string;
+  role: AgencyMember["role"];
+  status: "Active" | "On Break" | "Removed";
+};
+
+// Define the columns for the table
+export const columns: ColumnDef<TeamMember>[] = [
   {
-    accessorKey: "status",
-    header: "Status",
+    accessorKey: "id",
+    header: "#",
+  },
+  {
+    accessorKey: "name",
+    header: "Name",
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDownIcon className="ml-2 h-4 w-4" />
-        </Button>
-      );
+    header: "Email",
+  },
+  {
+    accessorKey: "role",
+    header: "Role",
+    cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const t = useTranslations();
+      const role = row.getValue<TeamMember["role"]>("role");
+
+      return <span>{t(`ROLES.${role}`)}</span>;
     },
   },
   {
-    accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    accessorKey: "status",
+    header: "Status",
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
+      const status = row.getValue<TeamMember["status"]>("status");
+      const badgeVariant = statusBadgeMap[status];
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <Badge variant={badgeVariant}>{status}</Badge>;
     },
   },
   {
     id: "actions",
+    header: "Actions",
+    enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const t = useTranslations();
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { openModal } = useModal();
+      const member = row.original;
 
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontalIcon className="h-4 w-4" />
+              <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
+              <MoreVerticalIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() =>
+                openModal(
+                  <CustomModal
+                    title="Edit Details"
+                    caption="Manage workspaces and roles for this team member."
+                  >
+                    <TeamMemberDetails memberId={member.email} />
+                  </CustomModal>
+                )
+              }
             >
-              Copy payment ID
+              {t("ACTIONS.VIEW_DETAILS")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => navigator.clipboard.writeText(member.email)}
+            >
+              {t("ACTIONS.COPY_EMAIL")}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>{t("ACTIONS.SET_AS_ON_BREAK")}</DropdownMenuItem>
+            <DropdownMenuItem>{t("ACTIONS.SET_AS_REMOVED")}</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              {t("ACTIONS.DELETE_FROM_TABLE")}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

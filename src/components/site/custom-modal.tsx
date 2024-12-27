@@ -27,7 +27,7 @@ const CustomModal = ({
 
   return (
     <Dialog open={isOpen || defaultOpen} onOpenChange={closeModal}>
-      <DialogContent className="md:h-fit h-screen sm:max-w-[425px] bg-muted dark:bg-muted/90">
+      <DialogContent className="md:h-fit h-screen sm:max-w-[425px] bg-white dark:bg-gray-800">
         <DialogHeader className="text-left">
           <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
           <DialogDescription>{caption}</DialogDescription>

@@ -76,6 +76,7 @@
     "sonner": "^1.7.1",
     "stripe": "^17.4.0",
     "svix": "^1.37.0",
+    "swr": "^2.2.5",
     "tailwind-merge": "^2.5.4",
     "tailwind-variants": "^0.2.1",
     "tailwindcss-animate": "^1.0.7",

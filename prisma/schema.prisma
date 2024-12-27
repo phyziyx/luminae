@@ -56,14 +56,14 @@ model AgencyMember {
 }
 
 model Permission {
-  id             String @id @default(uuid())
+  id             String  @id @default(uuid())
   agencyMemberId String
   workspaceId    String
+  access         Boolean
+  manager        Boolean
 
   agencyMember AgencyMember @relation(fields: [agencyMemberId], references: [id])
   workspace    Workspace    @relation(fields: [workspaceId], references: [id])
-  access       Boolean
-  manager      Boolean
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

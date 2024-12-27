@@ -5,6 +5,7 @@ import { currentUser, auth } from "@clerk/nextjs/server";
 import AgencyDetails from "../components/agency-details/agency-details";
 import Logo from "@/components/logo";
 import UserManager from "@/lib/managers/userManager";
+import { Suspense } from "react";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await currentUser();
@@ -45,8 +46,6 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     agencyMember.email
   );
 
-  console.log("workspaces", workspaces);
-
   return (
     <SidebarProvider
       style={
@@ -61,7 +60,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
         agency={agencyMember.agency}
         workspaces={workspaces}
       >
-        {children}
+        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
       </DashboardSidebar>
     </SidebarProvider>
   );
