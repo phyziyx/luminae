@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import {
   Command,
   CommandEmpty,
@@ -26,6 +25,11 @@ import formSchema from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/hooks/use-toast";
 import onUpdateMember from "./action";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface TeamMemberDetailsFormProps {
   data: any;
@@ -75,95 +79,109 @@ export default function TeamMemberDetailsForm({
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Assign Role Section */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">{t("ASSIGN_ROLE.HEADER")}</h2>
-          <div className="flex items-center justify-between">
-            <p>{t("ASSIGN_ROLE.SELECT_ROLE")}</p>
-            <Select>
-              <SelectTrigger className="w-2/3">
-                <SelectValue placeholder="Choose a role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>{t("ASSIGN_ROLE.ROLES")}</SelectLabel>
-                  <SelectItem value="agency_admin">
-                    {t("ROLES.AGENCY_ADMIN")}
-                  </SelectItem>
-                  <SelectItem value="team_member">
-                    {t("ROLES.AGENCY_USER")}
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        {/* Horizontal Line */}
-        <hr className="border-t border-gray-300" />
-
-        {/* Workspaces Section */}
-        <div className="space-y-4">
-          <div className="flex flex-row justify-between">
-            <p>{t("INVITE_TEAM_MEMBER.WORKSPACES_ASSIGNED")}</p>
-            <p className="font-semibold">3</p>
-          </div>
-          <Input
-            type="text"
-            placeholder="Search workspaces..."
-            className="w-full p-2 border rounded"
-          />
-          <div className="h-48 overflow-y-auto border rounded p-2">
-            {data.workspaces.map((workspace, index) => (
-              <div
-                key={index}
-                className="flex justify-between items-center p-2 border-b"
-              >
-                <span>{workspace.name}</span>
-                <label className="flex items-center gap-2 text-xs">
-                  {t("INVITE_TEAM_MEMBER.IS_WORKSPACE_MANAGER")}
-                  <input type="checkbox" />
-                </label>
+    <div className="space-y-2">
+      <div className="gap-4 flex flex-row justify-between place-items-center">
+        <Avatar>
+          <AvatarImage src={data.member.avatarUrl} />
+          <AvatarFallback>{data.member.name}</AvatarFallback>
+        </Avatar>
+        <h2 className="font-semibold text-black dark:text-white">
+          {data.member.name}
+        </h2>
+        <Badge className="text-center" variant={"default"}>
+          {t(`ROLES.${data.role}`)}
+        </Badge>
+      </div>
+      <Separator
+        orientation="horizontal"
+        className="bg-black dark:bg-slate-200"
+      />
+      <div>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Assign Role Section */}
+            {data.role !== "AGENCY_OWNER" && (
+              <div className="space-y-4">
+                <h2 className="text-lg font-semibold">
+                  {t("ASSIGN_ROLE.HEADER")}
+                </h2>
+                <div className="flex items-center justify-between">
+                  <p>{t("ASSIGN_ROLE.SELECT_ROLE")}</p>
+                  <Select defaultValue={data.role}>
+                    <SelectTrigger className="w-2/3">
+                      <SelectValue placeholder="Choose a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>{t("ASSIGN_ROLE.ROLES")}</SelectLabel>
+                        <SelectItem value="agency_admin">
+                          {t("ROLES.AGENCY_ADMIN")}
+                        </SelectItem>
+                        <SelectItem value="team_member">
+                          {t("ROLES.AGENCY_USER")}
+                        </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-            ))}
-          </div>
+            )}
 
-          {/* Horizontal Line */}
-          <hr className="border-t border-gray-300" />
+            {/* Workspaces Section */}
+            <div className="space-y-4">
+              <div className="flex flex-row justify-between">
+                <p>{t("INVITE_TEAM_MEMBER.WORKSPACES_ASSIGNED")}</p>
+                <p className="font-semibold">{data.workspaces.length || 0}</p>
+              </div>
 
-          {/* Assign Workspace Section */}
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">
-              {t("ASSIGN_WORKSPACE.HEADER")}
-            </h2>
-            <p>{t("ASSIGN_WORKSPACE.SELECT_WORKSPACE")}</p>
-            <Command>
-              <CommandInput placeholder={t("SEARCH_IN_AGENCY")} />
-              <CommandList className="pb-16">
-                <CommandEmpty>{t("NO_RESULTS_FOUND")}</CommandEmpty>
-                <CommandGroup heading={t("WORKSPACES")}>
-                  {data.workspaces && data.workspaces.length > 0
-                    ? data.workspaces.map((e, index) => (
-                        <CommandItem key={index}>{e.name}</CommandItem>
-                      ))
-                    : t("NO_WORKSPACES_FOUND")}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </div>
+              <Command>
+                <CommandInput placeholder={t("SEARCH_IN_AGENCY")} />
+                <CommandList>
+                  <CommandEmpty>{t("NO_RESULTS_FOUND")}</CommandEmpty>
+                  <CommandGroup>
+                    {data.workspaces.map((workspace) => (
+                      <CommandItem
+                        key={workspace.id}
+                        className="flex flex-row justify-between p-1 border-b"
+                      >
+                        <span>{workspace.name}</span>
 
-          {/* Submit Button */}
-          <div className="text-right">
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            >
-              {t("BUTTONS.SAVE_CHANGES")}
-            </button>
-          </div>
-        </div>
-      </form>
-    </Form>
+                        <div className="flex items-center space-x-2 text-xs">
+                          <label
+                            htmlFor="access"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {t("INVITE_TEAM_MEMBER.HAS_ACCESS")}
+                          </label>
+                          <Checkbox id="access" />
+
+                          <Separator
+                            orientation="vertical"
+                            className="bg-black dark:bg-slate-200"
+                          />
+
+                          <label
+                            htmlFor="manager"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {t("INVITE_TEAM_MEMBER.IS_WORKSPACE_MANAGER")}
+                          </label>
+                          <Checkbox id="manager" />
+                        </div>
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </div>
+
+            {/* Submit Button */}
+            <div className="text-right">
+              <Button type="submit">{t("BUTTONS.SAVE_CHANGES")}</Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+    </div>
   );
 }

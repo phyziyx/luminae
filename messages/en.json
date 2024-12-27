@@ -211,7 +211,8 @@
     "HEADER": "Invite Team Member",
     "TEAM_MEMBER": "Team Member",
     "WORKSPACES_ASSIGNED": "Workspaces Assigned:",
-    "IS_WORKSPACE_MANAGER": "Is Workspace Manager?"
+    "IS_WORKSPACE_MANAGER": "Manager?",
+    "HAS_ACCESS": "Has Access?"
   },
 
   "ERROR_MESSAGES": {
