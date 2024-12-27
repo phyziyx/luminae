@@ -46,7 +46,7 @@ interface TeamMemberDetailsFormProps {
       name: string;
       avatarUrl: string;
     };
-    role: "AGENCY_ADMIN" | "AGENCY_USER";
+    role: "AGENCY_ADMIN" | "AGENCY_USER" | "AGENCY_OWNER";
     workspaces: {
       id: string;
       name: string;
