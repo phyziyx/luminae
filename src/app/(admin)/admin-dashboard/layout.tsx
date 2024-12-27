@@ -1,9 +1,6 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import DashboardSidebar from "../components/admin-sidebar";
-import AgencyManager from "@/lib/managers/agencyManager";
 import { currentUser, auth } from "@clerk/nextjs/server";
-import AgencyDetails from "@/app/(dashboard)/components/agency-details/agency-details";
-import Logo from "@/components/logo";
 import UserManager from "@/lib/managers/userManager";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -28,25 +25,6 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     });
   }
 
-  const agencyMember = await AgencyManager.findUserAgency(email);
-
-  if (!agencyMember) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <Logo className="text-blue-500 max-w-sm" />
-        <div className="w-full max-w-2xl p-6">
-          <AgencyDetails data={{ companyEmail: email }} />
-        </div>
-      </div>
-    );
-  }
-
-  const workspaces = await AgencyManager.findAndFilterWorkspaces(
-    agencyMember.email
-  );
-
-  console.log("workspaces", workspaces);
-
   return (
     <SidebarProvider
       style={
@@ -56,13 +34,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
         } as React.CSSProperties
       }
     >
-      <DashboardSidebar
-        role={agencyMember.role}
-        agency={agencyMember.agency}
-        workspaces={workspaces}
-      >
-        {children}
-      </DashboardSidebar>
+      <DashboardSidebar>{children}</DashboardSidebar>
     </SidebarProvider>
   );
 };

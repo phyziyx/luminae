@@ -201,6 +201,9 @@ class AgencyManager {
       where: {
         agencyId,
       },
+      include: {
+        user: true,
+      },
     });
   }
 

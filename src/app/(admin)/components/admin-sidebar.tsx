@@ -2,21 +2,6 @@
 
 import Logo from "@/components/logo";
 import ModeToggle from "@/components/site/mode-toggle";
-import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandSeparator,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   useSidebar,
   Sidebar,
@@ -37,7 +22,6 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { UserButton } from "@clerk/nextjs";
-import { Agency, Workspace, Role } from "@prisma/client";
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -47,32 +31,17 @@ import {
   BookOpenIcon,
   ChartNetworkIcon,
   ChevronRightIcon,
-  ChevronsUpDownIcon,
-  CompassIcon,
   LifeBuoyIcon,
   NetworkIcon,
-  SendIcon,
-  Settings2Icon,
   SquareTerminalIcon,
   UserCog2Icon,
 } from "lucide-react";
-// import { useTranslations } from "next-intl";
-// import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface DashboardSidebarProps {
   children: React.ReactNode;
-  role: Role;
-  agency: Pick<Agency, "id" | "name" | "address" | "agencyLogo">;
-  workspaces: Workspace[];
 }
-
-// interface AgencyPickerProps {
-//   role: Role;
-//   agency: Pick<Agency, "id" | "name" | "address" | "agencyLogo">;
-//   workspaces: Workspace[];
-// }
 
 interface Item {
   title: string;
@@ -142,147 +111,7 @@ const data: NavData = {
   ],
 };
 
-// const PickerItem = ({
-//   isWorkspace,
-//   id,
-//   name,
-//   logoUrl,
-//   address,
-// }: {
-//   isWorkspace: boolean;
-//   id: string;
-//   name: string;
-//   logoUrl: string;
-//   address: string;
-// }) => {
-//   return (
-//     <CommandItem className="my-2 text-primary border-[1px] border-border p-2 rounded-md cursor-pointer transition-all">
-//       <Link
-//         href={`/${isWorkspace ? "workspace" : "agency"}/${id}`}
-//         className="flex gap-4 w-full h-full"
-//       >
-//         {!isWorkspace && (
-//           <div className="relative w-16">
-//             <Image
-//               src={logoUrl}
-//               alt={name}
-//               fill
-//               className="rounded-md object-contain"
-//             />
-//           </div>
-//         )}
-//         <div className="flex flex-col flex-1">
-//           {name}
-//           {!isWorkspace && (
-//             <span className="text-muted-foreground">{address}</span>
-//           )}
-//         </div>
-//       </Link>
-//     </CommandItem>
-//   );
-// };
-
-// const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
-//   const t = useTranslations();
-
-//   return (
-//     <>
-//       <Popover>
-//         {/* Trigger */}
-//         <PopoverTrigger asChild>
-//           <Button
-//             className="w-full flex items-center justify-between py-8"
-//             variant="secondary"
-//           >
-//             <div className="flex items-center text-left gap-2">
-//               <CompassIcon />
-//               <div className="flex flex-col">
-//                 {agency.name}
-//                 <span className="text-wrap text-xs text-muted-foreground">
-//                   {t("SEARCH_IN_AGENCY")}
-//                 </span>
-//               </div>
-//             </div>
-//             <div>
-//               <ChevronsUpDownIcon size={16} className="text-muted-foreground" />
-//             </div>
-//           </Button>
-//         </PopoverTrigger>
-
-//         {/* Content */}
-//         <PopoverContent className="rounded-lg w-80 mt-4 z-[200]">
-//           <Command>
-//             <CommandInput placeholder={t("SEARCH_IN_AGENCY")} />
-//             <CommandList className="pb-16">
-//               <CommandEmpty>{t("NO_RESULTS_FOUND")}</CommandEmpty>
-//               {/* Agency */}
-//               {(role === "AGENCY_OWNER" || role === "AGENCY_ADMIN") &&
-//                 agency && (
-//                   <CommandGroup heading="Agency">
-//                     <PickerItem
-//                       id={agency.id}
-//                       name={agency.name}
-//                       address={agency.address}
-//                       isWorkspace={false}
-//                       logoUrl={agency.agencyLogo || "/assets/logo.png"}
-//                     />
-//                   </CommandGroup>
-//                 )}
-
-//               {/* Workspaces */}
-//               <CommandSeparator />
-//               <CommandGroup heading={t("WORKSPACES")}>
-//                 {workspaces && workspaces.length > 0
-//                   ? workspaces.map((e) => (
-//                       <PickerItem
-//                         key={e.id}
-//                         id={e.id}
-//                         name={e.name}
-//                         isWorkspace={true}
-//                         address=""
-//                         logoUrl=""
-//                       />
-//                     ))
-//                   : t("NO_WORKSPACES_FOUND")}
-//               </CommandGroup>
-//             </CommandList>
-//           </Command>
-
-//           {/* Create New Workspace */}
-//           {/* {(role === "AGENCY_OWNER" || role === "AGENCY_ADMIN") && (
-//             <Button
-//               className="w-full flex gap-2"
-//               onClick={() => {
-//                 openModal(
-//                   <CustomModal
-//                     title={t("CREATE_WORKSPACE")}
-//                     caption={t("CREATE_WORKSPACE_CAPTION")}
-//                   >
-//                     <WorkspaceDetails
-//                       data={{
-//                         agencyId: agency.id,
-//                       }}
-//                     />
-//                   </CustomModal>
-//                 );
-//               }}
-//             >
-//               <PlusCircleIcon size={15} />
-//               {t("CREATE_WORKSPACE")}
-//             </Button>
-//           )} */}
-//         </PopoverContent>
-//       </Popover>
-//     </>
-//   );
-// };
-
-const DashboardSidebar = ({
-  role,
-  children,
-  agency,
-  workspaces,
-}: DashboardSidebarProps) => {
+const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
   const sidebar = useSidebar();
   const rawPathName = usePathname();
 
@@ -308,20 +137,6 @@ const DashboardSidebar = ({
         <hr />
 
         <SidebarContent>
-          {/* Agency Switcher */}
-          {/* <SidebarGroup>
-            <SidebarGroupLabel>Agency</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <AgencyPicker
-                  role={role}
-                  agency={agency}
-                  workspaces={workspaces}
-                />
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup> */}
-
           {/* Primary */}
           <SidebarGroup>
             <SidebarGroupLabel>Platform</SidebarGroupLabel>

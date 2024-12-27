@@ -13,6 +13,19 @@ import FallbackSpinner from "@/components/site/fallback-spinner";
 
 const t = await getTranslations({ locale: "en" });
 
+const TeamList = async ({ agencyId }: { agencyId: string }) => {
+  const members = await AgencyManager.findAgencyMembers(agencyId);
+  const data: TeamMember[] = members.map((member) => ({
+    id: member.id,
+    name: member.user.name,
+    email: member.email,
+    role: member.role,
+    status: "Active",
+  }));
+
+  return <DataTable columns={columns} data={data} />;
+};
+
 const Team = async () => {
   const { userId } = await auth();
   const user = await currentUser();
@@ -28,15 +41,6 @@ const Team = async () => {
     return <div>{t("ERROR_MESSAGES.NOT_PART_OF_AGENCY")}</div>;
   }
 
-  const members = await AgencyManager.findAgencyMembers(agencyMember?.agencyId);
-  const data: TeamMember[] = members.map((member) => ({
-    id: member.id,
-    name: "to-do",
-    email: member.email,
-    role: member.role,
-    status: "Active",
-  }));
-
   return (
     <>
       <header className="flex h-16 items-center px-4">
@@ -48,7 +52,7 @@ const Team = async () => {
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4">
         <Suspense fallback={<FallbackSpinner />}>
-          <DataTable columns={columns} data={data} />
+          <TeamList agencyId={agencyMember.agencyId} />
         </Suspense>
       </div>
     </>
