@@ -24,7 +24,7 @@ export default function TeamMemberDetails({
 
   return (
     <>
-      {isLoading ? <LoadingSpinner /> : <TeamMemberDetailsForm data={data} />}
+      {isLoading ? <LoadingSpinner /> : <TeamMemberDetailsForm data={data!} />}
     </>
   );
 }

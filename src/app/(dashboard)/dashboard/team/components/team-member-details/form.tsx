@@ -18,8 +18,15 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { useTranslations } from "next-intl";
-import { Form } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import formSchema from "./schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,9 +37,23 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { LoadingSpinner } from "@/components/site/loading-spinner";
 
 interface TeamMemberDetailsFormProps {
-  data: any;
+  data: {
+    member: {
+      email: string;
+      name: string;
+      avatarUrl: string;
+    };
+    role: "AGENCY_ADMIN" | "AGENCY_USER";
+    workspaces: {
+      id: string;
+      name: string;
+      access: boolean;
+      manager: boolean;
+    }[];
+  };
 }
 
 export default function TeamMemberDetailsForm({
@@ -40,40 +61,65 @@ export default function TeamMemberDetailsForm({
 }: TeamMemberDetailsFormProps) {
   const t = useTranslations();
 
+  const initialWorkspaces = data.workspaces.map((workspace) => ({
+    id: workspace.id,
+    access: workspace.access || false,
+    manager: workspace.manager || false,
+  }));
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      role: "AGENCY_USER",
+      email: data.member.email || "",
+      role: data.role || "AGENCY_USER",
+      workspaces: data.workspaces.map((workspace) => ({
+        id: workspace.id,
+        access: workspace.access || false,
+        manager: workspace.manager || false,
+      })),
     },
   });
-
-  console.log(data);
 
   const isLoading = form.formState.isSubmitting;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await onUpdateMember(values);
+      const modifiedWorkspaces = values.workspaces.filter(
+        (workspace, index) => {
+          const initialWorkspace = initialWorkspaces[index];
+          return (
+            workspace.access !== initialWorkspace.access ||
+            workspace.manager !== initialWorkspace.manager
+          );
+        }
+      );
+
+      const modifiedValues = {
+        ...values,
+        workspaces: modifiedWorkspaces,
+      };
+
+      const response = await onUpdateMember(modifiedValues);
+
+      // For debugging!
+      // toast({
+      //   title: "You submitted the following values:",
+      //   description: (
+      //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+      //       <code className="text-white">
+      //         {JSON.stringify(modifiedValues, null, 2)}
+      //       </code>
+      //     </pre>
+      //   ),
+      // });
 
       toast({
-        title: response?.error || "Workspace information saved successfully",
+        title: response?.error || "Member information updated successfully",
         variant: response?.error ? "destructive" : "default",
       });
     } catch {
       toast({
-        title: "An error occurred while saving the workspace information",
-      });
-    } finally {
-      toast({
-        title: "You submitted the following values:",
-        description: (
-          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-            <code className="text-white">
-              {JSON.stringify(values, null, 2)}
-            </code>
-          </pre>
-        ),
+        title: "An error occurred while saving the team member information",
       });
     }
   }
@@ -99,39 +145,58 @@ export default function TeamMemberDetailsForm({
       <div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Assign Role Section */}
-            {data.role !== "AGENCY_OWNER" && (
+            {/* Assign Role Section -- Not visible for agency owner */}
+            {(data.role as string) !== "AGENCY_OWNER" && (
               <div className="space-y-4">
                 <h2 className="text-lg font-semibold">
                   {t("ASSIGN_ROLE.HEADER")}
                 </h2>
                 <div className="flex items-center justify-between">
                   <p>{t("ASSIGN_ROLE.SELECT_ROLE")}</p>
-                  <Select defaultValue={data.role}>
-                    <SelectTrigger className="w-2/3">
-                      <SelectValue placeholder="Choose a role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>{t("ASSIGN_ROLE.ROLES")}</SelectLabel>
-                        <SelectItem value="agency_admin">
-                          {t("ROLES.AGENCY_ADMIN")}
-                        </SelectItem>
-                        <SelectItem value="team_member">
-                          {t("ROLES.AGENCY_USER")}
-                        </SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+                  <FormField
+                    control={form.control}
+                    name="role"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel htmlFor="role">{t("ROLE")}</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={data.role}
+                          >
+                            <SelectTrigger className="w-2/3">
+                              <SelectValue placeholder="Choose a role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectLabel>
+                                  {t("ASSIGN_ROLE.ROLES")}
+                                </SelectLabel>
+                                <SelectItem value="agency_admin">
+                                  {t("ROLES.AGENCY_ADMIN")}
+                                </SelectItem>
+                                <SelectItem value="team_member">
+                                  {t("ROLES.AGENCY_USER")}
+                                </SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </div>
             )}
 
             {/* Workspaces Section */}
-            <div className="space-y-4">
+            <div className="space-y-2">
               <div className="flex flex-row justify-between">
-                <p>{t("INVITE_TEAM_MEMBER.WORKSPACES_ASSIGNED")}</p>
-                <p className="font-semibold">{data.workspaces.length || 0}</p>
+                <p className="font-semibold">
+                  {t("INVITE_TEAM_MEMBER.WORKSPACES_ASSIGNED")}
+                </p>
+                <p>{data.workspaces.length || 0}</p>
               </div>
 
               <Command>
@@ -139,7 +204,7 @@ export default function TeamMemberDetailsForm({
                 <CommandList>
                   <CommandEmpty>{t("NO_RESULTS_FOUND")}</CommandEmpty>
                   <CommandGroup>
-                    {data.workspaces.map((workspace) => (
+                    {data.workspaces.map((workspace, index) => (
                       <CommandItem
                         key={workspace.id}
                         className="flex flex-row justify-between p-1 border-b"
@@ -147,26 +212,52 @@ export default function TeamMemberDetailsForm({
                         <span>{workspace.name}</span>
 
                         <div className="flex items-center space-x-2 text-xs">
-                          <label
-                            htmlFor="access"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            {t("INVITE_TEAM_MEMBER.HAS_ACCESS")}
-                          </label>
-                          <Checkbox id="access" />
-
+                          <Controller
+                            name={`workspaces.${index}.access`}
+                            control={form.control}
+                            render={({ field }) => (
+                              <>
+                                <label
+                                  htmlFor={`access-${workspace.id}`}
+                                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                  {t("INVITE_TEAM_MEMBER.HAS_ACCESS")}
+                                </label>
+                                <Checkbox
+                                  id={`access-${workspace.id}`}
+                                  checked={field.value}
+                                  onCheckedChange={(checked) =>
+                                    field.onChange(checked)
+                                  }
+                                />
+                              </>
+                            )}
+                          />
                           <Separator
                             orientation="vertical"
                             className="bg-black dark:bg-slate-200"
                           />
-
-                          <label
-                            htmlFor="manager"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                          >
-                            {t("INVITE_TEAM_MEMBER.IS_WORKSPACE_MANAGER")}
-                          </label>
-                          <Checkbox id="manager" />
+                          <Controller
+                            name={`workspaces.${index}.manager`}
+                            control={form.control}
+                            render={({ field }) => (
+                              <>
+                                <label
+                                  htmlFor={`manager-${workspace.id}`}
+                                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                  {t("INVITE_TEAM_MEMBER.IS_WORKSPACE_MANAGER")}
+                                </label>
+                                <Checkbox
+                                  id={`manager-${workspace.id}`}
+                                  checked={field.value}
+                                  onCheckedChange={(checked) =>
+                                    field.onChange(checked)
+                                  }
+                                />
+                              </>
+                            )}
+                          />
                         </div>
                       </CommandItem>
                     ))}
@@ -177,7 +268,9 @@ export default function TeamMemberDetailsForm({
 
             {/* Submit Button */}
             <div className="text-right">
-              <Button type="submit">{t("BUTTONS.SAVE_CHANGES")}</Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? <LoadingSpinner /> : t("BUTTONS.SAVE_CHANGES")}
+              </Button>
             </div>
           </form>
         </Form>
