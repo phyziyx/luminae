@@ -19,16 +19,6 @@ import { AgencyMember } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import TeamMemberDetails from "./team-member-details";
 
-// Define team member data type
-export type TeamMember = {
-  id: string;
-  name: string;
-  email: string;
-  role: AgencyMember["role"];
-  workspacesAssigned: number;
-  status: "Active" | "On Break" | "Removed";
-};
-
 // Map status to badge variants
 const statusBadgeMap: Record<
   TeamMember["status"],
@@ -37,6 +27,15 @@ const statusBadgeMap: Record<
   Active: "default",
   "On Break": "secondary",
   Removed: "destructive",
+};
+
+// Define team member data type
+export type TeamMember = {
+  id: string;
+  name: string;
+  email: string;
+  role: AgencyMember["role"];
+  status: "Active" | "On Break" | "Removed";
 };
 
 // Define the columns for the table

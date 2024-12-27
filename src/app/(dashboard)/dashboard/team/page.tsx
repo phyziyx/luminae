@@ -4,7 +4,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DataTable } from "./components/data-table";
-import { columns } from "./components/columns";
+import { TeamMember, columns } from "./components/columns";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { getTranslations } from "next-intl/server";
 
@@ -28,12 +28,12 @@ const Team = async () => {
   }
 
   const members = await AgencyManager.findAgencyMembers(agencyMember?.agencyId);
-  const data = members.map((member) => ({
+  const data: TeamMember[] = members.map((member) => ({
     id: member.id,
     name: "to-do",
     email: member.email,
     role: member.role,
-    status: "ACTIVE",
+    status: "Active",
   }));
 
   return (

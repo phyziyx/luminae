@@ -51,6 +51,7 @@ export default function Page() {
     if (user?.id) {
       router.push("/");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   if (!token) {
