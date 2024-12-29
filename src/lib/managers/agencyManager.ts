@@ -67,6 +67,35 @@ class AgencyManager {
     return null;
   }
 
+  /**
+   * Fetch agency details by ID
+   * @param agencyId ID of the agency
+   * @returns agency details
+   */
+  public static async fetchAgencyDetails(agencyId: string) {
+    const agency = await prisma.agency.findUnique({
+      where: { id: agencyId },
+    });
+
+    if (!agency) {
+      throw new Error("Agency not found");
+    }
+
+    return {
+      id: agency.id,
+      name: agency.name,
+      agencyLogo: agency.agencyLogo || "",
+      companyEmail: agency.companyEmail || "",
+      companyPhone: agency.companyPhone || "",
+      stripeCustomerId: agency.stripeCustomerId || "",
+      address: agency.address || "",
+      city: agency.city || "",
+      zipCode: agency.zipCode || "",
+      state: agency.state || "",
+      country: agency.country || "",
+    };
+  }
+
   public static async updateAgencyMemberRole(
     agencyId: string,
     email: string,

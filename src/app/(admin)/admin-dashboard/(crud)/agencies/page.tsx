@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DataTable } from "./components/data-table";
 import { AgencyData, columns } from "./components/columns";
-import AgencyManager from "@/lib/managers/agencyManager";
+// import AgencyManager from "@/lib/managers/agencyManager";
 import prisma from "@/lib/db";
 import { getTranslations } from "next-intl/server";
 
@@ -37,15 +37,15 @@ const AgencyPage = async () => {
     return <div>{t("ERROR_MESSAGES.NOT_AUTHENTICATED")}</div>;
   }
 
-  const email = user.emailAddresses[0].emailAddress;
-  const agencyMember = await prisma.agencyMember.findUnique({
-    where: { email },
-    include: { agency: true },
-  });
+  // const email = user.emailAddresses[0].emailAddress;
+  // const agencyMember = await prisma.agencyMember.findUnique({
+  //   where: { email },
+  //   include: { agency: true },
+  // });
 
-  if (!agencyMember || !agencyMember.agencyId) {
-    return <div>{t("ERROR_MESSAGES.NOT_PART_OF_AGENCY")}</div>;
-  }
+  // if (!agencyMember || !agencyMember.agencyId) {
+  //   return <div>{t("ERROR_MESSAGES.NOT_PART_OF_AGENCY")}</div>;
+  // }
 
   // Fetch all agencies
   const data = await fetchAgencies();

@@ -57,8 +57,9 @@ export const columns: ColumnDef<UserData>[] = [
     accessorKey: "role",
     header: "Role",
     cell: ({ row }) => {
+      const t = useTranslations();
       const role = row.getValue<UserData["role"]>("role");
-      return <span>{role}</span>;
+      return <span>{t(`ROLES.${role}`)}</span>;
     },
   },
   {
