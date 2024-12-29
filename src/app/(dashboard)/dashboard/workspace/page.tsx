@@ -9,71 +9,20 @@ import AgencyManager from "@/lib/managers/agencyManager";
 import WorkspaceCard from "./components/workspace-card";
 import CreateWorkspaceCard from "./components/create-workspace-card";
 import SubscriptionManager from "@/lib/managers/subscriptionManager";
+import { Suspense } from "react";
+import FallbackSpinner from "@/components/site/fallback-spinner";
 
-const Workspaces = async () => {
-  const { userId } = await auth();
-  const user = await currentUser();
-
-  const t = await getTranslations();
-
-  if (!userId || !user) {
-    return <div>Not authenticated!</div>;
-  }
-
-  const email = user.emailAddresses[0].emailAddress;
-  const agencyMember = await AgencyManager.findUserAgency(email);
+const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
+  const agencyMember = await AgencyManager.findUserAgency(userEmail);
 
   if (!agencyMember) {
     return <div>You are not a member of any agency.</div>;
   }
 
-  const workspaces = await AgencyManager.findAndFilterWorkspaces(email);
+  const workspaces = await AgencyManager.findAndFilterWorkspaces(userEmail);
   const subscribedPackage = await SubscriptionManager.findByAgency(
     agencyMember.agencyId
   );
-
-  // workspaces = [
-  //   {
-  //     agencyId: "1",
-  //     id: "1",
-  //     name: "SEO Workspace",
-  //     description: "This is the workspace for SEO tasks.",
-  //     createdAt: new Date("2021-09-01T00:00:00.000Z"),
-  //     updatedAt: new Date("2021-09-01T00:00:00.000Z"),
-  //   },
-  //   {
-  //     agencyId: "1",
-  //     id: "2",
-  //     name: "Web Design Workspace",
-  //     description: "Web design workspace for the agency.",
-  //     createdAt: new Date("2021-10-01T00:00:00.000Z"),
-  //     updatedAt: new Date("2021-10-01T00:00:00.000Z"),
-  //   },
-  //   {
-  //     agencyId: "1",
-  //     id: "3",
-  //     name: "Graphic Design",
-  //     description: "Web design workspace for the agency.",
-  //     createdAt: new Date("2021-10-01T00:00:00.000Z"),
-  //     updatedAt: new Date("2021-10-01T00:00:00.000Z"),
-  //   },
-  //   {
-  //     id: "4",
-  //     name: "App Development",
-  //     description: "This is the workspace for App Development",
-  //     createdAt: new Date("2024-10-01T00:00:00.000Z"),
-  //     updatedAt: new Date("2024-10-01T00:00:00.000Z"),
-  //     agencyId: "1",
-  //   },
-  //   {
-  //     id: "5",
-  //     name: "Digital Marketing",
-  //     description: "This is the workspace for Digital Marketing",
-  //     createdAt: new Date("2024-10-01T00:00:00.000Z"),
-  //     updatedAt: new Date("2024-10-01T00:00:00.000Z"),
-  //     agencyId: "1",
-  //   },
-  // ];
 
   if (!subscribedPackage) {
     console.error("Unreachable code");
@@ -92,6 +41,32 @@ const Workspaces = async () => {
     )) || -1;
 
   return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 pt-0">
+      {workspaces &&
+        workspaces.length > 0 &&
+        workspaces.map((workspace) => (
+          <WorkspaceCard key={workspace.id} workspace={workspace} />
+        ))}
+
+      {(agencyMember?.role === "AGENCY_ADMIN" ||
+        agencyMember?.role === "AGENCY_OWNER") && (
+        <CreateWorkspaceCard created={created} max={max} />
+      )}
+    </div>
+  );
+};
+
+const Workspaces = async () => {
+  const { userId } = await auth();
+  const user = await currentUser();
+
+  const t = await getTranslations();
+
+  if (!userId || !user) {
+    return <div>Not authenticated!</div>;
+  }
+
+  return (
     <>
       <header className="flex h-16 shrink-0 items-center gap-2">
         <div className="flex items-center gap-2 px-4">
@@ -100,18 +75,9 @@ const Workspaces = async () => {
           <h1 className="text-3xl font-semibold">{t("WORKSPACES")}</h1>
         </div>
       </header>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 pt-0">
-        {workspaces &&
-          workspaces.length > 0 &&
-          workspaces.map((workspace) => (
-            <WorkspaceCard key={workspace.id} workspace={workspace} />
-          ))}
-
-        {(agencyMember?.role === "AGENCY_ADMIN" ||
-          agencyMember?.role === "AGENCY_OWNER") && (
-          <CreateWorkspaceCard created={created} max={max} />
-        )}
-      </div>
+      <Suspense fallback={<FallbackSpinner />}>
+        <WorkspacesList userEmail={user.emailAddresses[0].emailAddress} />
+      </Suspense>
     </>
   );
 };
