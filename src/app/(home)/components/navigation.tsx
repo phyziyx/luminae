@@ -1,6 +1,12 @@
 "use client";
 
-import { HouseIcon, MenuIcon, User2Icon, UserRoundPlus } from "lucide-react";
+import {
+  HouseIcon,
+  MenuIcon,
+  User2Icon,
+  UserRoundPlus,
+  UserRoundXIcon,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -10,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import ModeToggle from "@/components/site/mode-toggle";
 import Logo from "@/components/logo";
+import { SignOutButton } from "@clerk/nextjs";
 
 type Props = {
   user?: boolean;
@@ -127,29 +134,39 @@ const Navigation = ({ user }: Props) => {
         {/* Options for Mode Toggle, Sign Up and Sign In  */}
         <div className="flex flex-row gap-2">
           <ModeToggle />
-          {user ? (
-            <Link href="/dashboard">
-              <Button>
-                <HouseIcon />
-                {t("DASHBOARD")}
-              </Button>
-            </Link>
-          ) : (
-            <div className="md:flex flex-row gap-2 hidden">
-              <Link href="/sign-in">
-                <Button>
-                  <User2Icon />
-                  {t("SIGN_IN")}
-                </Button>
-              </Link>
-              <Link href="/sign-up">
-                <Button variant={"secondary"}>
-                  <UserRoundPlus />
-                  {t("SIGN_UP")}
-                </Button>
-              </Link>
-            </div>
-          )}
+          <div className="md:flex flex-row gap-2 hidden">
+            {user ? (
+              <>
+                <Link href="/dashboard">
+                  <Button>
+                    <HouseIcon />
+                    {t("DASHBOARD")}
+                  </Button>
+                </Link>
+                <SignOutButton>
+                  <Button variant={"destructive"}>
+                    <UserRoundXIcon />
+                    {t("SIGN_OUT")}
+                  </Button>
+                </SignOutButton>
+              </>
+            ) : (
+              <>
+                <Link href="/sign-in">
+                  <Button>
+                    <User2Icon />
+                    {t("SIGN_IN")}
+                  </Button>
+                </Link>
+                <Link href="/sign-up">
+                  <Button variant={"secondary"}>
+                    <UserRoundPlus />
+                    {t("SIGN_UP")}
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>

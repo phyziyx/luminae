@@ -1,8 +1,8 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-import DashboardSidebar from "../components/sidebar";
+import DashboardSidebar from "./components/sidebar";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { currentUser, auth } from "@clerk/nextjs/server";
-import AgencyDetails from "../components/agency-details/agency-details";
+import AgencyDetails from "./components/agency-details/agency-details";
 import Logo from "@/components/logo";
 import UserManager from "@/lib/managers/userManager";
 import { Suspense } from "react";
