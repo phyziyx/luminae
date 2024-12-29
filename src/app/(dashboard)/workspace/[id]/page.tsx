@@ -6,6 +6,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import KanbanBoard from "./components/kanban-board";
 
 export default async function WorkspacePage({
   params,
@@ -32,7 +33,7 @@ export default async function WorkspacePage({
         </div>
       </header>
       <Suspense fallback={<FallbackSpinner />}>
-        <>{id}</>
+        <KanbanBoard id={id} />
       </Suspense>
     </>
   );
