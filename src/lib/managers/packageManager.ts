@@ -5,6 +5,28 @@ class PackageManager {
   public static FREE_PLAN_PRICE_ID = "FREE";
 
   /**
+   * Get the package from the database from the provided Stripe's Product Price ID
+   * @param priceId The Stripe Stripe Produce Price ID
+   */
+  public static async getPackageByPriceId(priceId: string) {
+    return await prisma.package.findFirst({
+      where: {
+        OR: [
+          {
+            stripePriceIdMonthly: priceId,
+          },
+          {
+            stripePriceIdAnnually: priceId,
+          },
+        ],
+      },
+      include: {
+        features: true,
+      },
+    });
+  }
+
+  /**
    * Get the package from the database using its ID
    * @param packageId The ID of the package
    */
@@ -15,9 +37,9 @@ class PackageManager {
         features: true,
       },
     });
-  
+
     if (!packageData) return null;
-  
+
     // Convert Decimal fields to numbers
     return {
       ...packageData,
@@ -46,7 +68,7 @@ class PackageManager {
    * @param packageId The ID of the package
    * @param data The data to update (e.g., name, status, monthlyPrice)
    */
-  public static async updatePackage(packageId: string, data: { name: string; }) {
+  public static async updatePackage(packageId: string, data: { name: string }) {
     try {
       await prisma.package.update({
         where: { id: packageId },
@@ -62,7 +84,9 @@ class PackageManager {
    * Update the max limit of features
    * @param features Array of features with their IDs and new max limits
    */
-  public static async updatePackageFeatures(features: Array<{ id: string; maxLimit: number }>) {
+  public static async updatePackageFeatures(
+    features: Array<{ id: string; maxLimit: number }>
+  ) {
     try {
       for (const feature of features) {
         await prisma.feature.update({

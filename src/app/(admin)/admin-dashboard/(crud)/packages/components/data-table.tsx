@@ -20,11 +20,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { useModal } from "@/providers/modal-provider";
 import * as React from "react";
 import { DataTablePagination } from "@/components/site/pagination";
-import { PackageData } from "./columns"; // Import PackageData type from columns.tsx
-import { useTranslations } from "next-intl";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -34,9 +31,6 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const t = useTranslations();
-
-  const { openModal } = useModal();
 
   const table = useReactTable({
     data,

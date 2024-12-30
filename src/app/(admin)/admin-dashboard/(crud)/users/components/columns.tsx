@@ -14,9 +14,7 @@ import {
 import { MoreVerticalIcon } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import CustomModal from "@/components/site/custom-modal";
-import { User } from "@prisma/client";
 import { useTranslations } from "next-intl";
-
 import UpdateUserModal from "./modals/update-user-modal"; // Import the UpdateUserModal component
 import { toast } from "@/hooks/use-toast";
 import deleteUser from "./actions/delete-user"; // Import the deleteUser action
@@ -57,6 +55,7 @@ export const columns: ColumnDef<UserData>[] = [
     accessorKey: "role",
     header: "Role",
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const t = useTranslations();
       const role = row.getValue<UserData["role"]>("role");
       return <span>{t(`ROLES.${role}`)}</span>;
@@ -77,10 +76,9 @@ export const columns: ColumnDef<UserData>[] = [
     header: "Actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { openModal } = useModal();
-      const t = useTranslations();
       const user = row.original;
-
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { openModal } = useModal();
       const handleDeleteClick = async () => {
         try {
           const result = await deleteUser({ id: user.id });
@@ -96,7 +94,7 @@ export const columns: ColumnDef<UserData>[] = [
               description: `${user.name} has been successfully deleted.`,
             });
           }
-        } catch (error) {
+        } catch {
           toast({
             variant: "destructive",
             title: "Error Deleting User",

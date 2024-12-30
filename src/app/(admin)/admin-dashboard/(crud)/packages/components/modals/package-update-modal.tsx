@@ -50,7 +50,7 @@ const UpdatePackageModal: React.FC<UpdatePackageModalProps> = ({
         id: packageData.id,
         name: packageData.name,
         // monthlyPrice: packageData.monthlyPrice,
-        features: packageData.features.map((feature: any) => ({
+        features: packageData.features.map((feature) => ({
           id: feature.id,
           code: feature.code,
           maxLimit: feature.maxLimit || 0,
@@ -77,8 +77,7 @@ const UpdatePackageModal: React.FC<UpdatePackageModalProps> = ({
         });
         onClose(); // Close the modal after successful update
       }
-    } catch (error) {
-      console.error("Package update failed:", error);
+    } catch {
       toast({
         title: "An error occurred while updating the package",
         variant: "destructive",

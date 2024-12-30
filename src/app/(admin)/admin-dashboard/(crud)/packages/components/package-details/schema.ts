@@ -11,7 +11,7 @@ const packageFormSchema = z.object({
   //   .optional(),
   features: z.array(
     z.object({
-      code: z.enum(["TEAM_MEMBERS", "WORKSPACE"]), // Limits to specific feature types
+      code: z.enum(["TEAM_MEMBERS", "WORKSPACE", "FILE_STORAGE", "CUSTOM_URL"]), // Limits to specific feature types
       maxLimit: z.preprocess(
         (input) => {
           const processed = z.string().regex(/^\d+$/).transform(Number).safeParse(input);

@@ -15,8 +15,6 @@ import {
 import { MoreVerticalIcon } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import CustomModal from "@/components/site/custom-modal";
-import { Agency } from "@prisma/client";
-import { useTranslations } from "next-intl";
 
 import UpdateAgencyModal from "./modals/update-agency-modal"; // Import the UpdateAgencyModal component
 import { toast } from "@/hooks/use-toast";
@@ -69,10 +67,9 @@ export const columns: ColumnDef<AgencyData>[] = [
     header: "Actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { openModal } = useModal();
-      const t = useTranslations();
       const agency = row.original;
-
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { openModal } = useModal();
       const handleDeleteClick = async () => {
         try {
           const result = await deleteAgency({ id: agency.id });
@@ -88,7 +85,7 @@ export const columns: ColumnDef<AgencyData>[] = [
               description: `${agency.name} has been successfully deleted.`,
             });
           }
-        } catch (error) {
+        } catch {
           toast({
             variant: "destructive",
             title: "Error Deleting Agency",

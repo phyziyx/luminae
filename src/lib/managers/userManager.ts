@@ -2,7 +2,6 @@ import { User } from "@prisma/client";
 import prisma from "../db";
 
 type CreateUser = Pick<User, "id" | "email" | "name" | "avatarUrl">;
-type UpdateUser = Partial<CreateUser>;  // Allow partial updates
 
 class UserManager {
   /**
@@ -111,15 +110,15 @@ class UserManager {
    * Find if user is admin
    * @returns boolean
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public static async isUserAdmin(userId: string) {
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
+    // const user = await prisma.user.findUnique({
+    //   where: {
+    //     id: userId,
+    //   },
+    // });
 
     // TODO: UPDATE SCHEMA, ADD IS ADMIN
-
     return true;
   }
 }

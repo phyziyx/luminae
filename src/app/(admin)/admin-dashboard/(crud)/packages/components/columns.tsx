@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,7 +19,9 @@ import UpdatePackageModal from "./modals/package-update-modal";
 export type PackageData = {
   id: string;
   name: string;
-  features: string[]; // Array of feature names, as strings
+  TEAM_MEMBERS?: number;
+  WORKSPACE?: number;
+  FILE_STORAGE?: number; 
   status: string;
   monthlyPrice: number;
 };
@@ -65,8 +66,9 @@ export const columns: ColumnDef<PackageData>[] = [
     header: "Actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { openModal } = useModal();
       const packageData = row.original;
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { openModal } = useModal();
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

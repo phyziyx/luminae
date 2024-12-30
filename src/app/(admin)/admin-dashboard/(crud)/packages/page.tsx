@@ -4,7 +4,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DataTable } from "./components/data-table";
-import { PackageData, columns } from "./components/columns";
+import { columns } from "./components/columns";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import PackageManager from "@/lib/managers/packageManager";
@@ -12,7 +12,16 @@ import { getTranslations } from "next-intl/server";
 
 const t = await getTranslations({ locale: "en" });
 
-const PackagesList = ({ data }) => {
+interface PackageListProps {
+  data: {
+    id: string;
+    name: string;
+    monthlyPrice: number;
+    status: string
+  }[];
+}
+
+const PackagesList = ({ data }:PackageListProps) => {
   return <DataTable columns={columns} data={data} />;
 };
 
@@ -39,8 +48,6 @@ const PackagesPage = async () => {
       ...features,
     };
   });
-
-  console.log(data);
 
   return (
     <>
