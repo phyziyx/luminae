@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { useModal } from "@/providers/modal-provider";
 import * as React from "react";
 import { DataTablePagination } from "@/components/site/pagination";
+import { PackageData } from "./columns"; // Import PackageData type from columns.tsx
 import { useTranslations } from "next-intl";
 
 interface DataTableProps<TData, TValue> {
@@ -30,28 +31,12 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const t = useTranslations();
 
   const { openModal } = useModal();
-
-//   const handleCreateUser = () => {
-//     openModal(
-//       <CustomModal
-//         title="Create New User"
-//         caption="Fill out the form below to create a new user."
-//       >
-//         <CreateUserModal />
-//       </CustomModal>
-//     );
-//   };
 
   const table = useReactTable({
     data,
@@ -73,17 +58,13 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between py-4">
         {/* Search Bar */}
         <Input
-          placeholder="Filter by name or email..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter by package name..."
+          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn("name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
-        {/* Create User Button */}
-        {/* <Button className="ml-4" onClick={handleCreateUser}>
-          <UserPlus className="mr-2 h-4 w-4" /> {t("CREATE_USER.HEADER")}
-        </Button> */}
       </div>
       <div className="rounded-md border">
         <Table>
@@ -109,20 +90,14 @@ export function DataTable<TData, TValue>({
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
