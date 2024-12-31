@@ -1,6 +1,13 @@
 "use client";
 
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -16,7 +23,11 @@ interface UpdatePackageFormProps {
   onClose: () => void;
 }
 
-const UpdatePackageForm: React.FC<UpdatePackageFormProps> = ({ form, onSubmit, onClose }) => {
+const UpdatePackageForm: React.FC<UpdatePackageFormProps> = ({
+  form,
+  onSubmit,
+  onClose,
+}) => {
   // Extract editable features
   const editableFeatures = ["WORKSPACE", "TEAM_MEMBERS"];
   const t = useTranslations();
@@ -63,7 +74,6 @@ const UpdatePackageForm: React.FC<UpdatePackageFormProps> = ({ form, onSubmit, o
           {form.watch("features")?.map((feature, index) => {
             if (!editableFeatures.includes(feature.code)) return null;
 
-            
             return (
               <FormField
                 key={feature.code}
@@ -71,12 +81,17 @@ const UpdatePackageForm: React.FC<UpdatePackageFormProps> = ({ form, onSubmit, o
                 name={`features.${index}.maxLimit`} // Access the correct field in features array
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>{t(`PACKAGE_FEATURES.${feature.code}`)}</FormLabel>
+                    <FormLabel>
+                      {t(`PACKAGE_FEATURES.${feature.code}`)}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
+                        min={-1}
                         {...field}
-                        placeholder={`Enter max limit for ${t(`PACKAGE_FEATURES.${feature.code}`)}`}
+                        placeholder={`Enter max limit for ${t(
+                          `PACKAGE_FEATURES.${feature.code}`
+                        )}`}
                       />
                     </FormControl>
                     <FormMessage />
@@ -88,7 +103,12 @@ const UpdatePackageForm: React.FC<UpdatePackageFormProps> = ({ form, onSubmit, o
         </div>
 
         <DialogFooter>
-          <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={onClose}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
           <Button type="submit" disabled={isLoading}>
