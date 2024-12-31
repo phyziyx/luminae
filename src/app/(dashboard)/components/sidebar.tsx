@@ -83,6 +83,7 @@ interface NavItem extends Item {
   icon: React.FC;
   isActive?: boolean;
   items?: Item[];
+  roles?: Role[];
 }
 
 interface NavData {
@@ -102,12 +103,14 @@ const data: NavData = {
       url: "/dashboard/billing",
       icon: ChartNetworkIcon,
       items: [],
+      roles: ["AGENCY_OWNER", "AGENCY_ADMIN"],
     },
     {
       title: "Team",
       url: "/dashboard/team",
       icon: UserCog2Icon,
       items: [],
+      roles: ["AGENCY_OWNER", "AGENCY_ADMIN"],
     },
     {
       title: "Workspaces",
@@ -328,6 +331,10 @@ const DashboardSidebar = ({
             <SidebarMenu>
               {data.navMain.map((item) => {
                 const isActive = item.url === rawPathName;
+
+                if (item.roles && !item.roles.includes(role)) {
+                  return null;
+                }
 
                 return (
                   <Collapsible
