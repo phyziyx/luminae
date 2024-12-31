@@ -228,6 +228,7 @@
   },
 
   "CLIENTS": {
-    "CREATE_CLIENT": "Create Client"
+    "CREATE_CLIENT": "Create Client",
+    "HEADER": "Clients"
   }
 }
