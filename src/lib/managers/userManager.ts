@@ -47,32 +47,6 @@ class UserManager {
   }
 
   /**
-   * Fetches the details of a user
-   * @param userId user ID
-   * @returns user details
-   */
-  public static async fetchUserDetails(userId: string) {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    return {
-      id: user.id,
-      name: user.name,
-      avatarUrl: user.avatarUrl || "",
-      email: user.email || "",
-      stripeConnectAccountId: user.stripeConnectAccountId || "",
-      stripeCustomerId: user.stripeCustomerId || "",
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
-  }
-
-  /**
    * Deletes the user in the database
    * @param id user id
    * @returns user

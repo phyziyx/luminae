@@ -19,10 +19,11 @@ interface UpdateUserModalProps {
 const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ userId }) => {
   const { toast } = useToast();
 
-  const { data: userData, error, isLoading } = useSWR(
-    ["userDetails", userId],
-    ([, userId]) => fetchUserDetails(userId)
-  );
+  const {
+    data: userData,
+    error,
+    isLoading,
+  } = useSWR(["userDetails", userId], ([, userId]) => fetchUserDetails(userId));
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -68,11 +69,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ userId }) => {
   }
 
   return (
-    <UpdateUserForm
-      form={form}
-      onSubmit={onSubmit}
-      isLoading={isLoading}
-    />
+    <UpdateUserForm form={form} onSubmit={onSubmit} isLoading={isLoading} />
   );
 };
 

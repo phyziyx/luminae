@@ -14,7 +14,7 @@ const fetchUserDetails = async (userId: string) => {
 
   // Fetch user details
   try {
-    const userDetails = await UserManager.fetchUserDetails(userId);
+    const userDetails = await UserManager.findUser(userId);
     return userDetails;
   } catch (error) {
     console.error("Failed to fetch user details:", error);
