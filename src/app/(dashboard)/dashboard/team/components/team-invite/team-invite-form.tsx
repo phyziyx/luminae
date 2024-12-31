@@ -45,12 +45,12 @@ export default function TeamInviteForm() {
       const response = await onCreateInvite(values);
 
       toast({
-        title: response?.error || "Workspace information saved successfully",
+        title: response?.error || "Team member invitation sent successfully",
         variant: response?.error ? "destructive" : "default",
       });
     } catch {
       toast({
-        title: "An error occurred while saving the workspace information",
+        title: "An error occurred while sending the invitation",
       });
     } finally {
       toast({

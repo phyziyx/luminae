@@ -22,6 +22,28 @@ class UserManager {
         avatarUrl: user.avatarUrl,
       },
     });
+
+    const invitation = await prisma.invitation.findFirst({
+      where: {
+        email: user.email,
+      },
+    });
+
+    if (invitation) {
+      await prisma.invitation.delete({
+        where: {
+          id: invitation.id,
+        },
+      });
+
+      await prisma.agencyMember.create({
+        data: {
+          agencyId: invitation.agencyId,
+          email: invitation.email,
+          role: invitation.role,
+        },
+      });
+    }
   }
 
   /**
@@ -29,26 +51,26 @@ class UserManager {
    * @param userId user ID
    * @returns user details
    */
-    public static async fetchUserDetails(userId: string) {
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-      });
-  
-      if (!user) {
-        throw new Error("User not found");
-      }
-  
-      return {
-        id: user.id,
-        name: user.name,
-        avatarUrl: user.avatarUrl || "",
-        email: user.email || "",
-        stripeConnectAccountId: user.stripeConnectAccountId || "",
-        stripeCustomerId: user.stripeCustomerId || "",
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      };
+  public static async fetchUserDetails(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error("User not found");
     }
+
+    return {
+      id: user.id,
+      name: user.name,
+      avatarUrl: user.avatarUrl || "",
+      email: user.email || "",
+      stripeConnectAccountId: user.stripeConnectAccountId || "",
+      stripeCustomerId: user.stripeCustomerId || "",
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+  }
 
   /**
    * Deletes the user in the database
@@ -99,7 +121,10 @@ class UserManager {
    * @param userUpdates updated user data
    * @returns updated user
    */
-  public static async updateUser(id: string, userUpdates: { name: string; email: string; avatarUrl: string }) {
+  public static async updateUser(
+    id: string,
+    userUpdates: { name: string; email: string; avatarUrl: string }
+  ) {
     return await prisma.user.update({
       where: { id },
       data: userUpdates,

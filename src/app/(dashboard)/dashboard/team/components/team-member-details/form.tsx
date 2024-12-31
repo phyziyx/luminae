@@ -23,7 +23,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Controller, useForm } from "react-hook-form";
@@ -158,7 +157,6 @@ export default function TeamMemberDetailsForm({
                     name="role"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="role">{t("ROLE")}</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
@@ -172,10 +170,10 @@ export default function TeamMemberDetailsForm({
                                 <SelectLabel>
                                   {t("ASSIGN_ROLE.ROLES")}
                                 </SelectLabel>
-                                <SelectItem value="agency_admin">
+                                <SelectItem value="AGENCY_ADMIN">
                                   {t("ROLES.AGENCY_ADMIN")}
                                 </SelectItem>
-                                <SelectItem value="team_member">
+                                <SelectItem value="AGENCY_USER">
                                   {t("ROLES.AGENCY_USER")}
                                 </SelectItem>
                               </SelectGroup>

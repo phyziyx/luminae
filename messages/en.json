@@ -50,6 +50,7 @@
   "SEARCH_IN_AGENCY": "Search in Agency...",
   "NO_RESULTS_FOUND": "No results found",
   "NO_WORKSPACES_FOUND": "No Workspaces Found",
+  "NO_WORKSPACES_ASSIGNED": "No Workspaces Assigned",
   "CREATE_WORKSPACE": "Create Workspace",
   "WORKSPACES": "Workspaces",
   "FOR_THE_YEAR": "For the year {YEAR}",
