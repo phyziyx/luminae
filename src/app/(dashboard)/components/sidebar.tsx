@@ -54,6 +54,7 @@ import {
   SendIcon,
   Settings2Icon,
   SquareTerminalIcon,
+  UserCircle2Icon,
   UserCog2Icon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -111,6 +112,12 @@ const data: NavData = {
       icon: UserCog2Icon,
       items: [],
       roles: ["AGENCY_OWNER", "AGENCY_ADMIN"],
+    },
+    {
+      title: "Clients",
+      url: "/dashboard/clients",
+      icon: UserCircle2Icon,
+      items: [],
     },
     {
       title: "Workspaces",

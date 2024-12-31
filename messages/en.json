@@ -225,5 +225,9 @@
     "SUCCESS": "Success",
     "NOT_AUTHENTICATED": "Not authenticated!",
     "NOT_PART_OF_AGENCY": "Not part of an agency!"
+  },
+
+  "CLIENTS": {
+    "CREATE_CLIENT": "Create Client"
   }
 }

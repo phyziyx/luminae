@@ -446,6 +446,14 @@ class AgencyManager {
         throw new Error(`Feature code ${featureCode} is not supported`);
     }
   }
+
+  public static async findClients(agencyId: string) {
+    return await prisma.client.findMany({
+      where: {
+        agencyId,
+      },
+    });
+  }
 }
 
 export default AgencyManager;
