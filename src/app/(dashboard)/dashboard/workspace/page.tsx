@@ -43,7 +43,7 @@ const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
       "WORKSPACE"
     )) || -1;
 
-  if (!isAgencyAdmin(agencyMember?.role) && created === 0) {
+  if (!isAgencyAdmin(agencyMember.role) && created === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-4">
         {t("NO_WORKSPACES_ASSIGNED")}
@@ -63,10 +63,9 @@ const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
           />
         ))}
 
-      {agencyMember?.role === "AGENCY_ADMIN" ||
-        (agencyMember?.role === "AGENCY_OWNER" && (
-          <CreateWorkspaceCard created={created} max={max} />
-        ))}
+      {isAgencyAdmin(agencyMember.role) && (
+        <CreateWorkspaceCard created={created} max={max} />
+      )}
     </div>
   );
 };

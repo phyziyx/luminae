@@ -35,7 +35,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
+import { cn, isAgencyAdmin } from "@/lib/utils";
 import { UserButton } from "@clerk/nextjs";
 import { Agency, Workspace, Role } from "@prisma/client";
 import {
@@ -226,18 +226,17 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
             <CommandList>
               <CommandEmpty>{t("NO_RESULTS_FOUND")}</CommandEmpty>
               {/* Agency */}
-              {(role === "AGENCY_OWNER" || role === "AGENCY_ADMIN") &&
-                agency && (
-                  <CommandGroup heading="Agency">
-                    <PickerItem
-                      id={agency.id}
-                      name={agency.name}
-                      address={agency.address}
-                      isWorkspace={false}
-                      logoUrl={agency.agencyLogo || "/assets/logo.png"}
-                    />
-                  </CommandGroup>
-                )}
+              {isAgencyAdmin(role) && agency && (
+                <CommandGroup heading="Agency">
+                  <PickerItem
+                    id={agency.id}
+                    name={agency.name}
+                    address={agency.address}
+                    isWorkspace={false}
+                    logoUrl={agency.agencyLogo || "/assets/logo.png"}
+                  />
+                </CommandGroup>
+              )}
 
               {/* Workspaces */}
               <CommandSeparator />
