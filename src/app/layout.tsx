@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -16,6 +16,13 @@ const geistSans = localFont({
   variable: "--font-geist-sans",
   weight: "100 900",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 1,
+};
 
 export const metadata: Metadata = {
   title: "Luminae",
