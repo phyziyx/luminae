@@ -2,6 +2,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import DashboardSidebar from "../components/admin-sidebar";
 import { currentUser, auth } from "@clerk/nextjs/server";
 import UserManager from "@/lib/managers/userManager";
+import { redirect } from "next/navigation";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await currentUser();
@@ -12,17 +13,8 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     return;
   }
 
-  const email = user.emailAddresses[0].emailAddress;
-
-  const foundUser = UserManager.findUser(email);
-  if (!foundUser) {
-    // User not found, lets create an account...
-    await UserManager.createUser({
-      id: user.id,
-      email: email,
-      name: `${user.firstName} ${user.lastName}`,
-      avatarUrl: user.imageUrl,
-    });
+  if (!(await UserManager.isUserAdmin(user.id))) {
+    redirect("/dashboard");
   }
 
   return (
