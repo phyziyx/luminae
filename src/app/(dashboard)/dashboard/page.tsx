@@ -17,6 +17,9 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
 import { SampleChart } from "../components/chart/area-chart";
 import { ClosingRateChart } from "../components/chart/closing-rate-chart";
+import AgencyManager from "@/lib/managers/agencyManager";
+import { isAgencyAdmin } from "@/lib/utils";
+import { redirect } from "next/navigation";
 
 const Dashboard = async () => {
   const { userId } = await auth();
@@ -26,6 +29,14 @@ const Dashboard = async () => {
 
   if (!userId || !user) {
     return <div>Not authenticated!</div>;
+  }
+
+  const agencyMember = await AgencyManager.findUserAgency(
+    user.emailAddresses[0].emailAddress
+  );
+
+  if (agencyMember && !isAgencyAdmin(agencyMember.role)) {
+    redirect("/dashboard/workspace");
   }
 
   const currentYear = new Date().getFullYear();
