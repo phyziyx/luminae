@@ -98,10 +98,11 @@ export const columns: ColumnDef<UserData>[] = [
           toast({
             variant: "destructive",
             title: "Error Deleting User",
-            description: "There was an issue deleting the user. Please try again.",
+            description:
+              "There was an issue deleting the user. Please try again.",
           });
         }
-      };      
+      };
 
       return (
         <DropdownMenu>
@@ -120,7 +121,7 @@ export const columns: ColumnDef<UserData>[] = [
                     title="Edit User Details"
                     caption="Modify user information as needed."
                   >
-                    <UpdateUserModal userId={user.id} />
+                    <UpdateUserModal userId={user.email} />
                   </CustomModal>
                 )
               }
@@ -134,7 +135,9 @@ export const columns: ColumnDef<UserData>[] = [
               Copy Email
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleDeleteClick}>Delete</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDeleteClick}>
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -32,33 +32,29 @@ class UserManager {
         avatarUrl: user.avatarUrl,
       },
     });
-  }
 
-  /**
-   * Fetches the details of a user
-   * @param userId user ID
-   * @returns user details
-   */
-    public static async fetchUserDetails(userId: string) {
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
+    const invitation = await prisma.invitation.findFirst({
+      where: {
+        email: user.email,
+      },
+    });
+
+    if (invitation) {
+      await prisma.invitation.delete({
+        where: {
+          id: invitation.id,
+        },
       });
-  
-      if (!user) {
-        throw new Error("User not found");
-      }
-  
-      return {
-        id: user.id,
-        name: user.name,
-        avatarUrl: user.avatarUrl || "",
-        email: user.email || "",
-        stripeConnectAccountId: user.stripeConnectAccountId || "",
-        stripeCustomerId: user.stripeCustomerId || "",
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      };
+
+      await prisma.agencyMember.create({
+        data: {
+          agencyId: invitation.agencyId,
+          email: invitation.email,
+          role: invitation.role,
+        },
+      });
     }
+  }
 
   /**
    * Deletes the user in the database
@@ -109,7 +105,10 @@ class UserManager {
    * @param userUpdates updated user data
    * @returns updated user
    */
-  public static async updateUser(id: string, userUpdates: { name: string; email: string; avatarUrl: string }) {
+  public static async updateUser(
+    id: string,
+    userUpdates: { name: string; email: string; avatarUrl: string }
+  ) {
     return await prisma.user.update({
       where: { id },
       data: userUpdates,
@@ -117,19 +116,20 @@ class UserManager {
   }
 
   /**
-   * Find if user is admin
+   * Check if the user is a platform admin
    * @returns boolean
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public static async isUserAdmin(userId: string) {
-    // const user = await prisma.user.findUnique({
-    //   where: {
-    //     id: userId,
-    //   },
-    // });
+  public static async isAdmin(userId: string) {
+    const user = await prisma.user.findUnique({
+      select: {
+        isAdmin: true,
+      },
+      where: {
+        id: userId,
+      },
+    });
 
-    // TODO: UPDATE SCHEMA, ADD IS ADMIN
-    return true;
+    return user?.isAdmin || false;
   }
 }
 

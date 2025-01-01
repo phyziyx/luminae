@@ -32,7 +32,7 @@ const deleteAgency = async (values: z.infer<typeof deleteAgencySchema>) => {
   const agencyID = validatedFields.data.id;
 
   // Check if the current user is an admin
-  const isAdmin = await UserManager.isUserAdmin(user.id);
+  const isAdmin = await UserManager.isAdmin(user.id);
 
   if (!isAdmin) {
     error = "User is not authorized to delete agencies.";

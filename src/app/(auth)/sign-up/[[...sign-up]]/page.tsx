@@ -89,6 +89,26 @@ export default function SignUpPage() {
                     <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
                       or
                     </p>
+                    <div className="flex flex-row gap-x-2">
+                      <Clerk.Field name="firstName" className="space-y-2">
+                        <Clerk.Label asChild>
+                          <Label>{t("FIRSTNAME")}</Label>
+                        </Clerk.Label>
+                        <Clerk.Input type="text" required asChild>
+                          <Input />
+                        </Clerk.Input>
+                        <Clerk.FieldError className="block text-sm text-destructive" />
+                      </Clerk.Field>
+                      <Clerk.Field name="lastName" className="space-y-2">
+                        <Clerk.Label asChild>
+                          <Label>{t("LASTNAME")}</Label>
+                        </Clerk.Label>
+                        <Clerk.Input type="text" required asChild>
+                          <Input />
+                        </Clerk.Input>
+                        <Clerk.FieldError className="block text-sm text-destructive" />
+                      </Clerk.Field>
+                    </div>
                     <Clerk.Field name="emailAddress" className="space-y-2">
                       <Clerk.Label asChild>
                         <Label>{t("EMAIL")}</Label>

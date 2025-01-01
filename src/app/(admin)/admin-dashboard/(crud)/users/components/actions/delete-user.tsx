@@ -12,9 +12,9 @@ const deleteUserSchema = z.object({
 
 const onUserDelete = async (values: z.infer<typeof deleteUserSchema>) => {
   const user = await currentUser();
-  
+
   let error = "An error occurred while deleting the user.";
-  
+
   // Check if the user is authenticated
   if (!user) {
     console.error("An unauthenticated user attempted to delete a user.");
@@ -31,8 +31,8 @@ const onUserDelete = async (values: z.infer<typeof deleteUserSchema>) => {
   const userID = validatedFields.data.id;
 
   // Check if the current user is an admin
-  const isAdmin = await UserManager.isUserAdmin(user.id);
-  
+  const isAdmin = await UserManager.isAdmin(user.id);
+
   if (!isAdmin) {
     error = "User is not an admin.";
     return { error };

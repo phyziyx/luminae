@@ -12,6 +12,9 @@
   "DASHBOARD": "Dashboard",
   "PREVIEW": "Preview",
 
+  "FIRSTNAME": "First Name",
+  "LASTNAME": "Last Name",
+
   "INVITATION_HEADER": "Create your Account",
   "INVITATION_DESCRIPTION": "You've been invited to join Luminae. Please fill in the details to get started.",
   "GOOGLE": "Google",
@@ -47,6 +50,7 @@
   "SEARCH_IN_AGENCY": "Search in Agency...",
   "NO_RESULTS_FOUND": "No results found",
   "NO_WORKSPACES_FOUND": "No Workspaces Found",
+  "NO_WORKSPACES_ASSIGNED": "No Workspaces Assigned",
   "CREATE_WORKSPACE": "Create Workspace",
   "WORKSPACES": "Workspaces",
   "FOR_THE_YEAR": "For the year {YEAR}",
@@ -222,5 +226,10 @@
     "SUCCESS": "Success",
     "NOT_AUTHENTICATED": "Not authenticated!",
     "NOT_PART_OF_AGENCY": "Not part of an agency!"
+  },
+
+  "CLIENTS": {
+    "CREATE_CLIENT": "Create Client",
+    "HEADER": "Clients"
   }
 }
