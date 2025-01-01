@@ -147,9 +147,6 @@ export default function TeamMemberDetailsForm({
             {/* Assign Role Section -- Not visible for agency owner */}
             {(data.role as string) !== "AGENCY_OWNER" && (
               <div className="space-y-4">
-                <h2 className="text-lg font-semibold">
-                  {t("ASSIGN_ROLE.HEADER")}
-                </h2>
                 <div className="flex items-center justify-between">
                   <p>{t("ASSIGN_ROLE.SELECT_ROLE")}</p>
                   <FormField
@@ -162,7 +159,7 @@ export default function TeamMemberDetailsForm({
                             onValueChange={field.onChange}
                             defaultValue={data.role}
                           >
-                            <SelectTrigger className="w-2/3">
+                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Choose a role" />
                             </SelectTrigger>
                             <SelectContent>
