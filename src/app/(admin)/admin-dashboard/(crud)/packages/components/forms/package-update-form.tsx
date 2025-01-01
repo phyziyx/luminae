@@ -101,16 +101,8 @@ const UpdatePackageForm: React.FC<UpdatePackageFormProps> = ({
         </div>
 
         <DialogFooter>
-          {/* <Button
-            type="button"
-            variant="secondary"
-            onClick={onClose}
-            disabled={isLoading}
-          >
-            Cancel
-          </Button> */}
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? <LoadingSpinner /> : "Save Changes"}
+            {isLoading ? <LoadingSpinner /> : t("BUTTONS.SAVE_CHANGES")}
           </Button>
         </DialogFooter>
       </form>

@@ -162,7 +162,7 @@ const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ onSubmit, agencyDat
 
         <DialogFooter>
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? <LoadingSpinner /> : "Save Changes"}
+            {isLoading ? <LoadingSpinner /> : t("BUTTONS.SAVE_CHANGES")}
           </Button>
         </DialogFooter>
       </form>

@@ -114,9 +114,6 @@ export const columns: ColumnDef<PackageData>[] = [
               {t("ACTIONS.EDIT_DETAILS")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => alert("Delete Package")}>
-              {t("ACTIONS.DELETE")}
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
