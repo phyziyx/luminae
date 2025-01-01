@@ -1,11 +1,12 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-import DashboardSidebar from "../components/sidebar";
+import DashboardSidebar from "./components/sidebar";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { currentUser, auth } from "@clerk/nextjs/server";
-import AgencyDetails from "../components/agency-details/agency-details";
+import AgencyDetails from "./components/agency-details/agency-details";
 import Logo from "@/components/logo";
 import UserManager from "@/lib/managers/userManager";
 import { Suspense } from "react";
+import FallbackSpinner from "@/components/site/fallback-spinner";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await currentUser();
@@ -18,7 +19,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
 
   const email = user.emailAddresses[0].emailAddress;
 
-  const foundUser = UserManager.findUser(email);
+  const foundUser = await UserManager.findUser(email);
   if (!foundUser) {
     // User not found, lets create an account...
     await UserManager.createUser({
@@ -28,6 +29,13 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
       avatarUrl: user.imageUrl,
     });
   }
+
+  // TODO: Check if user is an admin, and redirect
+
+  // const isAdmin = true;
+  // if (isAdmin){
+  //   redirect("/admin-dashboard");
+  // }
 
   const agencyMember = await AgencyManager.findUserAgency(email);
 
@@ -60,7 +68,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
         agency={agencyMember.agency}
         workspaces={workspaces}
       >
-        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+        <Suspense fallback={<FallbackSpinner />}>{children}</Suspense>
       </DashboardSidebar>
     </SidebarProvider>
   );

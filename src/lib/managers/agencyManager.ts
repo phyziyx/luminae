@@ -9,6 +9,7 @@ import {
 import prisma from "../db";
 import { v7 } from "uuid";
 import { clerkClient } from "@clerk/nextjs/server";
+import { isAgencyAdmin } from "../utils";
 
 type CreateAgency = Omit<
   Agency,
@@ -65,6 +66,35 @@ class AgencyManager {
     }
 
     return null;
+  }
+
+  /**
+   * Fetch agency details by ID
+   * @param agencyId ID of the agency
+   * @returns agency details
+   */
+  public static async fetchAgencyDetails(agencyId: string) {
+    const agency = await prisma.agency.findUnique({
+      where: { id: agencyId },
+    });
+
+    if (!agency) {
+      throw new Error("Agency not found");
+    }
+
+    return {
+      id: agency.id,
+      name: agency.name,
+      agencyLogo: agency.agencyLogo || "",
+      companyEmail: agency.companyEmail || "",
+      companyPhone: agency.companyPhone || "",
+      stripeCustomerId: agency.stripeCustomerId || "",
+      address: agency.address || "",
+      city: agency.city || "",
+      zipCode: agency.zipCode || "",
+      state: agency.state || "",
+      country: agency.country || "",
+    };
   }
 
   public static async updateAgencyMemberRole(
@@ -201,6 +231,9 @@ class AgencyManager {
       where: {
         agencyId,
       },
+      include: {
+        user: true,
+      },
     });
   }
 
@@ -232,11 +265,7 @@ class AgencyManager {
     if (!workspaces || workspaces.length === 0) return [];
 
     // If the user is an agency admin or owner, return all workspaces
-    if (
-      [Role.AGENCY_ADMIN as string, Role.AGENCY_OWNER as string].includes(
-        agencyMember.role
-      )
-    ) {
+    if (isAgencyAdmin(agencyMember.role)) {
       return workspaces;
     }
 
@@ -413,6 +442,14 @@ class AgencyManager {
       default:
         throw new Error(`Feature code ${featureCode} is not supported`);
     }
+  }
+
+  public static async findClients(agencyId: string) {
+    return await prisma.client.findMany({
+      where: {
+        agencyId,
+      },
+    });
   }
 }
 

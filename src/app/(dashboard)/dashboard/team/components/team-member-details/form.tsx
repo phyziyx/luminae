@@ -23,7 +23,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Controller, useForm } from "react-hook-form";
@@ -148,9 +147,6 @@ export default function TeamMemberDetailsForm({
             {/* Assign Role Section -- Not visible for agency owner */}
             {(data.role as string) !== "AGENCY_OWNER" && (
               <div className="space-y-4">
-                <h2 className="text-lg font-semibold">
-                  {t("ASSIGN_ROLE.HEADER")}
-                </h2>
                 <div className="flex items-center justify-between">
                   <p>{t("ASSIGN_ROLE.SELECT_ROLE")}</p>
                   <FormField
@@ -158,13 +154,12 @@ export default function TeamMemberDetailsForm({
                     name="role"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel htmlFor="role">{t("ROLE")}</FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={data.role}
                           >
-                            <SelectTrigger className="w-2/3">
+                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Choose a role" />
                             </SelectTrigger>
                             <SelectContent>
@@ -172,10 +167,10 @@ export default function TeamMemberDetailsForm({
                                 <SelectLabel>
                                   {t("ASSIGN_ROLE.ROLES")}
                                 </SelectLabel>
-                                <SelectItem value="agency_admin">
+                                <SelectItem value="AGENCY_ADMIN">
                                   {t("ROLES.AGENCY_ADMIN")}
                                 </SelectItem>
-                                <SelectItem value="team_member">
+                                <SelectItem value="AGENCY_USER">
                                   {t("ROLES.AGENCY_USER")}
                                 </SelectItem>
                               </SelectGroup>

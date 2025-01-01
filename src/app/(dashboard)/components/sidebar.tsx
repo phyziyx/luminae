@@ -35,7 +35,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
+import { cn, isAgencyAdmin } from "@/lib/utils";
 import { UserButton } from "@clerk/nextjs";
 import { Agency, Workspace, Role } from "@prisma/client";
 import {
@@ -54,6 +54,7 @@ import {
   SendIcon,
   Settings2Icon,
   SquareTerminalIcon,
+  UserCircle2Icon,
   UserCog2Icon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -83,6 +84,7 @@ interface NavItem extends Item {
   icon: React.FC;
   isActive?: boolean;
   items?: Item[];
+  roles?: Role[];
 }
 
 interface NavData {
@@ -102,11 +104,19 @@ const data: NavData = {
       url: "/dashboard/billing",
       icon: ChartNetworkIcon,
       items: [],
+      roles: ["AGENCY_OWNER", "AGENCY_ADMIN"],
     },
     {
       title: "Team",
       url: "/dashboard/team",
       icon: UserCog2Icon,
+      items: [],
+      roles: ["AGENCY_OWNER", "AGENCY_ADMIN"],
+    },
+    {
+      title: "Clients",
+      url: "/dashboard/clients",
+      icon: UserCircle2Icon,
       items: [],
     },
     {
@@ -216,18 +226,17 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
             <CommandList>
               <CommandEmpty>{t("NO_RESULTS_FOUND")}</CommandEmpty>
               {/* Agency */}
-              {(role === "AGENCY_OWNER" || role === "AGENCY_ADMIN") &&
-                agency && (
-                  <CommandGroup heading="Agency">
-                    <PickerItem
-                      id={agency.id}
-                      name={agency.name}
-                      address={agency.address}
-                      isWorkspace={false}
-                      logoUrl={agency.agencyLogo || "/assets/logo.png"}
-                    />
-                  </CommandGroup>
-                )}
+              {isAgencyAdmin(role) && agency && (
+                <CommandGroup heading="Agency">
+                  <PickerItem
+                    id={agency.id}
+                    name={agency.name}
+                    address={agency.address}
+                    isWorkspace={false}
+                    logoUrl={agency.agencyLogo || "/assets/logo.png"}
+                  />
+                </CommandGroup>
+              )}
 
               {/* Workspaces */}
               <CommandSeparator />
@@ -328,6 +337,10 @@ const DashboardSidebar = ({
             <SidebarMenu>
               {data.navMain.map((item) => {
                 const isActive = item.url === rawPathName;
+
+                if (item.roles && !item.roles.includes(role)) {
+                  return null;
+                }
 
                 return (
                   <Collapsible

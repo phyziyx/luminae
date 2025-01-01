@@ -4,6 +4,16 @@ import prisma from "../db";
 type CreateUser = Pick<User, "id" | "email" | "name" | "avatarUrl">;
 
 class UserManager {
+
+  public static async fetchUsers() {
+    const users = await prisma.user.findMany({
+      include: {
+        AgencyMembers: true,
+      },
+    });
+    return users;
+  }
+
   /**
    * Creates the user in the database
    * @param user user object
@@ -22,6 +32,28 @@ class UserManager {
         avatarUrl: user.avatarUrl,
       },
     });
+
+    const invitation = await prisma.invitation.findFirst({
+      where: {
+        email: user.email,
+      },
+    });
+
+    if (invitation) {
+      await prisma.invitation.delete({
+        where: {
+          id: invitation.id,
+        },
+      });
+
+      await prisma.agencyMember.create({
+        data: {
+          agencyId: invitation.agencyId,
+          email: invitation.email,
+          role: invitation.role,
+        },
+      });
+    }
   }
 
   /**
@@ -65,6 +97,39 @@ class UserManager {
         email: email,
       },
     });
+  }
+
+  /**
+   * Update a user's details in the database
+   * @param userId user id
+   * @param userUpdates updated user data
+   * @returns updated user
+   */
+  public static async updateUser(
+    id: string,
+    userUpdates: { name: string; email: string; avatarUrl: string }
+  ) {
+    return await prisma.user.update({
+      where: { id },
+      data: userUpdates,
+    });
+  }
+
+  /**
+   * Check if the user is a platform admin
+   * @returns boolean
+   */
+  public static async isAdmin(userId: string) {
+    const user = await prisma.user.findUnique({
+      select: {
+        isAdmin: true,
+      },
+      where: {
+        id: userId,
+      },
+    });
+
+    return user?.isAdmin || false;
   }
 }
 

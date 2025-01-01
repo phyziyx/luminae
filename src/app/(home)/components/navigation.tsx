@@ -1,15 +1,28 @@
 "use client";
 
-import { HouseIcon, MenuIcon, User2Icon, UserRoundPlus } from "lucide-react";
+import {
+  HouseIcon,
+  MenuIcon,
+  User2Icon,
+  UserRoundPlus,
+  UserRoundXIcon,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import ModeToggle from "@/components/site/mode-toggle";
 import Logo from "@/components/logo";
+import { SignOutButton } from "@clerk/nextjs";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 type Props = {
   user?: boolean;
@@ -49,6 +62,9 @@ const Navigation = ({ user }: Props) => {
           </Link>
 
           <Sheet>
+            <VisuallyHidden>
+              <SheetTitle></SheetTitle>
+            </VisuallyHidden>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
                 <MenuIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
@@ -80,12 +96,20 @@ const Navigation = ({ user }: Props) => {
                 ))}
                 <hr />
                 {user ? (
-                  <Link href="/agency">
-                    <Button>
-                      <HouseIcon />
-                      {t("DASHBOARD")}
-                    </Button>
-                  </Link>
+                  <>
+                    <Link href="/agency">
+                      <Button>
+                        <HouseIcon />
+                        {t("DASHBOARD")}
+                      </Button>
+                    </Link>
+                    <SignOutButton>
+                      <Button variant={"destructive"}>
+                        <UserRoundXIcon />
+                        {t("SIGN_OUT")}
+                      </Button>
+                    </SignOutButton>
+                  </>
                 ) : (
                   <>
                     <Link href="/sign-in">
@@ -127,29 +151,39 @@ const Navigation = ({ user }: Props) => {
         {/* Options for Mode Toggle, Sign Up and Sign In  */}
         <div className="flex flex-row gap-2">
           <ModeToggle />
-          {user ? (
-            <Link href="/dashboard">
-              <Button>
-                <HouseIcon />
-                {t("DASHBOARD")}
-              </Button>
-            </Link>
-          ) : (
-            <div className="md:flex flex-row gap-2 hidden">
-              <Link href="/sign-in">
-                <Button>
-                  <User2Icon />
-                  {t("SIGN_IN")}
-                </Button>
-              </Link>
-              <Link href="/sign-up">
-                <Button variant={"secondary"}>
-                  <UserRoundPlus />
-                  {t("SIGN_UP")}
-                </Button>
-              </Link>
-            </div>
-          )}
+          <div className="md:flex flex-row gap-2 hidden">
+            {user ? (
+              <>
+                <Link href="/dashboard">
+                  <Button>
+                    <HouseIcon />
+                    {t("DASHBOARD")}
+                  </Button>
+                </Link>
+                <SignOutButton>
+                  <Button variant={"destructive"}>
+                    <UserRoundXIcon />
+                    {t("SIGN_OUT")}
+                  </Button>
+                </SignOutButton>
+              </>
+            ) : (
+              <>
+                <Link href="/sign-in">
+                  <Button>
+                    <User2Icon />
+                    {t("SIGN_IN")}
+                  </Button>
+                </Link>
+                <Link href="/sign-up">
+                  <Button variant={"secondary"}>
+                    <UserRoundPlus />
+                    {t("SIGN_UP")}
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </header>
