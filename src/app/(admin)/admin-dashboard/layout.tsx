@@ -13,7 +13,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     return;
   }
 
-  if (!(await UserManager.isUserAdmin(user.id))) {
+  if (!(await UserManager.isAdmin(user.id))) {
     redirect("/dashboard");
   }
 

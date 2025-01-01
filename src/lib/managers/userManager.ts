@@ -106,19 +106,20 @@ class UserManager {
   }
 
   /**
-   * Find if user is admin
+   * Check if the user is a platform admin
    * @returns boolean
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public static async isUserAdmin(userId: string) {
-    // const user = await prisma.user.findUnique({
-    //   where: {
-    //     id: userId,
-    //   },
-    // });
+  public static async isAdmin(userId: string) {
+    const user = await prisma.user.findUnique({
+      select: {
+        isAdmin: true,
+      },
+      where: {
+        id: userId,
+      },
+    });
 
-    // TODO: UPDATE SCHEMA, ADD IS ADMIN
-    return true;
+    return user?.isAdmin || false;
   }
 }
 

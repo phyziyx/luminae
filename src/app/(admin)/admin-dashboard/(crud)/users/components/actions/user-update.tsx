@@ -30,7 +30,7 @@ const onUserUpdate = async (values: z.infer<typeof formSchema>) => {
 
   const userFields = validatedFields.data;
 
-  const isAdmin = await UserManager.isUserAdmin(user.id);
+  const isAdmin = await UserManager.isAdmin(user.id);
 
   if (!isAdmin) {
     error = "User is not an admin.";
