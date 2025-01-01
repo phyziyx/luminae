@@ -4,38 +4,30 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DataTable } from "./components/data-table";
-import { UserData, columns } from "./components/columns";
-import prisma from "@/lib/db";
+import { columns } from "./components/columns";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
+import UserManager from "@/lib/managers/userManager";
 
 const t = await getTranslations({ locale: "en" });
 
-// Fetch users
-const fetchUsers = async (): Promise<UserData[]> => {
-  const users = await prisma.user.findMany({
-    include: {
-      AgencyMembers: true,
-      Notification: true,
-    },
-  });
-
-  // Map user data for the DataTable, including the 'status' field
-  return users.map((user) => ({
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    role: user.AgencyMembers?.role || "N/A", // Role if part of an agency
-    status: "active", // Example: add default status (if applicable)
-  }));
-};
-
 const UsersList = async () => {
   // Fetch user data for the DataTable
-  const data = await fetchUsers();
+  const users = await UserManager.fetchUsers();
 
-  return <DataTable columns={columns} data={data} />;
+  return (
+    <DataTable
+      columns={columns}
+      data={users.map((user) => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.AgencyMembers?.role || "N/A", // Role if part of an agency
+        status: "active", // Example: add default status (if applicable)
+      }))}
+    />
+  );
 };
 
 const UserPage = async () => {

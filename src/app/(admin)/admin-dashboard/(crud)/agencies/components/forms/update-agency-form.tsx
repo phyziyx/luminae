@@ -13,10 +13,10 @@ import { LoadingSpinner } from "@/components/site/loading-spinner";
 interface UpdateAgencyFormProps {
   form: UseFormReturn<z.infer<typeof formSchema>>;
   onSubmit: (values: z.infer<typeof formSchema>) => Promise<void>;
-  isLoading: boolean;
 }
 
-const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ form, onSubmit, isLoading }) => {
+const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ form, onSubmit }) => {
+  const isLoading = form.formState.isSubmitting;
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

@@ -14,10 +14,10 @@ import { Label } from "@/components/ui/label";
 interface UpdateUserFormProps {
   form: UseFormReturn<z.infer<typeof userFormSchema>>;
   onSubmit: (values: z.infer<typeof userFormSchema>) => Promise<void>;
-  isLoading: boolean;
 }
 
-const UpdateUserForm: React.FC<UpdateUserFormProps> = ({ form, onSubmit, isLoading }) => {
+const UpdateUserForm: React.FC<UpdateUserFormProps> = ({ form, onSubmit }) => {
+  const isLoading = form.formState.isSubmitting;
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

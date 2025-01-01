@@ -4,6 +4,16 @@ import prisma from "../db";
 type CreateUser = Pick<User, "id" | "email" | "name" | "avatarUrl">;
 
 class UserManager {
+
+  public static async fetchUsers() {
+    const users = await prisma.user.findMany({
+      include: {
+        AgencyMembers: true,
+      },
+    });
+    return users;
+  }
+
   /**
    * Creates the user in the database
    * @param user user object

@@ -77,7 +77,6 @@ const UpdateAgencyModal: React.FC<UpdateAgencyModalProps> = ({ agencyId }) => {
     <UpdateAgencyForm
       form={form}
       onSubmit={onSubmit}
-      isLoading={isLoading}
     />
   );
 };

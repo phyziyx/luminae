@@ -27,11 +27,11 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ userId }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      id: "",
-      name: "",
-      avatarUrl: "",
-      email: "",
-    }, // Default values for all fields
+      id: userData?.id || "",
+      name: userData?.name || "",
+      avatarUrl: userData?.avatarUrl || "",
+      email: userData?.email || "",
+    },
     mode: "onChange",
   });
 
@@ -71,7 +71,6 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ userId }) => {
     <UpdateUserForm
       form={form}
       onSubmit={onSubmit}
-      isLoading={isLoading}
     />
   );
 };
