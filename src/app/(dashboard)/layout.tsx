@@ -20,7 +20,6 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const email = user.emailAddresses[0].emailAddress;
 
   const foundUser = await UserManager.findUser(email);
-  console.log(foundUser);
   if (!foundUser) {
     // User not found, lets create an account...
     await UserManager.createUser({

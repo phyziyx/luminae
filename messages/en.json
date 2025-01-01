@@ -11,6 +11,12 @@
   "DOCUMENTATION": "Documentation",
   "DASHBOARD": "Dashboard",
   "PREVIEW": "Preview",
+  "AGENCIES": "Agencies",
+  "PACKAGES": "Packages",
+  "USERS": "Users",
+
+  "FIRSTNAME": "First Name",
+  "LASTNAME": "Last Name",
 
   "INVITATION_HEADER": "Create your Account",
   "INVITATION_DESCRIPTION": "You've been invited to join Luminae. Please fill in the details to get started.",
@@ -47,6 +53,7 @@
   "SEARCH_IN_AGENCY": "Search in Agency...",
   "NO_RESULTS_FOUND": "No results found",
   "NO_WORKSPACES_FOUND": "No Workspaces Found",
+  "NO_WORKSPACES_ASSIGNED": "No Workspaces Assigned",
   "CREATE_WORKSPACE": "Create Workspace",
   "WORKSPACES": "Workspaces",
   "FOR_THE_YEAR": "For the year {YEAR}",
@@ -68,6 +75,8 @@
 
   "SETTINGS": "Settings",
 
+  "NO_RESULTS": "No Results",
+
   "CONTACT_US": "Contact Us",
   "GET_IN_TOUCH": "Get in Touch",
   "NAME": "Name",
@@ -77,6 +86,8 @@
 
   "AGENCY_DETAILS": {
     "SAVE_AGENCY_INFORMATION": "Save Agency Information",
+    "EDIT_AGENCY_INFORMATION": "Edit Agency Details",
+    "AGENCY_INFORMATION_DESCRIPTION": "Modify agency information as needed.",
     "CREATE_AGENCY": "Create Agency",
     "CREATE_AGENCY_DESCRIPTION": "Lets create an agency for you business. You can edit agency settings later from the agency settings tab.",
     "UPDATE_AGENCY_DESCRIPTION": "You can update the agency information here.",
@@ -158,6 +169,40 @@
     "UPGRADE_TO_ACCESS": "Upgrade to get access to {FEATURE}"
   },
 
+  "PACKAGE_FORM": {
+    "HEADER": "Package Form",
+    "EDIT_PACKAGE": "Edit Package Details",
+    "EDIT_PACKAGE_CAPTION": "Modify package information as needed.",
+    "PACKAGE_ID": "Package ID",
+    "PACKAGE_NAME": "Package Name",
+    "PACKAGE_DESCRIPTION": "Package Description",
+    "PACKAGE_PRICE": "Package Price",
+    "PACKAGE_QUANTITY": "Package Quantity",
+    "PACKAGE_FEATURES": "Package Features",
+    "EDITABLE_FEATURES": "Editable Features",
+    "PACKAGE_FEATURES_DESCRIPTION": "Add features to the package",
+    "ADD_FEATURE": "Add Feature",
+    "FEATURE_CODE": "Feature Code",
+    "FEATURE_QUANTITY": "Feature Quantity",
+    "FEATURE_PRICE": "Feature Price",
+    "FEATURES": "Features",
+    "FEATURES_DESCRIPTION": "Features of the package",
+    "FEATURES_QUANTITY": "Features Quantity",
+    "FEATURES_PRICE": "Features Price",
+    "FEATURES_TOTAL": "Features Total",
+    "PACKAGE_TOTAL": "Package Total",
+    "UPDATE_PACKAGE": "Update Package",
+    "PACKAGE_UPDATED_SUCCESSFULLY": "Package updated successfully",
+    "FAILED_TO_UPDATE_PACKAGE": "Failed to update package",
+    "DELETE_PACKAGE": "Delete Package"
+  },
+
+  "USER_FORM": {
+    "HEADER": "User Form",
+    "EDIT_USER": "Edit User Details",
+    "EDIT_USER_CAPTION": "Modify user information as needed."
+  },
+
   "PACKAGE_FEATURES": {
     "ACCESS": "Access {FEATURE_CODE}",
     "QUANTITY": "Upto {QUANTITY} {FEATURE_CODE}",
@@ -195,6 +240,28 @@
     "CONFIRM": "Confirm"
   },
 
+  "FORMS": {
+    "ID": "ID",
+    "NAME": "Name",
+    "EMAIL": "Email",
+    "COMPANY_EMAIL": "Company Email",
+    "PHONE": "Phone",
+    "COMPANY_PHONE": "Company Phone",
+    "ADDRESS": "Address",
+    "CITY": "City",
+    "STATE": "State",
+    "COUNTRY": "Country",
+    "ZIPCODE": "Zipcode",
+    "LOGO": "Logo",
+    "AVATAR": "Avatar",
+    "DESCRIPTION": "Description",
+    "ROLE": "Role",
+    "WORKSPACE": "Workspace",
+    "QUANTITY": "Quantity",
+    "PRICE": "Price"
+  },
+
+
   "MENU": {
     "OPEN_MENU": "Open menu"
   },
@@ -202,10 +269,12 @@
   "ACTIONS": {
     "HEADER": "Actions",
     "VIEW_DETAILS": "View details",
+    "EDIT_DETAILS": "Edit details",
     "COPY_EMAIL": "Copy email",
     "SET_AS_ON_BREAK": "Set as On Break",
     "SET_AS_REMOVED": "Set as Removed",
-    "DELETE_FROM_TABLE": "Delete from table"
+    "DELETE_FROM_TABLE": "Delete from table",
+    "DELETE": "Delete"
   },
 
   "INVITE_TEAM_MEMBER": {
@@ -221,6 +290,16 @@
     "PLEASE_TRY_AGAIN": "Please try again.",
     "SUCCESS": "Success",
     "NOT_AUTHENTICATED": "Not authenticated!",
-    "NOT_PART_OF_AGENCY": "Not part of an agency!"
+    "NOT_PART_OF_AGENCY": "Not part of an agency!",
+    "FAILED_TO_LOAD_AGENCY_DETAILS": "Error: Failed to load agency details",
+    "FAILED_TO_LOAD_WORKSPACE_DETAILS": "Error: Failed to load workspace details",
+    "FAILED_TO_LOAD_USER_DETAILS": "Error: Failed to load user details",
+    "FAILED_TO_LOAD_TEAM_MEMBERS": "Error: Failed to load team members",
+    "FAILED_TO_LOAD_PACKAGES": "Error: Failed to load package details"
+  },
+
+  "CLIENTS": {
+    "CREATE_CLIENT": "Create Client",
+    "HEADER": "Clients"
   }
 }

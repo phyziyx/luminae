@@ -9,6 +9,7 @@ import {
 import prisma from "../db";
 import { v7 } from "uuid";
 import { clerkClient } from "@clerk/nextjs/server";
+import { isAgencyAdmin } from "../utils";
 
 type CreateAgency = Omit<
   Agency,
@@ -264,11 +265,7 @@ class AgencyManager {
     if (!workspaces || workspaces.length === 0) return [];
 
     // If the user is an agency admin or owner, return all workspaces
-    if (
-      [Role.AGENCY_ADMIN as string, Role.AGENCY_OWNER as string].includes(
-        agencyMember.role
-      )
-    ) {
+    if (isAgencyAdmin(agencyMember.role)) {
       return workspaces;
     }
 
@@ -445,6 +442,14 @@ class AgencyManager {
       default:
         throw new Error(`Feature code ${featureCode} is not supported`);
     }
+  }
+
+  public static async findClients(agencyId: string) {
+    return await prisma.client.findMany({
+      where: {
+        agencyId,
+      },
+    });
   }
 }
 

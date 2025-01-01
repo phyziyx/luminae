@@ -6,7 +6,6 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import KanbanBoard from "./components/kanban-board";
 
 export default async function WorkspacePage({
   params,
@@ -29,11 +28,11 @@ export default async function WorkspacePage({
         <div className="flex items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
-          <h1 className="text-3xl font-semibold">{t("WORKSPACES")}</h1>
+          <h1 className="text-3xl font-semibold">{t("WORKSPACE")}</h1>
         </div>
       </header>
       <Suspense fallback={<FallbackSpinner />}>
-        <KanbanBoard id={id} data={{}} name={user.firstName!} />
+        <>{id}</>
       </Suspense>
     </>
   );

@@ -5,7 +5,6 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DataTable } from "./components/data-table";
 import { AgencyData, columns } from "./components/columns";
-// import AgencyManager from "@/lib/managers/agencyManager";
 import prisma from "@/lib/db";
 import { getTranslations } from "next-intl/server";
 
@@ -15,7 +14,7 @@ const t = await getTranslations({ locale: "en" });
 const fetchAgencies = async (): Promise<AgencyData[]> => {
   const agencies = await prisma.agency.findMany({
     include: {
-      agencyMembers: true,  // Include members, even if there are none
+      agencyMembers: true, // Include members, even if there are none
     },
   });
 
@@ -23,9 +22,9 @@ const fetchAgencies = async (): Promise<AgencyData[]> => {
   return agencies.map((agency) => ({
     id: agency.id,
     name: agency.name,
-    status: agency.agencyMembers.length > 0 ? "Active" : "No Members",  // Adjust status based on membership
-    logo: agency.agencyLogo,  // Include other fields as required
-    email: agency.companyEmail,  // Example of additional data to display
+    status: agency.agencyMembers.length > 0 ? "Active" : "No Members", // Adjust status based on membership
+    logo: agency.agencyLogo, // Include other fields as required
+    email: agency.companyEmail, // Example of additional data to display
   }));
 };
 
@@ -37,16 +36,6 @@ const AgencyPage = async () => {
     return <div>{t("ERROR_MESSAGES.NOT_AUTHENTICATED")}</div>;
   }
 
-  // const email = user.emailAddresses[0].emailAddress;
-  // const agencyMember = await prisma.agencyMember.findUnique({
-  //   where: { email },
-  //   include: { agency: true },
-  // });
-
-  // if (!agencyMember || !agencyMember.agencyId) {
-  //   return <div>{t("ERROR_MESSAGES.NOT_PART_OF_AGENCY")}</div>;
-  // }
-
   // Fetch all agencies
   const data = await fetchAgencies();
 
@@ -55,7 +44,7 @@ const AgencyPage = async () => {
       <header className="flex h-16 items-center px-4">
         <SidebarTrigger />
         <Separator orientation="vertical" className="mx-2 h-4" />
-        <h1 className="text-3xl font-semibold">Agencies</h1>
+        <h1 className="text-3xl font-semibold">{t("AGENCIES")}</h1>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4">
         <DataTable columns={columns} data={data} />

@@ -3,14 +3,13 @@
 import useSWR from "swr";
 import { useToast } from "@/hooks/use-toast";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import UpdateAgencyForm from "../forms/update-agency-form";
 import formSchema from "@/app/(dashboard)/components/agency-details/schema";
 import fetchAgencyDetails from "../actions/agency-fetch";
 import onAgencyUpdate from "../actions/agency-update";
 import React from "react";
+import { useTranslations } from "next-intl";
 
 interface UpdateAgencyModalProps {
   agencyId: string;
@@ -19,35 +18,15 @@ interface UpdateAgencyModalProps {
 const UpdateAgencyModal: React.FC<UpdateAgencyModalProps> = ({ agencyId }) => {
   const { toast } = useToast();
 
-  const { data: agencyData, error, isLoading } = useSWR(
-    ["agency", agencyId], 
-    ([, agencyId]) => fetchAgencyDetails(agencyId)
+  const t = useTranslations();
+
+  const {
+    data: agencyData,
+    error,
+    isLoading,
+  } = useSWR(["agency", agencyId], ([, agencyId]) =>
+    fetchAgencyDetails(agencyId)
   );
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      id: "",
-      name: "",
-      companyEmail: "",
-      companyPhone: "",
-      address: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      country: "",
-    }, // Provide default values for all fields
-    mode: "onChange",
-  });
-
-  const { reset } = form;
-
-  // Update form values when agencyData changes
-  React.useEffect(() => {
-    if (agencyData) {
-      reset(agencyData);
-    }
-  }, [agencyData, reset]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -69,17 +48,11 @@ const UpdateAgencyModal: React.FC<UpdateAgencyModalProps> = ({ agencyId }) => {
     return <LoadingSpinner />;
   }
 
-  if (error) {
-    return <div>Error: Failed to load agency details.</div>;
+  if (error || !agencyData) {
+    return <div>{t("ERROR_MESSAGES.FAILED_TO_LOAD_AGENCY_DETAILS")}</div>;
   }
 
-  return (
-    <UpdateAgencyForm
-      form={form}
-      onSubmit={onSubmit}
-      isLoading={isLoading}
-    />
-  );
+  return <UpdateAgencyForm onSubmit={onSubmit} agencyData={agencyData} />;
 };
 
 export default UpdateAgencyModal;

@@ -13,8 +13,10 @@ import { Workspace } from "@prisma/client";
 
 export const WorkspaceButtons = ({
   workspace,
+  isAdmin,
 }: {
   workspace: Partial<Workspace>;
+  isAdmin?: boolean;
 }) => {
   const t = useTranslations();
   const { toast } = useToast();
@@ -52,42 +54,46 @@ export const WorkspaceButtons = ({
       >
         {t("WORKSPACE_DETAILS.VIEW")}
       </Button>
-      <Button
-        onClick={() => {
-          openModal(
-            <CustomModal
-              title={t("CREATE_WORKSPACE")}
-              caption={t("CREATE_WORKSPACE_CAPTION")}
+      {isAdmin && (
+        <>
+          <Button
+            onClick={() => {
+              openModal(
+                <CustomModal
+                  title={t("CREATE_WORKSPACE")}
+                  caption={t("CREATE_WORKSPACE_CAPTION")}
+                >
+                  <WorkspaceDetails
+                    data={{
+                      ...workspace,
+                    }}
+                  />
+                </CustomModal>
+              );
+            }}
+            variant={"secondary"}
+            className="w-full"
+            disabled={isDeleting}
+            aria-disabled={isDeleting}
+          >
+            {t("WORKSPACE_DETAILS.EDIT")}
+          </Button>
+          <form className="w-full" action={deleteAction}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isDeleting}
+              aria-disabled={isDeleting}
+              variant={"destructive"}
+              // onClick={deleteAction}
             >
-              <WorkspaceDetails
-                data={{
-                  ...workspace,
-                }}
-              />
-            </CustomModal>
-          );
-        }}
-        variant={"secondary"}
-        className="w-full"
-        disabled={isDeleting}
-        aria-disabled={isDeleting}
-      >
-        {t("WORKSPACE_DETAILS.EDIT")}
-      </Button>
-      <form className="w-full" action={deleteAction}>
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isDeleting}
-          aria-disabled={isDeleting}
-          variant={"destructive"}
-          // onClick={deleteAction}
-        >
-          {isDeleting
-            ? t("WORKSPACE_DETAILS.DELETING")
-            : t("WORKSPACE_DETAILS.DELETE")}
-        </Button>
-      </form>
+              {isDeleting
+                ? t("WORKSPACE_DETAILS.DELETING")
+                : t("WORKSPACE_DETAILS.DELETE")}
+            </Button>
+          </form>
+        </>
+      )}
     </>
   );
 };

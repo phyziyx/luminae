@@ -13,9 +13,10 @@ import { WorkspaceButtons } from "./workspace-buttons";
 
 interface WorkspaceCardProps {
   workspace: Pick<Workspace, "id" | "name" | "description">;
+  isAdmin?: boolean;
 }
 
-const WorkspaceCard = async ({ workspace }: WorkspaceCardProps) => {
+const WorkspaceCard = async ({ workspace, isAdmin }: WorkspaceCardProps) => {
   return (
     <Card
       key={workspace.id}
@@ -30,7 +31,7 @@ const WorkspaceCard = async ({ workspace }: WorkspaceCardProps) => {
         <CardDescription>{workspace.description}</CardDescription>
       </CardContent>
       <CardFooter className="gap-2">
-        <WorkspaceButtons workspace={workspace} />
+        <WorkspaceButtons workspace={workspace} isAdmin={isAdmin} />
       </CardFooter>
     </Card>
   );

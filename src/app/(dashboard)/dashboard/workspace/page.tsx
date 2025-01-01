@@ -11,6 +11,7 @@ import CreateWorkspaceCard from "./components/create-workspace-card";
 import SubscriptionManager from "@/lib/managers/subscriptionManager";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
+import { isAgencyAdmin } from "@/lib/utils";
 
 const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
   const agencyMember = await AgencyManager.findUserAgency(userEmail);
@@ -33,6 +34,8 @@ const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
     );
   }
 
+  const t = await getTranslations();
+
   const created = workspaces.length;
   const max =
     (await AgencyManager.getFeatureMaxCount(
@@ -40,16 +43,27 @@ const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
       "WORKSPACE"
     )) || -1;
 
+  if (!isAgencyAdmin(agencyMember.role) && created === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center p-4">
+        {t("NO_WORKSPACES_ASSIGNED")}
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 pt-0">
       {workspaces &&
         workspaces.length > 0 &&
         workspaces.map((workspace) => (
-          <WorkspaceCard key={workspace.id} workspace={workspace} />
+          <WorkspaceCard
+            key={workspace.id}
+            workspace={workspace}
+            isAdmin={isAgencyAdmin(agencyMember.role)}
+          />
         ))}
 
-      {(agencyMember?.role === "AGENCY_ADMIN" ||
-        agencyMember?.role === "AGENCY_OWNER") && (
+      {isAgencyAdmin(agencyMember.role) && (
         <CreateWorkspaceCard created={created} max={max} />
       )}
     </div>
