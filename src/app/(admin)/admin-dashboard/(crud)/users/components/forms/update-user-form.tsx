@@ -21,7 +21,6 @@ import { useForm } from "react-hook-form";
 import formSchema from "../user-details/schema";
 
 interface UpdateUserFormProps {
-  
   onSubmit: (values: z.infer<typeof userFormSchema>) => Promise<void>;
   userData: {
     id: string;
@@ -31,7 +30,10 @@ interface UpdateUserFormProps {
   };
 }
 
-const UpdateUserForm: React.FC<UpdateUserFormProps> = ({ onSubmit, userData }) => {
+const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
+  onSubmit,
+  userData,
+}) => {
   const t = useTranslations();
 
   const form = useForm<z.infer<typeof formSchema>>({

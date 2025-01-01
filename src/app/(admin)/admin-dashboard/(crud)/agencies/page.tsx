@@ -5,7 +5,6 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DataTable } from "./components/data-table";
 import { AgencyData, columns } from "./components/columns";
-// import AgencyManager from "@/lib/managers/agencyManager";
 import prisma from "@/lib/db";
 import { getTranslations } from "next-intl/server";
 
@@ -15,7 +14,7 @@ const t = await getTranslations({ locale: "en" });
 const fetchAgencies = async (): Promise<AgencyData[]> => {
   const agencies = await prisma.agency.findMany({
     include: {
-      agencyMembers: true,  // Include members, even if there are none
+      agencyMembers: true, // Include members, even if there are none
     },
   });
 
@@ -23,9 +22,9 @@ const fetchAgencies = async (): Promise<AgencyData[]> => {
   return agencies.map((agency) => ({
     id: agency.id,
     name: agency.name,
-    status: agency.agencyMembers.length > 0 ? "Active" : "No Members",  // Adjust status based on membership
-    logo: agency.agencyLogo,  // Include other fields as required
-    email: agency.companyEmail,  // Example of additional data to display
+    status: agency.agencyMembers.length > 0 ? "Active" : "No Members", // Adjust status based on membership
+    logo: agency.agencyLogo, // Include other fields as required
+    email: agency.companyEmail, // Example of additional data to display
   }));
 };
 

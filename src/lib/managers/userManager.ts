@@ -2,9 +2,9 @@ import { User } from "@prisma/client";
 import prisma from "../db";
 
 type CreateUser = Pick<User, "id" | "email" | "name" | "avatarUrl">;
+type UpdateUser = Partial<CreateUser>; // Allow partial updates
 
 class UserManager {
-
   public static async fetchUsers() {
     const users = await prisma.user.findMany({
       include: {

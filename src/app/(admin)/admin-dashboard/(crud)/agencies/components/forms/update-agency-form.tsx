@@ -1,6 +1,12 @@
 "use client";
 
-import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DialogFooter } from "@/components/ui/dialog";
@@ -17,7 +23,10 @@ interface UpdateAgencyFormProps {
   agencyData: z.infer<typeof formSchema>;
 }
 
-const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ onSubmit, agencyData }) => {
+const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({
+  onSubmit,
+  agencyData,
+}) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -25,7 +34,7 @@ const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ onSubmit, agencyDat
     },
     mode: "onChange",
   });
-  
+
   const isLoading = form.formState.isSubmitting;
   const t = useTranslations();
   return (

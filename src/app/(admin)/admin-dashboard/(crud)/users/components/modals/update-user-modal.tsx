@@ -16,7 +16,10 @@ interface UpdateUserModalProps {
   onClose: () => void;
 }
 
-const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ userId, onClose, }) => {
+const UpdateUserModal: React.FC<UpdateUserModalProps> = ({
+  userId,
+  onClose,
+}) => {
   const { toast } = useToast();
 
   const {
@@ -52,12 +55,7 @@ const UpdateUserModal: React.FC<UpdateUserModalProps> = ({ userId, onClose, }) =
     return <div>{t("ERROR_MESSAGES.FAILED_TO_LOAD_USER_DETAILS")}</div>;
   }
 
-  return (
-    <UpdateUserForm
-      onSubmit={onSubmit}
-      userData={userData}
-    />
-  );
+  return <UpdateUserForm onSubmit={onSubmit} userData={userData} />;
 };
 
 export default UpdateUserModal;

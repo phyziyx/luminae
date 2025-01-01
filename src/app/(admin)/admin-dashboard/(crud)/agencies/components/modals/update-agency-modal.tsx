@@ -20,9 +20,12 @@ const UpdateAgencyModal: React.FC<UpdateAgencyModalProps> = ({ agencyId }) => {
 
   const t = useTranslations();
 
-  const { data: agencyData, error, isLoading } = useSWR(
-    ["agency", agencyId], 
-    ([, agencyId]) => fetchAgencyDetails(agencyId)
+  const {
+    data: agencyData,
+    error,
+    isLoading,
+  } = useSWR(["agency", agencyId], ([, agencyId]) =>
+    fetchAgencyDetails(agencyId)
   );
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -49,12 +52,7 @@ const UpdateAgencyModal: React.FC<UpdateAgencyModalProps> = ({ agencyId }) => {
     return <div>{t("ERROR_MESSAGES.FAILED_TO_LOAD_AGENCY_DETAILS")}</div>;
   }
 
-  return (
-    <UpdateAgencyForm
-      onSubmit={onSubmit}
-      agencyData={agencyData}
-    />
-  );
+  return <UpdateAgencyForm onSubmit={onSubmit} agencyData={agencyData} />;
 };
 
 export default UpdateAgencyModal;
