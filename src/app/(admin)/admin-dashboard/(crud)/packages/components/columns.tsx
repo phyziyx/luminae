@@ -14,6 +14,8 @@ import { MoreVerticalIcon } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import CustomModal from "@/components/site/custom-modal";
 import UpdatePackageModal from "./modals/package-update-modal";
+import { useTranslations } from "next-intl";
+import { Badge } from "@/components/ui/badge";
 
 // Define package data type
 export type PackageData = {
@@ -21,9 +23,17 @@ export type PackageData = {
   name: string;
   TEAM_MEMBERS?: number;
   WORKSPACE?: number;
-  FILE_STORAGE?: number; 
+  FILE_STORAGE?: number;
   status: string;
   monthlyPrice: number;
+};
+
+const statusBadgeMap: Record<
+  PackageData["status"],
+  "default" | "destructive" | "secondary"
+> = {
+  Active: "default",
+  Inactive: "destructive",
 };
 
 // Define columns for package table dynamically based on features
@@ -44,7 +54,12 @@ export const columns: ColumnDef<PackageData>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => row.getValue("status"),
+    cell: ({ row }) => {
+      const status = row.getValue<PackageData["status"]>("status");
+      const badgeVariant = statusBadgeMap[status];
+
+      return <Badge variant={badgeVariant}>{status}</Badge>;
+    }
   },
   {
     accessorKey: "TEAM_MEMBERS",
@@ -68,37 +83,39 @@ export const columns: ColumnDef<PackageData>[] = [
     cell: ({ row }) => {
       const packageData = row.original;
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      const { openModal } = useModal();
+      const { openModal, closeModal } = useModal();
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const t = useTranslations();
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
               <MoreVerticalIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() =>
                 openModal(
                   <CustomModal
-                    title="Edit Package Details"
-                    caption="Modify package information as needed."
+                    title={t("PACKAGE_FORM.EDIT_PACKAGE")}
+                    caption={t("PACKAGE_FORM.EDIT_PACKAGE_CAPTION")}
                   >
                     <UpdatePackageModal
                       packageId={packageData.id}
-                      onClose={() => openModal(null)}
+                      onClose={closeModal}
                     />
                   </CustomModal>
                 )
               }
             >
-              Edit Details
+              {t("ACTIONS.EDIT_DETAILS")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => alert("Delete Package")}>
-              Delete
+              {t("ACTIONS.DELETE")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

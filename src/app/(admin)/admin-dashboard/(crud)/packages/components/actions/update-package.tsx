@@ -26,8 +26,6 @@ const onPackageUpdate = async (values: z.infer<typeof packageFormSchema>) => {
     // Update package details
     await PackageManager.updatePackage(packageID, {
       name,
-      // status: "active", // Default status to active
-      // monthlyPrice: monthlyPrice || 0, 
     });
 
     // Map and validate features for the update

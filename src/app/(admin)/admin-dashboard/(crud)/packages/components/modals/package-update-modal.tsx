@@ -11,6 +11,7 @@ import packageFormSchema from "../package-details/schema";
 import fetchPackageDetails from "../actions/fetch-package";
 import onPackageUpdate from "../actions/update-package";
 import React, { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 interface UpdatePackageModalProps {
   packageId: string;
@@ -36,7 +37,6 @@ const UpdatePackageModal: React.FC<UpdatePackageModalProps> = ({
     defaultValues: {
       id: "",
       name: "",
-      // monthlyPrice: 0,
       features: [],
     },
     mode: "onChange",
@@ -75,7 +75,7 @@ const UpdatePackageModal: React.FC<UpdatePackageModalProps> = ({
           title: "Package updated successfully",
           variant: "default",
         });
-        onClose(); // Close the modal after successful update
+        onClose();
       }
     } catch {
       toast({
@@ -85,19 +85,20 @@ const UpdatePackageModal: React.FC<UpdatePackageModalProps> = ({
     }
   };
 
+  const t = useTranslations();
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
 
   if (error) {
-    return <div>Error: Failed to load package details.</div>;
+    return <div>{t("ERROR_MESSAGES.FAILED_TO_LOAD_PACKAGES")}</div>;
   }
 
   return (
     <UpdatePackageForm
       form={form}
       onSubmit={onSubmit}
-      onClose={onClose}
     />
   );
 };

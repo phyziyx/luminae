@@ -24,7 +24,7 @@ const UsersList = async () => {
         name: user.name,
         email: user.email,
         role: user.AgencyMembers?.role || "N/A", // Role if part of an agency
-        status: "active", // Example: add default status (if applicable)
+        status: "Active", // Example: add default status (if applicable)
       }))}
     />
   );
@@ -43,7 +43,7 @@ const UserPage = async () => {
       <header className="flex h-16 items-center px-4">
         <SidebarTrigger />
         <Separator orientation="vertical" className="mx-2 h-4" />
-        <h1 className="text-3xl font-semibold">Users</h1>
+        <h1 className="text-3xl font-semibold">{t("USERS")}</h1>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4">
         <Suspense fallback={<FallbackSpinner />}>

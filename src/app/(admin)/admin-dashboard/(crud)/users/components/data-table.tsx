@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import * as React from "react";
 import { DataTablePagination } from "@/components/site/pagination";
+import { useTranslations } from "next-intl";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -36,17 +37,6 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-
-//   const handleCreateUser = () => {
-//     openModal(
-//       <CustomModal
-//         title="Create New User"
-//         caption="Fill out the form below to create a new user."
-//       >
-//         <CreateUserModal />
-//       </CustomModal>
-//     );
-//   };
 
   const table = useReactTable({
     data,
@@ -63,6 +53,8 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const t = useTranslations();
+
   return (
     <div>
       <div className="flex items-center justify-between py-4">
@@ -75,10 +67,6 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        {/* Create User Button */}
-        {/* <Button className="ml-4" onClick={handleCreateUser}>
-          <UserPlus className="mr-2 h-4 w-4" /> {t("CREATE_USER.HEADER")}
-        </Button> */}
       </div>
       <div className="rounded-md border">
         <Table>
@@ -118,7 +106,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {t("NO_RESULTS")}
                 </TableCell>
               </TableRow>
             )}

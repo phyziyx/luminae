@@ -5,10 +5,6 @@ const packageFormSchema = z.object({
   name: z
     .string()
     .min(2, { message: "Package name must be at least 2 characters." }),
-  // monthlyPrice: z
-  //   .number()
-  //   .min(0, { message: "Price must be a positive value." })
-  //   .optional(),
   features: z.array(
     z.object({
       code: z.enum(["TEAM_MEMBERS", "WORKSPACE", "FILE_STORAGE", "CUSTOM_URL"]), // Limits to specific feature types

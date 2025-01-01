@@ -19,6 +19,7 @@ import CustomModal from "@/components/site/custom-modal";
 import UpdateAgencyModal from "./modals/update-agency-modal"; // Import the UpdateAgencyModal component
 import { toast } from "@/hooks/use-toast";
 import deleteAgency from "./actions/agency-delete";
+import { useTranslations } from "next-intl";
 
 // Define agency data type
 export type AgencyData = {
@@ -94,39 +95,42 @@ export const columns: ColumnDef<AgencyData>[] = [
         }
       };
 
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const t = useTranslations();
+      
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
               <MoreVerticalIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() =>
                 openModal(
                   <CustomModal
-                    title="Edit Agency Details"
-                    caption="Modify agency information as needed."
+                    title={t("AGENCY_DETAILS.EDIT_AGENCY_INFORMATION")}
+                    caption={t("AGENCY_DETAILS.AGENCY_INFORMATION_DESCRIPTION")}
                   >
                     <UpdateAgencyModal agencyId={agency.id} />
                   </CustomModal>
                 )
               }
             >
-              Edit Details
+              {t("ACTIONS.EDIT_DETAILS")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(agency.email)}
             >
-              Copy Email
+              {t("ACTIONS.COPY_EMAIL")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleDeleteClick}>
-              Delete
+            {t("ACTIONS.DELETE")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

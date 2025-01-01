@@ -15,9 +15,9 @@ import { MoreVerticalIcon } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import CustomModal from "@/components/site/custom-modal";
 import { useTranslations } from "next-intl";
-import UpdateUserModal from "./modals/update-user-modal"; // Import the UpdateUserModal component
+import UpdateUserModal from "./modals/update-user-modal";
 import { toast } from "@/hooks/use-toast";
-import deleteUser from "./actions/delete-user"; // Import the deleteUser action
+import deleteUser from "./actions/delete-user"; 
 
 // Define user data type
 export type UserData = {
@@ -78,7 +78,7 @@ export const columns: ColumnDef<UserData>[] = [
     cell: ({ row }) => {
       const user = row.original;
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      const { openModal } = useModal();
+      const { openModal, closeModal } = useModal();
       const handleDeleteClick = async () => {
         try {
           const result = await deleteUser({ id: user.id });
@@ -104,39 +104,42 @@ export const columns: ColumnDef<UserData>[] = [
         }
       };
 
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const t = useTranslations();
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
+              <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
               <MoreVerticalIcon />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
             <DropdownMenuItem
               onClick={() =>
                 openModal(
                   <CustomModal
-                    title="Edit User Details"
-                    caption="Modify user information as needed."
+                    title={t("USER_FORM.EDIT_USER")}
+                    caption={t("USER_FORM.EDIT_USER_CAPTION")}
                   >
-                    <UpdateUserModal userId={user.email} />
+                    <UpdateUserModal userId={user.email} onClose={closeModal} />
                   </CustomModal>
                 )
               }
             >
-              Edit Details
+              {t("ACTIONS.EDIT_DETAILS")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(user.email)}
             >
-              Copy Email
+              {t("ACTIONS.COPY_EMAIL")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleDeleteClick}>
-              Delete
+            {t("ACTIONS.DELETE")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -37,16 +37,6 @@ const AgencyPage = async () => {
     return <div>{t("ERROR_MESSAGES.NOT_AUTHENTICATED")}</div>;
   }
 
-  // const email = user.emailAddresses[0].emailAddress;
-  // const agencyMember = await prisma.agencyMember.findUnique({
-  //   where: { email },
-  //   include: { agency: true },
-  // });
-
-  // if (!agencyMember || !agencyMember.agencyId) {
-  //   return <div>{t("ERROR_MESSAGES.NOT_PART_OF_AGENCY")}</div>;
-  // }
-
   // Fetch all agencies
   const data = await fetchAgencies();
 
@@ -55,7 +45,7 @@ const AgencyPage = async () => {
       <header className="flex h-16 items-center px-4">
         <SidebarTrigger />
         <Separator orientation="vertical" className="mx-2 h-4" />
-        <h1 className="text-3xl font-semibold">Agencies</h1>
+        <h1 className="text-3xl font-semibold">{t("AGENCIES")}</h1>
       </header>
       <div className="flex flex-1 flex-col gap-4 p-4">
         <DataTable columns={columns} data={data} />

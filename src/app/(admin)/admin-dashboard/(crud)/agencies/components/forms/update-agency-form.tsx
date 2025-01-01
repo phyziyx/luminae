@@ -5,18 +5,29 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import formSchema from "@/app/(dashboard)/components/agency-details/schema";
 import { z } from "zod";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
+import { useTranslations } from "next-intl";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface UpdateAgencyFormProps {
-  form: UseFormReturn<z.infer<typeof formSchema>>;
   onSubmit: (values: z.infer<typeof formSchema>) => Promise<void>;
+  agencyData: z.infer<typeof formSchema>;
 }
 
-const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ form, onSubmit }) => {
+const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ onSubmit, agencyData }) => {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      ...agencyData,
+    },
+    mode: "onChange",
+  });
+  
   const isLoading = form.formState.isSubmitting;
+  const t = useTranslations();
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -26,7 +37,7 @@ const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ form, onSubmit }) =
             name="id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>ID</FormLabel>
+                <FormLabel>{t("FORMS.ID")}</FormLabel>
                 <FormControl>
                   <Input {...field} disabled />
                 </FormControl>
@@ -41,7 +52,7 @@ const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ form, onSubmit }) =
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{t("FORMS.NAME")}</FormLabel>
                 <FormControl>
                   <Input {...field} required />
                 </FormControl>
@@ -56,7 +67,7 @@ const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ form, onSubmit }) =
             name="companyEmail"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Company Email</FormLabel>
+                <FormLabel>{t("FORMS.COMPANY_EMAIL")}</FormLabel>
                 <FormControl>
                   <Input {...field} required />
                 </FormControl>
@@ -71,7 +82,7 @@ const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ form, onSubmit }) =
             name="companyPhone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Company Phone</FormLabel>
+                <FormLabel>{t("FORMS.COMPANY_PHONE")}</FormLabel>
                 <FormControl>
                   <Input {...field} required />
                 </FormControl>
@@ -86,7 +97,7 @@ const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ form, onSubmit }) =
             name="address"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Address</FormLabel>
+                <FormLabel>{t("FORMS.ADDRESS")}</FormLabel>
                 <FormControl>
                   <Textarea {...field} />
                 </FormControl>
@@ -101,7 +112,7 @@ const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ form, onSubmit }) =
             name="city"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>City</FormLabel>
+                <FormLabel>{t("FORMS.CITY")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -113,7 +124,7 @@ const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ form, onSubmit }) =
             name="state"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>State</FormLabel>
+                <FormLabel>{t("FORMS.STATE")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -125,7 +136,7 @@ const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ form, onSubmit }) =
             name="zipCode"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Zip Code</FormLabel>
+                <FormLabel>{t("FORMS.ZIPCODE")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -140,7 +151,7 @@ const UpdateAgencyForm: React.FC<UpdateAgencyFormProps> = ({ form, onSubmit }) =
             name="country"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Country</FormLabel>
+                <FormLabel>{t("FORMS.COUNTRY")}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>

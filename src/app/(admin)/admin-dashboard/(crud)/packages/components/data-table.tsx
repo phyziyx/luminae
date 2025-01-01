@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import * as React from "react";
 import { DataTablePagination } from "@/components/site/pagination";
+import { useTranslations } from "next-intl";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -46,6 +47,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       columnFilters,
     },
   });
+
+  const t = useTranslations();
 
   return (
     <div>
@@ -92,7 +95,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                {t("NO_RESULTS")}
                 </TableCell>
               </TableRow>
             )}

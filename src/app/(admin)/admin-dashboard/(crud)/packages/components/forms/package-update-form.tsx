@@ -20,13 +20,11 @@ import { useTranslations } from "next-intl";
 interface UpdatePackageFormProps {
   form: UseFormReturn<z.infer<typeof packageFormSchema>>;
   onSubmit: (values: z.infer<typeof packageFormSchema>) => Promise<void>;
-  onClose: () => void;
 }
 
 const UpdatePackageForm: React.FC<UpdatePackageFormProps> = ({
   form,
   onSubmit,
-  onClose,
 }) => {
   // Extract editable features
   const editableFeatures = ["WORKSPACE", "TEAM_MEMBERS"];
@@ -43,7 +41,7 @@ const UpdatePackageForm: React.FC<UpdatePackageFormProps> = ({
             name="id"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Package ID</FormLabel>
+                <FormLabel>{t("PACKAGE_FORM.PACKAGE_ID")}</FormLabel>
                 <FormControl>
                   <Input {...field} disabled />
                 </FormControl>
@@ -59,7 +57,7 @@ const UpdatePackageForm: React.FC<UpdatePackageFormProps> = ({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Package Name</FormLabel>
+                <FormLabel>{t("PACKAGE_FORM.PACKAGE_NAME")}</FormLabel>
                 <FormControl>
                   <Input {...field} disabled />
                 </FormControl>
@@ -70,7 +68,7 @@ const UpdatePackageForm: React.FC<UpdatePackageFormProps> = ({
 
         {/* Editable Features */}
         <div className="space-y-2">
-          <FormLabel>Editable Features</FormLabel>
+          <FormLabel>{t("PACKAGE_FORM.EDITABLE_FEATURES")}</FormLabel>
           {form.watch("features")?.map((feature, index) => {
             if (!editableFeatures.includes(feature.code)) return null;
 
@@ -103,14 +101,14 @@ const UpdatePackageForm: React.FC<UpdatePackageFormProps> = ({
         </div>
 
         <DialogFooter>
-          <Button
+          {/* <Button
             type="button"
             variant="secondary"
             onClick={onClose}
             disabled={isLoading}
           >
             Cancel
-          </Button>
+          </Button> */}
           <Button type="submit" disabled={isLoading}>
             {isLoading ? <LoadingSpinner /> : "Save Changes"}
           </Button>
