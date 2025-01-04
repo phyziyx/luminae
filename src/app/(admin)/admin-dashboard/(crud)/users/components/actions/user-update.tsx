@@ -22,8 +22,8 @@ const onUserUpdate = async (values: z.infer<typeof formSchema>) => {
     return { error };
   }
 
-  const userID = validatedFields.data.id;
-  if (!userID) {
+  const userId = validatedFields.data.id;
+  if (!userId) {
     error = "User ID is required.";
     return { error };
   }
@@ -38,19 +38,18 @@ const onUserUpdate = async (values: z.infer<typeof formSchema>) => {
   }
 
   try {
-    // Pass the second argument 'userFields' with the updated details
-    await UserManager.updateUser(userID, {
-      name: userFields.name,
+    await UserManager.updateUser(userId, {
+      firstName: userFields.firstName,
+      lastName: userFields.lastName,
       email: userFields.email,
       avatarUrl: userFields.avatarUrl || "",
     });
 
-    // TODO: Separate the name field into first and last name
     const clerk = await clerkClient();
 
-    await clerk.users.updateUser(userID, {
-      firstName: userFields.name,
-      lastName: userFields.name,
+    await clerk.users.updateUser(userId, {
+      firstName: userFields.firstName,
+      lastName: userFields.lastName,
     });
 
     error = "";
