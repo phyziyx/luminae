@@ -25,7 +25,8 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     await UserManager.createUser({
       id: user.id,
       email: email,
-      name: `${user.firstName} ${user.lastName}`,
+      firstName: user.firstName!,
+      lastName: user.lastName!,
       avatarUrl: user.imageUrl,
     });
   }

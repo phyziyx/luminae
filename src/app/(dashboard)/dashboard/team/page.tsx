@@ -17,7 +17,7 @@ const TeamList = async ({ agencyId }: { agencyId: string }) => {
   const members = await AgencyManager.findAgencyMembers(agencyId);
   const data: TeamMember[] = members.map((member) => ({
     id: member.id,
-    name: member.user.name,
+    name: member.user.firstName + " " + member.user.lastName,
     email: member.email,
     role: member.role,
     status: "Active",
