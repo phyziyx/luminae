@@ -18,6 +18,8 @@
   "FIRSTNAME": "First Name",
   "LASTNAME": "Last Name",
 
+  "WORKSPACE": "Workspace",
+
   "INVITATION_HEADER": "Create your Account",
   "INVITATION_DESCRIPTION": "You've been invited to join Luminae. Please fill in the details to get started.",
   "GOOGLE": "Google",
@@ -260,7 +262,6 @@
     "QUANTITY": "Quantity",
     "PRICE": "Price"
   },
-
 
   "MENU": {
     "OPEN_MENU": "Open menu"

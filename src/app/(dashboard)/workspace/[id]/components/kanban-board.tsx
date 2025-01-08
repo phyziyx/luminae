@@ -1,63 +1,38 @@
 "use client";
 
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  arrayMove,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  LightbulbIcon,
-  LightbulbOff,
-  PlusIcon,
-  PresentationIcon,
-} from "lucide-react";
-import { User } from "@prisma/client";
-import PipelineLane from "./pipeline-lane";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { HoverCard, HoverCardContent } from "@/components/ui/hover-card";
+import { HoverCardTrigger } from "@radix-ui/react-hover-card";
+import {
+  CalendarIcon,
+  Contact2Icon,
+  Link2Icon,
+  MoreVerticalIcon,
+  User2Icon,
+} from "lucide-react";
+import { useState } from "react";
 
 interface KanbanBoardProps {
   id: string;
   name: string;
-  data: any;
 }
-
-type Contact = {
-  id: string;
-  name: string;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date;
-  subAccountId: string;
-};
-
-type Tag = {
-  id: string;
-  name: string;
-  color: string;
-  createdAt: Date;
-  updatedAt: Date;
-  subAccountId: string;
-};
 
 interface Lane {
   id: string;
   name: string;
-  createdAt: Date;
-  updatedAt: Date;
+  // createdAt: Date;
+  // updatedAt: Date;
   pipelineId: string;
   order: number;
+  colour: string;
 }
 
 type Ticket = {
@@ -73,267 +48,255 @@ type Ticket = {
   assignedUserId: string | null;
 };
 
-type TicketAndTags = Ticket & {
-  tags: Tag[];
-  assigned: User | null;
-  customer: Contact | null;
-};
-
-type LaneDetail = Lane & {
-  tickets: TicketAndTags[];
-};
-
-export default function KanbanBoard({ id, data, name }: KanbanBoardProps) {
-  const [allLanes, setAllLanes] = useState<LaneDetail[]>([
+export default function KanbanBoard({ id, name }: KanbanBoardProps) {
+  const [lanes, setLanes] = useState<Lane[]>([
     {
-      createdAt: new Date(),
-      id: "0",
-      name: "Backlog",
-      order: 0,
-      pipelineId: "1",
-      updatedAt: new Date(),
-      tickets: [],
-    },
-    {
-      createdAt: new Date(),
       id: "1",
-      name: "To Do",
-      order: 0,
+      name: "Column 1",
+      order: 1,
       pipelineId: "1",
-      updatedAt: new Date(),
-      tickets: [
-        {
-          id: "1",
-          name: "Ticket 1",
-          description: "Description 1",
-          tags: [],
-          assignedUserId: null,
-          customerId: null,
-          assigned: null,
-          createdAt: new Date(),
-          customer: null,
-          laneId: "1",
-          order: 0,
-          updatedAt: new Date(),
-          value: null,
-        },
-        {
-          id: "2",
-          name: "Ticket 2",
-          description: "Description 2",
-          tags: [
-            {
-              color: "red",
-              createdAt: new Date(),
-              id: "1",
-              name: "Urgent",
-              subAccountId: "1",
-              updatedAt: new Date(),
-            },
-          ],
-          assigned: null,
-          customer: null,
-          assignedUserId: null,
-          createdAt: new Date(),
-          customerId: null,
-          laneId: "1",
-          order: 0,
-          updatedAt: new Date(),
-          value: null,
-        },
-      ],
+      colour: "#ff00ff",
     },
     {
-      createdAt: new Date(),
       id: "2",
-      name: "Recurring",
-      order: 0,
-      pipelineId: "2",
-      updatedAt: new Date(),
-      tickets: [],
+      name: "Column 2",
+      order: 2,
+      pipelineId: "1",
+      colour: "#ff3300",
     },
     {
-      createdAt: new Date(),
       id: "3",
-      name: "Progress",
-      order: 0,
-      pipelineId: "3",
-      updatedAt: new Date(),
-      tickets: [],
+      name: "Column 3",
+      order: 3,
+      pipelineId: "1",
+      colour: "#33ff00",
     },
     {
-      createdAt: new Date(),
       id: "4",
-      name: "Completed",
-      order: 0,
-      pipelineId: "4",
-      updatedAt: new Date(),
-      tickets: [],
-    },
-    {
-      createdAt: new Date(),
-      id: "5",
-      name: "Archived",
-      order: 0,
-      pipelineId: "5",
-      updatedAt: new Date(),
-      tickets: [],
+      name: "Column 4",
+      order: 4,
+      pipelineId: "1",
+      colour: "#00ff33",
     },
   ]);
 
-  const ticketsFromAllLanes: TicketAndTags[] = [];
-  allLanes.forEach((item) => {
-    item.tickets.forEach((i) => {
-      ticketsFromAllLanes.push(i);
-    });
-  });
-  const [allTickets, setAllTickets] = useState(ticketsFromAllLanes);
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
+  return (
+    <div className="flex w-full overflow-x-auto overflow-y-hidden px-[10px] gap-2">
+      <div className="m-auto w-full flex gap-2">
+        {lanes.map((lane) => (
+          <LaneContainer key={lane.id} lane={lane} />
+        ))}
+      </div>
+    </div>
   );
+}
 
-  const updateLanesOrder = (lanes: LaneDetail[]) => {
-    // Update the order of lanes in the database
-    setAllLanes(lanes);
-  };
+function LaneContainerHeader({
+  colour,
+  name,
+}: {
+  colour: string;
+  name: string;
+}) {
+  // absolute top-0 left-0 right-0
+  return (
+    <div className="rounded-tr-lg rounded-tl-lg h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10">
+      <div className="bg-white/10 h-full flex items-center p-4 justify-between cursor-grab border-b-[1px]">
+        <div className="flex items-center w-full gap-2">
+          <div
+            className="w-4 h-4 rounded-full"
+            style={{ background: colour }}
+          />
+          <span className="font-bold text-sm">{name}</span>
+        </div>
+        <LaneContainerHeaderMoney />
+      </div>
+    </div>
+  );
+}
 
-  const updateTicketsOrder = async (tickets: Ticket[]) => {
-    // Update the order of tickets in the database
-  };
-
-  const onDragEnd = (event: any) => {
-    const { active, over } = event;
-
-    if (!over) return;
-
-    const activeId = active.id;
-    const overId = over.id;
-
-    if (activeId === overId) return;
-
-    const isLane = active.data.current?.type === "lane";
-
-    if (isLane) {
-      const oldIndex = allLanes.findIndex((lane) => lane.id === activeId);
-      const newIndex = allLanes.findIndex((lane) => lane.id === overId);
-
-      const newLanes = arrayMove(allLanes, oldIndex, newIndex).map(
-        (lane, idx) => ({ ...lane, order: idx })
-      );
-      setAllLanes(newLanes);
-      updateLanesOrder(newLanes);
-    } else {
-      const sourceLaneId = active.data.current?.laneId;
-      const destinationLaneId = over.data.current?.laneId;
-
-      if (!sourceLaneId || !destinationLaneId) return;
-
-      const sourceLane = allLanes.find((lane) => lane.id === sourceLaneId);
-      const destinationLane = allLanes.find(
-        (lane) => lane.id === destinationLaneId
-      );
-
-      if (!sourceLane || !destinationLane) return;
-
-      const sourceTickets = sourceLane.tickets;
-      const destinationTickets = destinationLane.tickets;
-
-      const oldIndex = sourceTickets.findIndex(
-        (ticket) => ticket.id === activeId
-      );
-      const newIndex = overId ? destinationTickets.length : 0;
-
-      if (sourceLaneId === destinationLaneId) {
-        const updatedTickets = arrayMove(sourceTickets, oldIndex, newIndex).map(
-          (ticket, idx) => ({ ...ticket, order: idx })
-        );
-        sourceLane.tickets = updatedTickets;
-        setAllLanes([...allLanes]);
-        updateTicketsOrder(updatedTickets);
-      } else {
-        const [movedTicket] = sourceTickets.splice(oldIndex, 1);
-        movedTicket.laneId = destinationLaneId;
-
-        sourceTickets.forEach((ticket, idx) => (ticket.order = idx));
-        destinationTickets.splice(newIndex, 0, movedTicket);
-        destinationTickets.forEach((ticket, idx) => (ticket.order = idx));
-
-        setAllLanes([...allLanes]);
-        updateTicketsOrder([...sourceTickets, ...destinationTickets]);
-      }
-    }
-  };
-
-  const myTasksCount = allTickets.filter(
-    (ticket) => ticket.assignedUserId === "1"
-  ).length;
+function LaneContainerHeaderMoney() {
+  const CASH_AMOUNT = 5_000;
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={onDragEnd}
-    >
-      <div className="bg-white/60 dark:bg-background/60 rounded-xl p-4 space-y-2">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <p className="flex flex-row items-center gap-2">
-            <Badge variant={"secondary"} className="flex items-center gap-2">
-              {myTasksCount !== 0 ? (
-                <LightbulbOff />
-              ) : (
-                <>
-                  You have {myTasksCount} tasks!
-                  <LightbulbIcon />
-                </>
-              )}
-            </Badge>
-          </p>
-          <Button className="flex items-center gap-4" onClick={() => {}}>
-            <PlusIcon size={15} />
-            Create Lane
-          </Button>
-        </div>
+    <div className="flex items-center flex-row">
+      <Badge variant={"secondary"} className="">
+        ${CASH_AMOUNT.toFixed(2)}
+      </Badge>
+      {/* <DropdownMenuTrigger> */}
+      <MoreVerticalIcon className="text-muted-foreground cursor-pointer" />
+      {/* </DropdownMenuTrigger> */}
+    </div>
+  );
+}
 
-        {/* Kanban Board (core) */}
-        <div className="flex flex-wrap gap-y-2 item-center gap-x-2">
-          <DndContext>
-            <SortableContext
-              items={allLanes.map((lane) => lane.id)}
-              strategy={rectSortingStrategy}
-            >
-              {allLanes.map((lane, index) => (
-                <PipelineLane
-                  key={lane.id}
-                  id={lane.id}
-                  allTickets={allTickets}
-                  setAllTickets={setAllTickets}
-                  subaccountId={"1"}
-                  pipelineId={"1"}
-                  tickets={lane.tickets}
-                  laneDetails={lane}
-                  index={index}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
-          {allLanes.length === 0 && (
-            <div className="flex items-center justify-center w-full flex-col">
-              <div className="opacity-100">
-                <PresentationIcon
-                  width="100%"
-                  height="100%"
-                  className="text-muted-foreground"
-                />
-              </div>
-            </div>
-          )}
+function LaneContainerBody() {
+  const [tickets, setTickets] = useState<Ticket[]>([
+    {
+      id: "1",
+      name: "Ticket 1",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      laneId: "1",
+      order: 1,
+      value: 100,
+      description: "This is a ticket",
+      customerId: "1",
+      assignedUserId: "1",
+    },
+    {
+      id: "2",
+      name: "Ticket 2",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      laneId: "1",
+      order: 2,
+      value: 200,
+      description: "This is a ticket",
+      customerId: "1",
+      assignedUserId: "1",
+    },
+  ]);
+
+  return (
+    <div className="w-full h-full p-2">
+      {tickets.map((ticket) => (
+        <TicketCard key={ticket.id} ticket={ticket} />
+      ))}
+    </div>
+  );
+}
+
+function TicketTitle({ title }: { title: string }) {
+  return (
+    <CardTitle className="flex items-center justify-between">
+      <span className="text-lg w-full">{title}</span>
+    </CardTitle>
+  );
+}
+
+function TicketDate({ date }: { date: Date }) {
+  return (
+    <span className="flex flex-row items-center gap-2 text-muted-foreground text-xs">
+      <CalendarIcon size="20" /> {date.toLocaleDateString()}
+    </span>
+  );
+}
+
+function TicketTags({ tags }: { tags: string[] }) {
+  // return (<div className="flex items-center flex-wrap gap-2">
+  //   {tags.map((tag) => (
+  //     <TagComponent key={tag.id} title={tag.name} colorName={tag.color} />
+  //   ))}
+  // </div>);
+
+  // return (
+  //   <div className="flex items-center flex-wrap gap-2">
+  //     {tags.map((tag) => (
+  //       <Badge key={tag} variant={"secondary"} className="">
+  //         {tag}
+  //       </Badge>
+  //     ))}
+  //   </div>
+  // );
+
+  return null;
+}
+
+function TicketDescription({ description }: { description: string }) {
+  return <CardDescription className="w-full ">{description}</CardDescription>;
+}
+
+function TicketClient() {
+  return (
+    <HoverCard>
+      <HoverCardTrigger asChild>
+        <div className="p-2 text-muted-foreground flex gap-2 hover:bg-muted transition-all rounded-lg cursor-pointer items-center">
+          <Link2Icon />
+          <span className="text-xs font-bold">CONTACT</span>
         </div>
+      </HoverCardTrigger>
+      <HoverCardContent side="right" className="w-fit">
+        <div className="flex justify-between space-x-4">
+          <Avatar>
+            <AvatarImage />
+            <AvatarFallback>
+              {"CUSTOMER NAME".slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="space-y-1">
+            <h4 className="text-sm font-semibold">{"CUSTOMER NAME"}</h4>
+            <p className="text-sm text-muted-foreground">{"CUSTOMER EMAIL"}</p>
+            <div className="flex items-center pt-2">
+              <Contact2Icon className="mr-2 h-4 w-4 opacity-70" />
+              <span className="text-xs text-muted-foreground">
+                Joined {"CUSTOMER DATE"}
+              </span>
+            </div>
+          </div>
+        </div>
+      </HoverCardContent>
+    </HoverCard>
+  );
+}
+
+function TicketAssignedUser() {
+  return (
+    <div className="flex item-center gap-2">
+      <Avatar className="w-8 h-8">
+        <AvatarImage alt="contact" src={"AVATAR URL"} />
+        <AvatarFallback className="bg-primary text-sm text-white">
+          {"ASSIGNED NAME"}
+          {!!"ASSIGNED ID" && <User2Icon size={14} />}
+        </AvatarFallback>
+      </Avatar>
+      <div className="flex flex-col justify-center">
+        <span className="text-sm text-muted-foreground">
+          {"ASSIGNED ID" ? "Assigned to" : "Not Assigned"}
+        </span>
+        {"ASSIGNED ID" && (
+          <span className="text-xs w-28  overflow-ellipsis overflow-hidden whitespace-nowrap text-muted-foreground">
+            {"ASSIGNED NAME"}
+          </span>
+        )}
       </div>
-    </DndContext>
+    </div>
+  );
+}
+
+function TicketCard({ ticket }: { ticket: Ticket }) {
+  return (
+    <Card className="my-4 dark:bg-slate-900 bg-white shadow-none transition-all">
+      <CardHeader className="p-[12px]">
+        <TicketTitle title={ticket.name} />
+        {/* */}
+        <TicketDate date={ticket.createdAt} />
+        <TicketTags tags={[]} />
+        {/* */}
+        <TicketDescription description={ticket.description || ""} />
+        {/* */}
+        <TicketClient />
+      </CardHeader>
+      <CardFooter className="m-0 p-2 border-t-[1px] border-muted-foreground/20 flex items-center justify-between">
+        <TicketAssignedUser />
+        <span className="text-sm font-bold">
+          {!!ticket.value &&
+            new Intl.NumberFormat(undefined, {
+              style: "currency",
+              currency: "USD",
+            }).format(+ticket.value)}
+        </span>
+      </CardFooter>
+    </Card>
+  );
+}
+
+function LaneContainer({ lane }: { lane: Lane }) {
+  // relative
+  return (
+    <div className="bg-slate-200/50 dark:white/50 rounded-lg gap-0 p-0 space-x-0 space-y-0 w-full h-screen flex flex-col">
+      <LaneContainerHeader colour={lane.colour} name={lane.name} />
+      <LaneContainerBody />
+    </div>
   );
 }
