@@ -37,14 +37,11 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
+import { User } from "@prisma/client";
 
 interface TeamMemberDetailsFormProps {
   data: {
-    member: {
-      email: string;
-      name: string;
-      avatarUrl: string;
-    };
+    member: Pick<User, "firstName" | "lastName" | "email" | "avatarUrl">;
     role: "AGENCY_ADMIN" | "AGENCY_USER" | "AGENCY_OWNER";
     workspaces: {
       id: string;
@@ -69,7 +66,7 @@ export default function TeamMemberDetailsForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: data.member.email || "",
+      email: data.member.email,
       role: data.role || "AGENCY_USER",
       workspaces: data.workspaces.map((workspace) => ({
         id: workspace.id,
@@ -128,10 +125,10 @@ export default function TeamMemberDetailsForm({
       <div className="gap-4 flex flex-row justify-between place-items-center">
         <Avatar>
           <AvatarImage src={data.member.avatarUrl} />
-          <AvatarFallback>{data.member.name}</AvatarFallback>
+          <AvatarFallback>{data.member.firstName}</AvatarFallback>
         </Avatar>
         <h2 className="font-semibold text-black dark:text-white">
-          {data.member.name}
+          {`${data.member.firstName} ${data.member.lastName}`}
         </h2>
         <Badge className="text-center" variant={"default"}>
           {t(`ROLES.${data.role}`)}

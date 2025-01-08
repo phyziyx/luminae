@@ -1,8 +1,10 @@
 import { User } from "@prisma/client";
 import prisma from "../db";
 
-type CreateUser = Pick<User, "id" | "email" | "name" | "avatarUrl">;
-type UpdateUser = Partial<CreateUser>; // Allow partial updates
+type CreateUser = Pick<
+  User,
+  "id" | "email" | "firstName" | "lastName" | "avatarUrl"
+>;
 
 class UserManager {
   public static async fetchUsers() {
@@ -28,7 +30,8 @@ class UserManager {
       create: {
         email: user.email,
         id: user.id,
-        name: user.name,
+        firstName: user.firstName,
+        lastName: user.lastName,
         avatarUrl: user.avatarUrl,
       },
     });
@@ -107,11 +110,11 @@ class UserManager {
    */
   public static async updateUser(
     id: string,
-    userUpdates: { name: string; email: string; avatarUrl: string }
+    data: Pick<User, "firstName" | "lastName" | "email" | "avatarUrl">
   ) {
     return await prisma.user.update({
       where: { id },
-      data: userUpdates,
+      data: data,
     });
   }
 

@@ -22,12 +22,7 @@ import formSchema from "../user-details/schema";
 
 interface UpdateUserFormProps {
   onSubmit: (values: z.infer<typeof userFormSchema>) => Promise<void>;
-  userData: {
-    id: string;
-    name: string;
-    email: string;
-    avatarUrl: string;
-  };
+  userData: z.infer<typeof userFormSchema>;
 }
 
 const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
@@ -40,7 +35,8 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: userData.id,
-      name: userData.name,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
       avatarUrl: userData.avatarUrl,
       email: userData.email,
     },
@@ -67,13 +63,25 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-row gap-x-2">
           <FormField
             control={form.control}
-            name="name"
+            name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("FORMS.NAME")}</FormLabel>
+                <FormLabel>{t("FIRSTNAME")}</FormLabel>
+                <FormControl>
+                  <Input {...field} required />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{t("LASTNAME")}</FormLabel>
                 <FormControl>
                   <Input {...field} required />
                 </FormControl>
@@ -83,11 +91,10 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
         </div>
 
         <div className="space-y-2">
-          {/* HEADING */}
           <Label>{t("FORMS.AVATAR")}</Label>
           <Avatar>
             <AvatarImage src={form.getValues().avatarUrl} />
-            <AvatarFallback>{form.getValues().name}</AvatarFallback>
+            <AvatarFallback>{form.getValues().firstName}</AvatarFallback>
           </Avatar>
         </div>
 
