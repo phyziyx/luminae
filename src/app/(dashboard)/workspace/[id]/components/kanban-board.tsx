@@ -1,7 +1,19 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardDescription,
@@ -9,13 +21,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { HoverCard, HoverCardContent } from "@/components/ui/hover-card";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { HoverCardTrigger } from "@radix-ui/react-hover-card";
+import clsx from "clsx";
 import {
   CalendarIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
   Contact2Icon,
+  EditIcon,
   Link2Icon,
   MoreVerticalIcon,
+  PlusCircleIcon,
+  Trash2Icon,
   User2Icon,
 } from "lucide-react";
 import { useState } from "react";
@@ -33,6 +59,8 @@ interface Lane {
   pipelineId: string;
   order: number;
   colour: string;
+  //
+  collapsed: boolean;
 }
 
 type Ticket = {
@@ -56,6 +84,7 @@ export default function KanbanBoard({ id, name }: KanbanBoardProps) {
       order: 1,
       pipelineId: "1",
       colour: "#ff00ff",
+      collapsed: true,
     },
     {
       id: "2",
@@ -63,6 +92,7 @@ export default function KanbanBoard({ id, name }: KanbanBoardProps) {
       order: 2,
       pipelineId: "1",
       colour: "#ff3300",
+      collapsed: false,
     },
     {
       id: "3",
@@ -70,21 +100,35 @@ export default function KanbanBoard({ id, name }: KanbanBoardProps) {
       order: 3,
       pipelineId: "1",
       colour: "#33ff00",
+      collapsed: false,
     },
     {
       id: "4",
       name: "Column 4",
       order: 4,
       pipelineId: "1",
-      colour: "#00ff33",
+      colour: "#000088",
+      collapsed: false,
     },
   ]);
 
+  const toggleCollapse = (laneId: string) => {
+    setLanes((prevLanes) =>
+      prevLanes.map((lane) =>
+        lane.id === laneId ? { ...lane, collapsed: !lane.collapsed } : lane
+      )
+    );
+  };
+
   return (
-    <div className="flex w-full overflow-x-auto overflow-y-hidden px-[10px] gap-2">
-      <div className="m-auto w-full flex gap-2">
+    <div className="w-full overflow-x-auto overflow-y-hidden h-screen px-[10px] gap-2">
+      <div className="m-auto w-full flex gap-2 overflow-y-visible bg-red-200/20">
         {lanes.map((lane) => (
-          <LaneContainer key={lane.id} lane={lane} />
+          <LaneContainer
+            key={lane.id}
+            lane={lane}
+            toggleCollapse={toggleCollapse}
+          />
         ))}
       </div>
     </div>
@@ -92,80 +136,181 @@ export default function KanbanBoard({ id, name }: KanbanBoardProps) {
 }
 
 function LaneContainerHeader({
+  collapsed,
   colour,
   name,
+  onToggleCollapse,
 }: {
+  collapsed: boolean;
   colour: string;
   name: string;
+  onToggleCollapse: () => void;
 }) {
   // absolute top-0 left-0 right-0
   return (
-    <div className="rounded-tr-lg rounded-tl-lg h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10">
-      <div className="bg-white/10 h-full flex items-center p-4 justify-between cursor-grab border-b-[1px]">
-        <div className="flex items-center w-full gap-2">
-          <div
-            className="w-4 h-4 rounded-full"
-            style={{ background: colour }}
-          />
-          <span className="font-bold text-sm">{name}</span>
+    <AlertDialog>
+      <DropdownMenu>
+        <div className="rounded-tr-lg rounded-tl-lg h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10">
+          <div className="bg-white/10 h-full flex items-center p-4 justify-between cursor-grab border-b-[1px]">
+            <div className={"flex items-center w-full gap-2"}>
+              <Button
+                variant={"secondary"}
+                size="icon"
+                onClick={onToggleCollapse}
+              >
+                {!collapsed ? <ChevronDownIcon /> : <ChevronRightIcon />}
+              </Button>
+              <div
+                className="w-4 h-4 rounded-full"
+                style={{ background: colour }}
+              />
+              <span
+                className={clsx("font-bold text-sm", {
+                  "pl-12 rotate-90": collapsed,
+                })}
+              >
+                {name}
+              </span>
+            </div>
+            {/* */}
+            <div className="flex items-center flex-row gap-1">
+              <LaneContainerHeaderMoney />
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant={"ghost"}
+                  className="p-3 m-0 space-x-0 space-y-0 rounded-full text-muted-foreground cursor-pointer"
+                >
+                  <MoreVerticalIcon />
+                </Button>
+              </DropdownMenuTrigger>
+            </div>
+          </div>
         </div>
-        <LaneContainerHeaderMoney />
-      </div>
-    </div>
+
+        <DropdownMenuContent>
+          <DropdownMenuLabel>Options</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <AlertDialogTrigger>
+            <DropdownMenuItem className="flex items-center gap-2">
+              <Trash2Icon size={15} />
+              Delete
+            </DropdownMenuItem>
+          </AlertDialogTrigger>
+
+          <DropdownMenuItem
+            className="flex items-center gap-2"
+            onClick={() => alert("Edit lane")}
+          >
+            <EditIcon size={15} />
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="flex items-center gap-2"
+            onClick={() => alert("Create ticket")}
+          >
+            <PlusCircleIcon size={15} />
+            Create Ticket
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              lane and associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex items-center">
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive"
+              onClick={() => alert("Delete lane")}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </DropdownMenu>
+    </AlertDialog>
   );
 }
 
 function LaneContainerHeaderMoney() {
   const CASH_AMOUNT = 5_000;
 
-  return (
-    <div className="flex items-center flex-row">
-      <Badge variant={"secondary"} className="">
-        ${CASH_AMOUNT.toFixed(2)}
-      </Badge>
-      {/* <DropdownMenuTrigger> */}
-      <MoreVerticalIcon className="text-muted-foreground cursor-pointer" />
-      {/* </DropdownMenuTrigger> */}
-    </div>
-  );
+  return <Badge variant={"secondary"}>${CASH_AMOUNT.toFixed(2)}</Badge>;
 }
 
-function LaneContainerBody() {
-  const [tickets, setTickets] = useState<Ticket[]>([
-    {
-      id: "1",
-      name: "Ticket 1",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      laneId: "1",
-      order: 1,
-      value: 100,
-      description: "This is a ticket",
-      customerId: "1",
-      assignedUserId: "1",
-    },
-    {
-      id: "2",
-      name: "Ticket 2",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      laneId: "1",
-      order: 2,
-      value: 200,
-      description: "This is a ticket",
-      customerId: "1",
-      assignedUserId: "1",
-    },
-  ]);
+function getDummyTasks(laneId: string) {
+  return laneId === "1"
+    ? [
+        {
+          id: "1",
+          name: "Ticket 1",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          laneId: "1",
+          order: 1,
+          value: 100,
+          description: "This is a ticket",
+          customerId: "1",
+          assignedUserId: "1",
+        },
+        {
+          id: "2",
+          name: "Ticket 2",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          laneId: "1",
+          order: 2,
+          value: 200,
+          description: "This is a ticket",
+          customerId: "1",
+          assignedUserId: "1",
+        },
+      ]
+    : laneId === "2"
+    ? [
+        {
+          id: "1",
+          name: "Ticket 1",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          laneId: "1",
+          order: 1,
+          value: 100,
+          description: "This is a ticket",
+          customerId: "1",
+          assignedUserId: "1",
+        },
+      ]
+    : [];
+}
+
+function LaneContainerBody({ laneId }: { laneId: string }) {
+  const [tickets, setTickets] = useState<Ticket[]>(getDummyTasks(laneId));
 
   return (
     <div className="w-full h-full p-2">
       {tickets.map((ticket) => (
         <TicketCard key={ticket.id} ticket={ticket} />
       ))}
+      {/* <AddTicketCard /> */}
     </div>
   );
 }
+
+// function AddTicketCard() {
+//   return (
+//     <Button
+//       variant={"secondary"}
+//       size="lg"
+//       className="p-4 dark:bg-slate-900 bg-white shadow-none transition-all w-full rounded-xl"
+//     >
+//       <PlusCircleIcon /> Add Ticket
+//     </Button>
+//   );
+// }
 
 function TicketTitle({ title }: { title: string }) {
   return (
@@ -291,12 +436,48 @@ function TicketCard({ ticket }: { ticket: Ticket }) {
   );
 }
 
-function LaneContainer({ lane }: { lane: Lane }) {
-  // relative
+function LaneContainerFooter() {
   return (
-    <div className="bg-slate-200/50 dark:white/50 rounded-lg gap-0 p-0 space-x-0 space-y-0 w-full h-screen flex flex-col">
-      <LaneContainerHeader colour={lane.colour} name={lane.name} />
-      <LaneContainerBody />
+    <div className="rounded-bl-lg rounded-br-lg h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10">
+      <div className="bg-white/10 h-full flex items-center p-4 justify-between cursor-grab border-t-[1px]">
+        <div className="flex items-center w-full gap-2">
+          <span className="font-bold text-sm">Add Ticket...</span>
+        </div>
+        <LaneContainerFooterActions />
+      </div>
+    </div>
+  );
+}
+
+function LaneContainerFooterActions() {
+  return (
+    <div className="flex items-center flex-row">
+      <CalendarIcon className="text-muted-foreground cursor-pointer" />
+      <User2Icon className="text-muted-foreground cursor-pointer" />
+      <Link2Icon className="text-muted-foreground cursor-pointer" />
+    </div>
+  );
+}
+
+function LaneContainer({
+  lane,
+  toggleCollapse,
+}: {
+  lane: Lane;
+  toggleCollapse: (laneId: string) => void;
+}) {
+  // relative
+
+  return (
+    <div className="bg-slate-200/50 dark:white/50 rounded-lg gap-0 p-0 space-x-0 space-y-0 w-full h-full flex flex-col mb-2">
+      <LaneContainerHeader
+        collapsed={lane.collapsed}
+        colour={lane.colour}
+        name={lane.name}
+        onToggleCollapse={() => toggleCollapse(lane.id)}
+      />
+      {!lane.collapsed && <LaneContainerBody laneId={lane.id} />}
+      <LaneContainerFooter />
     </div>
   );
 }

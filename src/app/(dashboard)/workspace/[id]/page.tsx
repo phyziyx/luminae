@@ -24,7 +24,7 @@ export default async function WorkspacePage({
   }
 
   return (
-    <>
+    <div className="h-[100%]">
       <header className="flex h-16 shrink-0 items-center gap-2">
         <div className="flex items-center gap-2 px-4">
           <SidebarTrigger className="-ml-1" />
@@ -35,6 +35,6 @@ export default async function WorkspacePage({
       <Suspense fallback={<FallbackSpinner />}>
         <KanbanBoard id={"1"} name={"dummy"} />
       </Suspense>
-    </>
+    </div>
   );
 }
