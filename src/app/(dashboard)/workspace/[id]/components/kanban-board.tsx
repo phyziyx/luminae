@@ -82,7 +82,7 @@ export default function KanbanBoard({ id, name }: KanbanBoardProps) {
       id: "1",
       name: "Column 1",
       order: 1,
-      pipelineId: "1",
+      pipelineId: id,
       colour: "#ff00ff",
       collapsed: true,
     },
@@ -90,7 +90,7 @@ export default function KanbanBoard({ id, name }: KanbanBoardProps) {
       id: "2",
       name: "Column 2",
       order: 2,
-      pipelineId: "1",
+      pipelineId: id,
       colour: "#ff3300",
       collapsed: false,
     },
@@ -98,7 +98,7 @@ export default function KanbanBoard({ id, name }: KanbanBoardProps) {
       id: "3",
       name: "Column 3",
       order: 3,
-      pipelineId: "1",
+      pipelineId: id,
       colour: "#33ff00",
       collapsed: false,
     },
@@ -106,8 +106,24 @@ export default function KanbanBoard({ id, name }: KanbanBoardProps) {
       id: "4",
       name: "Column 4",
       order: 4,
-      pipelineId: "1",
+      pipelineId: id,
       colour: "#000088",
+      collapsed: false,
+    },
+    {
+      id: "5",
+      name: "Column 5",
+      order: 5,
+      pipelineId: id,
+      colour: "#660066",
+      collapsed: false,
+    },
+    {
+      id: "6",
+      name: "Column 6",
+      order: 6,
+      pipelineId: id,
+      colour: "#55BBAA",
       collapsed: false,
     },
   ]);
@@ -121,8 +137,8 @@ export default function KanbanBoard({ id, name }: KanbanBoardProps) {
   };
 
   return (
-    <div className="w-full overflow-x-auto overflow-y-hidden h-screen px-[10px] gap-2">
-      <div className="m-auto w-full flex gap-2 overflow-y-visible bg-red-200/20">
+    <div className="w-[90%] h-screen px-[10px] gap-2 overflow-y-hidden">
+      <div className="m-auto w-full flex gap-2 overflow-x-auto overflow-y-visible bg-red-200/20">
         {lanes.map((lane) => (
           <LaneContainer
             key={lane.id}
@@ -441,7 +457,12 @@ function LaneContainerFooter() {
     <div className="rounded-bl-lg rounded-br-lg h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10">
       <div className="bg-white/10 h-full flex items-center p-4 justify-between cursor-grab border-t-[1px]">
         <div className="flex items-center w-full gap-2">
-          <span className="font-bold text-sm">Add Ticket...</span>
+          <Button
+            variant={"ghost"}
+            className="p-2 hover:bg-transparent bg-transparent font-bold text-sm"
+          >
+            Add a Ticket...
+          </Button>
         </div>
         <LaneContainerFooterActions />
       </div>
