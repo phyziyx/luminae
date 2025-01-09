@@ -162,13 +162,28 @@ function LaneContainerHeader({
   name: string;
   onToggleCollapse: () => void;
 }) {
+  const CASH_AMOUNT = 5_000;
+
   // absolute top-0 left-0 right-0
   return (
     <AlertDialog>
       <DropdownMenu>
-        <div className="rounded-tr-lg rounded-tl-lg h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10">
+        <div
+          className={clsx(
+            "rounded-tr-lg rounded-tl-lg backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10",
+            {
+              "h-14": !collapsed,
+              "h-full": collapsed,
+            }
+          )}
+        >
           <div className="bg-white/10 h-full flex items-center p-4 justify-between cursor-grab border-b-[1px]">
-            <div className={"flex items-center w-full gap-2"}>
+            <div
+              className={clsx("gap-2", {
+                "flex flex-col h-auto w-fit": collapsed,
+                "items-center flex flex-row": !collapsed,
+              })}
+            >
               <Button
                 variant={"secondary"}
                 size="icon"
@@ -181,16 +196,21 @@ function LaneContainerHeader({
                 style={{ background: colour }}
               />
               <span
-                className={clsx("font-bold text-sm", {
-                  "pl-12 rotate-90": collapsed,
+                className={clsx("font-bold text-sm max-w-full", {
+                  "pl-12 rotate-90 whitespace-nowrap max-w-[50vh]": collapsed,
                 })}
               >
                 {name}
               </span>
             </div>
             {/* */}
-            <div className="flex items-center flex-row gap-1">
-              <LaneContainerHeaderMoney />
+            <div
+              className={clsx("flex items-center gap-1", {
+                "flex-row": !collapsed,
+                hidden: collapsed,
+              })}
+            >
+              <Badge variant={"secondary"}>${CASH_AMOUNT.toFixed(2)}</Badge>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant={"ghost"}
@@ -249,12 +269,6 @@ function LaneContainerHeader({
       </DropdownMenu>
     </AlertDialog>
   );
-}
-
-function LaneContainerHeaderMoney() {
-  const CASH_AMOUNT = 5_000;
-
-  return <Badge variant={"secondary"}>${CASH_AMOUNT.toFixed(2)}</Badge>;
 }
 
 function getDummyTasks(laneId: string) {
@@ -498,7 +512,7 @@ function LaneContainer({
         onToggleCollapse={() => toggleCollapse(lane.id)}
       />
       {!lane.collapsed && <LaneContainerBody laneId={lane.id} />}
-      <LaneContainerFooter />
+      {!lane.collapsed && <LaneContainerFooter />}
     </div>
   );
 }
