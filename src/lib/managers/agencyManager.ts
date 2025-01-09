@@ -141,6 +141,14 @@ class AgencyManager {
     });
   }
 
+  public static async findWorkspace(workspaceId: string) {
+    return await prisma.workspace.findUnique({
+      where: {
+        id: workspaceId,
+      },
+    });
+  }
+
   public static async updateAgency(agency: UpdateAgency) {
     return await prisma.agency.update({
       where: {

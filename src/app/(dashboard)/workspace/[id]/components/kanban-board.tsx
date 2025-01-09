@@ -28,13 +28,15 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { HoverCard, HoverCardContent } from "@/components/ui/hover-card";
+import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { HoverCardTrigger } from "@radix-ui/react-hover-card";
 import clsx from "clsx";
 import {
   CalendarIcon,
-  ChevronDownIcon,
   ChevronRightIcon,
   Contact2Icon,
   EditIcon,
@@ -45,6 +47,8 @@ import {
   User2Icon,
 } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface KanbanBoardProps {
   id: string;
@@ -138,7 +142,7 @@ export default function KanbanBoard({ id, name }: KanbanBoardProps) {
 
   return (
     <div className="w-[90%] h-screen px-[10px] gap-2 overflow-y-hidden">
-      <div className="m-auto w-full flex gap-2 overflow-x-auto overflow-y-visible bg-red-200/20">
+      <div className="m-auto w-full flex flex-row gap-2 overflow-x-auto overflow-y-visible min-h-dvh">
         {lanes.map((lane) => (
           <LaneContainer
             key={lane.id}
@@ -151,6 +155,12 @@ export default function KanbanBoard({ id, name }: KanbanBoardProps) {
   );
 }
 
+const laneNameEditSchema = z.object({
+  name: z.string(),
+});
+
+type LaneNameEditSchema = z.infer<typeof laneNameEditSchema>;
+
 function LaneContainerHeader({
   collapsed,
   colour,
@@ -162,26 +172,41 @@ function LaneContainerHeader({
   name: string;
   onToggleCollapse: () => void;
 }) {
+  const [editing, setEditing] = useState(false);
+
+  const form = useForm<LaneNameEditSchema>({
+    resolver: zodResolver(laneNameEditSchema),
+    defaultValues: {
+      name: name,
+    },
+    mode: "onChange",
+  });
+
+  const onSubmit = (data: LaneNameEditSchema) => {
+    console.log(data);
+    setEditing(false);
+  };
+
   const CASH_AMOUNT = 5_000;
 
   // absolute top-0 left-0 right-0
   return (
-    // <AlertDialog>
-    //   <DropdownMenu>
+    <AlertDialog>
+      <DropdownMenu>
         <div
           className={clsx(
-            "rounded-tr-lg rounded-tl-lg backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10",
+            "backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10",
             {
-              "h-14": !collapsed,
-              "h-full": collapsed,
+              "rounded-tr-lg rounded-tl-lg h-14 w-80": !collapsed,
+              "rounded-lg h-full": collapsed,
             }
           )}
         >
-          <div className="bg-white/10 h-full flex items-center p-4 justify-between cursor-grab border-b-[1px]">
+          <div className="bg-white/10 h-full flex p-2 justify-between cursor-grab border-b-[1px]">
             <div
               className={clsx("gap-2 place-items-center", {
-                "flex flex-row h-auto w-fit": collapsed,
                 "items-center flex flex-row": !collapsed,
+                "flex flex-col h-full w-fit": collapsed,
               })}
             >
               <Button
@@ -189,18 +214,60 @@ function LaneContainerHeader({
                 size="icon"
                 onClick={onToggleCollapse}
               >
-                {!collapsed ? <ChevronDownIcon /> : <ChevronRightIcon />}
+                <ChevronRightIcon
+                  className={clsx(
+                    "transform transition-transform duration-300",
+                    {
+                      "rotate-90": collapsed,
+                    }
+                  )}
+                />
               </Button>
               <div
                 className="w-4 h-4 rounded-full"
                 style={{ background: colour }}
               />
               <span
-                className={clsx("font-bold text-sm max-w-full", {
-                  "pl-12 whitespace-nowrap max-w-[50vh]": collapsed,
-                })}
+                onDoubleClick={() => setEditing(!collapsed && true)}
+                onBlur={() => setEditing(false)}
+                className={clsx(
+                  "whitespace-nowrap hover:cursor-text font-bold text-sm",
+                  {
+                    "w-0 rotate-90": collapsed,
+                  }
+                )}
               >
-                {name}
+                {editing ? (
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="space-y-4"
+                    >
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                onKeyDown={(e) =>
+                                  setEditing(
+                                    !(e.key === "Enter" || e.key === "Escape")
+                                  )
+                                }
+                                className="w-4/5"
+                                placeholder={name}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </form>
+                  </Form>
+                ) : (
+                  name
+                )}
               </span>
             </div>
             {/* */}
@@ -210,64 +277,66 @@ function LaneContainerHeader({
                 hidden: collapsed,
               })}
             >
-              <Badge variant={"secondary"}>${CASH_AMOUNT.toFixed(2)}</Badge>
-              {/* <DropdownMenuTrigger asChild>
+              <Badge variant={"secondary"} className="p-1">
+                ${CASH_AMOUNT.toFixed(2)}
+              </Badge>
+              <DropdownMenuTrigger asChild>
                 <Button
                   variant={"ghost"}
                   className="p-3 m-0 space-x-0 space-y-0 rounded-full text-muted-foreground cursor-pointer"
                 >
                   <MoreVerticalIcon />
                 </Button>
-              </DropdownMenuTrigger> */}
+              </DropdownMenuTrigger>
             </div>
           </div>
         </div>
 
-    //     <DropdownMenuContent>
-    //       <DropdownMenuLabel>Options</DropdownMenuLabel>
-    //       <DropdownMenuSeparator />
-    //       <AlertDialogTrigger>
-    //         <DropdownMenuItem className="flex items-center gap-2">
-    //           <Trash2Icon size={15} />
-    //           Delete
-    //         </DropdownMenuItem>
-    //       </AlertDialogTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel>Options</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <AlertDialogTrigger asChild>
+            <DropdownMenuItem className="bg-destructive/20 flex items-center gap-2">
+              <Trash2Icon size={15} />
+              Delete
+            </DropdownMenuItem>
+          </AlertDialogTrigger>
 
-    //       <DropdownMenuItem
-    //         className="flex items-center gap-2"
-    //         onClick={() => alert("Edit lane")}
-    //       >
-    //         <EditIcon size={15} />
-    //         Edit
-    //       </DropdownMenuItem>
-    //       <DropdownMenuItem
-    //         className="flex items-center gap-2"
-    //         onClick={() => alert("Create ticket")}
-    //       >
-    //         <PlusCircleIcon size={15} />
-    //         Create Ticket
-    //       </DropdownMenuItem>
-    //     </DropdownMenuContent>
-    //     <AlertDialogContent>
-    //       <AlertDialogHeader>
-    //         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-    //         <AlertDialogDescription>
-    //           This action cannot be undone. This will permanently delete the
-    //           lane and associated data.
-    //         </AlertDialogDescription>
-    //       </AlertDialogHeader>
-    //       <AlertDialogFooter className="flex items-center">
-    //         <AlertDialogCancel>Cancel</AlertDialogCancel>
-    //         <AlertDialogAction
-    //           className="bg-destructive"
-    //           onClick={() => alert("Delete lane")}
-    //         >
-    //           Continue
-    //         </AlertDialogAction>
-    //       </AlertDialogFooter>
-    //     </AlertDialogContent>
-    //   </DropdownMenu>
-    // </AlertDialog>
+          <DropdownMenuItem
+            className="flex items-center gap-2"
+            onClick={() => alert("Edit lane")}
+          >
+            <EditIcon size={15} />
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="flex items-center gap-2"
+            onClick={() => alert("Create ticket")}
+          >
+            <PlusCircleIcon size={15} />
+            Create Ticket
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              lane and associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex items-center">
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive"
+              onClick={() => alert("Delete lane")}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </DropdownMenu>
+    </AlertDialog>
   );
 }
 
@@ -321,7 +390,7 @@ function LaneContainerBody({ laneId }: { laneId: string }) {
   const [tickets, setTickets] = useState<Ticket[]>(getDummyTasks(laneId));
 
   return (
-    <div className="w-full h-full p-2">
+    <div className="w-full h-fit p-2">
       {tickets.map((ticket) => (
         <TicketCard key={ticket.id} ticket={ticket} />
       ))}
@@ -363,7 +432,6 @@ function TicketTags({ tags }: { tags: string[] }) {
   //   {tags.map((tag) => (
   //     <TagComponent key={tag.id} title={tag.name} colorName={tag.color} />
   //   ))}
-  // </div>);
 
   // return (
   //   <div className="flex items-center flex-wrap gap-2">
@@ -501,10 +569,10 @@ function LaneContainer({
   lane: Lane;
   toggleCollapse: (laneId: string) => void;
 }) {
-  // relative
-  if(lane.collapsed) {
+  if (lane.collapsed) {
+    // w-12
     return (
-      <div className="bg-slate-200/50 dark:white/50 rounded-lg gap-0 p-0 space-x-0 space-y-0 flex flex-row mb-2 h-full pl-10 rotate-90 w-[10%]">
+      <div className="transition-all ease-in-out duration-300 flex items-center">
         <LaneContainerHeader
           collapsed={lane.collapsed}
           colour={lane.colour}
@@ -516,7 +584,7 @@ function LaneContainer({
   }
 
   return (
-    <div className="bg-slate-200/50 dark:white/50 rounded-lg gap-0 p-0 space-x-0 space-y-0 flex flex-col mb-2 h-full">
+    <div className="transition-all ease-in-out duration-300 bg-slate-200/50 dark:white/50 h-full rounded-lg gap-0 p-0 space-x-0 space-y-0 flex flex-col mb-2">
       <LaneContainerHeader
         collapsed={lane.collapsed}
         colour={lane.colour}

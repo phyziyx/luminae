@@ -45,7 +45,7 @@ export default async function RootLayout({
   const messages = await getMessages();
   return (
     <html className="antialiased" lang={locale} suppressHydrationWarning>
-      <body className={`${geistSans.className}`}>
+      <body className={`${geistSans.className} w-svw h-svh`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
