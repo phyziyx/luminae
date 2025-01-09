@@ -166,8 +166,8 @@ function LaneContainerHeader({
 
   // absolute top-0 left-0 right-0
   return (
-    <AlertDialog>
-      <DropdownMenu>
+    // <AlertDialog>
+    //   <DropdownMenu>
         <div
           className={clsx(
             "rounded-tr-lg rounded-tl-lg backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10",
@@ -179,8 +179,8 @@ function LaneContainerHeader({
         >
           <div className="bg-white/10 h-full flex items-center p-4 justify-between cursor-grab border-b-[1px]">
             <div
-              className={clsx("gap-2", {
-                "flex flex-col h-auto w-fit": collapsed,
+              className={clsx("gap-2 place-items-center", {
+                "flex flex-row h-auto w-fit": collapsed,
                 "items-center flex flex-row": !collapsed,
               })}
             >
@@ -197,7 +197,7 @@ function LaneContainerHeader({
               />
               <span
                 className={clsx("font-bold text-sm max-w-full", {
-                  "pl-12 rotate-90 whitespace-nowrap max-w-[50vh]": collapsed,
+                  "pl-12 whitespace-nowrap max-w-[50vh]": collapsed,
                 })}
               >
                 {name}
@@ -211,63 +211,63 @@ function LaneContainerHeader({
               })}
             >
               <Badge variant={"secondary"}>${CASH_AMOUNT.toFixed(2)}</Badge>
-              <DropdownMenuTrigger asChild>
+              {/* <DropdownMenuTrigger asChild>
                 <Button
                   variant={"ghost"}
                   className="p-3 m-0 space-x-0 space-y-0 rounded-full text-muted-foreground cursor-pointer"
                 >
                   <MoreVerticalIcon />
                 </Button>
-              </DropdownMenuTrigger>
+              </DropdownMenuTrigger> */}
             </div>
           </div>
         </div>
 
-        <DropdownMenuContent>
-          <DropdownMenuLabel>Options</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <AlertDialogTrigger>
-            <DropdownMenuItem className="flex items-center gap-2">
-              <Trash2Icon size={15} />
-              Delete
-            </DropdownMenuItem>
-          </AlertDialogTrigger>
+    //     <DropdownMenuContent>
+    //       <DropdownMenuLabel>Options</DropdownMenuLabel>
+    //       <DropdownMenuSeparator />
+    //       <AlertDialogTrigger>
+    //         <DropdownMenuItem className="flex items-center gap-2">
+    //           <Trash2Icon size={15} />
+    //           Delete
+    //         </DropdownMenuItem>
+    //       </AlertDialogTrigger>
 
-          <DropdownMenuItem
-            className="flex items-center gap-2"
-            onClick={() => alert("Edit lane")}
-          >
-            <EditIcon size={15} />
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="flex items-center gap-2"
-            onClick={() => alert("Create ticket")}
-          >
-            <PlusCircleIcon size={15} />
-            Create Ticket
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              lane and associated data.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="flex items-center">
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive"
-              onClick={() => alert("Delete lane")}
-            >
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </DropdownMenu>
-    </AlertDialog>
+    //       <DropdownMenuItem
+    //         className="flex items-center gap-2"
+    //         onClick={() => alert("Edit lane")}
+    //       >
+    //         <EditIcon size={15} />
+    //         Edit
+    //       </DropdownMenuItem>
+    //       <DropdownMenuItem
+    //         className="flex items-center gap-2"
+    //         onClick={() => alert("Create ticket")}
+    //       >
+    //         <PlusCircleIcon size={15} />
+    //         Create Ticket
+    //       </DropdownMenuItem>
+    //     </DropdownMenuContent>
+    //     <AlertDialogContent>
+    //       <AlertDialogHeader>
+    //         <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+    //         <AlertDialogDescription>
+    //           This action cannot be undone. This will permanently delete the
+    //           lane and associated data.
+    //         </AlertDialogDescription>
+    //       </AlertDialogHeader>
+    //       <AlertDialogFooter className="flex items-center">
+    //         <AlertDialogCancel>Cancel</AlertDialogCancel>
+    //         <AlertDialogAction
+    //           className="bg-destructive"
+    //           onClick={() => alert("Delete lane")}
+    //         >
+    //           Continue
+    //         </AlertDialogAction>
+    //       </AlertDialogFooter>
+    //     </AlertDialogContent>
+    //   </DropdownMenu>
+    // </AlertDialog>
   );
 }
 
@@ -502,17 +502,29 @@ function LaneContainer({
   toggleCollapse: (laneId: string) => void;
 }) {
   // relative
+  if(lane.collapsed) {
+    return (
+      <div className="bg-slate-200/50 dark:white/50 rounded-lg gap-0 p-0 space-x-0 space-y-0 flex flex-row mb-2 h-full pl-10 rotate-90 w-[10%]">
+        <LaneContainerHeader
+          collapsed={lane.collapsed}
+          colour={lane.colour}
+          name={lane.name}
+          onToggleCollapse={() => toggleCollapse(lane.id)}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-slate-200/50 dark:white/50 rounded-lg gap-0 p-0 space-x-0 space-y-0 w-full h-full flex flex-col mb-2">
+    <div className="bg-slate-200/50 dark:white/50 rounded-lg gap-0 p-0 space-x-0 space-y-0 flex flex-col mb-2 h-full">
       <LaneContainerHeader
         collapsed={lane.collapsed}
         colour={lane.colour}
         name={lane.name}
         onToggleCollapse={() => toggleCollapse(lane.id)}
       />
-      {!lane.collapsed && <LaneContainerBody laneId={lane.id} />}
-      {!lane.collapsed && <LaneContainerFooter />}
+      {<LaneContainerBody laneId={lane.id} />}
+      {<LaneContainerFooter />}
     </div>
   );
 }
