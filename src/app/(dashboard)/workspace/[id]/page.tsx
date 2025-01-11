@@ -6,9 +6,9 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import KanbanBoard from "./components/kanban-board";
 import AgencyManager from "@/lib/managers/agencyManager";
-import CreateLaneButton from "./components/create-lane-button";
+import KanbanBoard from "@/components/kanban/kanban-board";
+import { KanbanProvider } from "@/components/kanban/kanban-provider";
 
 export default async function WorkspacePage({
   params,
@@ -41,10 +41,11 @@ export default async function WorkspacePage({
             workspace.name
           }`}</h1>
         </div>
-        <CreateLaneButton />
       </header>
       <Suspense fallback={<FallbackSpinner />}>
-        <KanbanBoard id={"1"} name={"dummy"} />
+        <KanbanProvider workspaceId={id}>
+          <KanbanBoard workspaceId={id} name={"TODO"} />
+        </KanbanProvider>
       </Suspense>
     </div>
   );

@@ -6,7 +6,7 @@ import AgencyManager from "@/lib/managers/agencyManager";
 import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 
-const onSubmit = async (values: z.infer<typeof formSchema>) => {
+const onUpdateAgency = async (values: z.infer<typeof formSchema>) => {
   const user = await currentUser();
 
   let error = "An error occurred while saving the workspace information";
@@ -84,4 +84,4 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
   };
 };
 
-export default onSubmit;
+export default onUpdateAgency;

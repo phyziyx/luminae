@@ -10,6 +10,7 @@ import { Suspense } from "react";
 import { ModalProvider } from "@/providers/modal-provider";
 import { Toaster } from "@/components/ui/toaster";
 import FallbackSpinner from "@/components/site/fallback-spinner";
+import { QueryProvider } from "@/providers/query-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -45,24 +46,25 @@ export default async function RootLayout({
   const messages = await getMessages();
   return (
     <html className="antialiased" lang={locale} suppressHydrationWarning>
-      <body className={`${geistSans.className} w-svw h-svh`}>
+      <body className={`${geistSans.className}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <NextIntlClientProvider messages={messages}>
-            <Suspense fallback={<FallbackSpinner />}>
-              <ClerkProvider>
-                <ModalProvider>
-                  {children}
-                  <Toaster />
-                  {/* <SonnarToaster position="bottom-left" /> */}
-                </ModalProvider>
-              </ClerkProvider>
-            </Suspense>
-          </NextIntlClientProvider>
+          <QueryProvider>
+            <NextIntlClientProvider messages={messages}>
+              <Suspense fallback={<FallbackSpinner />}>
+                <ClerkProvider>
+                  <ModalProvider>
+                    {children}
+                    <Toaster />
+                  </ModalProvider>
+                </ClerkProvider>
+              </Suspense>
+            </NextIntlClientProvider>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>

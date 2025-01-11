@@ -27,7 +27,7 @@ import { Workspace } from "@prisma/client";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
 
 import formSchema from "./schema";
-import onSubmit from "./action";
+import onUpdateAgency from "./action";
 
 type WorkspaceDetailsProps = {
   data?: Partial<Workspace>;
@@ -52,7 +52,7 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
 
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const result = await onSubmit(values);
+      const result = await onUpdateAgency(values);
 
       console.log(result);
 
