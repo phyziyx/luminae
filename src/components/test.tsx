@@ -1,12 +1,24 @@
 "use client";
 
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "./ui/button";
-import { Trash2Icon } from "lucide-react";
+import {
+  CalendarIcon,
+  ChevronRightIcon,
+  Circle,
+  Contact2Icon,
+  EditIcon,
+  Link2Icon,
+  MoreVerticalIcon,
+  PlusCircleIcon,
+  Trash2Icon,
+  User2Icon,
+} from "lucide-react";
 import {
   closestCenter,
   DndContext,
   DragEndEvent,
+  DraggableAttributes,
   DragOverlay,
   DragStartEvent,
   PointerSensor,
@@ -17,17 +29,108 @@ import { arrayMove, SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { createPortal } from "react-dom";
 import { Input } from "./ui/input";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import { useModal } from "@/providers/modal-provider";
+import CustomModal from "./site/custom-modal";
+import clsx from "clsx";
+import { Badge } from "./ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
+import {
+  Card,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "./ui/hover-card";
+import { Client, Ticket, User } from "@prisma/client";
+import { KanbanLane, LaneTicket } from "@/lib/types";
+import CreateLaneButton from "./kanban/create-lane-button";
 
-interface Lane {
-  id: string;
-  name: string;
+function LaneContainerFooter({
+  createTicket,
+  laneId,
+}: {
+  laneId: string;
+  createTicket: (laneId: string) => void;
+}) {
+  const { openModal } = useModal();
+
+  return (
+    <div className="rounded-bl-lg rounded-br-lg h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10">
+      <div className="bg-white/10 h-full flex items-center p-4 justify-between cursor-grab border-t-[1px]">
+        <div className="flex items-center w-full gap-2">
+          <Button
+            variant={"ghost"}
+            className="p-2 hover:bg-transparent bg-transparent font-bold text-sm"
+            onClick={() => {
+              openModal(
+                <CustomModal
+                  title="[TODO] Add a Ticket"
+                  caption="Add a ticket to the lane"
+                >
+                  {/* Add ticket form */}
+                  <Button onClick={() => createTicket(laneId)}>
+                    Create Dummy Task
+                  </Button>
+                </CustomModal>
+              );
+            }}
+          >
+            Add a Ticket...
+          </Button>
+        </div>
+        <div className="flex items-center flex-row">
+          <CalendarIcon className="text-muted-foreground cursor-pointer" />
+          <User2Icon className="text-muted-foreground cursor-pointer" />
+          <Link2Icon className="text-muted-foreground cursor-pointer" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
-interface Ticket {
-  id: string;
-  title: string;
-  description: string;
-  laneId: string;
+function LaneContainerBody({
+  tickets,
+  deleteTicket,
+  ticketIds,
+}: {
+  tickets: Array<LaneTicket>;
+  deleteTicket: (id: string) => void;
+  ticketIds: Array<string>;
+}) {
+  return (
+    <div className="flex flex-col flex-grow p-4 gap-2 overflow-x-hidden overflow-y-auto">
+      <SortableContext items={ticketIds}>
+        {tickets.map((ticket) => (
+          <TicketCard
+            key={ticket.id}
+            ticket={ticket}
+            deleteTicket={deleteTicket}
+          />
+        ))}
+      </SortableContext>
+    </div>
+  );
 }
 
 function LaneContainer({
@@ -38,11 +141,11 @@ function LaneContainer({
   tickets,
   deleteTicket,
 }: {
-  lane: Lane;
+  lane: KanbanLane;
   deleteLane: (id: string) => void;
   updateLaneTitle: (id: string, title: string) => void;
   createTicket: (id: string) => void;
-  tickets: Array<Ticket>;
+  tickets: Array<LaneTicket>;
   deleteTicket: (id: string) => void;
 }) {
   const [editMode, setEditMode] = useState(false);
@@ -89,75 +192,194 @@ function LaneContainer({
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-red-200 w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col"
+      className="bg-slate-200/50 dark:white/50 w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col"
     >
       {/* Column Title */}
-      <div
-        {...attributes}
-        {...listeners}
-        className="bg-blue-200 text-md h-[60px] cursor-grab rounded-md rounded-b-none p-3 font-bold border-blue-500 border-4 flex flex-row justify-between items-center"
-        onDoubleClick={() => setEditMode(true)}
-      >
-        <div className="flex gap-2 items-center">
-          <div className="flex justify-center items-center bg-gray-500 px-2 py-1 text-sm rounded-full">
-            {lane.id}
-          </div>
-          {editMode ? (
-            <Input
-              autoFocus
-              value={lane.name}
-              className="text-md font-bold w-full"
-              onChange={(e) => updateLaneTitle(lane.id, e.target.value)}
-              onBlur={() => setEditMode(false)}
-              onKeyDown={(e) => {
-                setEditMode(
-                  !((e.key === "Enter" || e.key === "Escape") && editMode)
-                );
+      <LaneContainerHeader
+        attributes={attributes}
+        listeners={listeners}
+        setEditMode={setEditMode}
+        editMode={editMode}
+        lane={lane}
+        updateLaneTitle={updateLaneTitle}
+        deleteLane={deleteLane}
+      />
 
-                if (e.key === "Enter") {
-                  setEditMode(false);
-                }
-              }}
-            />
-          ) : (
-            lane.name
-          )}
-        </div>
-        {!editMode && (
-          <Button variant={"ghost"} onClick={() => deleteLane(lane.id)}>
-            <Trash2Icon className="gray" />
-          </Button>
-        )}
-      </div>
+      <LaneContainerBody
+        deleteTicket={deleteTicket}
+        tickets={tickets}
+        ticketIds={ticketIds}
+      />
 
-      <div className="flex flex-col flex-grow p-4 gap-2 overflow-x-hidden overflow-y-auto">
-        <SortableContext items={ticketIds}>
-          {tickets.map((ticket) => (
-            <TaskCard
-              key={ticket.id}
-              ticket={ticket}
-              deleteTicket={deleteTicket}
-            />
-          ))}
-        </SortableContext>
-      </div>
-
-      <div>
-        <Button onClick={() => createTicket(lane.id)}>Add a Ticket</Button>
-      </div>
+      <LaneContainerFooter createTicket={createTicket} laneId={lane.id} />
     </div>
   );
 }
 
-function TaskCard({
+////////////////////////////////////////
+
+function LaneContainerHeader({
+  attributes,
+  listeners,
+  setEditMode,
+  editMode,
+  lane,
+  updateLaneTitle,
+}: {
+  attributes: DraggableAttributes;
+  listeners: undefined | SyntheticListenerMap;
+  setEditMode: (value: boolean) => void;
+  editMode: boolean;
+  lane: KanbanLane;
+  updateLaneTitle: (id: string, title: string) => void;
+  deleteLane: (id: string) => void;
+}) {
+  const collapsed = false;
+  const toggleCollapse = (id: string) => {
+    console.log("Toggling collapse for lane:", id);
+  };
+  const CASH_AMOUNT = "$5,000.00";
+
+  return (
+    <AlertDialog>
+      <DropdownMenu>
+        <div
+          {...attributes}
+          {...listeners}
+          className="backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10
+      rounded-lg rounded-b-none border-b-[1px]
+      text-md h-[60px] cursor-grab p-2 font-bold flex flex-row gap-2 items-center place-items-center"
+          onDoubleClick={() => setEditMode(true)}
+        >
+          <div className="flex w-full items-center place-items-center justify-between">
+            <div
+              className={clsx("gap-2 place-items-center", {
+                "items-center flex flex-row": !collapsed,
+                "flex flex-col h-full w-fit": collapsed,
+              })}
+            >
+              <Button
+                variant={"secondary"}
+                size="icon"
+                onClick={() => toggleCollapse(lane.id)}
+              >
+                <ChevronRightIcon
+                  className={clsx(
+                    "transform transition-transform duration-300",
+                    {
+                      "rotate-90": collapsed,
+                    }
+                  )}
+                />
+              </Button>
+              <Circle
+                style={{
+                  fill: "#ff0000",
+                  stroke: "#ff0000",
+                }}
+              />
+              {editMode ? (
+                <Input
+                  autoFocus
+                  value={lane.name}
+                  className="text-md font-bold w-full"
+                  onChange={(e) => updateLaneTitle(lane.id, e.target.value)}
+                  onBlur={() => setEditMode(false)}
+                  onKeyDown={(e) => {
+                    setEditMode(
+                      !((e.key === "Enter" || e.key === "Escape") && editMode)
+                    );
+
+                    if (e.key === "Enter") {
+                      setEditMode(false);
+                    }
+                  }}
+                />
+              ) : (
+                lane.name
+              )}
+            </div>
+
+            {/* */}
+            <div
+              className={clsx("flex items-center gap-1", {
+                "flex-row": !collapsed,
+                hidden: collapsed,
+              })}
+            >
+              {!editMode && (
+                <Badge variant={"secondary"} className="p-1">
+                  {CASH_AMOUNT}
+                </Badge>
+              )}
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant={"ghost"}
+                  className="p-3 m-0 space-x-0 space-y-0 rounded-full text-muted-foreground cursor-pointer"
+                >
+                  <MoreVerticalIcon />
+                </Button>
+              </DropdownMenuTrigger>
+            </div>
+          </div>
+        </div>
+
+        {/* */}
+        <DropdownMenuContent>
+          <DropdownMenuLabel>Options</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <AlertDialogTrigger asChild>
+            <DropdownMenuItem className="bg-destructive/20 flex items-center gap-2">
+              <Trash2Icon size={15} />
+              Delete
+            </DropdownMenuItem>
+          </AlertDialogTrigger>
+
+          <DropdownMenuItem
+            className="flex items-center gap-2"
+            onClick={() => alert("Edit lane")}
+          >
+            <EditIcon size={15} />
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="flex items-center gap-2"
+            onClick={() => alert("Create ticket")}
+          >
+            <PlusCircleIcon size={15} />
+            Create Ticket
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              lane and associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex items-center">
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive"
+              onClick={() => alert("Delete Lane Pressed")}
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </DropdownMenu>
+    </AlertDialog>
+  );
+}
+
+function TicketCard({
   ticket,
   deleteTicket,
 }: {
-  ticket: Ticket;
+  ticket: LaneTicket;
   deleteTicket: (id: string) => void;
 }) {
-  const [isHovering, setIsHovering] = useState(false);
-
   const {
     setNodeRef,
     attributes,
@@ -182,10 +404,10 @@ function TaskCard({
     // style.opacity = 0.6;
     // OR
     return (
-      <div
+      <Card
         ref={setNodeRef}
         style={style}
-        className="bg-gray-300 p-2 h-[100px] min-h-[100px]
+        className="bg-gray-300 p-2 h-[200px] min-h-[200px]
         items-center flex justify-between text-left rounded-xl ring-2 ring-inset
         ring-rose-500 border-2 border-gray-500
         cursor-grab relative opacity-40"
@@ -193,41 +415,152 @@ function TaskCard({
     );
   }
 
+  function TicketTitle({ title }: { title: string }) {
+    return (
+      <CardTitle className="flex items-center justify-between">
+        <span className="text-lg w-full">{title}</span>
+      </CardTitle>
+    );
+  }
+
+  function TicketDate({ date }: { date: Date }) {
+    return (
+      <span className="flex flex-row items-center gap-2 text-muted-foreground text-xs">
+        <CalendarIcon size="20" /> {new Date(date).toLocaleString()}
+      </span>
+    );
+  }
+
+  function TicketDescription({ description }: { description: string }) {
+    return <CardDescription className="w-full ">{description}</CardDescription>;
+  }
+
+  function TicketClient({ client }: { client: Client | null | undefined }) {
+    // If the ticket is not associated with any client.
+    // TODO: Clicking on this lets you assign a client
+    if (!client) {
+      return (
+        <div className="p-2 text-muted-foreground flex gap-2 hover:bg-muted transition-all rounded-lg cursor-pointer items-center">
+          <Link2Icon />
+          <span className="text-xs font-bold">ASSIGN A CLIENT</span>
+        </div>
+      );
+    }
+
+    return (
+      <HoverCard>
+        <HoverCardTrigger asChild>
+          <div className="p-2 text-muted-foreground flex gap-2 hover:bg-muted transition-all rounded-lg cursor-pointer items-center">
+            <Link2Icon />
+            <span className="text-xs font-bold">CONTACT</span>
+          </div>
+        </HoverCardTrigger>
+        <HoverCardContent side="right" className="w-fit">
+          <div className="flex justify-between space-x-4">
+            <Avatar>
+              <AvatarImage />
+              <AvatarFallback>
+                {client.name.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="space-y-1">
+              <h4 className="text-sm font-semibold">{client.name}</h4>
+              <p className="text-sm text-muted-foreground">{client.email}</p>
+              <div className="flex items-center pt-2">
+                <Contact2Icon className="mr-2 h-4 w-4 opacity-70" />
+                <span className="text-xs text-muted-foreground">
+                  Joined {new Date(client.createdAt).toLocaleString()}
+                </span>
+              </div>
+            </div>
+          </div>
+        </HoverCardContent>
+      </HoverCard>
+    );
+  }
+
+  function TicketAssignedUser({ user }: { user: User | null | undefined }) {
+    const assigned = !!user;
+    const fullName = assigned ? `${user.firstName} ${user.lastName}` : "";
+
+    return (
+      <div className="flex item-center gap-2">
+        <Avatar className="w-8 h-8">
+          <AvatarImage alt="contact" src={user?.avatarUrl} />
+          <AvatarFallback className="bg-primary text-sm text-white">
+            {fullName}
+            {assigned && <User2Icon size={14} />}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col justify-center">
+          <span className="text-sm text-muted-foreground">
+            {assigned ? "Assigned to" : "Not Assigned"}
+          </span>
+          {assigned && (
+            <span className="text-xs w-28  overflow-ellipsis overflow-hidden whitespace-nowrap text-muted-foreground">
+              {fullName}
+            </span>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div
+    <Card
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      className="bg-gray-300 p-2 h-[100px] min-h-[100px]
-    items-center flex justify-between text-left rounded-xl hover:ring-2 hover:ring-inset
-    hover:ring-rose-500 border-2 border-gray-500
-    cursor-grab relative"
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
+      className="dark:bg-slate-900 bg-slate-100 shadow-none transition-all"
     >
-      <div className="text-md font-bold">{ticket.title}</div>
-      {/* <div className="text-sm">{ticket.description}</div> */}
-      {isHovering && (
-        <Button
-          variant={"ghost"}
-          className="bg-transparent hover:bg-transparent opacity-60 hover:opacity-100"
-          onClick={() => deleteTicket(ticket.id)}
-        >
-          <Trash2Icon className="text-gray-500 " />
-        </Button>
-      )}
-    </div>
+      <CardHeader className="p-[12px]">
+        <TicketTitle title={ticket.title} />
+        {/* */}
+        <TicketDate date={ticket.createdAt} />
+        {/* */}
+        <TicketDescription description={ticket.description || ""} />
+        {/* */}
+        <TicketClient client={ticket.Client} />
+      </CardHeader>
+
+      <CardFooter className="m-0 p-2 border-t-[1px] border-muted-foreground/20 flex items-center justify-between">
+        <TicketAssignedUser user={ticket.assigneeUser} />
+        <span className="text-sm font-bold">
+          {!!ticket.value &&
+            new Intl.NumberFormat(undefined, {
+              style: "currency",
+              currency: "USD",
+            }).format(+ticket.value)}
+        </span>
+      </CardFooter>
+    </Card>
   );
 }
 
 const POINTER_ACTIVATION_CONSTRAINT_DISTANCE = 10; // 10 px
 
-function KanbanNew() {
-  const [lanes, setLanes] = useState<Lane[]>([]);
-  const laneIds = useMemo(() => lanes.map((lane) => lane.id) || [], [lanes]);
-  const [activeLane, setActiveLane] = useState<Lane | null>(null);
+function KanbanNew({
+  workspaceId,
+  data,
+}: {
+  workspaceId: string;
+  data: KanbanLane[];
+}) {
+  const [lanes, setLanes] = useState<KanbanLane[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>(
+    data.flatMap((lane) => lane.Tickets)
+  );
+
   const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
+  const laneIds = useMemo(() => lanes.map((lane) => lane.id) || [], [lanes]);
+
+  const [activeLane, setActiveLane] = useState<KanbanLane | null>(null);
+
+  useEffect(() => {
+    setLanes(data);
+  }, [data]);
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -235,7 +568,6 @@ function KanbanNew() {
       },
     })
   );
-  const [tickets, setTickets] = useState<Ticket[]>([]);
 
   const dragStateRef = useRef<{
     activeId: string | null | number;
@@ -244,15 +576,6 @@ function KanbanNew() {
     activeId: null,
     overId: null,
   });
-
-  function createNewLane() {
-    const newLane = {
-      id: Math.floor(Math.random() * 100_001).toString(),
-      name: `New Lane (${lanes.length + 1})`,
-    };
-
-    setLanes((prevLanes) => [...prevLanes, newLane]);
-  }
 
   function deleteLane(id: string) {
     setLanes((prevLanes) => prevLanes.filter((lane) => lane.id !== id));
@@ -446,7 +769,7 @@ function KanbanNew() {
               ))}
             </SortableContext>
 
-            <Button onClick={() => createNewLane()}>Create a Lane</Button>
+            <CreateLaneButton workspaceId={workspaceId} />
 
             {createPortal(
               <DragOverlay>
@@ -463,7 +786,10 @@ function KanbanNew() {
                   />
                 )}
                 {activeTicket && (
-                  <TaskCard ticket={activeTicket} deleteTicket={deleteTicket} />
+                  <TicketCard
+                    ticket={activeTicket}
+                    deleteTicket={deleteTicket}
+                  />
                 )}
               </DragOverlay>,
               document.body

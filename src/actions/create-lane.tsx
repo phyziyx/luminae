@@ -5,6 +5,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import prisma from "@/lib/db";
 import { v7 } from "uuid";
 import { createLaneSchema, CreateLaneSchema } from "@/lib/forms";
+import { revalidatePath } from "next/cache";
 
 export default async function onCreateLane(values: CreateLaneSchema) {
   const user = await currentUser();
@@ -79,7 +80,7 @@ export default async function onCreateLane(values: CreateLaneSchema) {
   }
 
   // Revalidate the cache
-  // revalidatePath("/dashboard", "page");
+  revalidatePath(`/`);
 
   return {
     error,

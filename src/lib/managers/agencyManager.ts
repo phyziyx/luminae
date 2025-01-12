@@ -218,6 +218,40 @@ class AgencyManager {
   }
 
   /**
+   * @param workspaceId workspace id
+   * @returns workspace's kanban board lanes with all tickets
+   */
+  public static async getWorkspaceKanbanBoard(workspaceId: string) {
+    const lanes = await prisma.lane.findMany({
+      where: {
+        workspaceId: workspaceId,
+      },
+      orderBy: {
+        order: "asc",
+      },
+      include: {
+        Tickets: {
+          // orderBy: {
+          //   order: "asc",
+          // },
+          include: {
+            assigneeUser: true,
+            Client: true,
+          },
+        },
+      },
+    });
+
+    return lanes.map((lane) => ({
+      ...lane,
+      Tickets: lane.Tickets.map((ticket) => ({
+        ...ticket,
+        value: ticket.value.valueOf(),
+      })),
+    }));
+  }
+
+  /**
    * Find user agency
    * @param id agency id
    * @returns agency

@@ -7,7 +7,6 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { KanbanProvider } from "@/components/kanban/kanban-provider";
 import KanbanNew from "@/components/test";
 
 export default async function WorkspacePage({
@@ -31,6 +30,8 @@ export default async function WorkspacePage({
     return <div>Workspace not found!</div>;
   }
 
+  const lanes = await AgencyManager.getWorkspaceKanbanBoard(id);
+
   return (
     <div className="h-full flex flex-col box-border">
       {/* Header */}
@@ -45,9 +46,8 @@ export default async function WorkspacePage({
       </header>
 
       {/* Content */}
-
       <Suspense fallback={<FallbackSpinner />}>
-        <KanbanNew />
+        <KanbanNew workspaceId={workspace.id} data={lanes!} />
       </Suspense>
     </div>
   );

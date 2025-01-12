@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { CollapseProvider } from "./collapse-provider";
 import CreateLaneButton from "./create-lane-button";
-import { useKanban } from "./kanban-provider";
 import LaneContainer from "./lane-container/lane-container";
 import { DndContext, DragStartEvent, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";

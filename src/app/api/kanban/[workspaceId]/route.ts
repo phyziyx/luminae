@@ -1,5 +1,6 @@
 import prisma from "@/lib/db";
 import { currentUser } from "@clerk/nextjs/server";
+import { DevBundlerService } from "next/dist/server/lib/dev-bundler-service";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -19,34 +20,24 @@ export async function GET(
   }
 
   const lanes = await prisma.lane.findMany({
-    select: {
-      colour: true,
-      id: true,
-      name: true,
-      order: true,
-      Tickets: {
-        select: {
-          title: true,
-          assigneeUserId: true,
-          Client: true,
-          assigneeUser: true,
-          clientId: true,
-          id: true,
-          description: true,
-          laneId: true,
-          createdAt: true,
-          open: true,
-          tag: true,
-          value: true,
-        },
-      },
-    },
     where: {
       workspaceId: workspaceId,
     },
+    orderBy: {
+      order: "asc",
+    },
+    include: {
+      Tickets: {
+        // orderBy: {
+        //   order: "asc",
+        // },
+        include: {
+          assigneeUser: true,
+          Client: true,
+        },
+      },
+    },
   });
-
-  console.table(lanes);
 
   return NextResponse.json(lanes);
 }

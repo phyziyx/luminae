@@ -1,5 +1,6 @@
 "use client";
 
+import onCreateLane from "@/actions/create-lane";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,11 +14,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { CreateLaneSchema, createLaneSchema } from "@/lib/forms";
+import { useModal } from "@/providers/modal-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Lane } from "@prisma/client";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { useKanban } from "../kanban-provider";
 
 type LaneFormProps = {
   data?: Pick<Lane, "id" | "name" | "colour">;
@@ -26,9 +28,8 @@ type LaneFormProps = {
 export default function LaneCreateForm({ data }: LaneFormProps) {
   const t = useTranslations();
   const { toast } = useToast();
-
-  const { useCreateLaneMutation } = useKanban();
-  const createLaneMutation = useCreateLaneMutation();
+  const { closeModal } = useModal();
+  const router = useRouter();
 
   const form = useForm<CreateLaneSchema>({
     mode: "onChange",
@@ -45,13 +46,15 @@ export default function LaneCreateForm({ data }: LaneFormProps) {
 
   async function handleSubmit(values: CreateLaneSchema) {
     try {
-      console.log("called", values);
-      const result = await createLaneMutation.mutateAsync(values);
+      const result = await onCreateLane(values);
 
       toast({
         title: result?.error || "Lane information saved successfully",
         variant: result?.error ? "destructive" : "default",
       });
+
+      // router.refresh();
+      closeModal();
     } catch {
       toast({
         title: "An error occurred while saving the lane information",
@@ -63,7 +66,6 @@ export default function LaneCreateForm({ data }: LaneFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((e) => {
-          console.log("test");
           return handleSubmit(e);
         })}
         className="space-y-4"

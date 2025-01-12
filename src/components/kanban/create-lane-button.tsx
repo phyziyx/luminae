@@ -6,7 +6,6 @@ import { useModal } from "@/providers/modal-provider";
 import { PlusCircleIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import LaneCreateForm from "./lane-container/lane-form";
-import { KanbanProvider } from "./kanban-provider";
 
 export default function CreateLaneButton({
   workspaceId,
@@ -25,15 +24,13 @@ export default function CreateLaneButton({
             title={t("KANBAN.CREATE_LANE_TITLE")}
             caption={t("KANBAN.CREATE_LANE_CAPTION")}
           >
-            <KanbanProvider workspaceId={workspaceId}>
-              <LaneCreateForm
-                data={{
-                  id: workspaceId,
-                  name: "",
-                  colour: "AA00AA",
-                }}
-              />
-            </KanbanProvider>
+            <LaneCreateForm
+              data={{
+                id: workspaceId,
+                name: "",
+                colour: "AA00AA",
+              }}
+            />
           </CustomModal>
         );
       }}
