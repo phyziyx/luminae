@@ -11,7 +11,7 @@ export type LaneNameEditSchema = z.infer<typeof laneNameEditSchema>;
 // Kanban Board: Create Lane
 
 export const createLaneSchema = z.object({
-  id: z.string().min(1).optional(),
+  id: z.string().optional(),
   name: z.string().min(2, { message: "Agency name must be atleast 2 chars." }),
   colour: z.string().min(6, { message: "Colour must be a valid hex code." }),
 });

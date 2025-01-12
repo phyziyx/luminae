@@ -37,11 +37,12 @@ export default async function onCreateLane(values: CreateLaneSchema) {
       return { error };
     }
 
-    const agencyId = agency.id;
+    console.log("agency id", agency.agencyId);
+    console.log("workspace id", workspaceId);
 
     const workspace = await prisma.workspace.findFirst({
       where: {
-        agencyId: agencyId,
+        agencyId: agency.agencyId,
         id: workspaceId,
       },
     });
@@ -59,7 +60,7 @@ export default async function onCreateLane(values: CreateLaneSchema) {
       data: {
         colour: values.colour,
         name: values.name,
-        workspaceId: workspaceId,
+        workspaceId: workspace.id,
         id: v7(),
         order: 0,
       },

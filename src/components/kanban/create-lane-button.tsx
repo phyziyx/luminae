@@ -26,7 +26,13 @@ export default function CreateLaneButton({
             caption={t("KANBAN.CREATE_LANE_CAPTION")}
           >
             <KanbanProvider workspaceId={workspaceId}>
-              <LaneCreateForm />
+              <LaneCreateForm
+                data={{
+                  id: workspaceId,
+                  name: "",
+                  colour: "AA00AA",
+                }}
+              />
             </KanbanProvider>
           </CustomModal>
         );

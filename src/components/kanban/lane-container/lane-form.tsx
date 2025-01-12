@@ -45,7 +45,7 @@ export default function LaneCreateForm({ data }: LaneFormProps) {
 
   async function handleSubmit(values: CreateLaneSchema) {
     try {
-      console.log("called");
+      console.log("called", values);
       const result = await createLaneMutation.mutateAsync(values);
 
       toast({
