@@ -1,3 +1,11 @@
+import { useCollapse } from "../collapse-provider";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import TicketCard from "../ticket-card";
+import CustomModal from "@/components/site/custom-modal";
+import { useModal } from "@/providers/modal-provider";
+import { CalendarIcon, User2Icon, Link2Icon } from "lucide-react";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +29,6 @@ import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import clsx from "clsx";
 import { useState } from "react";
 
-import { useCollapse } from "../collapse-provider";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -35,15 +42,22 @@ import {
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { laneNameEditSchema, LaneNameEditSchema } from "@/lib/forms";
+import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
+import { DraggableAttributes } from "@dnd-kit/core";
+import { KanbanLane, LaneTicket } from "@/lib/types";
 
-export default function LaneContainerHeader({
+function LaneContainerHeader({
   colour,
   name,
   id,
+  listeners,
+  attributes,
 }: {
   colour: string;
   name: string;
   id: string;
+  listeners: SyntheticListenerMap | undefined;
+  attributes: DraggableAttributes;
 }) {
   const { getCollapseState, toggleCollapse } = useCollapse();
   const collapsed = getCollapseState(id);
@@ -77,6 +91,8 @@ export default function LaneContainerHeader({
               "rounded-lg h-full": collapsed,
             }
           )}
+          {...attributes}
+          {...listeners}
         >
           <div className="bg-white/10 h-full flex p-2 justify-between cursor-grab border-b-[1px]">
             <div
@@ -213,5 +229,112 @@ export default function LaneContainerHeader({
         </AlertDialogContent>
       </DropdownMenu>
     </AlertDialog>
+  );
+}
+
+function LaneContainerFooter() {
+  const { openModal } = useModal();
+
+  return (
+    <div className="rounded-bl-lg rounded-br-lg h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10">
+      <div className="bg-white/10 h-full flex items-center p-4 justify-between cursor-grab border-t-[1px]">
+        <div className="flex items-center w-full gap-2">
+          <Button
+            variant={"ghost"}
+            className="p-2 hover:bg-transparent bg-transparent font-bold text-sm"
+            onClick={() => {
+              openModal(
+                <CustomModal
+                  title="[TODO] Add a Ticket"
+                  caption="Add a ticket to the lane"
+                >
+                  {/* Add ticket form */}
+                  TODO
+                </CustomModal>
+              );
+            }}
+          >
+            Add a Ticket...
+          </Button>
+        </div>
+        <LaneContainerFooterActions />
+      </div>
+    </div>
+  );
+}
+
+function LaneContainerFooterActions() {
+  return (
+    <div className="flex items-center flex-row">
+      <CalendarIcon className="text-muted-foreground cursor-pointer" />
+      <User2Icon className="text-muted-foreground cursor-pointer" />
+      <Link2Icon className="text-muted-foreground cursor-pointer" />
+    </div>
+  );
+}
+
+function LaneContainerBody({ tickets }: { tickets: LaneTicket[] }) {
+  return (
+    <div className="w-full h-fit p-2">
+      {tickets.map((ticket) => (
+        <TicketCard key={ticket.id} ticket={ticket} />
+      ))}
+    </div>
+  );
+}
+
+export default function LaneContainer({ lane }: { lane: KanbanLane }) {
+  const { getCollapseState } = useCollapse();
+  const collapsed = getCollapseState(lane.id);
+
+  const { setNodeRef, attributes, listeners, transform, transition } =
+    useSortable({
+      id: lane.id,
+      data: {
+        type: "Lane",
+        lane,
+      },
+    });
+
+  const style = {
+    transition,
+    transform: CSS.Transform.toString(transform),
+  };
+
+  if (collapsed) {
+    // w-12
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className="transition-all ease-in-out duration-300 flex items-center"
+      >
+        <LaneContainerHeader
+          listeners={listeners}
+          attributes={attributes}
+          id={lane.id}
+          colour={lane.colour}
+          name={lane.name}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="transition-all ease-in-out duration-300 bg-slate-200/50 dark:white/50 h-full rounded-lg gap-0 p-0 space-x-0 space-y-0 flex flex-col mb-2"
+    >
+      <LaneContainerHeader
+        attributes={attributes}
+        listeners={listeners}
+        id={lane.id}
+        colour={lane.colour}
+        name={lane.name}
+      />
+      <LaneContainerBody tickets={lane.Tickets!} />
+      <LaneContainerFooter />
+    </div>
   );
 }

@@ -7,21 +7,14 @@ import {
   useQuery,
   UseQueryResult,
 } from "@tanstack/react-query";
-import getKanbanBoard from "@/actions/get-kanban-boards";
 import onCreateLane from "@/actions/create-lane";
 import { CreateLaneSchema } from "@/lib/forms";
+import { KanbanLane } from "@/lib/types";
 
 interface KanbanContextType {
-  useKanbanBoardQuery: (workspaceId: string) => UseQueryResult<
-    {
-      id: string;
-      name: string;
-      order: number;
-      colour: string;
-      workspaceId: string;
-    }[],
-    Error
-  >;
+  useKanbanBoardQuery: (
+    workspaceId: string
+  ) => UseQueryResult<KanbanLane[], Error>;
   useCreateLaneMutation: () => UseMutationResult<
     {
       error: string;
@@ -49,13 +42,28 @@ export function KanbanProvider({
   function useKanbanBoardQuery() {
     return useQuery({
       queryKey: ["kanban-board", workspaceId],
-      queryFn: () => getKanbanBoard(workspaceId),
+      queryFn: async () => {
+        const response = await fetch(`/api/kanban/${workspaceId}/`);
+
+        if (!response.ok) {
+          throw new Error("An error occurred while fetching the data");
+        }
+
+        return response.json();
+      },
     });
   }
 
   function useCreateLaneMutation() {
+    // const queryClient = useQueryClient();
+
     return useMutation({
       mutationFn: (lane: CreateLaneSchema) => onCreateLane(lane),
+      // onSettled: () => {
+      //   queryClient.invalidateQueries({
+      //     queryKey: ["kanban-board", workspaceId],
+      //   });
+      // },
     });
   }
 
