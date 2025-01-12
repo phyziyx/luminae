@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { Trash2Icon } from "lucide-react";
 import {
@@ -237,6 +237,14 @@ function KanbanNew() {
   );
   const [tickets, setTickets] = useState<Ticket[]>([]);
 
+  const dragStateRef = useRef<{
+    activeId: string | null | number;
+    overId: string | null | number;
+  }>({
+    activeId: null,
+    overId: null,
+  });
+
   function createNewLane() {
     const newLane = {
       id: Math.floor(Math.random() * 100_001).toString(),
@@ -317,7 +325,7 @@ function KanbanNew() {
     // }
   }
 
-  function onDragOver(event: DragEndEvent) {
+  const onDragOver = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
 
@@ -327,88 +335,72 @@ function KanbanNew() {
     if (activeId === overId) return;
 
     const isActiveDragTask = active.data.current?.type === "Ticket";
-
     const isOverDragTask = over.data.current?.type === "Ticket";
     const isOverDragLane = over.data.current?.type === "Lane";
 
     if (!isActiveDragTask) return;
 
-    if (isOverDragTask) {
-      if (active.data.current?.ticket.laneId === overId) {
-        console.log("precaution caled");
-        return;
-      }
+    const currentDragState = dragStateRef.current;
 
-      const activeTicketIndex = tickets.findIndex(
-        (ticket) => ticket.id === activeId
-      );
-
-      const overTicketIndex = tickets.findIndex(
-        (ticket) => ticket.id === overId
-      );
-
-      if (activeTicketIndex === -1 || overTicketIndex === -1) return;
-
-      console.log(
-        "isOverDragTask",
-        over.data.current?.ticket.id,
-        "laneId",
-        over.data.current?.ticket.laneId
-      );
-
-      if (
-        over.data.current?.ticket.laneId === active.data.current?.ticket.laneId
-      ) {
-        console.log("2 precaution called");
-        return;
-      }
-
-      setTickets((prevTickets) => {
-        prevTickets[activeTicketIndex].laneId =
-          over.data.current?.ticket.laneId;
-
-        return arrayMove(prevTickets, activeTicketIndex, overTicketIndex);
-
-        // return [
-        //   ...prevTickets.map((ticket, index) => {
-        //     if (index === activeTicketIndex || index === overTicketIndex)
-        //       return ticket;
-
-        //     return {
-        //       ...ticket,
-        //       laneId:
-        //         index === activeTicketIndex
-        //           ? over.data.current?.ticket.laneId
-        //           : ticket.laneId,
-        //     };
-        //   }),
-        // ];
-      });
-      return;
-    } else if (isOverDragLane) {
-      // console.log("isOverDragLane", over.data.current?.lane.id);
-
-      // setTickets((prevTickets) => {
-      //   const activeTicketIndex = prevTickets.findIndex(
-      //     (ticket) => ticket.id === activeId
-      //   );
-      //   prevTickets[activeTicketIndex].laneId = overId as string;
-      //   return arrayMove(prevTickets, activeTicketIndex, activeTicketIndex);
-      // });
-      setTickets((prevTickets) => {
-        const activeTicketIndex = prevTickets.findIndex(
-          (ticket) => ticket.id === activeId
-        );
-
-        tickets[activeTicketIndex].laneId = overId as string;
-
-        return arrayMove(prevTickets, activeTicketIndex, activeTicketIndex);
-      });
+    // Only process the drag if something has changed
+    if (
+      currentDragState.activeId === activeId &&
+      currentDragState.overId === overId
+    ) {
       return;
     }
 
-    console.error("Invalid over data type:", over.data.current?.type);
-  }
+    // Update the drag state
+    dragStateRef.current = { activeId: activeId, overId: overId };
+
+    // Handle moving to a different lane
+    if (isOverDragLane) {
+      setTickets((prevTickets) => {
+        const ticketsCopy = [...prevTickets];
+        const activeTicketIndex = ticketsCopy.findIndex(
+          (ticket) => ticket.id === activeId
+        );
+
+        if (activeTicketIndex === -1) {
+          return prevTickets; // Invalid ID, no change needed
+        }
+
+        // Update laneId
+        ticketsCopy[activeTicketIndex] = {
+          ...ticketsCopy[activeTicketIndex],
+          laneId: overId as string,
+        };
+
+        return ticketsCopy;
+      });
+    }
+
+    // Handle ticket reordering
+    if (isOverDragTask) {
+      setTickets((prevTickets) => {
+        const ticketsCopy = [...prevTickets];
+        const activeTicketIndex = ticketsCopy.findIndex(
+          (ticket) => ticket.id === activeId
+        );
+        const overTicketIndex = ticketsCopy.findIndex(
+          (ticket) => ticket.id === overId
+        );
+
+        if (activeTicketIndex === -1 || overTicketIndex === -1) {
+          return prevTickets; // Invalid IDs, no change needed
+        }
+
+        // Update lane if necessary
+        ticketsCopy[activeTicketIndex] = {
+          ...ticketsCopy[activeTicketIndex],
+          laneId: over.data.current?.ticket.laneId,
+        };
+
+        return arrayMove(ticketsCopy, activeTicketIndex, overTicketIndex);
+      });
+      return;
+    }
+  };
 
   function createTicket(laneId: string) {
     const newTicket = {
