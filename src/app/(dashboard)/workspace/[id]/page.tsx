@@ -7,8 +7,8 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import AgencyManager from "@/lib/managers/agencyManager";
-import KanbanBoard from "@/components/kanban/kanban-board";
 import { KanbanProvider } from "@/components/kanban/kanban-provider";
+import KanbanNew from "@/components/test";
 
 export default async function WorkspacePage({
   params,
@@ -44,7 +44,8 @@ export default async function WorkspacePage({
       </header>
       <Suspense fallback={<FallbackSpinner />}>
         <KanbanProvider workspaceId={id}>
-          <KanbanBoard workspaceId={id} name={"TODO"} />
+          {/* <KanbanBoard workspaceId={id} name={"TODO"} /> */}
+          <KanbanNew />
         </KanbanProvider>
       </Suspense>
     </div>
