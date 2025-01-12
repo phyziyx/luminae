@@ -296,7 +296,7 @@ const DashboardSidebar = ({
   const rawPathName = usePathname();
 
   return (
-    <>
+    <div className="flex-1 flex h-full border-box">
       <Sidebar variant="inset">
         {/* Header */}
         <SidebarHeader>
@@ -434,8 +434,12 @@ const DashboardSidebar = ({
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset>{children}</SidebarInset>
-    </>
+      <SidebarInset className="flex-1 flex">
+        <main className="flex-1 flex flex-col box-border h-full">
+          {children}
+        </main>
+      </SidebarInset>
+    </div>
   );
 };
 

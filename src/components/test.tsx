@@ -81,7 +81,7 @@ function LaneContainer({
         ref={setNodeRef}
         style={style}
         className="opacity-40 bg-red-200 w-[350px] h-[500px] max-h-[500px] rounded-md flex flex-col border-2 border-rose-500"
-      ></div>
+      />
     );
   }
 
@@ -420,7 +420,7 @@ function KanbanNew() {
   }
 
   return (
-    <div className="bg-green-500/30 m-auto min-h-full w-full items-center overflow-x-auto overflow-y-hidden px-[40px]">
+    <div className="flex-grow m-auto w-full items-center overflow-x-auto overflow-y-hidden p-2">
       <DndContext
         collisionDetection={closestCenter}
         sensors={sensors}
@@ -428,8 +428,8 @@ function KanbanNew() {
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
       >
-        <div className="bg-purple-500/30 m-auto flex gap-4">
-          <div className="bg-blue-500/30 flex gap-4">
+        <div className="m-auto flex gap-4">
+          <div className="flex gap-4">
             <SortableContext items={laneIds}>
               {lanes.map((lane) => (
                 <LaneContainer

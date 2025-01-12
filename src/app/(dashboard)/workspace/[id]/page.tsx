@@ -32,9 +32,10 @@ export default async function WorkspacePage({
   }
 
   return (
-    <div className="h-[100%]">
-      <header className="flex h-16 shrink-0 items-center gap-2">
-        <div className="flex flex-row gap-2 px-4 items-center w-full">
+    <div className="h-full flex flex-col box-border">
+      {/* Header */}
+      <header className="box-border flex h-16 shrink-0 items-center gap-2">
+        <div className="h-full box-border flex flex-row gap-2 px-4 items-center w-full">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
           <h1 className="text-3xl font-semibold">{`${t("WORKSPACE")}: ${
@@ -42,11 +43,11 @@ export default async function WorkspacePage({
           }`}</h1>
         </div>
       </header>
+
+      {/* Content */}
+
       <Suspense fallback={<FallbackSpinner />}>
-        <KanbanProvider workspaceId={id}>
-          {/* <KanbanBoard workspaceId={id} name={"TODO"} /> */}
-          <KanbanNew />
-        </KanbanProvider>
+        <KanbanNew />
       </Suspense>
     </div>
   );

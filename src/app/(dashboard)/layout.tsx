@@ -61,6 +61,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
         {
           "--sidebar-width": "18rem",
           "--sidebar-width-mobile": "18rem",
+          boxSizing: "border-box",
         } as React.CSSProperties
       }
     >
