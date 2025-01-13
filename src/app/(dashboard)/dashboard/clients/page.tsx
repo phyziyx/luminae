@@ -29,7 +29,7 @@ const ClientsList = async ({ agencyId }: { agencyId: string }) => {
         city: client.city,
         state: client.state,
         country: client.country,
-        ticket_size: 1000,
+        ticketSize: client.ticketSize,
         status: client.status,
       }))}
     />

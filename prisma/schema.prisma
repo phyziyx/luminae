@@ -28,6 +28,7 @@ model User {
   avatarUrl String  @db.Text
   email     String  @unique
   isAdmin   Boolean @default(false)
+  isLocked  Boolean @default(false)
 
   stripeConnectAccountId String? @default("")
   stripeCustomerId       String? @default("")

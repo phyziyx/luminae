@@ -15,6 +15,7 @@ import { MoreVerticalIcon } from "lucide-react";
 // import { useModal } from "@/providers/modal-provider";
 // import CustomModal from "@/components/site/custom-modal";
 import { useTranslations } from "next-intl";
+import { currencyFormat } from "@/lib/utils";
 // import { toast } from "@/hooks/use-toast";
 
 // Define user data type
@@ -26,7 +27,7 @@ export type ClientData = {
   city: string;
   state: string;
   country: string;
-  ticket_size: number;
+  ticketSize: number;
   status: string;
 };
 
@@ -69,11 +70,11 @@ export const columns: ColumnDef<ClientData>[] = [
     header: "Country",
   },
   {
-    accessorKey: "ticket_size",
+    accessorKey: "ticketSize",
     header: "Ticket Size",
     cell: ({ row }) => {
-      const ticketSize = row.getValue<ClientData["ticket_size"]>("ticket_size");
-      return <span>${ticketSize}</span>;
+      const ticketSize = row.getValue<ClientData["ticketSize"]>("ticketSize");
+      return <span>{currencyFormat(ticketSize)}</span>;
     },
   },
   {

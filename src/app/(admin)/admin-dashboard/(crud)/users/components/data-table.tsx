@@ -89,7 +89,15 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow
+                  key={row.id}
+                  style={
+                    // TODO: Fix warning
+                    row.original["isLocked"]
+                      ? { backgroundColor: "rgba(207, 96, 66, 102)" }
+                      : {}
+                  }
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(

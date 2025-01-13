@@ -13,11 +13,11 @@ const deleteUserSchema = z.object({
 const onUserDelete = async (values: z.infer<typeof deleteUserSchema>) => {
   const user = await currentUser();
 
-  let error = "An error occurred while deleting the user.";
+  let error = "An error occurred while locking the user.";
 
   // Check if the user is authenticated
   if (!user) {
-    console.error("An unauthenticated user attempted to delete a user.");
+    console.error("An unauthenticated user attempted to lock a user.");
     return { error };
   }
 
@@ -40,10 +40,10 @@ const onUserDelete = async (values: z.infer<typeof deleteUserSchema>) => {
 
   try {
     // Perform the deletion
-    await UserManager.deleteUser(userID);
+    await UserManager.toggleUserBan(userID);
     error = "";
   } catch (err) {
-    error = "An error occurred while attempting to delete the user.";
+    error = "An error occurred while attempting to lock the user.";
     console.error(err);
   }
 

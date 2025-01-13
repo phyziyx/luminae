@@ -26,6 +26,7 @@ export type UserData = {
   email: string;
   role: string;
   status: string;
+  isLocked: boolean;
 };
 
 // Map status to badge variants
@@ -85,21 +86,23 @@ export const columns: ColumnDef<UserData>[] = [
           if (result.error) {
             toast({
               variant: "destructive",
-              title: "Error Deleting User",
+              title: "Error Locking User",
               description: result.error,
             });
           } else {
             toast({
-              title: "User Deleted",
-              description: `${user.name} has been successfully deleted.`,
+              title: user.isLocked ? `User Unlocked` : `User Locked`,
+              description: user.isLocked
+                ? `${user.name} has been successfully Unlocked.`
+                : `${user.name} has been successfully Locked.`,
             });
           }
         } catch {
           toast({
             variant: "destructive",
-            title: "Error Deleting User",
+            title: "Error Locking User",
             description:
-              "There was an issue deleting the user. Please try again.",
+              "There was an issue locking the user. Please try again.",
           });
         }
       };
@@ -139,7 +142,7 @@ export const columns: ColumnDef<UserData>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleDeleteClick}>
-              {t("ACTIONS.DELETE")}
+              {user.isLocked ? t("ACTIONS.UNBAN_USER") : t("ACTIONS.BAN_USER")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

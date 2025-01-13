@@ -24,7 +24,8 @@ const UsersList = async () => {
         name: user.firstName + " " + user.lastName,
         email: user.email,
         role: user.AgencyMembers?.role || "N/A", // Role if part of an agency
-        status: "Active", // Example: add default status (if applicable)
+        status: "Active",
+        isLocked: user.isLocked,
       }))}
     />
   );

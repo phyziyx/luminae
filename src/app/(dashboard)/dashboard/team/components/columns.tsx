@@ -85,6 +85,7 @@ export const columns: ColumnDef<TeamMember>[] = [
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const { openModal } = useModal();
       const member = row.original;
+
       // TODO:
       // const handleTeamMemberDelete = () => async () => {
       //   try {

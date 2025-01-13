@@ -277,7 +277,9 @@
     "DELETE_FROM_TABLE": "Remove Team Member",
     "DELETE": "Delete",
     "SET_ACTIVE": "Set Active",
-    "SET_INACTIVE": "Set Inactive"
+    "SET_INACTIVE": "Set Inactive",
+    "BAN_USER": "Lock User",
+    "UNBAN_USER": "Unlock User"
   },
 
   "INVITE_TEAM_MEMBER": {
