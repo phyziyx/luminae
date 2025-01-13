@@ -18,24 +18,23 @@ import { useModal } from "@/providers/modal-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Lane } from "@prisma/client";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
 type LaneFormProps = {
-  data?: Pick<Lane, "id" | "name" | "colour">;
+  data?: Pick<Lane, "id" | "workspaceId" | "name" | "colour">;
 };
 
 export default function LaneCreateForm({ data }: LaneFormProps) {
   const t = useTranslations();
   const { toast } = useToast();
   const { closeModal } = useModal();
-  const router = useRouter();
 
   const form = useForm<CreateLaneSchema>({
     mode: "onChange",
     resolver: zodResolver(createLaneSchema),
     defaultValues: {
       id: data?.id || "",
+      workspaceId: data?.workspaceId || "",
       name: data?.name || "",
       colour: data?.colour || "AA00AA",
     },

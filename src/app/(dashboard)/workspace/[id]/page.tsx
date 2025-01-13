@@ -47,7 +47,7 @@ export default async function WorkspacePage({
 
       {/* Content */}
       <Suspense fallback={<FallbackSpinner />}>
-        <KanbanNew workspaceId={workspace.id} data={lanes!} />
+        <KanbanNew workspaceId={workspace.id} data={lanes} />
       </Suspense>
     </div>
   );

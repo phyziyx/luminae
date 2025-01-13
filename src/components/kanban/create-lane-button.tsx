@@ -26,7 +26,8 @@ export default function CreateLaneButton({
           >
             <LaneCreateForm
               data={{
-                id: workspaceId,
+                id: "",
+                workspaceId,
                 name: "",
                 colour: "AA00AA",
               }}

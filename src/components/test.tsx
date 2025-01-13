@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useActionState,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Button } from "./ui/button";
 import {
   CalendarIcon,
@@ -65,13 +71,281 @@ import { HoverCard, HoverCardTrigger, HoverCardContent } from "./ui/hover-card";
 import { Client, Ticket, User } from "@prisma/client";
 import { KanbanLane, LaneTicket } from "@/lib/types";
 import CreateLaneButton from "./kanban/create-lane-button";
+import { LoadingSpinner } from "./site/loading-spinner";
+import deleteLane from "@/actions/delete-lane";
+import { toast } from "@/hooks/use-toast";
+import { useTranslations } from "next-intl";
+import LaneCreateForm from "./kanban/lane-container/lane-form";
+import { z } from "zod";
+import { LaneTicketFormSchema, laneTicketFormSchema } from "@/lib/forms";
+import onUpdateTicket from "@/actions/update-ticket";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
+import { DialogFooter } from "./ui/dialog";
+import { Checkbox } from "./ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import useSWR from "swr";
+import fetchMembersByWorkspace from "@/actions/fetch-members-by-workspace";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "./ui/command";
+
+function LaneTicketForm({
+  workspaceId,
+  data,
+}: {
+  workspaceId: string;
+  data: LaneTicketFormSchema;
+}) {
+  const form = useForm<LaneTicketFormSchema>({
+    resolver: zodResolver(laneTicketFormSchema),
+    defaultValues: {
+      ...data,
+    },
+    mode: "onChange",
+  });
+
+  const onSubmit = async (values: z.infer<typeof laneTicketFormSchema>) => {
+    try {
+      const response = await onUpdateTicket(values);
+
+      toast({
+        title: response?.error || "User information saved successfully",
+        variant: response?.error ? "destructive" : "default",
+      });
+    } catch {
+      toast({
+        title: "An error occurred while saving the user information",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const isLoading = form.formState.isSubmitting;
+  const t = useTranslations();
+
+  // const {
+  //   data: clientsData,
+  //   error,
+  //   isLoading: isLoadingClients,
+  // } = useSWR(["clients"], () => fetchAgencyDetails(agencyId));
+
+  const {
+    data: membersData,
+    error: membersError,
+    isLoading: isLoadingMembers,
+  } = useSWR(["members", workspaceId], ([, workspaceId]) =>
+    fetchMembersByWorkspace(workspaceId)
+  );
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("FORMS.NAME")}</FormLabel>
+              <FormControl>
+                <Input {...field} required />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Input {...field} required />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="value"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Value</FormLabel>
+              <FormControl>
+                <Input {...field} required />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        {data.id && (
+          <FormField
+            control={form.control}
+            name="open"
+            render={({ field }) => (
+              <FormItem className="flex items-center place-items-center gap-2">
+                <FormLabel>Open</FormLabel>
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={(checked) => field.onChange(checked)}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
+
+        <FormField
+          control={form.control}
+          name="tag"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Select a Role:</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Choose a tag" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="High">{t("TAGS.HIGH")}</SelectItem>
+                    <SelectItem value="Medium">{t("TAGS.MEDIUM")}</SelectItem>
+                    <SelectItem value="Low">{t("TAGS.LOW")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="clientId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Client</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Choose a client" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* {isLoadingClients && (
+                      <SelectItem value="" disabled>
+                        <LoadingSpinner />
+                      </SelectItem>
+                    )} */}
+                    {/* {clientsData?.map((client) => (
+                      <SelectItem key={client.id} value={client.id}>
+                        {client.name}
+                      </SelectItem>
+                    ))} */}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Command>
+          <CommandInput placeholder={t("SEARCH_IN_AGENCY")} />
+          <CommandList>
+            <CommandEmpty>{t("NO_RESULTS_FOUND")}</CommandEmpty>
+            <CommandGroup>
+              {isLoadingMembers && (
+                <div className="flex items-center justify-center">
+                  <LoadingSpinner />
+                </div>
+              )}
+              {(membersData || []).map((member) => (
+                <CommandItem
+                  key={member.id}
+                  className="flex flex-row justify-between p-1 border-b"
+                >
+                  <Avatar>
+                    <AvatarImage src={member.user.avatarUrl} />
+                    <AvatarFallback>{member.user.firstName}</AvatarFallback>
+                  </Avatar>
+                  <span>{`${member.user.firstName} ${member.user.lastName}`}</span>
+
+                  <div className="flex items-center space-x-2 text-xs">
+                    {/* <Controller
+                            name={`workspaces.${index}.access`}
+                            control={form.control}
+                            render={({ field }) => (
+                              <>
+                                <label
+                                  htmlFor={`access-${workspace.id}`}
+                                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                >
+                                  {t("INVITE_TEAM_MEMBER.HAS_ACCESS")}
+                                </label>
+                                <Checkbox
+                                  id={`access-${workspace.id}`}
+                                  checked={field.value}
+                                  onCheckedChange={(checked) =>
+                                    field.onChange(checked)
+                                  }
+                                />
+                              </>
+                            )}
+                          /> */}
+                  </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+
+        <DialogFooter>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? <LoadingSpinner /> : t("BUTTONS.SAVE_CHANGES")}
+          </Button>
+        </DialogFooter>
+      </form>
+    </Form>
+  );
+}
 
 function LaneContainerFooter({
   createTicket,
   laneId,
+  workspaceId,
 }: {
   laneId: string;
   createTicket: (laneId: string) => void;
+  workspaceId: string;
 }) {
   const { openModal } = useModal();
 
@@ -85,13 +359,23 @@ function LaneContainerFooter({
             onClick={() => {
               openModal(
                 <CustomModal
-                  title="[TODO] Add a Ticket"
+                  title="Add a Ticket"
                   caption="Add a ticket to the lane"
                 >
-                  {/* Add ticket form */}
-                  <Button onClick={() => createTicket(laneId)}>
-                    Create Dummy Task
-                  </Button>
+                  <LaneTicketForm
+                    workspaceId={workspaceId}
+                    data={{
+                      laneId: laneId,
+                      clientId: "",
+                      description: "",
+                      name: "",
+                      tag: "High",
+                      userId: "",
+                      value: "0",
+                      id: "",
+                      open: true,
+                    }}
+                  />
                 </CustomModal>
               );
             }}
@@ -211,7 +495,11 @@ function LaneContainer({
         ticketIds={ticketIds}
       />
 
-      <LaneContainerFooter createTicket={createTicket} laneId={lane.id} />
+      <LaneContainerFooter
+        createTicket={createTicket}
+        laneId={lane.id}
+        workspaceId={lane.workspaceId}
+      />
     </div>
   );
 }
@@ -234,11 +522,53 @@ function LaneContainerHeader({
   updateLaneTitle: (id: string, title: string) => void;
   deleteLane: (id: string) => void;
 }) {
+  const t = useTranslations();
+  const { openModal } = useModal();
+
   const collapsed = false;
   const toggleCollapse = (id: string) => {
     console.log("Toggling collapse for lane:", id);
   };
   const CASH_AMOUNT = "$5,000.00";
+
+  const deleteLaneWithId = deleteLane.bind(null, {
+    workspaceId: lane.workspaceId,
+    laneId: lane.id,
+  });
+  const [deleteState, deleteAction, isDeleting] = useActionState(
+    deleteLaneWithId,
+    {
+      error: "",
+    }
+  );
+
+  function onEditLane() {
+    openModal(
+      <CustomModal
+        title={t("KANBAN.CREATE_LANE_TITLE")}
+        caption={t("KANBAN.CREATE_LANE_CAPTION")}
+      >
+        <LaneCreateForm
+          data={{
+            id: lane.id,
+            workspaceId: lane.workspaceId,
+            name: "",
+            colour: "AA00AA",
+          }}
+        />
+      </CustomModal>
+    );
+  }
+
+  useEffect(() => {
+    if (deleteState && deleteState.error) {
+      toast({
+        title: deleteState.error || "Failed to delete lane",
+        variant: "destructive",
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deleteState]);
 
   return (
     <AlertDialog>
@@ -274,11 +604,11 @@ function LaneContainerHeader({
               </Button>
               <Circle
                 style={{
-                  fill: "#ff0000",
-                  stroke: "#ff0000",
+                  fill: `#${lane.colour}`,
+                  stroke: `#${lane.colour}`,
                 }}
               />
-              {editMode ? (
+              {/* {editMode ? (
                 <Input
                   autoFocus
                   value={lane.name}
@@ -297,7 +627,8 @@ function LaneContainerHeader({
                 />
               ) : (
                 lane.name
-              )}
+              )} */}
+              {lane.name} ({lane.order})
             </div>
 
             {/* */}
@@ -337,7 +668,7 @@ function LaneContainerHeader({
 
           <DropdownMenuItem
             className="flex items-center gap-2"
-            onClick={() => alert("Edit lane")}
+            onClick={onEditLane}
           >
             <EditIcon size={15} />
             Edit
@@ -360,12 +691,16 @@ function LaneContainerHeader({
           </AlertDialogHeader>
           <AlertDialogFooter className="flex items-center">
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive"
-              onClick={() => alert("Delete Lane Pressed")}
-            >
-              Continue
-            </AlertDialogAction>
+            <form action={deleteAction}>
+              <AlertDialogAction
+                type="submit"
+                disabled={isDeleting}
+                aria-disabled={isDeleting}
+                className="bg-destructive"
+              >
+                {isDeleting ? <LoadingSpinner /> : "Delete"}
+              </AlertDialogAction>
+            </form>
           </AlertDialogFooter>
         </AlertDialogContent>
       </DropdownMenu>

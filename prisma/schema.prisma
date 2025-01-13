@@ -173,7 +173,7 @@ model Ticket {
   id          String    @id @default(uuid()) // UUIDv7 for ticket ID
   title       String // Title of the ticket
   description String    @db.Text // Description of the ticket
-  value       Decimal // Value of the ticket (in currency)
+  value       Int // Value of the ticket (in currency)
   open        Boolean // Indicates if the ticket is open or closed
   tag         TicketTag // Tag for the ticket
 

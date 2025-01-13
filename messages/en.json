@@ -309,5 +309,11 @@
   "CLIENTS": {
     "CREATE_CLIENT": "Create Client",
     "HEADER": "Clients"
+  },
+
+  "TAGS": {
+    "HIGH": "High",
+    "MEDIUM": "Medium",
+    "LOW": "Low"
   }
 }

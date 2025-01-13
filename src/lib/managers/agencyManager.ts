@@ -231,9 +231,6 @@ class AgencyManager {
       },
       include: {
         Tickets: {
-          // orderBy: {
-          //   order: "asc",
-          // },
           include: {
             assigneeUser: true,
             Client: true,
@@ -242,13 +239,7 @@ class AgencyManager {
       },
     });
 
-    return lanes.map((lane) => ({
-      ...lane,
-      Tickets: lane.Tickets.map((ticket) => ({
-        ...ticket,
-        value: ticket.value.valueOf(),
-      })),
-    }));
+    return lanes;
   }
 
   /**
@@ -277,6 +268,48 @@ class AgencyManager {
         user: true,
       },
     });
+  }
+
+  public static async findAgencyMembersByWorkspaceId(
+    workspaceId: string,
+    agencyId: string
+  ) {
+    const members = await prisma.agencyMember.findMany({
+      where: {
+        OR: [
+          {
+            permissions: {
+              some: {
+                workspaceId,
+              },
+            },
+          },
+          {
+            OR: [
+              {
+                AND: {
+                  role: Role.AGENCY_OWNER,
+                  agencyId,
+                },
+              },
+              {
+                AND: {
+                  role: Role.AGENCY_ADMIN,
+                  agencyId,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    console.log("members", members);
+
+    return members;
   }
 
   public static async findWorkspaces(agencyId: string) {
