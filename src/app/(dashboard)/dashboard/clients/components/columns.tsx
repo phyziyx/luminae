@@ -37,6 +37,9 @@ const statusBadgeMap: Record<
 > = {
   ACTIVE: "default",
   INACTIVE: "destructive",
+  // LEAD: "secondary",
+  ONBOARDING: "secondary",
+  LOST: "destructive",
 };
 
 // Define the columns for the user table
