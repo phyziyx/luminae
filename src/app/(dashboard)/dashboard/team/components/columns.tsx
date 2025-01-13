@@ -18,6 +18,8 @@ import CustomModal from "@/components/site/custom-modal";
 import { AgencyMember } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import TeamMemberDetails from "./team-member-details";
+// import UserManager from "@/lib/managers/userManager";
+// import { toast } from "@/hooks/use-toast";
 
 // Map status to badge variants
 const statusBadgeMap: Record<
@@ -83,6 +85,22 @@ export const columns: ColumnDef<TeamMember>[] = [
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const { openModal } = useModal();
       const member = row.original;
+      // TODO:
+      // const handleTeamMemberDelete = () => async () => {
+      //   try {
+      //     UserManager.deleteUserAndAgencyMembers(member.id);
+      //       toast({
+      //         title: "User Deleted",
+      //         description: `${member.name} has been successfully deleted.`,
+      //       });
+      //   } catch {
+      //     toast({
+      //       variant: "destructive",
+      //       title: "Error Deleting User",
+      //       description: "There was an issue deleting the user. Please try again.",
+      //     });
+      //   }
+      // }
 
       return (
         <DropdownMenu>
@@ -114,13 +132,19 @@ export const columns: ColumnDef<TeamMember>[] = [
             >
               {t("ACTIONS.COPY_EMAIL")}
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            {/* <DropdownMenuSeparator />
             <DropdownMenuItem>{t("ACTIONS.SET_AS_ON_BREAK")}</DropdownMenuItem>
-            <DropdownMenuItem>{t("ACTIONS.SET_AS_REMOVED")}</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              {t("ACTIONS.DELETE_FROM_TABLE")}
-            </DropdownMenuItem>
+            <DropdownMenuItem>{t("ACTIONS.SET_AS_REMOVED")}</DropdownMenuItem> */}
+            {member.role !== "AGENCY_OWNER" && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                // onClick={handleTeamMemberDelete()}
+                >
+                  {t("ACTIONS.DELETE_FROM_TABLE")}
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       );

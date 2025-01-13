@@ -274,8 +274,10 @@
     "COPY_EMAIL": "Copy email",
     "SET_AS_ON_BREAK": "Set as On Break",
     "SET_AS_REMOVED": "Set as Removed",
-    "DELETE_FROM_TABLE": "Delete from table",
-    "DELETE": "Delete"
+    "DELETE_FROM_TABLE": "Remove Team Member",
+    "DELETE": "Delete",
+    "SET_ACTIVE": "Set Active",
+    "SET_INACTIVE": "Set Inactive"
   },
 
   "INVITE_TEAM_MEMBER": {
