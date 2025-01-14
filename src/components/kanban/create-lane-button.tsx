@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useModal } from "@/providers/modal-provider";
 import { PlusCircleIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import LaneCreateForm from "./lane-container/lane-form";
+import LaneCreateForm from "./lane-form";
 
 export default function CreateLaneButton({
   workspaceId,

@@ -8,6 +8,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import AgencyManager from "@/lib/managers/agencyManager";
 import KanbanNew from "@/components/test";
+import { KanbanProvider } from "@/providers/kanban-provider";
 
 export default async function WorkspacePage({
   params,
@@ -47,7 +48,12 @@ export default async function WorkspacePage({
 
       {/* Content */}
       <Suspense fallback={<FallbackSpinner />}>
-        <KanbanNew workspaceId={workspace.id} data={lanes} />
+        <KanbanProvider
+          agencyId={workspace.agencyId}
+          workspaceId={workspace.id}
+        >
+          <KanbanNew data={lanes} />
+        </KanbanProvider>
       </Suspense>
     </div>
   );
