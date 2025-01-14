@@ -12,22 +12,79 @@ import {
   Form,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { CreateLaneSchema, createLaneSchema } from "@/lib/forms";
 import { useModal } from "@/providers/modal-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Lane } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
 
 type LaneFormProps = {
   data?: Pick<Lane, "id" | "workspaceId" | "name" | "colour">;
+  onSubmit: (values: CreateLaneSchema) => Promise<void>;
 };
 
-export default function LaneCreateForm({ data }: LaneFormProps) {
-  const t = useTranslations();
-  const { toast } = useToast();
+type LaneCreateModalProps = {
+  workspaceId: string;
+  lane: Lane;
+};
+
+export default function LaneCreateModal({
+  workspaceId,
+  lane,
+}: LaneCreateModalProps) {
   const { closeModal } = useModal();
+
+  const {
+    data: laneData,
+    error,
+    isLoading,
+  } = useSWR(lane.id ? ["lane", lane.id] : null, ([, laneId]) =>
+    fetchLaneDetails(laneId)
+  );
+
+  async function onSubmit(values: CreateLaneSchema) {
+    try {
+      const result = await onCreateLane(values);
+
+      toast({
+        title: result?.error || "Lane information saved successfully",
+        variant: result?.error ? "destructive" : "default",
+      });
+
+      closeModal();
+    } catch {
+      toast({
+        title: "An error occurred while saving the lane information",
+      });
+    }
+  }
+
+  // if (isLoading) {
+  //   return <LoadingSpinner />;
+  // }
+
+  // if (error || (laneId && !laneData)) {
+  //   return <div>{t("ERROR_MESSAGES.FAILED_TO_LOAD_AGENCY_DETAILS")}</div>;
+  // }
+
+  return (
+    <LaneCreateForm
+      onSubmit={onSubmit}
+      data={{
+        id: lane.id,
+        workspaceId,
+        colour: lane.colour,
+        name: lane.name,
+      }}
+    />
+  );
+}
+
+function LaneCreateForm({ data, onSubmit }: LaneFormProps) {
+  const t = useTranslations();
 
   const form = useForm<CreateLaneSchema>({
     mode: "onChange",
@@ -43,32 +100,9 @@ export default function LaneCreateForm({ data }: LaneFormProps) {
   const isCreating = !data?.id;
   const isLoading = form.formState.isSubmitting;
 
-  async function handleSubmit(values: CreateLaneSchema) {
-    try {
-      const result = await onCreateLane(values);
-
-      toast({
-        title: result?.error || "Lane information saved successfully",
-        variant: result?.error ? "destructive" : "default",
-      });
-
-      // router.refresh();
-      closeModal();
-    } catch {
-      toast({
-        title: "An error occurred while saving the lane information",
-      });
-    }
-  }
-
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((e) => {
-          return handleSubmit(e);
-        })}
-        className="space-y-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="flex md:flex-row gap-4">
           <FormField
             control={form.control}
@@ -115,7 +149,7 @@ export default function LaneCreateForm({ data }: LaneFormProps) {
           ) : isCreating ? (
             t("KANBAN.CREATE_LANE_TITLE")
           ) : (
-            t("WORKSPACE_DETAILS.SAVE_WORKSPACE_INFORMATION")
+            t("BUTTONS.SAVE_CHANGES")
           )}
         </Button>
       </form>

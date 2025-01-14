@@ -43,8 +43,9 @@ import { LoadingSpinner } from "../site/loading-spinner";
 import deleteLane from "@/actions/delete-lane";
 import { toast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
-import LaneCreateForm from "../kanban/lane-form";
 import { TicketCard } from "./ticket-card";
+import LaneCreateModal from "../kanban/lane-form";
+import LaneTicketFormModal from "./lane-ticket-form";
 
 function LaneContainerFooter({
   laneId,
@@ -68,7 +69,7 @@ function LaneContainerFooter({
                   title="Add a Ticket"
                   caption="Add a ticket to the lane"
                 >
-                  <LaneTicketForm
+                  <LaneTicketFormModal
                     workspaceId={workspaceId}
                     data={{
                       laneId: laneId,
@@ -232,18 +233,20 @@ function LaneContainerHeader({
     }
   );
 
-  function onEditLane(name: string, colour: string) {
+  function onEditLane() {
     openModal(
       <CustomModal
         title={t("KANBAN.EDIT_LANE_TITLE")}
         caption={t("KANBAN.EDIT_LANE_CAPTION")}
       >
-        <LaneCreateForm
-          data={{
+        <LaneCreateModal
+          workspaceId={lane.workspaceId}
+          lane={{
+            order: 0,
             id: lane.id,
             workspaceId: lane.workspaceId,
-            name: name,
-            colour: colour || "FF0000",
+            name: lane.name,
+            colour: lane.colour,
           }}
         />
       </CustomModal>
@@ -361,7 +364,7 @@ function LaneContainerHeader({
 
           <DropdownMenuItem
             className="flex items-center gap-2"
-            onClick={() => onEditLane(lane.name, lane.colour)}
+            onClick={onEditLane}
           >
             <EditIcon size={15} />
             Edit

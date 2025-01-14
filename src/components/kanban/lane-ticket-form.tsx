@@ -1,6 +1,5 @@
 import { Input } from "../ui/input";
 import { useModal } from "@/providers/modal-provider";
-import { z } from "zod";
 import { LaneTicketFormSchema, laneTicketFormSchema } from "@/lib/forms";
 import onUpdateTicket from "@/actions/update-ticket";
 import { useForm } from "react-hook-form";
@@ -31,14 +30,63 @@ import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { LoadingSpinner } from "../site/loading-spinner";
 import { Button } from "../ui/button";
+import { Ticket } from "@prisma/client";
 
-export default function LaneTicketForm({
-  workspaceId,
-  data,
-}: {
-  workspaceId: string;
+type LaneTicketFormProps = {
+  onSubmit: (values: LaneTicketFormSchema) => Promise<void>;
   data: LaneTicketFormSchema;
-}) {
+};
+
+type LaneTicketModalProps = {
+  laneId: string;
+  ticketId: string;
+};
+
+export default function LaneTicketModal({
+  laneId,
+  ticketId,
+}: LaneTicketModalProps) {
+  const t = useTranslations();
+  const { closeModal } = useModal();
+
+  const {
+    data: ticketData,
+    error,
+    isLoading,
+  } = useSWR(ticketId ? ["ticket", ticketId] : null, ([, tId]) =>
+    fetchTicketDetails(tId)
+  );
+
+  async function onSubmit(values: LaneTicketFormSchema) {
+    try {
+      const response = await onUpdateTicket(values);
+
+      toast({
+        title: response?.error || "Ticked information saved successfully",
+        variant: response?.error ? "destructive" : "default",
+      });
+
+      closeModal();
+    } catch {
+      toast({
+        title: "An error occurred while saving the ticket information",
+        variant: "destructive",
+      });
+    }
+  }
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error || (ticketId && !ticketData)) {
+    return <div>{t("ERROR_MESSAGES.FAILED_TO_LOAD_AGENCY_DETAILS")}</div>;
+  }
+
+  return <LaneTicketForm onSubmit={onSubmit} data={{}} />;
+}
+
+function LaneTicketForm({ onSubmit, data }: LaneTicketFormProps) {
   const { closeModal } = useModal();
 
   const form = useForm<LaneTicketFormSchema>({
@@ -48,23 +96,6 @@ export default function LaneTicketForm({
     },
     mode: "onChange",
   });
-
-  const onSubmit = async (values: z.infer<typeof laneTicketFormSchema>) => {
-    try {
-      const response = await onUpdateTicket(values);
-
-      toast({
-        title: response?.error || "User information saved successfully",
-        variant: response?.error ? "destructive" : "default",
-      });
-      closeModal();
-    } catch {
-      toast({
-        title: "An error occurred while saving the user information",
-        variant: "destructive",
-      });
-    }
-  };
 
   const isLoading = form.formState.isSubmitting;
   const t = useTranslations();

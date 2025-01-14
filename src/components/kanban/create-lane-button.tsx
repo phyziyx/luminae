@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useModal } from "@/providers/modal-provider";
 import { PlusCircleIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import LaneCreateForm from "./lane-form";
+import LaneCreateModal from "./lane-form";
 
 export default function CreateLaneButton({
   workspaceId,
@@ -24,8 +24,10 @@ export default function CreateLaneButton({
             title={t("KANBAN.CREATE_LANE_TITLE")}
             caption={t("KANBAN.CREATE_LANE_CAPTION")}
           >
-            <LaneCreateForm
-              data={{
+            <LaneCreateModal
+              workspaceId={workspaceId}
+              lane={{
+                order: 0,
                 id: "",
                 workspaceId,
                 name: "",
