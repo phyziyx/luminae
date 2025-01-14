@@ -79,7 +79,7 @@ import LaneCreateForm from "./kanban/lane-container/lane-form";
 import { z } from "zod";
 import { LaneTicketFormSchema, laneTicketFormSchema } from "@/lib/forms";
 import onUpdateTicket from "@/actions/update-ticket";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -100,14 +100,8 @@ import {
 } from "./ui/select";
 import useSWR from "swr";
 import fetchMembersByWorkspace from "@/actions/fetch-members-by-workspace";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "./ui/command";
+import ComboBox from "./site/combo-box";
+import fetchClients from "@/actions/fetch-clients";
 
 function LaneTicketForm({
   workspaceId,
@@ -116,6 +110,8 @@ function LaneTicketForm({
   workspaceId: string;
   data: LaneTicketFormSchema;
 }) {
+  const { closeModal } = useModal();
+
   const form = useForm<LaneTicketFormSchema>({
     resolver: zodResolver(laneTicketFormSchema),
     defaultValues: {
@@ -132,6 +128,7 @@ function LaneTicketForm({
         title: response?.error || "User information saved successfully",
         variant: response?.error ? "destructive" : "default",
       });
+      closeModal();
     } catch {
       toast({
         title: "An error occurred while saving the user information",
@@ -143,18 +140,30 @@ function LaneTicketForm({
   const isLoading = form.formState.isSubmitting;
   const t = useTranslations();
 
-  // const {
-  //   data: clientsData,
-  //   error,
-  //   isLoading: isLoadingClients,
-  // } = useSWR(["clients"], () => fetchAgencyDetails(agencyId));
+  const { data: rawClientsData, isLoading: isLoadingClients } = useSWR(
+    ["clients"],
+    () => fetchClients()
+  );
 
-  const {
-    data: membersData,
-    error: membersError,
-    isLoading: isLoadingMembers,
-  } = useSWR(["members", workspaceId], ([, workspaceId]) =>
-    fetchMembersByWorkspace(workspaceId)
+  const { data: rawMembersData, isLoading: isLoadingMembers } = useSWR(
+    ["members", workspaceId],
+    ([, workspaceId]) => fetchMembersByWorkspace(workspaceId)
+  );
+
+  const membersData = useMemo(
+    () =>
+      rawMembersData?.map((e) => {
+        return {
+          label: `${e.user.firstName} ${e.user.lastName}`,
+          value: e.user.id,
+        };
+      }) || [],
+    [rawMembersData]
+  );
+
+  const clientsData = useMemo(
+    () => rawClientsData?.map((e) => ({ label: e.name, value: e.id })) || [],
+    [rawClientsData]
   );
 
   return (
@@ -246,87 +255,47 @@ function LaneTicketForm({
 
         <FormField
           control={form.control}
-          name="clientId"
+          name="userId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Client</FormLabel>
+              <FormLabel>Team Member:</FormLabel>
               <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isLoading}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Choose a client" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {/* {isLoadingClients && (
-                      <SelectItem value="" disabled>
-                        <LoadingSpinner />
-                      </SelectItem>
-                    )} */}
-                    {/* {clientsData?.map((client) => (
-                      <SelectItem key={client.id} value={client.id}>
-                        {client.name}
-                      </SelectItem>
-                    ))} */}
-                  </SelectContent>
-                </Select>
+                {isLoadingMembers ? (
+                  <LoadingSpinner />
+                ) : (
+                  <ComboBox
+                    value={field.value}
+                    setValue={field.onChange}
+                    data={membersData}
+                  />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Command>
-          <CommandInput placeholder={t("SEARCH_IN_AGENCY")} />
-          <CommandList>
-            <CommandEmpty>{t("NO_RESULTS_FOUND")}</CommandEmpty>
-            <CommandGroup>
-              {isLoadingMembers && (
-                <div className="flex items-center justify-center">
+        <FormField
+          control={form.control}
+          name="clientId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Client</FormLabel>
+              <FormControl>
+                {isLoadingClients ? (
                   <LoadingSpinner />
-                </div>
-              )}
-              {(membersData || []).map((member) => (
-                <CommandItem
-                  key={member.id}
-                  className="flex flex-row justify-between p-1 border-b"
-                >
-                  <Avatar>
-                    <AvatarImage src={member.user.avatarUrl} />
-                    <AvatarFallback>{member.user.firstName}</AvatarFallback>
-                  </Avatar>
-                  <span>{`${member.user.firstName} ${member.user.lastName}`}</span>
-
-                  <div className="flex items-center space-x-2 text-xs">
-                    {/* <Controller
-                            name={`workspaces.${index}.access`}
-                            control={form.control}
-                            render={({ field }) => (
-                              <>
-                                <label
-                                  htmlFor={`access-${workspace.id}`}
-                                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                >
-                                  {t("INVITE_TEAM_MEMBER.HAS_ACCESS")}
-                                </label>
-                                <Checkbox
-                                  id={`access-${workspace.id}`}
-                                  checked={field.value}
-                                  onCheckedChange={(checked) =>
-                                    field.onChange(checked)
-                                  }
-                                />
-                              </>
-                            )}
-                          /> */}
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
+                ) : (
+                  <ComboBox
+                    value={field.value}
+                    setValue={field.onChange}
+                    data={clientsData}
+                  />
+                )}
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <DialogFooter>
           <Button type="submit" disabled={isLoading}>
@@ -339,12 +308,10 @@ function LaneTicketForm({
 }
 
 function LaneContainerFooter({
-  createTicket,
   laneId,
   workspaceId,
 }: {
   laneId: string;
-  createTicket: (laneId: string) => void;
   workspaceId: string;
 }) {
   const { openModal } = useModal();
@@ -495,11 +462,7 @@ function LaneContainer({
         ticketIds={ticketIds}
       />
 
-      <LaneContainerFooter
-        createTicket={createTicket}
-        laneId={lane.id}
-        workspaceId={lane.workspaceId}
-      />
+      <LaneContainerFooter laneId={lane.id} workspaceId={lane.workspaceId} />
     </div>
   );
 }
