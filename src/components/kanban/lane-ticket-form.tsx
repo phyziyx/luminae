@@ -30,19 +30,25 @@ import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { LoadingSpinner } from "../site/loading-spinner";
 import { Button } from "../ui/button";
-import { Ticket } from "@prisma/client";
+import fetchTicketDetails from "@/actions/fetch-ticket-details";
+import { User } from "@prisma/client";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import clsx from "clsx";
 
 type LaneTicketFormProps = {
   onSubmit: (values: LaneTicketFormSchema) => Promise<void>;
   data: LaneTicketFormSchema;
+  workspaceId: string;
 };
 
 type LaneTicketModalProps = {
+  workspaceId: string;
   laneId: string;
   ticketId: string;
 };
 
 export default function LaneTicketModal({
+  workspaceId,
   laneId,
   ticketId,
 }: LaneTicketModalProps) {
@@ -83,18 +89,32 @@ export default function LaneTicketModal({
     return <div>{t("ERROR_MESSAGES.FAILED_TO_LOAD_AGENCY_DETAILS")}</div>;
   }
 
-  return <LaneTicketForm onSubmit={onSubmit} data={{}} />;
+  return (
+    <LaneTicketForm
+      workspaceId={workspaceId}
+      onSubmit={onSubmit}
+      data={{
+        clientId: ticketData?.clientId || "",
+        description: ticketData?.description || "",
+        id: ticketData?.id || "",
+        name: ticketData?.title || "",
+        tag: ticketData?.tag || "",
+        userId: ticketData?.assigneeUserId || "",
+        value: `${ticketData?.value ?? 0}`,
+        open: ticketData?.open || false,
+        laneId,
+      }}
+    />
+  );
 }
 
-function LaneTicketForm({ onSubmit, data }: LaneTicketFormProps) {
-  const { closeModal } = useModal();
-
+function LaneTicketForm({ onSubmit, data, workspaceId }: LaneTicketFormProps) {
   const form = useForm<LaneTicketFormSchema>({
     resolver: zodResolver(laneTicketFormSchema),
     defaultValues: {
       ...data,
     },
-    mode: "onChange",
+    mode: "onBlur",
   });
 
   const isLoading = form.formState.isSubmitting;
@@ -116,6 +136,9 @@ function LaneTicketForm({ onSubmit, data }: LaneTicketFormProps) {
         return {
           label: `${e.user.firstName} ${e.user.lastName}`,
           value: e.user.id,
+          data: {
+            ...e.user,
+          },
         };
       }) || [],
     [rawMembersData]
@@ -128,6 +151,8 @@ function LaneTicketForm({ onSubmit, data }: LaneTicketFormProps) {
 
   return (
     <Form {...form}>
+      <pre>{JSON.stringify(form.formState.errors)}</pre>
+
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
@@ -191,7 +216,7 @@ function LaneTicketForm({ onSubmit, data }: LaneTicketFormProps) {
           name="tag"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Select a Role:</FormLabel>
+              <FormLabel>Select a Priority</FormLabel>
               <FormControl>
                 <Select
                   onValueChange={field.onChange}
@@ -217,16 +242,32 @@ function LaneTicketForm({ onSubmit, data }: LaneTicketFormProps) {
           control={form.control}
           name="userId"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Team Member:</FormLabel>
+            <FormItem className="flex flex-col">
+              <FormLabel>Team Member</FormLabel>
               <FormControl>
                 {isLoadingMembers ? (
                   <LoadingSpinner />
                 ) : (
-                  <ComboBox
+                  <ComboBox<User>
+                    className="bg-white"
                     value={field.value}
                     setValue={field.onChange}
                     data={membersData}
+                    renderFn={(value, checked) => (
+                      <div className="flex flex-row gap-2 place-items-center">
+                        <Avatar>
+                          <AvatarImage src={value.avatarUrl} />
+                          <AvatarFallback>
+                            {`${value.firstName} ${value.lastName}`}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span
+                          className={clsx({
+                            "font-bold": checked,
+                          })}
+                        >{`${value.firstName} ${value.lastName}`}</span>
+                      </div>
+                    )}
                   />
                 )}
               </FormControl>
@@ -246,6 +287,7 @@ function LaneTicketForm({ onSubmit, data }: LaneTicketFormProps) {
                   <LoadingSpinner />
                 ) : (
                   <ComboBox
+                    className="bg-white"
                     value={field.value}
                     setValue={field.onChange}
                     data={clientsData}

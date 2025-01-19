@@ -307,8 +307,6 @@ class AgencyManager {
       },
     });
 
-    console.log("members", members);
-
     return members;
   }
 

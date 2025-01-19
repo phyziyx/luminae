@@ -1,5 +1,8 @@
 import {
   CalendarIcon,
+  ChevronDownIcon,
+  ChevronsUpIcon,
+  ChevronUpIcon,
   Contact2Icon,
   EditIcon,
   Link2Icon,
@@ -26,6 +29,13 @@ import { LaneTicket } from "@/lib/types";
 import { useModal } from "@/providers/modal-provider";
 import { Button } from "../ui/button";
 import CustomModal from "../site/custom-modal";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import LaneTicketModal from "./lane-ticket-form";
 
 export function TicketCard({ ticket }: { ticket: LaneTicket }) {
   const {
@@ -78,7 +88,11 @@ export function TicketCard({ ticket }: { ticket: LaneTicket }) {
                 title="Add a Ticket"
                 caption="Add a ticket to the lane"
               >
-                <LaneTicketModal />
+                <LaneTicketModal
+                  laneId={ticket.laneId}
+                  ticketId={ticket.id}
+                  workspaceId={workspaceId}
+                />
               </CustomModal>
             );
           }}
@@ -91,9 +105,9 @@ export function TicketCard({ ticket }: { ticket: LaneTicket }) {
 
   function TicketDate({ date }: { date: Date }) {
     return (
-      <span className="flex flex-row items-center gap-2 text-muted-foreground text-xs">
+      <div className="flex flex-row items-center gap-2 text-muted-foreground text-xs">
         <CalendarIcon size="20" /> {new Date(date).toLocaleString()}
-      </span>
+      </div>
     );
   }
 
@@ -183,7 +197,25 @@ export function TicketCard({ ticket }: { ticket: LaneTicket }) {
       <CardHeader className="p-[12px]">
         <TicketTitle title={ticket.title} />
         {/* */}
-        <TicketDate date={ticket.createdAt} />
+        <div className="flex flex-row items-center justify-between">
+          <TicketDate date={ticket.createdAt} />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                {ticket.tag === "High" ? (
+                  <ChevronsUpIcon className="text-red-500 bg-red-100 rounded-full p-1" />
+                ) : ticket.tag === "Medium" ? (
+                  <ChevronUpIcon className="text-orange-500 bg-orange-100 rounded-full p-1" />
+                ) : (
+                  <ChevronDownIcon className="text-blue-500 bg-blue-100 rounded-full p-1" />
+                )}
+              </TooltipTrigger>
+              <TooltipContent className="font-bold bg-slate-200 text-black dark:bg-slate-900 dark:text-white p-2 rounded-lg">
+                <p>{ticket.tag} Priority</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         {/* */}
         <TicketDescription description={ticket.description || ""} />
         {/* */}

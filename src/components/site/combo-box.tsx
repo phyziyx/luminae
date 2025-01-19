@@ -20,6 +20,7 @@ import {
   CommandItem,
 } from "../ui/command";
 import { useState } from "react";
+import clsx from "clsx";
 
 interface ComboBoxDataType<T> {
   value: string;
@@ -32,6 +33,7 @@ interface ComboBoxProps<T> {
   setValue: (value: string) => void;
   data: ComboBoxDataType<T>[];
   renderFn?: (value: T, checked: boolean) => React.ReactNode;
+  className?: string;
 }
 
 export default function ComboBox<T>({
@@ -39,6 +41,7 @@ export default function ComboBox<T>({
   setValue,
   data,
   renderFn,
+  className,
 }: ComboBoxProps<T>) {
   const [open, setOpen] = useState(false);
 
@@ -49,7 +52,7 @@ export default function ComboBox<T>({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className={clsx("w-full justify-between", className)}
         >
           {value
             ? data.find((e) => e.value === value)?.label || "Select..."
@@ -57,7 +60,7 @@ export default function ComboBox<T>({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-full p-0">
         <Command>
           <CommandInput placeholder="Search..." />
           <CommandList>

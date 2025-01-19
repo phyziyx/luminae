@@ -45,7 +45,7 @@ import { toast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
 import { TicketCard } from "./ticket-card";
 import LaneCreateModal from "../kanban/lane-form";
-import LaneTicketFormModal from "./lane-ticket-form";
+import LaneTicketModal from "./lane-ticket-form";
 
 function LaneContainerFooter({
   laneId,
@@ -55,6 +55,7 @@ function LaneContainerFooter({
   workspaceId: string;
 }) {
   const { openModal } = useModal();
+  // const { workspaceId } = useKanban();
 
   return (
     <div className="rounded-bl-lg rounded-br-lg h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10">
@@ -69,19 +70,10 @@ function LaneContainerFooter({
                   title="Add a Ticket"
                   caption="Add a ticket to the lane"
                 >
-                  <LaneTicketFormModal
+                  <LaneTicketModal
                     workspaceId={workspaceId}
-                    data={{
-                      laneId: laneId,
-                      clientId: "",
-                      description: "",
-                      name: "",
-                      tag: "High",
-                      userId: "",
-                      value: "0",
-                      id: "",
-                      open: true,
-                    }}
+                    laneId={laneId}
+                    ticketId=""
                   />
                 </CustomModal>
               );
