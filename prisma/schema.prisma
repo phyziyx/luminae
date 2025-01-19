@@ -176,6 +176,7 @@ model Ticket {
   value       Int // Value of the ticket (in currency)
   open        Boolean // Indicates if the ticket is open or closed
   tag         TicketTag // Tag for the ticket
+  order       Int // Order of the ticket in the lane
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

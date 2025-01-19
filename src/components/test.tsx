@@ -19,6 +19,8 @@ import CreateLaneButton from "./kanban/create-lane-button";
 import { TicketCard } from "./kanban/ticket-card";
 import { useKanban } from "@/providers/kanban-provider";
 import LaneContainer from "./kanban/lane-container";
+import updateLaneOrder from "@/actions/update-lane-order";
+import updateTicketOrder from "@/actions/update-ticket-order";
 
 const POINTER_ACTIVATION_CONSTRAINT_DISTANCE = 10; // 10 px
 
@@ -90,37 +92,54 @@ function KanbanNew({ data }: { data: KanbanLane[] }) {
     const activeId = active.id;
     const overId = over.id;
 
-    if (activeId === overId) return;
-
-    if (active.data.current?.type === "Lane") {
-      setLanes((prevLanes) => {
-        const activeLaneIndex = prevLanes.findIndex(
-          (lane) => lane.id === activeId
-        );
-        const overLaneIndex = prevLanes.findIndex((lane) => lane.id === overId);
-
-        return arrayMove(prevLanes, activeLaneIndex, overLaneIndex);
-      });
-
+    if (activeId === overId) {
+      console.log("onDragEnd Ticket!!");
       return;
     }
 
     if (active.data.current?.type === "Ticket") {
+      console.log("onDragEnd Ticket!");
+
+      const activeTicketIndex = tickets.findIndex((t) => t.id === activeId);
+      const overTicketIndex = tickets.findIndex((t) => t.id === overId);
+
+      if (activeTicketIndex === -1 || overTicketIndex === -1) {
+        return;
+      }
+
+      console.log(
+        "activeTicket",
+        JSON.stringify(tickets[activeTicketIndex], null, 2)
+      );
+      console.log(
+        "overTicket",
+        JSON.stringify(tickets[overTicketIndex], null, 2)
+      );
+      return;
+    }
+
+    if (active.data.current?.type === "Lane") {
+      const activeLaneIndex = lanes.findIndex((lane) => lane.id === activeId);
+      const overLaneIndex = lanes.findIndex((lane) => lane.id === overId);
+
+      if (activeLaneIndex === -1 || overLaneIndex === -1) {
+        return;
+      }
+
+      const newLanes = lanes
+        .toSpliced(activeLaneIndex, 1)
+        .toSpliced(overLaneIndex, 0, lanes[activeLaneIndex])
+        .map((lane, idx) => {
+          return { ...lane, order: idx };
+        });
+
+      updateLaneOrder(newLanes);
+      setLanes(newLanes);
+
       return;
     }
 
     console.error("Invalid active data type:", active.data.current?.type);
-    // else if (active.data.current?.type === "Ticket") {
-    //   setTickets((prevTickets) => {
-    //     const activeTicketIndex = prevTickets.findIndex(
-    //       (ticket) => ticket.id === activeId
-    //     );
-    //     const overTicketIndex = prevTickets.findIndex(
-    //       (ticket) => ticket.id === overId
-    //     );
-    //     return arrayMove(prevTickets, activeTicketIndex, overTicketIndex);
-    //   });
-    // }
   }
 
   const onDragOver = (event: DragEndEvent) => {
@@ -158,17 +177,14 @@ function KanbanNew({ data }: { data: KanbanLane[] }) {
         const activeTicketIndex = ticketsCopy.findIndex(
           (ticket) => ticket.id === activeId
         );
-
         if (activeTicketIndex === -1) {
           return prevTickets; // Invalid ID, no change needed
         }
-
         // Update laneId
         ticketsCopy[activeTicketIndex] = {
           ...ticketsCopy[activeTicketIndex],
           laneId: overId as string,
         };
-
         return ticketsCopy;
       });
     }
@@ -194,6 +210,11 @@ function KanbanNew({ data }: { data: KanbanLane[] }) {
           laneId: over.data.current?.ticket.laneId,
         };
 
+        // updateTicketOrder(
+        //   tickets[activeTicketIndex].id,
+        //   tickets[overTicketIndex].id
+        // );
+
         return arrayMove(ticketsCopy, activeTicketIndex, overTicketIndex);
       });
       return;
@@ -205,6 +226,13 @@ function KanbanNew({ data }: { data: KanbanLane[] }) {
       prevTickets.filter((ticket) => ticket.id !== id)
     );
   }
+
+  const ticketsByLane = useMemo(() => {
+    return lanes.map((lane) => ({
+      laneId: lane.id,
+      tickets: tickets.filter((ticket) => ticket.laneId === lane.id),
+    }));
+  }, [lanes, tickets]);
 
   return (
     <div className="flex-grow m-auto w-full items-center overflow-x-auto overflow-y-hidden p-2">
@@ -224,9 +252,10 @@ function KanbanNew({ data }: { data: KanbanLane[] }) {
                   lane={lane}
                   deleteLane={deleteLane}
                   updateLaneTitle={updateLaneTitle}
-                  tickets={tickets.filter(
-                    (ticket) => ticket.laneId === lane.id
-                  )}
+                  tickets={
+                    ticketsByLane.find((e) => e.laneId === lane.id)?.tickets ||
+                    []
+                  }
                   deleteTicket={deleteTicket}
                 />
               ))}
@@ -241,18 +270,11 @@ function KanbanNew({ data }: { data: KanbanLane[] }) {
                     lane={activeLane}
                     deleteLane={deleteLane}
                     updateLaneTitle={updateLaneTitle}
-                    tickets={tickets.filter(
-                      (ticket) => ticket.laneId === activeLane.id
-                    )}
+                    tickets={[]}
                     deleteTicket={deleteTicket}
                   />
                 )}
-                {activeTicket && (
-                  <TicketCard
-                    ticket={activeTicket}
-                    deleteTicket={deleteTicket}
-                  />
-                )}
+                {activeTicket && <TicketCard ticket={activeTicket} />}
               </DragOverlay>,
               document.body
             )}

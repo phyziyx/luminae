@@ -59,7 +59,7 @@ function LaneContainerFooter({
 
   return (
     <div className="rounded-bl-lg rounded-br-lg h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10">
-      <div className="bg-white/10 h-full flex items-center p-4 justify-between cursor-grab border-t-[1px]">
+      <div className="bg-white/10 h-full flex items-center p-4 justify-between border-t-[1px]">
         <div className="flex items-center w-full gap-2">
           <Button
             variant={"ghost"}
@@ -83,9 +83,9 @@ function LaneContainerFooter({
           </Button>
         </div>
         <div className="flex items-center flex-row">
-          <CalendarIcon className="text-muted-foreground cursor-pointer" />
-          <User2Icon className="text-muted-foreground cursor-pointer" />
-          <Link2Icon className="text-muted-foreground cursor-pointer" />
+          <CalendarIcon className="text-muted-foreground" />
+          <User2Icon className="text-muted-foreground" />
+          <Link2Icon className="text-muted-foreground" />
         </div>
       </div>
     </div>
@@ -313,7 +313,7 @@ function LaneContainerHeader({
 				) : (
 				  lane.name
 				)} */}
-              {lane.name} ({lane.order})
+              {lane.name}
             </div>
 
             {/* */}
