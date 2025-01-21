@@ -17,7 +17,7 @@ import CustomModal from "@/components/site/custom-modal";
 import { useTranslations } from "next-intl";
 import UpdateUserModal from "./modals/update-user-modal";
 import { toast } from "@/hooks/use-toast";
-import deleteUser from "./actions/delete-user"; 
+import deleteUser from "./actions/delete-user";
 
 // Define user data type
 export type UserData = {
@@ -139,7 +139,7 @@ export const columns: ColumnDef<UserData>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleDeleteClick}>
-            {t("ACTIONS.DELETE")}
+              {t("ACTIONS.DELETE")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -90,14 +90,15 @@ export const columns: ColumnDef<AgencyData>[] = [
           toast({
             variant: "destructive",
             title: "Error Deleting Agency",
-            description: "There was an issue deleting the agency. Please try again.",
+            description:
+              "There was an issue deleting the agency. Please try again.",
           });
         }
       };
 
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const t = useTranslations();
-      
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -130,7 +131,7 @@ export const columns: ColumnDef<AgencyData>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleDeleteClick}>
-            {t("ACTIONS.DELETE")}
+              {t("ACTIONS.DELETE")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

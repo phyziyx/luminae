@@ -17,11 +17,11 @@ interface PackageListProps {
     id: string;
     name: string;
     monthlyPrice: number;
-    status: string
+    status: string;
   }[];
 }
 
-const PackagesList = ({ data }:PackageListProps) => {
+const PackagesList = ({ data }: PackageListProps) => {
   return <DataTable columns={columns} data={data} />;
 };
 
@@ -38,7 +38,9 @@ const PackagesPage = async () => {
   // Map the fetched data into a format that the table expects
   const data = packages.map((pkg) => {
     const features = pkg.features
-      ? pkg.features.map((feature) => ({ [feature.code]: feature.maxLimit })).reduce((acc, cur) => ({ ...acc, ...cur }), {})
+      ? pkg.features
+          .map((feature) => ({ [feature.code]: feature.maxLimit }))
+          .reduce((acc, cur) => ({ ...acc, ...cur }), {})
       : {};
     return {
       id: pkg.id,

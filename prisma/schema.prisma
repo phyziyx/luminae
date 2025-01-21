@@ -114,6 +114,7 @@ model Workspace {
   agency        Agency         @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   permissions   Permission[]
   notifications Notification[]
+  Lane          Lane[]
 
   @@index([agencyId])
 }
@@ -153,13 +154,29 @@ enum TicketTag {
   Low
 }
 
+model Lane {
+  id     String @id
+  name   String
+  order  Int
+  colour String @db.VarChar(6)
+
+  workspaceId String
+  Workspace   Workspace @relation(fields: [workspaceId], references: [id])
+
+  Tickets Ticket[]
+
+  @@index([id])
+  @@index([workspaceId])
+}
+
 model Ticket {
   id          String    @id @default(uuid()) // UUIDv7 for ticket ID
   title       String // Title of the ticket
   description String    @db.Text // Description of the ticket
-  value       Decimal // Value of the ticket (in currency)
+  value       Int // Value of the ticket (in currency)
   open        Boolean // Indicates if the ticket is open or closed
   tag         TicketTag // Tag for the ticket
+  order       Int // Order of the ticket in the lane
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -169,6 +186,8 @@ model Ticket {
 
   assigneeUserId String? // User ID
   assigneeUser   User?   @relation(fields: [assigneeUserId], references: [id])
+  Lane           Lane    @relation(fields: [laneId], references: [id])
+  laneId         String
 
   @@index([clientId])
   @@index([assigneeUserId])

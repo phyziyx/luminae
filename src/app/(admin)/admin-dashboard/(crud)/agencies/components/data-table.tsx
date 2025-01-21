@@ -54,7 +54,7 @@ export function DataTable<TData, TValue>({
   });
 
   const t = useTranslations();
-  
+
   return (
     <div>
       <div className="flex items-center justify-between py-4">

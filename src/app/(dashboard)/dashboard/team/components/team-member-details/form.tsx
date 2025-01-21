@@ -150,7 +150,7 @@ export default function TeamMemberDetailsForm({
                     control={form.control}
                     name="role"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="border-blue-500 border-collapse border-2 rounded-md">
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
