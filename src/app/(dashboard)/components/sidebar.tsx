@@ -220,7 +220,7 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
         </PopoverTrigger>
 
         {/* Content */}
-        <PopoverContent className="rounded-lg w-80 mt-4 z-[200]">
+        <PopoverContent className="rounded-lg w-[18rem] mt-4 z-[200]">
           <Command>
             <CommandInput placeholder={t("SEARCH_IN_AGENCY")} />
             <CommandList>
