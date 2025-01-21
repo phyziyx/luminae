@@ -1,6 +1,5 @@
 import prisma from "@/lib/db";
 import { currentUser } from "@clerk/nextjs/server";
-import { DevBundlerService } from "next/dist/server/lib/dev-bundler-service";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(

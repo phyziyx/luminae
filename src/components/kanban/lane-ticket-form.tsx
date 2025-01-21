@@ -27,13 +27,14 @@ import ComboBox from "../site/combo-box";
 import fetchClients from "@/actions/fetch-clients";
 import { toast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
-import { useMemo } from "react";
+import { startTransition, useActionState, useMemo } from "react";
 import { LoadingSpinner } from "../site/loading-spinner";
 import { Button } from "../ui/button";
 import fetchTicketDetails from "@/actions/fetch-ticket-details";
 import { User } from "@prisma/client";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import clsx from "clsx";
+import deleteTicket from "@/actions/delete-ticket";
 
 type LaneTicketFormProps = {
   onSubmit: (values: LaneTicketFormSchema) => Promise<void>;
@@ -149,10 +150,15 @@ function LaneTicketForm({ onSubmit, data, workspaceId }: LaneTicketFormProps) {
     [rawClientsData]
   );
 
+  const deleteTicketWithId = deleteTicket.bind(null, {
+    ticketId: data.id || "",
+  });
+  const [, deleteAction, isDeleting] = useActionState(deleteTicketWithId, {
+    error: "",
+  });
+
   return (
     <Form {...form}>
-      <pre>{JSON.stringify(form.formState.errors)}</pre>
-
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
@@ -299,7 +305,19 @@ function LaneTicketForm({ onSubmit, data, workspaceId }: LaneTicketFormProps) {
           )}
         />
 
-        <DialogFooter>
+        <DialogFooter className="justify-between">
+          {data.id && (
+            <Button
+              variant={"destructive"}
+              type="button"
+              disabled={isLoading || isDeleting}
+              onClick={() => {
+                startTransition(deleteAction);
+              }}
+            >
+              {t("BUTTONS.DELETE")}
+            </Button>
+          )}
           <Button type="submit" disabled={isLoading}>
             {isLoading ? <LoadingSpinner /> : t("BUTTONS.SAVE_CHANGES")}
           </Button>

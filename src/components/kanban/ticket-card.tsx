@@ -84,10 +84,7 @@ export function TicketCard({ ticket }: { ticket: LaneTicket }) {
           variant={"ghost"}
           onClick={() => {
             openModal(
-              <CustomModal
-                title="Add a Ticket"
-                caption="Add a ticket to the lane"
-              >
+              <CustomModal title="Edit a Ticket" caption="Edit your ticket...">
                 <LaneTicketModal
                   laneId={ticket.laneId}
                   ticketId={ticket.id}

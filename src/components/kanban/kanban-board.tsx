@@ -48,13 +48,9 @@ function KanbanBoard({ data }: { data: KanbanLane[] }) {
     })
   );
 
-  const dragStateRef = useRef<{
-    activeId: string | null | number;
-    overId: string | null | number;
-  }>({
-    activeId: null,
-    overId: null,
-  });
+  const ticketDragRef = useRef<{ ticket: any; originalLaneId: string } | null>(
+    null
+  );
 
   function deleteLane(id: string) {
     setLanes((prevLanes) => prevLanes.filter((lane) => lane.id !== id));
@@ -78,6 +74,10 @@ function KanbanBoard({ data }: { data: KanbanLane[] }) {
       return;
     } else if (event.active.data.current?.type === "Ticket") {
       setActiveTicket(event.active.data.current.ticket);
+      ticketDragRef.current = {
+        ticket: event.active.data.current.ticket,
+        originalLaneId: event.active.data.current.ticket.laneId,
+      };
       return;
     }
   }
@@ -104,6 +104,31 @@ function KanbanBoard({ data }: { data: KanbanLane[] }) {
       over.data.current?.type
     );
 
+    if (ticketDragRef.current) {
+      const activeTicketIndex = tickets.findIndex(
+        (ticket) => ticket.id === activeId
+      );
+
+      const isMoveTypeLane = over.data.current?.type === "Lane";
+
+      const overIndex = isMoveTypeLane
+        ? lanes.findIndex((lane) => lane.id === overId)
+        : tickets.findIndex((ticket) => ticket.id === overId);
+
+      if (isMoveTypeLane) {
+        console.log("Move to lane");
+      } else {
+        console.log("Move between ticket");
+      }
+
+      if (activeTicketIndex !== -1 && overIndex !== -1) {
+        updateTicketOrder(tickets);
+      }
+      return;
+    }
+
+    ticketDragRef.current = null;
+
     if (activeId === overId) {
       return;
     }
@@ -129,32 +154,6 @@ function KanbanBoard({ data }: { data: KanbanLane[] }) {
       return;
     }
 
-    if (active.data.current?.type === "Ticket") {
-      const activeTicketIndex = tickets.findIndex(
-        (ticket) => ticket.id === activeId
-      );
-      const overTicketIndex = tickets.findIndex(
-        (ticket) => ticket.id === overId
-      );
-
-      if (activeTicketIndex === -1 || overTicketIndex === -1) {
-        return;
-      }
-
-      const newTickets = arrayMove(
-        tickets,
-        activeTicketIndex,
-        overTicketIndex
-      ).map((ticket, idx) => {
-        return { ...ticket, order: idx, laneId: ticket.laneId };
-      });
-
-      updateTicketOrder(newTickets);
-      setTickets(newTickets);
-
-      return;
-    }
-
     console.error("Invalid active data type:", active.data.current?.type);
   }
 
@@ -172,19 +171,6 @@ function KanbanBoard({ data }: { data: KanbanLane[] }) {
     const isOverDragLane = over.data.current?.type === "Lane";
 
     if (!isActiveDragTask) return;
-
-    const currentDragState = dragStateRef.current;
-
-    // Only process the drag if something has changed
-    if (
-      currentDragState.activeId === activeId &&
-      currentDragState.overId === overId
-    ) {
-      return;
-    }
-
-    // Update the drag state
-    dragStateRef.current = { activeId: activeId, overId: overId };
 
     // Handle moving to a different lane
     if (isOverDragLane) {
@@ -226,12 +212,25 @@ function KanbanBoard({ data }: { data: KanbanLane[] }) {
           laneId: over.data.current?.ticket.laneId,
         };
 
-        // updateTicketOrder(
-        //   tickets[activeTicketIndex].id,
-        //   tickets[overTicketIndex].id
-        // );
+        const newTickets = arrayMove(
+          ticketsCopy,
+          activeTicketIndex,
+          overTicketIndex
+        ).map((ticket, idx) => {
+          return { ...ticket, order: idx };
+        });
+        console.log(
+          JSON.stringify(
+            newTickets.map((ticket) => ({
+              title: ticket.title,
+              order: ticket.order,
+            })),
+            null,
+            2
+          )
+        );
 
-        return arrayMove(ticketsCopy, activeTicketIndex, overTicketIndex);
+        return newTickets;
       });
       return;
     }
@@ -246,7 +245,9 @@ function KanbanBoard({ data }: { data: KanbanLane[] }) {
   const ticketsByLane = useMemo(() => {
     return lanes.map((lane) => ({
       laneId: lane.id,
-      tickets: tickets.filter((ticket) => ticket.laneId === lane.id),
+      tickets: tickets
+        .filter((ticket) => ticket.laneId === lane.id)
+        .sort((a, b) => a.order - b.order),
     }));
   }, [lanes, tickets]);
 

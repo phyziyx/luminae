@@ -77,7 +77,7 @@ export default async function onUpdateTicket(values: LaneTicketFormSchema) {
           tag: values.tag as TicketTag,
           clientId: values.clientId || null,
           assigneeUserId: values.userId || null,
-          // order: ticketsCount,
+          order: ticketsCount,
         },
       });
     } else {

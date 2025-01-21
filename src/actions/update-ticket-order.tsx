@@ -7,13 +7,13 @@ export default async function updateTicketOrder(
   tickets: { id: string; order: number; laneId: string }[]
 ) {
   await prisma.$transaction(
-    tickets.map((ticket) =>
+    tickets.map((ticket, index) =>
       prisma.ticket.update({
         where: {
           id: ticket.id,
         },
         data: {
-          order: ticket.order,
+          order: index,
           laneId: ticket.laneId,
         },
       })

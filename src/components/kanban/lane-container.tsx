@@ -46,6 +46,8 @@ import { useTranslations } from "next-intl";
 import { TicketCard } from "./ticket-card";
 import LaneCreateModal from "../kanban/lane-form";
 import LaneTicketModal from "./lane-ticket-form";
+import { useKanban } from "@/providers/kanban-provider";
+// import { useKanban } from "@/providers/kanban-provider";
 
 function LaneContainerFooter({
   laneId,
@@ -123,6 +125,21 @@ export default function LaneContainer({
   deleteTicket: (id: string) => void;
 }) {
   const [editMode, setEditMode] = React.useState(false);
+
+  // const { getCollapseState } = useKanban();
+  // const collapsed = getCollapseState(lane.id);
+  // if (collapsed) {
+  //   // w-12
+  //   return (
+  //     <div className="transition-all ease-in-out duration-300 flex items-center">
+  //       <LaneContainerHeader
+  //         id={lane.id}
+  //         colour={lane.colour}
+  //         name={lane.name}
+  //       />
+  //     </div>
+  //   );
+  // }
 
   const {
     setNodeRef,
@@ -209,10 +226,8 @@ function LaneContainerHeader({
     [lane.Tickets]
   );
 
-  const collapsed = false;
-  const toggleCollapse = (id: string) => {
-    console.log("Toggling collapse for lane:", id);
-  };
+  const { getCollapseState, toggleCollapse } = useKanban();
+  const collapsed = getCollapseState(lane.id);
 
   const deleteLaneWithId = deleteLane.bind(null, {
     workspaceId: lane.workspaceId,
@@ -264,7 +279,14 @@ function LaneContainerHeader({
           className="backdrop-blur-lg dark:bg-background/40 bg-slate-500/20 z-10
 		rounded-lg rounded-b-none border-b-[1px]
 		text-md h-[60px] cursor-grab p-2 font-bold flex flex-row gap-2 items-center place-items-center"
-          onDoubleClick={() => setEditMode(true)}
+          // onDoubleClick={() => setEditMode(!collapsed && true)}
+          // onBlur={() => setEditMode(false)}
+          // className={clsx(
+          //   "whitespace-nowrap hover:cursor-text font-bold text-sm",
+          //   {
+          //     "w-0 rotate-90": collapsed,
+          //   }
+          // )}
         >
           <div className="flex w-full items-center place-items-center justify-between">
             <div
