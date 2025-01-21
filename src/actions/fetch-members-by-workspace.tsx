@@ -6,8 +6,6 @@ import { currentUser } from "@clerk/nextjs/server";
 export default async function fetchMembersByWorkspace(workspaceId: string) {
   const user = await currentUser();
 
-  let error = "An error occurred while saving the workspace information";
-
   if (!user) {
     return [];
   }

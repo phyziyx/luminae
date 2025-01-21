@@ -6,8 +6,6 @@ import { currentUser } from "@clerk/nextjs/server";
 export default async function fetchClients() {
   const user = await currentUser();
 
-  let error = "An error occurred while fetching agency clients.";
-
   if (!user) {
     return [];
   }

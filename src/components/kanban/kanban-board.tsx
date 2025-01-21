@@ -48,9 +48,10 @@ function KanbanBoard({ data }: { data: KanbanLane[] }) {
     })
   );
 
-  const ticketDragRef = useRef<{ ticket: any; originalLaneId: string } | null>(
-    null
-  );
+  const ticketDragRef = useRef<{
+    ticket: unknown;
+    originalLaneId: string;
+  } | null>(null);
 
   function deleteLane(id: string) {
     setLanes((prevLanes) => prevLanes.filter((lane) => lane.id !== id));

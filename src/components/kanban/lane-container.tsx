@@ -206,7 +206,6 @@ export default function LaneContainer({
 function LaneContainerHeader({
   attributes,
   listeners,
-  setEditMode,
   editMode,
   lane,
 }: {
