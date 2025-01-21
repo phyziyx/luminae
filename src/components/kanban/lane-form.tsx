@@ -19,7 +19,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Lane } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
-import useSWR from "swr";
 
 type LaneFormProps = {
   data?: Pick<Lane, "id" | "workspaceId" | "name" | "colour">;
@@ -37,13 +36,13 @@ export default function LaneCreateModal({
 }: LaneCreateModalProps) {
   const { closeModal } = useModal();
 
-  const {
-    data: laneData,
-    error,
-    isLoading,
-  } = useSWR(lane.id ? ["lane", lane.id] : null, ([, laneId]) =>
-    fetchLaneDetails(laneId)
-  );
+  // const {
+  //   data: laneData,
+  //   error,
+  //   isLoading,
+  // } = useSWR(lane.id ? ["lane", lane.id] : null, ([, laneId]) =>
+  //   fetchLaneDetails(laneId)
+  // );
 
   async function onSubmit(values: CreateLaneSchema) {
     try {

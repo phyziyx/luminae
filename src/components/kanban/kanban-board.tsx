@@ -13,8 +13,7 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove, SortableContext } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
-import { Ticket } from "@prisma/client";
-import { KanbanLane } from "@/lib/types";
+import { KanbanLane, LaneTicket } from "@/lib/types";
 import CreateLaneButton from "./create-lane-button";
 import { TicketCard } from "./ticket-card";
 import { useKanban } from "@/providers/kanban-provider";
@@ -26,9 +25,9 @@ const POINTER_ACTIVATION_CONSTRAINT_DISTANCE = 10; // 10 px
 
 function KanbanBoard({ data }: { data: KanbanLane[] }) {
   const [lanes, setLanes] = useState<KanbanLane[]>([]);
-  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [tickets, setTickets] = useState<LaneTicket[]>([]);
 
-  const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
+  const [activeTicket, setActiveTicket] = useState<LaneTicket | null>(null);
   const laneIds = useMemo(() => lanes.map((lane) => lane.id) || [], [lanes]);
 
   const [activeLane, setActiveLane] = useState<KanbanLane | null>(null);
@@ -48,9 +47,10 @@ function KanbanBoard({ data }: { data: KanbanLane[] }) {
     })
   );
 
-  const ticketDragRef = useRef<{ ticket: any; originalLaneId: string } | null>(
-    null
-  );
+  const ticketDragRef = useRef<{
+    ticket: unknown;
+    originalLaneId: string;
+  } | null>(null);
 
   function deleteLane(id: string) {
     setLanes((prevLanes) => prevLanes.filter((lane) => lane.id !== id));
@@ -219,16 +219,6 @@ function KanbanBoard({ data }: { data: KanbanLane[] }) {
         ).map((ticket, idx) => {
           return { ...ticket, order: idx };
         });
-        console.log(
-          JSON.stringify(
-            newTickets.map((ticket) => ({
-              title: ticket.title,
-              order: ticket.order,
-            })),
-            null,
-            2
-          )
-        );
 
         return newTickets;
       });
