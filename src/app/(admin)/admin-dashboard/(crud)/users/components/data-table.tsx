@@ -92,8 +92,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   style={
-                    // TODO: Fix warning
-                    row.original["isLocked"]
+                    row.original["isLocked" as keyof TData]
                       ? { backgroundColor: "rgba(207, 96, 66, 102)" }
                       : {}
                   }
