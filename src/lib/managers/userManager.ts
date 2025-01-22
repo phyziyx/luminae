@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import prisma from "../db";
+import { clerkClient } from "@clerk/nextjs/server";
 
 type CreateUser = Pick<
   User,
@@ -64,10 +65,29 @@ class UserManager {
    * @param id user id
    * @returns user
    */
-  public static async deleteUser(userId: string) {
-    return await prisma.user.delete({
+  public static async toggleUserBan(userId: string) {
+    const clerk = await clerkClient();
+    const user = await prisma.user.findUnique({
       where: {
         id: userId,
+      },
+      select: {
+        isLocked: true,
+      },
+    });
+    if (!user) {
+      return false;
+    }
+    const ban = user.isLocked
+      ? await clerk.users.unbanUser(userId)
+      : await clerk.users.banUser(userId);
+    console.log(ban);
+    return await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        isLocked: ban.banned,
       },
     });
   }

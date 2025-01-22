@@ -12,34 +12,40 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVerticalIcon } from "lucide-react";
-import { useModal } from "@/providers/modal-provider";
-import CustomModal from "@/components/site/custom-modal";
 import { useTranslations } from "next-intl";
-import UpdateUserModal from "./modals/update-user-modal";
-import { toast } from "@/hooks/use-toast";
-import deleteUser from "./actions/delete-user";
+import { currencyFormat } from "@/lib/utils";
+import CustomModal from "@/components/site/custom-modal";
+import UpsertClientModal from "../modals/upsert-client-modal";
+import { useModal } from "@/providers/modal-provider";
+// import { toast } from "@/hooks/use-toast";
 
 // Define user data type
-export type UserData = {
+export type ClientData = {
   id: string;
   name: string;
   email: string;
-  role: string;
+  phone: string;
+  city: string;
+  state: string;
+  country: string;
+  ticketSize: number;
   status: string;
-  isLocked: boolean;
 };
 
 // Map status to badge variants
 const statusBadgeMap: Record<
-  UserData["status"],
+  ClientData["status"],
   "default" | "destructive" | "secondary"
 > = {
-  Active: "default",
-  Inactive: "destructive",
+  ACTIVE: "default",
+  INACTIVE: "destructive",
+  // LEAD: "secondary",
+  ONBOARDING: "secondary",
+  LOST: "destructive",
 };
 
 // Define the columns for the user table
-export const columns: ColumnDef<UserData>[] = [
+export const columns: ColumnDef<ClientData>[] = [
   {
     accessorKey: "id",
     header: "#",
@@ -53,20 +59,30 @@ export const columns: ColumnDef<UserData>[] = [
     header: "Email",
   },
   {
-    accessorKey: "role",
-    header: "Role",
+    accessorKey: "city",
+    header: "City",
+  },
+  {
+    accessorKey: "state",
+    header: "State",
+  },
+  {
+    accessorKey: "country",
+    header: "Country",
+  },
+  {
+    accessorKey: "ticketSize",
+    header: "Ticket Size",
     cell: ({ row }) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const t = useTranslations();
-      const role = row.getValue<UserData["role"]>("role");
-      return <span>{t(`ROLES.${role}`)}</span>;
+      const ticketSize = row.getValue<ClientData["ticketSize"]>("ticketSize");
+      return <span>{currencyFormat(ticketSize)}</span>;
     },
   },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue<UserData["status"]>("status");
+      const status = row.getValue<ClientData["status"]>("status");
       const badgeVariant = statusBadgeMap[status];
 
       return <Badge variant={badgeVariant}>{status}</Badge>;
@@ -77,35 +93,9 @@ export const columns: ColumnDef<UserData>[] = [
     header: "Actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const user = row.original;
+      const client = row.original;
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const { openModal, closeModal } = useModal();
-      const handleDeleteClick = async () => {
-        try {
-          const result = await deleteUser({ id: user.id });
-          if (result.error) {
-            toast({
-              variant: "destructive",
-              title: "Error Locking User",
-              description: result.error,
-            });
-          } else {
-            toast({
-              title: user.isLocked ? `User Unlocked` : `User Locked`,
-              description: user.isLocked
-                ? `${user.name} has been successfully Unlocked.`
-                : `${user.name} has been successfully Locked.`,
-            });
-          }
-        } catch {
-          toast({
-            variant: "destructive",
-            title: "Error Locking User",
-            description:
-              "There was an issue locking the user. Please try again.",
-          });
-        }
-      };
 
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const t = useTranslations();
@@ -124,10 +114,16 @@ export const columns: ColumnDef<UserData>[] = [
               onClick={() =>
                 openModal(
                   <CustomModal
-                    title={t("USER_FORM.EDIT_USER")}
-                    caption={t("USER_FORM.EDIT_USER_CAPTION")}
+                    title="Edit Client Details"
+                    caption="Edit the client's details"
                   >
-                    <UpdateUserModal userId={user.email} onClose={closeModal} />
+                    {
+                      <UpsertClientModal
+                        clientId={client.id}
+                        onClose={closeModal}
+                        create={false}
+                      />
+                    }
                   </CustomModal>
                 )
               }
@@ -136,13 +132,9 @@ export const columns: ColumnDef<UserData>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.email)}
+              onClick={() => navigator.clipboard.writeText(client.email)}
             >
               {t("ACTIONS.COPY_EMAIL")}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleDeleteClick}>
-              {user.isLocked ? t("ACTIONS.UNBAN_USER") : t("ACTIONS.BAN_USER")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -23,6 +23,11 @@ import { Input } from "@/components/ui/input";
 import * as React from "react";
 import { DataTablePagination } from "@/components/site/pagination";
 import { useTranslations } from "next-intl";
+import { Button } from "@/components/ui/button";
+import { UserPlus } from "lucide-react";
+import CustomModal from "@/components/site/custom-modal";
+import { useModal } from "@/providers/modal-provider";
+import UpsertClientModal from "../modals/upsert-client-modal";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -55,6 +60,8 @@ export function DataTable<TData, TValue>({
 
   const t = useTranslations();
 
+  const { openModal, closeModal } = useModal();
+
   return (
     <div>
       <div className="flex items-center justify-between py-4">
@@ -67,6 +74,25 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        {/* Add Client Button */}
+        <Button
+          className="ml-4"
+          onClick={() => {
+            openModal(
+              <CustomModal title="Create Client" caption="Create a new client">
+                <UpsertClientModal
+                  clientId=""
+                  onClose={() => {
+                    closeModal();
+                  }}
+                  create={true}
+                />
+              </CustomModal>
+            );
+          }}
+        >
+          <UserPlus className="mr-2 h-4 w-4" /> {t("CLIENTS.CREATE_CLIENT")}
+        </Button>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -89,14 +115,7 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  style={
-                    row.original["isLocked" as keyof TData]
-                      ? { backgroundColor: "rgba(207, 96, 66, 102)" }
-                      : {}
-                  }
-                >
+                <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(

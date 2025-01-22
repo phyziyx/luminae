@@ -5,32 +5,34 @@ import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 // import { DataTable } from "./components/data-table";
 // import { TeamMember, columns } from "./components/columns";
+import ClientManager from "@/lib/managers/clientManager";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { getTranslations } from "next-intl/server";
 
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
+import { DataTable } from "./components/data-table";
+import { columns } from "./components/columns";
 
 const t = await getTranslations({ locale: "en" });
 
 const ClientsList = async ({ agencyId }: { agencyId: string }) => {
-  const clients = await AgencyManager.findClients(agencyId);
-
-  //   const data: TeamMember[] = members.map((member) => ({
-  //     id: member.id,
-  //     name: member.user.name,
-  //     email: member.email,
-  //     role: member.role,
-  //     status: "Active",
-  //   }));
-
-  // <DataTable columns={columns} data={data} />;
+  const clients = await ClientManager.fetchClients(agencyId);
   return (
-    <>
-      {clients.map((client) => (
-        <div key={client.id}>{client.name}</div>
-      ))}
-    </>
+    <DataTable
+      columns={columns}
+      data={clients.map((client) => ({
+        id: client.id,
+        name: client.name,
+        email: client.email,
+        phone: client.phone,
+        city: client.city,
+        state: client.state,
+        country: client.country,
+        ticketSize: client.ticketSize,
+        status: client.status,
+      }))}
+    />
   );
 };
 
