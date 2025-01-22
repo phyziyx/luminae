@@ -1,10 +1,7 @@
-// import { Client } from "@prisma/client";
+import { Client } from "@prisma/client";
 import prisma from "../db";
 
-// type CreateClient = Pick<
-//   Client,
-//   "id" | "name" | "email" | "city" | "state" | "country" | "status"
-// >;
+type UpsertClient = Omit<Client, "createdAt" | "updatedAt" | "agencyId">;
 
 class ClientManager {
   public static async fetchClients(agencyId: string) {
@@ -35,6 +32,40 @@ class ClientManager {
         0
       ),
     }));
+  }
+
+  public static async fetchClientDetails(clientId: string) {
+    const client = await prisma.client.findUnique({
+      where: {
+        id: clientId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        city: true,
+        state: true,
+        country: true,
+        status: true,
+      },
+    });
+    return client;
+  }
+
+  public static async upsertClient(client: UpsertClient, agencyId: string) {
+    await prisma.client.upsert({
+      where: {
+        id: client.id,
+      },
+      create: {
+        agencyId: agencyId,
+        ...client,
+      },
+      update: {
+        ...client,
+      },
+    });
   }
 }
 

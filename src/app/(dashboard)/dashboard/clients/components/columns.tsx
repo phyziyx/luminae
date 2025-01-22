@@ -12,10 +12,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVerticalIcon } from "lucide-react";
-// import { useModal } from "@/providers/modal-provider";
-// import CustomModal from "@/components/site/custom-modal";
 import { useTranslations } from "next-intl";
 import { currencyFormat } from "@/lib/utils";
+import CustomModal from "@/components/site/custom-modal";
+import UpsertClientModal from "../modals/upsert-client-modal";
+import { useModal } from "@/providers/modal-provider";
 // import { toast } from "@/hooks/use-toast";
 
 // Define user data type
@@ -94,7 +95,7 @@ export const columns: ColumnDef<ClientData>[] = [
     cell: ({ row }) => {
       const client = row.original;
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      //   const { openModal, closeModal } = useModal();
+      const { openModal, closeModal } = useModal();
 
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const t = useTranslations();
@@ -110,16 +111,22 @@ export const columns: ColumnDef<ClientData>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
             <DropdownMenuItem
-            //   onClick={() =>
-            //     openModal(
-            //       <CustomModal
-            //         title="Edit Client Details"
-            //         caption="Edit the client's details"
-            //       >
-            //         TO DO: Add form for editing client details
-            //       </CustomModal>
-            //     )
-            //   }
+              onClick={() =>
+                openModal(
+                  <CustomModal
+                    title="Edit Client Details"
+                    caption="Edit the client's details"
+                  >
+                    {
+                      <UpsertClientModal
+                        clientId={client.id}
+                        onClose={closeModal}
+                        create={false}
+                      />
+                    }
+                  </CustomModal>
+                )
+              }
             >
               {t("ACTIONS.EDIT_DETAILS")}
             </DropdownMenuItem>
@@ -129,14 +136,6 @@ export const columns: ColumnDef<ClientData>[] = [
             >
               {t("ACTIONS.COPY_EMAIL")}
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              {client.status === "ACTIVE"
-                ? t("ACTIONS.SET_INACTIVE")
-                : t("ACTIONS.SET_ACTIVE")}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>{t("ACTIONS.DELETE")}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
