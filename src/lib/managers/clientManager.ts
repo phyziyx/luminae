@@ -27,10 +27,7 @@ class ClientManager {
     });
     return clients.map((client) => ({
       ...client,
-      ticketSize: client.tickets.reduce(
-        (acc, ticket) => acc + ticket.value.toNumber(),
-        0
-      ),
+      ticketSize: client.tickets.reduce((acc, ticket) => acc + ticket.value, 0),
     }));
   }
 
