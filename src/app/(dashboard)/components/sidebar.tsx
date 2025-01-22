@@ -220,7 +220,7 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
         </PopoverTrigger>
 
         {/* Content */}
-        <PopoverContent className="rounded-lg w-80 mt-4 z-[200]">
+        <PopoverContent className="rounded-lg w-[18rem] mt-4 z-[200]">
           <Command>
             <CommandInput placeholder={t("SEARCH_IN_AGENCY")} />
             <CommandList>
@@ -296,7 +296,7 @@ const DashboardSidebar = ({
   const rawPathName = usePathname();
 
   return (
-    <>
+    <div className="flex-1 flex h-full border-box">
       <Sidebar variant="inset">
         {/* Header */}
         <SidebarHeader>
@@ -434,8 +434,12 @@ const DashboardSidebar = ({
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset>{children}</SidebarInset>
-    </>
+      <SidebarInset className="flex-1 flex">
+        <main className="flex-1 flex flex-col box-border h-full">
+          {children}
+        </main>
+      </SidebarInset>
+    </div>
   );
 };
 

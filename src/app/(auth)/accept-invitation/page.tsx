@@ -29,6 +29,7 @@ import { Icons } from "@/components/ui/icons";
 import { PasswordInput } from "@/components/ui/password-input";
 
 import { formSchema } from "./types";
+import { Input } from "@/components/ui/input";
 
 export default function Page() {
   const t = useTranslations();
@@ -41,8 +42,8 @@ export default function Page() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // firstName: "",
-      // lastName: "",
+      firstName: "",
+      lastName: "",
       password: "",
     },
   });
@@ -64,13 +65,11 @@ export default function Page() {
     try {
       if (!token) return null;
 
-      console.log(values);
-
       const signUpAttempt = await signUp.create({
         strategy: "ticket",
         ticket: token,
-        // firstName: values.firstName,
-        // lastName: values.lastName,
+        firstName: values.firstName,
+        lastName: values.lastName,
         password: values.password,
       });
 
@@ -100,7 +99,7 @@ export default function Page() {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-2"
               >
-                {/* <FormField
+                <FormField
                   control={form.control}
                   name="firstName"
                   render={({ field }) => (
@@ -128,7 +127,7 @@ export default function Page() {
                       <FormMessage />
                     </FormItem>
                   )}
-                /> */}
+                />
 
                 <FormField
                   control={form.control}

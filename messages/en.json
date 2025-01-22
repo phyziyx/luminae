@@ -303,8 +303,25 @@
     "FAILED_TO_LOAD_PACKAGES": "Error: Failed to load package details"
   },
 
+  "KANBAN": {
+    "CREATE_LANE_TITLE": "Create a Lane",
+    "CREATE_LANE_CAPTION": "Create a new lane to organize your tasks.",
+
+    "EDIT_LANE_TITLE": "Edit Lane",
+    "EDIT_LANE_CAPTION": "Modify lane information as needed.",
+
+    "BOARD_NAME": "Board Name",
+    "BOARD_COLOUR": "Board Colour"
+  },
+
   "CLIENTS": {
     "CREATE_CLIENT": "Create Client",
     "HEADER": "Clients"
+  },
+
+  "TAGS": {
+    "HIGH": "High",
+    "MEDIUM": "Medium",
+    "LOW": "Low"
   }
 }

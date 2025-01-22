@@ -58,7 +58,6 @@ export default async function RootLayout({
                 <ModalProvider>
                   {children}
                   <Toaster />
-                  {/* <SonnarToaster position="bottom-left" /> */}
                 </ModalProvider>
               </ClerkProvider>
             </Suspense>

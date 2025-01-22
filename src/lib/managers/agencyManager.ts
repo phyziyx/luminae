@@ -141,6 +141,14 @@ class AgencyManager {
     });
   }
 
+  public static async findWorkspace(workspaceId: string) {
+    return await prisma.workspace.findUnique({
+      where: {
+        id: workspaceId,
+      },
+    });
+  }
+
   public static async updateAgency(agency: UpdateAgency) {
     return await prisma.agency.update({
       where: {
@@ -210,6 +218,31 @@ class AgencyManager {
   }
 
   /**
+   * @param workspaceId workspace id
+   * @returns workspace's kanban board lanes with all tickets
+   */
+  public static async getWorkspaceKanbanBoard(workspaceId: string) {
+    const lanes = await prisma.lane.findMany({
+      where: {
+        workspaceId: workspaceId,
+      },
+      orderBy: {
+        order: "asc",
+      },
+      include: {
+        Tickets: {
+          include: {
+            assigneeUser: true,
+            Client: true,
+          },
+        },
+      },
+    });
+
+    return lanes;
+  }
+
+  /**
    * Find user agency
    * @param id agency id
    * @returns agency
@@ -235,6 +268,46 @@ class AgencyManager {
         user: true,
       },
     });
+  }
+
+  public static async findAgencyMembersByWorkspaceId(
+    workspaceId: string,
+    agencyId: string
+  ) {
+    const members = await prisma.agencyMember.findMany({
+      where: {
+        OR: [
+          {
+            permissions: {
+              some: {
+                workspaceId,
+              },
+            },
+          },
+          {
+            OR: [
+              {
+                AND: {
+                  role: Role.AGENCY_OWNER,
+                  agencyId,
+                },
+              },
+              {
+                AND: {
+                  role: Role.AGENCY_ADMIN,
+                  agencyId,
+                },
+              },
+            ],
+          },
+        ],
+      },
+      include: {
+        user: true,
+      },
+    });
+
+    return members;
   }
 
   public static async findWorkspaces(agencyId: string) {
