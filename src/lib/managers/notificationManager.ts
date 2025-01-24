@@ -1,3 +1,4 @@
+import { v7 } from "uuid";
 import prisma from "../db";
 
 class NotificationManager {
@@ -27,6 +28,7 @@ class NotificationManager {
   public static async create(userId: string, message: string) {
     await prisma.notification.create({
       data: {
+        id: v7(),
         userId,
         message,
       },

@@ -31,9 +31,9 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   };
 
   return (
-    <div className="flex items-center justify-between p-4 border-b last:border-b-0 bg-blue-100/50 rounded-xl">
+    <div className="flex items-center justify-between p-4 border-b last:border-b-0 bg-blue-100/50 dark:bg-muted rounded-xl">
       <div>
-        <p className="text-sm font-medium">
+        <p className="text-sm font-medium text-wrap">
           {getLocalizedMessage(notification)}
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-400">
