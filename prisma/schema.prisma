@@ -96,7 +96,6 @@ model Agency {
   agencyMembers AgencyMember[]
   workspaces    Workspace[]
   invitations   Invitation[]
-  notifications Notification[]
   clients       Client[]
   subscription  Subscription?
 
@@ -112,10 +111,9 @@ model Workspace {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  agency        Agency         @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  permissions   Permission[]
-  notifications Notification[]
-  Lane          Lane[]
+  agency      Agency       @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  permissions Permission[]
+  Lane        Lane[]
 
   @@index([agencyId])
 }
@@ -217,23 +215,18 @@ model Invitation {
 }
 
 model Notification {
-  id      String @id @default(uuid()) // UUIDv7 for notification ID
+  id      String  @id @default(uuid()) // UUIDv7 for notification ID
   message String // Notification message
+  read    Boolean @default(false) // Indicates if the notification is read
 
-  userId      String // User ID
-  agencyId    String // Agency ID
-  workspaceId String? // Workspace ID
+  userId String // User ID
 
   createdAt DateTime @default(now()) // Creation date of the notification
   updatedAt DateTime @updatedAt // Last update date of the notification
 
-  user      User       @relation(fields: [userId], references: [id])
-  agency    Agency     @relation(fields: [agencyId], references: [id])
-  workspace Workspace? @relation(fields: [workspaceId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
-  @@index([agencyId])
-  @@index([workspaceId])
 }
 
 enum FeatureCode {

@@ -328,5 +328,18 @@
   "NOT_FOUND": {
     "TITLE": "Page Not Found",
     "CAPTION": "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
+  },
+
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "MARK_ALL_READ": "Mark all as read",
+    "UNREAD": "Unread",
+    "READ": "Read",
+    "NO_UNREAD": "No unread notifications",
+    "NO_READ": "No read notifications",
+    "MARK_AS_READ": "Mark as read",
+    "ACTIONS": {
+      "WELCOME": "Welcome to Luminae - Your One Stop Agency Management Platform!"
+    }
   }
 }

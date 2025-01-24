@@ -1,6 +1,7 @@
 "use client";
 
 import Logo from "@/components/logo";
+import { NotificationsPopover } from "@/components/notifications/notifications";
 import ModeToggle from "@/components/site/mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -304,11 +305,12 @@ const DashboardSidebar = ({
             <SidebarMenuItem>
               <div
                 className={cn(
-                  "h-[36px] overflow-hidden transition-all [&>div]:w-full",
+                  "h-[36px] overflow-hidden transition-all place-content-between flex items-center",
                   sidebar.open ? "" : "-mx-1"
                 )}
               >
                 <Logo className="text-blue-500" />
+                <NotificationsPopover />
               </div>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -434,6 +436,7 @@ const DashboardSidebar = ({
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
+
       <SidebarInset className="flex-1 flex">
         <main className="flex-1 flex flex-col box-border h-full">
           {children}
