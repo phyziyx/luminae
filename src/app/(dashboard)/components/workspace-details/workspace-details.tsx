@@ -75,7 +75,7 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
   // }, [data]);
 
   return (
-    <Card className="w-full bg-white dark:bg-muted/90">
+    <Card className="w-full bg-white dark:bg-muted/50">
       <CardHeader>
         <CardTitle>
           {isCreating

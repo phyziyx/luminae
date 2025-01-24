@@ -3,7 +3,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -162,7 +161,32 @@ export const Pricing = ({ packages }: PricingProps) => {
         {t("PRICING.PRICING_DESCRIPTION")}
       </p>
 
-      <div className="flex flex-row items-center gap-2 mt-10">
+      <div className="relative self-center mt-6 bg-blue-500/10 rounded-lg p-0.5 flex sm:mt-8 border">
+        <button
+          onClick={() => setAnnual(false)}
+          type="button"
+          className={`${
+            isAnnual === false
+              ? "relative w-1/2 bg-blue-500 border-blue-800 shadow-sm text-white"
+              : "ml-0.5 relative w-1/2 border border-transparent text-zinc-500"
+          } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
+        >
+          {t("PRICING.PRICING_BILLED_MONTHLY")}
+        </button>
+        <button
+          onClick={() => setAnnual(true)}
+          type="button"
+          className={`${
+            isAnnual === true
+              ? "relative w-1/2 bg-blue-500 border-blue-800 shadow-sm text-white"
+              : "ml-0.5 relative w-1/2 border border-transparent text-zinc-500"
+          } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
+        >
+          {t("PRICING.PRICING_BILLED_YEARLY")}
+        </button>
+      </div>
+
+      {/* <div className="flex flex-row items-center gap-2 mt-10">
         <span
           className={cn("font-bold", {
             "text-primary": !isAnnual,
@@ -181,7 +205,7 @@ export const Pricing = ({ packages }: PricingProps) => {
         >
           {t("PRICING.PRICING_BILLED_YEARLY")}
         </span>
-      </div>
+      </div> */}
 
       <div className="flex flex-col gap-6 items-center mt-10 lg:flex-row lg:items-end lg:justify-center">
         {packages.map((p) => (

@@ -255,7 +255,7 @@ function LaneTicketForm({ onSubmit, data, workspaceId }: LaneTicketFormProps) {
                   <LoadingSpinner />
                 ) : (
                   <ComboBox<User>
-                    className="bg-white"
+                    className="bg-transparent"
                     value={field.value}
                     setValue={field.onChange}
                     data={membersData}
@@ -293,7 +293,7 @@ function LaneTicketForm({ onSubmit, data, workspaceId }: LaneTicketFormProps) {
                   <LoadingSpinner />
                 ) : (
                   <ComboBox
-                    className="bg-white"
+                    className="bg-transparent"
                     value={field.value}
                     setValue={field.onChange}
                     data={clientsData}

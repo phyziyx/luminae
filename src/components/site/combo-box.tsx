@@ -1,8 +1,6 @@
-// Custom combobox component with a list of items to select from.
-//
-// TODO: Implement the custom renderFn prop to render custom items.
-// - phyziyx
-//
+// Custom Combobox Component with Custom Styling Support
+// Based on Shadcn's Combobox
+// - Phyziyx
 
 "use client";
 
@@ -32,7 +30,12 @@ interface ComboBoxProps<T> {
   value: string;
   setValue: (value: string) => void;
   data: ComboBoxDataType<T>[];
-  renderFn?: (value: T, checked: boolean) => React.ReactNode;
+  renderFn?: (
+    data: T,
+    checked: boolean,
+    value: string,
+    label: string
+  ) => React.ReactNode;
   className?: string;
 }
 
@@ -81,7 +84,9 @@ export default function ComboBox<T>({
                       value === e.value ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {renderFn ? renderFn(e.data!, value === e.value) : e.label}
+                  {renderFn
+                    ? renderFn(e.data!, value === e.value, e.value, e.label)
+                    : e.label}
                 </CommandItem>
               ))}
             </CommandGroup>

@@ -14,10 +14,12 @@ export default async function NotFound() {
         <div className="flex justify-center">
           <Logo className="text-blue-500" />
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
           {t("NOT_FOUND.TITLE")}
         </h1>
-        <p className="text-base text-gray-500">{t("NOT_FOUND.CAPTION")}</p>
+        <p className="text-base text-gray-500 dark:text-gray-300">
+          {t("NOT_FOUND.CAPTION")}
+        </p>
         <Link
           href={"/"}
           className="max-w-48 mx-auto flex justify-center py-2 px-4 shadow-sm text-sm font-medium"

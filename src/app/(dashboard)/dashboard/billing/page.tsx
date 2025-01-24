@@ -109,7 +109,7 @@ const Billing = async () => {
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         {t("BILLING.BILLING_DESCRIPTION")}
 
-        <Card className="w-full bg-white dark:bg-muted/90">
+        <Card className="w-full bg-white dark:bg-muted/50">
           <CardHeader className="mt-0 mb-0 pt-0" />
           <CardContent className="flex flex-row justify-between place-items-center">
             <div className="flex flex-row gap-2">
@@ -137,7 +137,7 @@ const Billing = async () => {
           </div>
           <Separator className="my-4" />
 
-          <Card className="bg-muted/50 dark:bg-muted">
+          <Card className="bg-muted/50 dark:bg-muted/50">
             <CardHeader>
               <CardTitle>{t("BILLING.USAGE_DETAILS")}</CardTitle>
             </CardHeader>

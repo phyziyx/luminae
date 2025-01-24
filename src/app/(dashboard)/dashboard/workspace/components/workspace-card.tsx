@@ -20,7 +20,7 @@ const WorkspaceCard = async ({ workspace, isAdmin }: WorkspaceCardProps) => {
   return (
     <Card
       key={workspace.id}
-      className="flex flex-col gap-2 max-w-sm bg-white dark:bg-muted/90"
+      className="flex flex-col gap-2 max-w-sm bg-white dark:bg-muted/50"
     >
       <CardHeader>
         <CardTitle className="flex flex-row place-content-between">

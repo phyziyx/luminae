@@ -19,6 +19,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Lane } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
+import ComboBox from "../site/combo-box";
+import { Circle } from "lucide-react";
+import clsx from "clsx";
 
 type LaneFormProps = {
   data?: Pick<Lane, "id" | "workspaceId" | "name" | "colour">;
@@ -29,6 +32,28 @@ type LaneCreateModalProps = {
   workspaceId: string;
   lane: Lane;
 };
+
+interface Colour {
+  label: string;
+  value: string;
+}
+
+const coloursList: Colour[] = [
+  { label: "Red", value: "FF0000" },
+  { label: "Green", value: "00FF00" },
+  { label: "Blue", value: "0000FF" },
+  { label: "Yellow", value: "FFFF00" },
+  { label: "Magenta", value: "FF00FF" },
+  { label: "Cyan", value: "00FFFF" },
+
+  { label: "Luminae Navy Blue", value: "002E62" },
+  { label: "Luminae Blue", value: "185081" },
+  { label: "Luminae Hot Pink", value: "EE2363" },
+  { label: "Luminae Orange", value: "FEC506" },
+  { label: "Luminae Green", value: "B9E766" },
+  { label: "Luminae Pink", value: "C79DD7" },
+  { label: "Luminae Red", value: "FF4E50" },
+];
 
 export default function LaneCreateModal({
   workspaceId,
@@ -130,11 +155,28 @@ function LaneCreateForm({ data, onSubmit }: LaneFormProps) {
             <FormItem className="flex-1">
               <FormLabel>{t("KANBAN.BOARD_COLOUR")}</FormLabel>
               <FormControl>
-                <Input
-                  disabled={isLoading}
-                  required
-                  placeholder={t("KANBAN.BOARD_COLOUR")}
-                  {...field}
+                <ComboBox<Colour>
+                  className="bg-transparent"
+                  value={field.value}
+                  setValue={field.onChange}
+                  data={coloursList}
+                  renderFn={(data, checked, value, label) => (
+                    <div className="flex flex-row gap-2 place-items-center">
+                      <Circle
+                        style={{
+                          fill: `#${value}`,
+                          stroke: `#${value}`,
+                        }}
+                      />
+                      <span
+                        className={clsx({
+                          "font-bold": checked,
+                        })}
+                      >
+                        {label}
+                      </span>
+                    </div>
+                  )}
                 />
               </FormControl>
               <FormMessage />
