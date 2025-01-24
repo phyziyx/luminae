@@ -5,20 +5,20 @@ import { Button } from "@/components/ui/button";
 import { CheckboxCard } from "@/components/site/checkbox-card";
 import AgencyDetails from "../(dashboard)/components/agency-details/agency-details";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 function CommunityUser() {
+  const t = useTranslations();
+
   return (
     <div className="max-w-md mx-auto text-center">
       <h2 className="text-2xl font-bold mb-4 text-blue-800">
-        Welcome, Community Member!
+        {t("COMMUNITY_FORUM.WELCOME")}
       </h2>
       <p className="text-lg mb-6 text-blue-700 dark:text-slate-100">
-        Our community forums are coming soon...
+        {t("COMMUNITY_FORUM.COMING_SOON")}
       </p>
-      <p className="text-blue-600 dark:text-slate-100">
-        We're working hard to bring you an amazing community experience. Stay
-        tuned for updates, and thank you for your patience!
-      </p>
+      <p className="text-blue-600 dark:text-slate-100">{t("WORKING_HARD")}</p>
       <Link href="/">
         <Button className="mt-2">Go Back</Button>
       </Link>
@@ -70,7 +70,6 @@ export default function Onboarding() {
                 onClick={handleNext}
                 disabled={!selectedOption}
                 variant={"default"}
-                // className="w-full md:w-auto bg-blue-500 hover:bg-blue-600 text-white"
               >
                 NEXT
               </Button>

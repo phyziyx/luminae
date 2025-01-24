@@ -346,5 +346,11 @@
       "WORKSPACE_MANAGER": "You have been assigned as a manager for a workspace",
       "AGENCY_ADMIN": "You have been assigned as the admin of your agency"
     }
+  },
+
+  "COMMUNITY_FORUM": {
+    "WELCOME": "Welcome, Community Member!",
+    "COMING_SOON": "Our community forums are coming soon...",
+    "WORKING_HARD": "We're working hard to bring you an amazing community experience. Stay tuned for updates, and thank you for your patience!"
   }
 }
