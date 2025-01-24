@@ -5,9 +5,10 @@ import {
   markAllAsReadAction,
   markAsReadAction,
 } from "@/actions/notifications";
+import { toast } from "@/hooks/use-toast";
 import { Notification } from "@prisma/client";
 import type React from "react";
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef } from "react";
 import useSWR from "swr";
 
 interface NotificationsContextType {
@@ -49,6 +50,8 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     revalidateOnReconnect: true,
   });
 
+  const previousUnreadCountRef = useRef(0);
+
   const unreadNotifications = useMemo(
     () => notifications.filter((n) => !n.read),
     [notifications]
@@ -61,6 +64,17 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     () => (notifications || []).filter((n) => !n.read).length,
     [notifications]
   );
+
+  useEffect(() => {
+    if (unreadCount > previousUnreadCountRef.current) {
+      toast({
+        title: "You have unread notifications",
+        description: `You have ${unreadCount} unread notifications`,
+      });
+
+      previousUnreadCountRef.current = unreadCount;
+    }
+  }, [unreadCount]);
 
   const markAsRead = async (id: string) => {
     await markAsReadAction(id);

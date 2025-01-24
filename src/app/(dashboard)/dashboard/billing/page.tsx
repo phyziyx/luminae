@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import React, { JSX } from "react";
+import Link from "next/link";
 
 const usages = [
   {
@@ -128,7 +129,11 @@ const Billing = async () => {
                     DATE: data.expiryDate,
                   })}
             </div>
-            <Button>{t("BILLING.EXPLORE_PLANS")}</Button>
+            <Link
+              href={`https://billing.stripe.com/p/login/test_3csg2ieAa6yFel27ss?prefilled_email=${user.emailAddresses[0].emailAddress}`}
+            >
+              <Button>{t("BILLING.EXPLORE_PLANS")}</Button>
+            </Link>
           </CardContent>
           <CardFooter className="mb-0 mt-0 pb-0" />
         </Card>
