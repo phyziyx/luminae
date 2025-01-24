@@ -47,7 +47,12 @@ export const NotificationsPopover: React.FC = () => {
             <h2 className="text-lg font-semibold">
               {t("NOTIFICATIONS.TITLE")}
             </h2>
-            <Button variant="ghost" size="sm" onClick={markAllAsRead}>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={unreadCount === 0}
+              onClick={markAllAsRead}
+            >
               <CheckCheckIcon />
               {t("NOTIFICATIONS.MARK_ALL_READ")}
             </Button>
