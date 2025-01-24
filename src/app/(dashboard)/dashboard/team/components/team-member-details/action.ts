@@ -5,6 +5,7 @@ import formSchema from "./schema";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { currentUser } from "@clerk/nextjs/server";
 import prisma from "@/lib/db";
+import NotificationManager from "@/lib/managers/notificationManager";
 
 const onUpdateMember = async (values: z.infer<typeof formSchema>) => {
   const user = await currentUser();
@@ -55,6 +56,10 @@ const onUpdateMember = async (values: z.infer<typeof formSchema>) => {
         email,
         role
       );
+
+      if (role === "AGENCY_ADMIN") {
+        await NotificationManager.create(agencyMember.id, "AGENCY_ADMIN");
+      }
     }
 
     // Update the workspaces
@@ -94,6 +99,15 @@ const onUpdateMember = async (values: z.infer<typeof formSchema>) => {
             workspaceId: workspace.id,
           },
         });
+
+        await NotificationManager.create(
+          agencyMember.id,
+          workspace.manager ? "WORKSPACE_MANAGER" : "WORKSPACE_ASSIGNED",
+          {
+            resourceId: workspace.id,
+            resourceType: "workspace",
+          }
+        );
       } else if (workspaceMember && (workspace.access || workspace.manager)) {
         await prisma.permission.update({
           where: {
@@ -104,6 +118,17 @@ const onUpdateMember = async (values: z.infer<typeof formSchema>) => {
             manager: workspace.manager,
           },
         });
+
+        if (workspace.manager) {
+          await NotificationManager.create(
+            agencyMember.id,
+            "WORKSPACE_MANAGER",
+            {
+              resourceId: workspace.id,
+              resourceType: "workspace",
+            }
+          );
+        }
       } else if (workspaceMember) {
         await prisma.permission.delete({
           where: {

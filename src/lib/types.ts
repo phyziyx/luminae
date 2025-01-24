@@ -1,5 +1,7 @@
 import { Feature, Package, Prisma } from "@prisma/client";
 
+export type NotificationType = "workspace" | "ticket";
+
 export type PricingPackage = Omit<Package, "monthlyPrice"> & {
   monthlyPrice: number;
   features: Feature[];

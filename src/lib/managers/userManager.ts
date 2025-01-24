@@ -1,6 +1,7 @@
 import { User } from "@prisma/client";
 import prisma from "../db";
 import { clerkClient } from "@clerk/nextjs/server";
+import NotificationManager from "./notificationManager";
 
 type CreateUser = Pick<
   User,
@@ -23,7 +24,7 @@ class UserManager {
    * @returns user
    */
   public static async createUser(user: CreateUser) {
-    await prisma.user.upsert({
+    const createdUser = await prisma.user.upsert({
       where: {
         email: user.email,
       },
@@ -36,6 +37,8 @@ class UserManager {
         avatarUrl: user.avatarUrl,
       },
     });
+
+    await NotificationManager.create(createdUser.id, "WELCOME");
 
     const invitation = await prisma.invitation.findFirst({
       where: {

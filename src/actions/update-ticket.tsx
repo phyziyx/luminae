@@ -3,6 +3,7 @@
 import prisma from "@/lib/db";
 import { laneTicketFormSchema, LaneTicketFormSchema } from "@/lib/forms";
 import AgencyManager from "@/lib/managers/agencyManager";
+import NotificationManager from "@/lib/managers/notificationManager";
 import { currentUser } from "@clerk/nextjs/server";
 import { TicketTag } from "@prisma/client";
 import { revalidatePath } from "next/cache";
@@ -80,6 +81,13 @@ export default async function onUpdateTicket(values: LaneTicketFormSchema) {
           order: ticketsCount,
         },
       });
+
+      if (values.userId) {
+        await NotificationManager.create(values.userId, "TICKET_ASSIGNED", {
+          resourceId: lane.workspaceId,
+          resourceType: "workspace",
+        });
+      }
     } else {
       await prisma.ticket.update({
         data: {

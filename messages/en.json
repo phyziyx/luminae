@@ -328,5 +328,23 @@
   "NOT_FOUND": {
     "TITLE": "Page Not Found",
     "CAPTION": "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
+  },
+
+  "NOTIFICATIONS": {
+    "TITLE": "Notifications",
+    "MARK_ALL_READ": "Mark all as read",
+    "UNREAD": "Unread",
+    "READ": "Read",
+    "NO_UNREAD": "No unread notifications",
+    "NO_READ": "No read notifications",
+    "MARK_AS_READ": "Mark as read",
+    "VIEW": "View",
+    "ACTIONS": {
+      "WELCOME": "Welcome to Luminae - Your One Stop Agency Management Platform!",
+      "TICKET_ASSIGNED": "You have been assigned a new ticket",
+      "WORKSPACE_ASSIGNED": "You have been assigned a new workspace",
+      "WORKSPACE_MANAGER": "You have been assigned as a manager for a workspace",
+      "AGENCY_ADMIN": "You have been assigned as the admin of your agency"
+    }
   }
 }
