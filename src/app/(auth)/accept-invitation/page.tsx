@@ -87,7 +87,7 @@ export default function Page() {
     <div className="grid w-full grow items-center justify-center px-4 sm:justify-center">
       <Logo className="text-blue-500" />
 
-      <Card className="w-full sm:w-96">
+      <Card className="w-full sm:w-96 bg-white">
         <CardHeader>
           <CardTitle>{t("INVITATION_HEADER")}</CardTitle>
           <CardDescription>{t("INVITATION_DESCRIPTION")}</CardDescription>
