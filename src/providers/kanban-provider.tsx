@@ -12,6 +12,7 @@ type KanbanData = {
   //
   workspaceId: string;
   agencyId: string;
+  manager: boolean;
 };
 
 const KanbanContext = createContext<undefined | KanbanData>(undefined);
@@ -19,10 +20,12 @@ const KanbanContext = createContext<undefined | KanbanData>(undefined);
 export function KanbanProvider({
   workspaceId,
   agencyId,
+  manager,
   children,
 }: {
   workspaceId: string;
   agencyId: string;
+  manager: boolean;
   children: React.ReactNode;
 }) {
   // The collapsed state should be saved in the localStorage
@@ -67,6 +70,7 @@ export function KanbanProvider({
       value={{
         workspaceId,
         agencyId,
+        manager,
         getCollapseState,
         toggleCollapse,
         collapseNone,

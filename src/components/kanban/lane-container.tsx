@@ -225,7 +225,7 @@ function LaneContainerHeader({
     [lane.Tickets]
   );
 
-  const { getCollapseState } = useKanban();
+  const { manager, getCollapseState } = useKanban();
   const collapsed = getCollapseState(lane.id);
 
   const deleteLaneWithId = deleteLane.bind(null, {
@@ -368,20 +368,25 @@ function LaneContainerHeader({
         <DropdownMenuContent>
           <DropdownMenuLabel>Options</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <AlertDialogTrigger asChild>
-            <DropdownMenuItem className="bg-destructive/20 flex items-center gap-2">
-              <Trash2Icon size={15} />
-              Delete
-            </DropdownMenuItem>
-          </AlertDialogTrigger>
 
-          <DropdownMenuItem
-            className="flex items-center gap-2"
-            onClick={onEditLane}
-          >
-            <EditIcon size={15} />
-            Edit
-          </DropdownMenuItem>
+          {manager && (
+            <>
+              <AlertDialogTrigger asChild>
+                <DropdownMenuItem className="bg-destructive/20 flex items-center gap-2">
+                  <Trash2Icon size={15} />
+                  Delete
+                </DropdownMenuItem>
+              </AlertDialogTrigger>
+
+              <DropdownMenuItem
+                className="flex items-center gap-2"
+                onClick={onEditLane}
+              >
+                <EditIcon size={15} />
+                Edit
+              </DropdownMenuItem>
+            </>
+          )}
           <DropdownMenuItem
             className="flex items-center gap-2"
             onClick={() => alert("Create ticket")}

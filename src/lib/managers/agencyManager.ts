@@ -270,6 +270,34 @@ class AgencyManager {
     });
   }
 
+  public static async canMemberAccessWorkspace(
+    workspaceId: string,
+    agencyId: string,
+    userId: string
+  ) {
+    const member = await prisma.agencyMember.findFirst({
+      where: {
+        id: userId,
+        agencyId,
+      },
+      include: {
+        permissions: {
+          where: {
+            workspaceId,
+          },
+        },
+      },
+    });
+
+    const access =
+      !!member && (member.permissions.length > 0 || isAgencyAdmin(member.role));
+
+    return {
+      access,
+      manager: access && member.permissions[0]?.manager,
+    };
+  }
+
   public static async findAgencyMembersByWorkspaceId(
     workspaceId: string,
     agencyId: string
