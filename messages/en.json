@@ -323,5 +323,10 @@
     "HIGH": "High",
     "MEDIUM": "Medium",
     "LOW": "Low"
+  },
+
+  "NOT_FOUND": {
+    "TITLE": "Page Not Found",
+    "CAPTION": "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable."
   }
 }
