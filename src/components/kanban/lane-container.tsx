@@ -225,7 +225,7 @@ function LaneContainerHeader({
     [lane.Tickets]
   );
 
-  const { getCollapseState, toggleCollapse } = useKanban();
+  const { getCollapseState } = useKanban();
   const collapsed = getCollapseState(lane.id);
 
   const deleteLaneWithId = deleteLane.bind(null, {
@@ -297,7 +297,7 @@ function LaneContainerHeader({
               <Button
                 variant={"secondary"}
                 size="icon"
-                onClick={() => toggleCollapse(lane.id)}
+                // onClick={() => toggleCollapse(lane.id)}
               >
                 <ChevronRightIcon
                   className={clsx(
