@@ -524,6 +524,38 @@ class AgencyManager {
       },
     });
   }
+
+  public static async findWorkspacesCount(agencyId: string) {
+    return await prisma.workspace.count({
+      where: {
+        agencyId,
+      },
+    });
+  }
+
+  public static async findClientsCount(agencyId: string) {
+    return await prisma.client.count({
+      where: {
+        agencyId,
+      },
+    });
+  }
+
+  public static async findMembersCount(agencyId: string) {
+    return await prisma.agencyMember.count({
+      where: {
+        agencyId,
+      },
+    });
+  }
+
+  public static async findInvitationsCount(agencyId: string) {
+    return await prisma.invitation.count({
+      where: {
+        agencyId,
+      },
+    });
+  }
 }
 
 export default AgencyManager;

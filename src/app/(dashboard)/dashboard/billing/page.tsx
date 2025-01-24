@@ -95,6 +95,10 @@ const Billing = async () => {
       new Intl.DateTimeFormat(locale, {
         dateStyle: "long",
       }).format(subscription?.currentPeriodEnd) || "N/A",
+    TEAM_MEMBERS: await AgencyManager.findMembersCount(agencyId),
+    WORKSPACE: await AgencyManager.findWorkspacesCount(agencyId),
+    FILE_STORAGE: 0,
+    CUSTOM_URL: 0,
   };
 
   return (
@@ -148,7 +152,7 @@ const Billing = async () => {
                     key={feature.name}
                     icon={usages.find((u) => u.feature === feature.code)!.icon}
                     feature={t(`BILLING.${feature.code}`)}
-                    value={0}
+                    value={data[feature.code]}
                     max={feature.maxLimit}
                   />
                 ))}
