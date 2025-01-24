@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Role } from "@prisma/client";
+import { NotificationType } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -15,4 +16,18 @@ export function currencyFormat(currency: number) {
     style: "currency",
     currency: "USD",
   }).format(+currency);
+}
+
+export function getLinkByResourceType(
+  resourceType: NotificationType,
+  resourceId: string
+) {
+  switch (resourceType) {
+    case "workspace":
+      return `/workspace/${resourceId}`;
+    // case "ticket":
+    //   return `/ticket/${resourceId}`;
+    default:
+      return null;
+  }
 }

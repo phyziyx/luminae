@@ -16,11 +16,13 @@ import { Bell, CheckCheckIcon } from "lucide-react";
 
 export const NotificationsPopover: React.FC = () => {
   const t = useTranslations();
-  const { notifications, unreadCount, markAsRead, markAllAsRead } =
-    useNotifications();
-
-  const unreadNotifications = notifications.filter((n) => !n.read);
-  const readNotifications = notifications.filter((n) => n.read);
+  const {
+    unreadNotifications,
+    readNotifications,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+  } = useNotifications();
 
   return (
     <div className="relative">
@@ -66,36 +68,40 @@ export const NotificationsPopover: React.FC = () => {
             </TabsList>
             <TabsContent value="unread">
               <ScrollArea className="min-h-[100px] max-h-[300px]">
-                {unreadNotifications.length > 0 ? (
-                  unreadNotifications.map((notification) => (
-                    <NotificationItem
-                      key={notification.id}
-                      notification={notification}
-                      onMarkAsRead={markAsRead}
-                    />
-                  ))
-                ) : (
-                  <p className="text-center text-gray-500 dark:text-gray-400 py-4">
-                    {t("NOTIFICATIONS.NO_UNREAD")}
-                  </p>
-                )}
+                <div className="flex flex-col gap-2">
+                  {unreadNotifications.length > 0 ? (
+                    unreadNotifications.map((notification) => (
+                      <NotificationItem
+                        key={notification.id}
+                        notification={notification}
+                        onMarkAsRead={markAsRead}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-500 dark:text-gray-400 py-4">
+                      {t("NOTIFICATIONS.NO_UNREAD")}
+                    </p>
+                  )}
+                </div>
               </ScrollArea>
             </TabsContent>
             <TabsContent value="read">
               <ScrollArea className="min-h-[100px] max-h-[300px]">
-                {readNotifications.length > 0 ? (
-                  readNotifications.map((notification) => (
-                    <NotificationItem
-                      key={notification.id}
-                      notification={notification}
-                      onMarkAsRead={() => {}}
-                    />
-                  ))
-                ) : (
-                  <p className="text-center text-gray-500 dark:text-gray-400 py-4">
-                    {t("NOTIFICATIONS.NO_READ")}
-                  </p>
-                )}
+                <div className="flex flex-col gap-2">
+                  {readNotifications.length > 0 ? (
+                    readNotifications.map((notification) => (
+                      <NotificationItem
+                        key={notification.id}
+                        notification={notification}
+                        onMarkAsRead={() => {}}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-500 dark:text-gray-400 py-4">
+                      {t("NOTIFICATIONS.NO_READ")}
+                    </p>
+                  )}
+                </div>
               </ScrollArea>
             </TabsContent>
           </Tabs>

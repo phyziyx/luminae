@@ -4,7 +4,10 @@ import type React from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Notification } from "@prisma/client";
-import { EyeIcon } from "lucide-react";
+import { EyeIcon, Link2Icon } from "lucide-react";
+import Link from "next/link";
+import { getLinkByResourceType } from "@/lib/utils";
+import { NotificationType } from "@/lib/types";
 
 interface NotificationItemProps {
   notification: Notification;
@@ -40,16 +43,32 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           {notification.createdAt.toLocaleString()}
         </p>
       </div>
-      {!notification.read && (
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onMarkAsRead(notification.id)}
-          aria-label={t("MARK_AS_READ")}
-        >
-          <EyeIcon />
-        </Button>
-      )}
+      <div className="flex flex-col">
+        {!notification.read && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onMarkAsRead(notification.id)}
+            aria-label={t("MARK_AS_READ")}
+          >
+            <EyeIcon />
+          </Button>
+        )}
+        {notification.resourceType && notification.resourceId && (
+          <Link
+            href={
+              getLinkByResourceType(
+                notification.resourceType as NotificationType,
+                notification.resourceId
+              ) ?? ""
+            }
+          >
+            <Button variant="ghost" size="sm" aria-label={t("VIEW")}>
+              <Link2Icon />
+            </Button>
+          </Link>
+        )}
+      </div>
     </div>
   );
 };

@@ -7,15 +7,17 @@ import {
 } from "@/actions/notifications";
 import { Notification } from "@prisma/client";
 import type React from "react";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
 import useSWR from "swr";
 
 interface NotificationsContextType {
-  notifications: Notification[];
+  readNotifications: Notification[];
+  unreadNotifications: Notification[];
   unreadCount: number;
+  loading: boolean;
+  //
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
-  loading: boolean;
 }
 
 const NotificationsContext = createContext<
@@ -47,9 +49,18 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
     revalidateOnReconnect: true,
   });
 
-  console.log("[client] notifications", notifications);
-
-  const unreadCount = (notifications || []).filter((n) => !n.read).length;
+  const unreadNotifications = useMemo(
+    () => notifications.filter((n) => !n.read),
+    [notifications]
+  );
+  const readNotifications = useMemo(
+    () => notifications.filter((n) => n.read),
+    [notifications]
+  );
+  const unreadCount = useMemo(
+    () => (notifications || []).filter((n) => !n.read).length,
+    [notifications]
+  );
 
   const markAsRead = async (id: string) => {
     await markAsReadAction(id);
@@ -79,7 +90,8 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <NotificationsContext.Provider
       value={{
-        notifications: notifications,
+        unreadNotifications,
+        readNotifications,
         unreadCount,
         markAsRead,
         markAllAsRead,
