@@ -34,7 +34,7 @@ export default function SignUpPage() {
 
               {/* Start */}
               <SignUp.Step name="start">
-                <Card className="w-full sm:w-96 bg-white">
+                <Card className="w-full sm:w-96 bg-white dark:bg-muted/30">
                   <CardHeader>
                     <CardTitle>{t("CREATE_ACCOUNT_HEADER")}</CardTitle>
                     <CardDescription>

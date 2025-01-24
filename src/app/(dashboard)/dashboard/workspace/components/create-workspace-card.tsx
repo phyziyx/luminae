@@ -27,7 +27,7 @@ const CreateWorkspaceCard = async ({
   const isLimitReached = !isInfinite && created >= max;
 
   return (
-    <Card className="gap-2 max-w-sm max-h-sm bg-white">
+    <Card className="gap-2 max-w-sm max-h-sm bg-white dark:bg-muted/50">
       <CardHeader>
         <CardTitle className="flex flex-row place-content-between">
           {t("WORKSPACE_DETAILS.CREATE_A_WORKSPACE")}

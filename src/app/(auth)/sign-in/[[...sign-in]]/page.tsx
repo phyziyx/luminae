@@ -32,7 +32,7 @@ export default function SignInPage() {
 
               {/* Start */}
               <SignIn.Step name="start">
-                <Card className="w-full sm:w-96 bg-white">
+                <Card className="w-full sm:w-96 bg-white dark:bg-muted/30">
                   <CardHeader>
                     <CardTitle>{t("SIGN_IN_HEADER")}</CardTitle>
                     <CardDescription>
