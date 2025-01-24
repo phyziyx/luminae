@@ -158,7 +158,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
                         className={cn({
                           "bg-blue-500 hover:bg-blue-600 text-white font-extrabold":
                             isActive,
-                          "hover:bg-blue-300 dark:hover:bg-blue-400 font-normal":
+                          "hover:bg-blue-300 dark:hover:bg-muted font-normal":
                             !isActive,
                         })}
                       >
