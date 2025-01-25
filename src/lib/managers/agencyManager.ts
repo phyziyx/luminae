@@ -277,7 +277,9 @@ class AgencyManager {
   ) {
     const member = await prisma.agencyMember.findFirst({
       where: {
-        id: userId,
+        user: {
+          id: userId,
+        },
         agencyId,
       },
       include: {
