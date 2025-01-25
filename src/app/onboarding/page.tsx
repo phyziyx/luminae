@@ -1,86 +1,45 @@
-"use client";
+"use server";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { CheckboxCard } from "@/components/site/checkbox-card";
-import AgencyDetails from "../(dashboard)/components/agency-details/agency-details";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
+import Logo from "@/components/logo";
+import ChooseYourPath from "@/components/onboarding/choose-your-path";
+import AgencyManager from "@/lib/managers/agencyManager";
+import UserManager from "@/lib/managers/userManager";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-function CommunityUser() {
-  const t = useTranslations();
+export default async function Onboarding() {
+  const user = await currentUser();
+  const { redirectToSignIn } = await auth();
 
-  return (
-    <div className="max-w-md mx-auto text-center">
-      <h2 className="text-2xl font-bold mb-4 text-blue-800">
-        {t("COMMUNITY_FORUM.WELCOME")}
-      </h2>
-      <p className="text-lg mb-6 text-blue-700 dark:text-slate-100">
-        {t("COMMUNITY_FORUM.COMING_SOON")}
-      </p>
-      <p className="text-blue-600 dark:text-slate-100">{t("WORKING_HARD")}</p>
-      <Link href="/">
-        <Button className="mt-2">Go Back</Button>
-      </Link>
-    </div>
-  );
-}
+  if (!user) {
+    redirectToSignIn();
+    return;
+  }
 
-export default function Onboarding() {
-  const [selectedOption, setSelectedOption] = useState<
-    "agency" | "community" | null
-  >(null);
-  const [step, setStep] = useState(1);
+  const email = user.emailAddresses[0].emailAddress;
 
-  const handleSelect = (option: "agency" | "community") => {
-    setSelectedOption(option);
-  };
+  const foundUser = await UserManager.findUser(email);
+  if (!foundUser) {
+    // User not found, lets create an account...
+    await UserManager.createUser({
+      id: user.id,
+      email: email,
+      firstName: user.firstName!,
+      lastName: user.lastName!,
+      avatarUrl: user.imageUrl,
+    });
+  }
 
-  const handleNext = () => {
-    if (selectedOption) {
-      setStep(2);
-    }
-  };
+  const agencyMember = await AgencyManager.findUserAgency(email);
+
+  if (agencyMember) {
+    redirect("/dashboard");
+  }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-4xl p-8 bg-white dark:bg-muted/40 rounded-lg">
-        {step === 1 ? (
-          <>
-            <h1 className="text-3xl font-bold mb-6 text-center text-blue-500 dark:text-blue-700">
-              Choose Your Path
-            </h1>
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
-              <CheckboxCard
-                title="I'm an Agency Owner"
-                caption="Create your agency and streamline your operations + access community forums"
-                selected={selectedOption === "agency"}
-                onSelect={() => handleSelect("agency")}
-              />
-              <CheckboxCard
-                title="I'm a Community Member"
-                caption="Browse our community forums"
-                note="You can choose to create your agency later"
-                selected={selectedOption === "community"}
-                onSelect={() => handleSelect("community")}
-              />
-            </div>
-            <div className="flex justify-center">
-              <Button
-                onClick={handleNext}
-                disabled={!selectedOption}
-                variant={"default"}
-              >
-                NEXT
-              </Button>
-            </div>
-          </>
-        ) : selectedOption === "agency" ? (
-          <AgencyDetails />
-        ) : (
-          <CommunityUser />
-        )}
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <Logo className="text-blue-500 max-w-sm" />
+      <ChooseYourPath />
     </div>
   );
 }
