@@ -24,7 +24,7 @@ export default async function NotFound() {
           href={"/"}
           className="max-w-48 mx-auto flex justify-center py-2 px-4 shadow-sm text-sm font-medium"
         >
-          <Button>Back to Home</Button>
+          <Button>{t("BUTTONS.BACK_TO_HOME")}</Button>
         </Link>
       </div>
     </div>

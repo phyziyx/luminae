@@ -31,6 +31,16 @@ export default async function WorkspacePage({
     return <div>Workspace not found!</div>;
   }
 
+  const { access, manager } = await AgencyManager.canMemberAccessWorkspace(
+    workspace.id,
+    workspace.agencyId,
+    user.id
+  );
+
+  if (!access) {
+    return <div>Access denied!</div>;
+  }
+
   const lanes = await AgencyManager.getWorkspaceKanbanBoard(id);
 
   return (
@@ -51,6 +61,7 @@ export default async function WorkspacePage({
         <KanbanProvider
           agencyId={workspace.agencyId}
           workspaceId={workspace.id}
+          manager={manager}
         >
           <KanbanBoard data={lanes} />
         </KanbanProvider>

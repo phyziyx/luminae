@@ -37,6 +37,7 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { cn, isAgencyAdmin } from "@/lib/utils";
+import { NotificationsProvider } from "@/providers/notifications-provider";
 import { UserButton } from "@clerk/nextjs";
 import { Agency, Workspace, Role } from "@prisma/client";
 import {
@@ -310,7 +311,9 @@ const DashboardSidebar = ({
                 )}
               >
                 <Logo className="text-blue-500" />
-                <NotificationsPopover />
+                <NotificationsProvider>
+                  <NotificationsPopover />
+                </NotificationsProvider>
               </div>
             </SidebarMenuItem>
           </SidebarMenu>

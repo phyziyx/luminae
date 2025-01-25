@@ -1,4 +1,5 @@
 import {
+  BanIcon,
   CalendarIcon,
   ChevronDownIcon,
   ChevronsUpIcon,
@@ -199,16 +200,20 @@ export function TicketCard({ ticket }: { ticket: LaneTicket }) {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                {ticket.tag === "High" ? (
-                  <ChevronsUpIcon className="text-red-500 bg-red-100 rounded-full p-1" />
-                ) : ticket.tag === "Medium" ? (
-                  <ChevronUpIcon className="text-orange-500 bg-orange-100 rounded-full p-1" />
+                {ticket.open === true ? (
+                  ticket.tag === "High" ? (
+                    <ChevronsUpIcon className="text-red-500 bg-red-100 rounded-full p-1" />
+                  ) : ticket.tag === "Medium" ? (
+                    <ChevronUpIcon className="text-orange-500 bg-orange-100 rounded-full p-1" />
+                  ) : (
+                    <ChevronDownIcon className="text-blue-500 bg-blue-100 rounded-full p-1" />
+                  )
                 ) : (
-                  <ChevronDownIcon className="text-blue-500 bg-blue-100 rounded-full p-1" />
+                  <BanIcon className="text-red-500 bg-red-100 rounded-full p-1" />
                 )}
               </TooltipTrigger>
-              <TooltipContent className="font-bold bg-slate-200 text-black dark:bg-slate-900 dark:text-white p-2 rounded-lg">
-                <p>{ticket.tag} Priority</p>
+              <TooltipContent className="font-bold bg-slate-200 text-black dark:bg-slate-700 dark:text-white p-2 rounded-lg">
+                {!ticket.open ? <p>Closed</p> : <p>{ticket.tag} Priority</p>}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>

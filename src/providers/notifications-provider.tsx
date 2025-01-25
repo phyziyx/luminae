@@ -7,6 +7,7 @@ import {
 } from "@/actions/notifications";
 import { toast } from "@/hooks/use-toast";
 import { Notification } from "@prisma/client";
+import { useTranslations } from "next-intl";
 import type React from "react";
 import { createContext, useContext, useEffect, useMemo, useRef } from "react";
 import useSWR from "swr";
@@ -38,7 +39,8 @@ export const useNotifications = () => {
 export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  // const { mutate } = useSWRConfig();
+  const t = useTranslations();
+
   const {
     data: notifications = [],
     isLoading: loading,
@@ -46,8 +48,9 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   } = useSWR(["notifications"], fetchNotificationsAction, {
     refreshInterval: 30_000,
     dedupingInterval: 1_000,
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    errorRetryCount: 2,
   });
 
   const previousUnreadCountRef = useRef(0);
@@ -68,12 +71,15 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (unreadCount > previousUnreadCountRef.current) {
       toast({
-        title: "You have unread notifications",
-        description: `You have ${unreadCount} unread notifications`,
+        title: t("NOTIFICATIONS.NEW_NOTIFICATIONS_TITLE"),
+        description: t("NOTIFICATIONS.NEW_NOTIFICATIONS_DESCRIPTION", {
+          COUNT: unreadCount,
+        }),
       });
 
       previousUnreadCountRef.current = unreadCount;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [unreadCount]);
 
   const markAsRead = async (id: string) => {

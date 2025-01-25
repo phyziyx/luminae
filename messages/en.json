@@ -239,7 +239,8 @@
     "CREATE": "Create",
     "DELETE": "Delete",
     "CANCEL": "Cancel",
-    "CONFIRM": "Confirm"
+    "CONFIRM": "Confirm",
+    "BACK_TO_HOME": "Back to Home"
   },
 
   "FORMS": {
@@ -339,6 +340,8 @@
     "NO_READ": "No read notifications",
     "MARK_AS_READ": "Mark as read",
     "VIEW": "View",
+    "NEW_NOTIFICATIONS_TITLE": "You have unread notifications",
+    "NEW_NOTIFICATIONS_DESCRIPTION": "You have {COUNT} unread notifications",
     "ACTIONS": {
       "WELCOME": "Welcome to Luminae - Your One Stop Agency Management Platform!",
       "TICKET_ASSIGNED": "You have been assigned a new ticket",
@@ -346,5 +349,22 @@
       "WORKSPACE_MANAGER": "You have been assigned as a manager for a workspace",
       "AGENCY_ADMIN": "You have been assigned as the admin of your agency"
     }
+  },
+
+  "ONBOARDING": {
+    "CHOOSE_YOUR_PATH": "Choose Your Path",
+    "CHOOSE_YOUR_PATH_DESCRIPTION": "Select the path that best describes you.",
+    "AGENCY_OWNER": "I'm a Agency Owner",
+    "AGENCY_OWNER_CAPTION": "Create your agency and streamline your operations + access community forums",
+    "FORUM_MEMBER": "I'm a Community Member",
+    "FORUM_MEMBER_CAPTION": "Join the community forums and connect with other members",
+    "FORUM_MEMBER_NOTE": "You can choose to create your agency later",
+    "NEXT": "NEXT"
+  },
+
+  "COMMUNITY_FORUM": {
+    "WELCOME": "Welcome, Community Member!",
+    "COMING_SOON": "Our community forums are coming soon...",
+    "WORKING_HARD": "We're working hard to bring you an amazing community experience. Stay tuned for updates, and thank you for your patience!"
   }
 }

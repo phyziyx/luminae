@@ -1,19 +1,16 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import DashboardSidebar from "./components/sidebar";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { currentUser, auth } from "@clerk/nextjs/server";
-import AgencyDetails from "./components/agency-details/agency-details";
-import Logo from "@/components/logo";
+import { currentUser } from "@clerk/nextjs/server";
 import UserManager from "@/lib/managers/userManager";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
+import { redirect } from "next/navigation";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await currentUser();
-  const { redirectToSignIn } = await auth();
 
   if (!user) {
-    redirectToSignIn();
     return;
   }
 
@@ -31,24 +28,15 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
     });
   }
 
-  // TODO: Check if user is an admin, and redirect
-
-  // const isAdmin = true;
-  // if (isAdmin){
-  //   redirect("/admin-dashboard");
-  // }
+  const isAdmin = await UserManager.isAdmin(user.id);
+  if (isAdmin) {
+    redirect("/admin-dashboard");
+  }
 
   const agencyMember = await AgencyManager.findUserAgency(email);
 
   if (!agencyMember) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <Logo className="text-blue-500 max-w-sm" />
-        <div className="w-full max-w-2xl p-6">
-          <AgencyDetails data={{ companyEmail: email }} />
-        </div>
-      </div>
-    );
+    redirect("/onboarding");
   }
 
   const workspaces = await AgencyManager.findAndFilterWorkspaces(
