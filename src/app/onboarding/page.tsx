@@ -1,5 +1,3 @@
-"use server";
-
 import Logo from "@/components/logo";
 import ChooseYourPath from "@/components/onboarding/choose-your-path";
 import AgencyManager from "@/lib/managers/agencyManager";

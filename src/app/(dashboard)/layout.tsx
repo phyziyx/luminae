@@ -1,7 +1,7 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import DashboardSidebar from "./components/sidebar";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { currentUser, auth } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import UserManager from "@/lib/managers/userManager";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
@@ -9,10 +9,8 @@ import { redirect } from "next/navigation";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = await currentUser();
-  const { redirectToSignIn } = await auth();
 
   if (!user) {
-    redirectToSignIn();
     return;
   }
 
