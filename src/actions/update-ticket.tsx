@@ -89,6 +89,23 @@ export default async function onUpdateTicket(values: LaneTicketFormSchema) {
         });
       }
     } else {
+      const assigneeId = await prisma.ticket.findFirst({
+        where: {
+          id: values.id,
+          laneId: values.laneId,
+        },
+        select: {
+          assigneeUserId: true,
+        },
+      });
+
+      if (values.userId && values.userId !== assigneeId?.assigneeUserId) {
+        await NotificationManager.create(values.userId, "TICKET_ASSIGNED", {
+          resourceId: lane.workspaceId,
+          resourceType: "workspace",
+        });
+      }
+
       await prisma.ticket.update({
         data: {
           title: values.name,
