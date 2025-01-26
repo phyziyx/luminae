@@ -100,6 +100,7 @@ const data: NavData = {
       title: "Overview",
       url: "/dashboard",
       icon: SquareTerminalIcon,
+      roles: ["AGENCY_OWNER", "AGENCY_ADMIN"],
     },
     {
       title: "Billing",
@@ -119,7 +120,7 @@ const data: NavData = {
       title: "Clients",
       url: "/dashboard/clients",
       icon: UserCircle2Icon,
-      items: [],
+      roles: ["AGENCY_OWNER", "AGENCY_ADMIN"],
     },
     {
       title: "Workspaces",
@@ -132,6 +133,7 @@ const data: NavData = {
       url: "/dashboard/settings",
       icon: Settings2Icon,
       items: [],
+      roles: ["AGENCY_OWNER"],
     },
   ],
   navSecondary: [

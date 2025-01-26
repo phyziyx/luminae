@@ -10,6 +10,7 @@ import prisma from "../db";
 import { v7 } from "uuid";
 import { clerkClient } from "@clerk/nextjs/server";
 import { isAgencyAdmin } from "../utils";
+import SubscriptionManager from "./subscriptionManager";
 
 type CreateAgency = Omit<
   Agency,
@@ -58,6 +59,8 @@ class AgencyManager {
             role: Role.AGENCY_OWNER,
           },
         });
+
+        await SubscriptionManager.createFreePlan(agencyId);
       }
 
       return createdAgency;
