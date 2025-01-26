@@ -1,0 +1,22 @@
+@startuml notifications
+start
+:User Opens Notifications Panel;
+
+if (Any Unread Notifications?) then (Yes)
+  :Display Unread and Read Notifications;
+else (No)
+  :Display All Read Notifications;
+endif
+
+if (User Action?) then (Mark All as Read)
+  :Mark All Notifications as Read;
+  :Refresh Notifications Panel;
+else if (Mark Individually)
+  :Mark Notification as Read;
+  :Refresh Notifications Panel;
+else (Do Nothing)
+  stop
+endif
+
+stop
+@enduml
