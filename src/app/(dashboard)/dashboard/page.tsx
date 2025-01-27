@@ -11,12 +11,12 @@ import { Separator } from "@/components/ui/separator";
 import { DollarSign, TicketIcon, UsersRoundIcon } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
-import { SampleChart } from "../components/chart/area-chart";
 import { ClosingRateChart } from "../components/chart/closing-rate-chart";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { isAgencyAdmin } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import KpiManager from "@/lib/managers/kpiManager";
+import { Component } from "../components/chart/bar-chart";
 
 const Dashboard = async () => {
   const { userId } = await auth();
@@ -39,6 +39,14 @@ const Dashboard = async () => {
   // const currentYear = new Date().getFullYear();
 
   const kpis = await KpiManager.fetchAgencyKpi(agencyMember!.agencyId);
+
+  const kpiData = await KpiManager.fetchClientsOnboardedByMonth(
+    agencyMember!.agencyId
+  );
+
+  const closingRateData = await KpiManager.fetchClientClosingRate(
+    agencyMember!.agencyId
+  );
 
   return (
     <>
@@ -110,11 +118,11 @@ const Dashboard = async () => {
         <div className="grid auto-rows-min gap-4 md:grid-cols-4 grid-cols-1">
           <Card className="bg-muted/50 dark:bg-muted md:col-span-3">
             <CardHeader>
-              <CardTitle>{t("INCOME_TIMELINE")}</CardTitle>
+              <CardTitle>{t("CLIENT_TIMELINE")}</CardTitle>
             </CardHeader>
             <CardContent>
               {/* TODO: */}
-              <SampleChart />
+              <Component data={kpiData} />
             </CardContent>
           </Card>
           <Card className="bg-muted/50 dark:bg-muted w-full">
@@ -123,7 +131,7 @@ const Dashboard = async () => {
             </CardHeader>
             <CardContent>
               {/* TODO: */}
-              <ClosingRateChart />
+              <ClosingRateChart data={closingRateData} />
             </CardContent>
           </Card>
         </div>

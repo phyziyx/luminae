@@ -71,6 +71,7 @@
   "CURRENT_GOAL_ACHIEVED": "Current: {GOAL}",
   "CURRENT_GOAL": "Goal: {GOAL}",
   "INCOME_TIMELINE": "Income Timeline",
+  "CLIENT_TIMELINE": "Client Timeline",
   "SALES_PIPELINE": "Sales Pipeline",
   "CREATE_WORKSPACE_CAPTION": "You can switch between your agency and workspaces from the sidebar",
 
