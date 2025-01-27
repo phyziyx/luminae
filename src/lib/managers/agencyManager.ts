@@ -624,7 +624,8 @@ class AgencyManager {
     return {
       thisMonth: thisMonthCount,
       lastMonth: lastMonthCount,
-      difference: (thisMonthCount - lastMonthCount) / (lastMonthCount || 1),
+      difference:
+        ((thisMonthCount - lastMonthCount) / (lastMonthCount || 1)) * 100,
     };
   }
 }

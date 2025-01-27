@@ -114,7 +114,7 @@ const Dashboard = async () => {
             <CardHeader>
               <CardTitle>Platform Goal</CardTitle>
               <CardDescription>
-                <span className="mt-2">{t("AGENCY_GOAL_DESCRIPTION")}</span>
+                <span className="mt-2">{t("PLATFORM_GOAL_DESCRIPTION")}</span>
               </CardDescription>
             </CardHeader>
             <CardFooter>
@@ -188,7 +188,9 @@ const Dashboard = async () => {
                   </div>
                   <div>this month</div>
                 </CardContent>
-                <CardFooter className="flex-col gap-2 text-sm"></CardFooter>
+                <CardFooter className="flex-col gap-2 text-xs">
+                  {thisMonth} this month, compared to {lastMonth} last month.
+                </CardFooter>
               </Card>
             </CardContent>
           </Card>
