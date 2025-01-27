@@ -4,13 +4,11 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { DollarSign, Goal, UsersRoundIcon } from "lucide-react";
+import { DollarSign, TicketIcon, UsersRoundIcon } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
 import { SampleChart } from "../components/chart/area-chart";
@@ -18,6 +16,7 @@ import { ClosingRateChart } from "../components/chart/closing-rate-chart";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { isAgencyAdmin } from "@/lib/utils";
 import { redirect } from "next/navigation";
+import KpiManager from "@/lib/managers/kpiManager";
 
 const Dashboard = async () => {
   const { userId } = await auth();
@@ -37,15 +36,9 @@ const Dashboard = async () => {
     redirect("/dashboard/workspace");
   }
 
-  const currentYear = new Date().getFullYear();
+  // const currentYear = new Date().getFullYear();
 
-  const income = Intl.NumberFormat("en-US").format(1337);
-  const potentialIncome = Intl.NumberFormat("en-US").format(4200);
-  const activeClients = 12;
-  const goalProgress = 6;
-  const currentGoal = 9;
-
-  const progressPercent = (goalProgress / currentGoal) * 100;
+  const kpis = await KpiManager.fetchAgencyKpi(agencyMember!.agencyId);
 
   return (
     <>
@@ -61,12 +54,12 @@ const Dashboard = async () => {
           <Card className="bg-muted/50 dark:bg-muted flex-1 relative">
             <CardHeader>
               <CardDescription>{t("INCOME")}</CardDescription>
-              <CardTitle className="text-4xl">${income}</CardTitle>
-              <small className="text-xs text-muted-foreground">
+              <CardTitle className="text-4xl">${kpis.income}</CardTitle>
+              {/* <small className="text-xs text-muted-foreground">
                 {t("FOR_THE_YEAR", {
                   YEAR: currentYear,
                 })}
-              </small>
+              </small> */}
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
               {t("INCOME_DESCRIPTION")}
@@ -77,12 +70,14 @@ const Dashboard = async () => {
           <Card className="bg-muted/50 dark:bg-muted flex-1 relative">
             <CardHeader>
               <CardDescription>{t("POTENTIAL_INCOME")}</CardDescription>
-              <CardTitle className="text-4xl">${potentialIncome}</CardTitle>
-              <small className="text-xs text-muted-foreground">
+              <CardTitle className="text-4xl">
+                ${kpis.potentialIncome}
+              </CardTitle>
+              {/* <small className="text-xs text-muted-foreground">
                 {t("FOR_THE_YEAR", {
                   YEAR: currentYear,
                 })}
-              </small>
+              </small> */}
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
               {t("POTENTIAL_INCOME_DESCRIPTION")}
@@ -93,7 +88,7 @@ const Dashboard = async () => {
           <Card className="bg-muted/50 dark:bg-muted flex-1 relative">
             <CardHeader>
               <CardDescription>{t("ACTIVE_WORKSPACES")}</CardDescription>
-              <CardTitle className="text-4xl">{activeClients}</CardTitle>
+              <CardTitle className="text-4xl">{kpis.workspaces}</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
               {t("ACTIVE_WORKSPACES_DESCRIPTION")}
@@ -103,29 +98,13 @@ const Dashboard = async () => {
 
           <Card className="bg-muted/50 dark:bg-muted flex-1 relative">
             <CardHeader>
-              <CardTitle>{t("AGENCY_GOAL")}</CardTitle>
-              <CardDescription>
-                <span className="mt-2">{t("AGENCY_GOAL_DESCRIPTION")}</span>
-              </CardDescription>
+              <CardDescription>{t("AGENCY_GOAL")}</CardDescription>
+              <CardTitle className="text-4xl">{kpis.tickets}</CardTitle>
             </CardHeader>
-            <CardFooter>
-              <div className="flex flex-col w-full">
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground text-sm">
-                    {t("CURRENT_GOAL_ACHIEVED", {
-                      GOAL: goalProgress,
-                    })}
-                  </span>
-                  <span className="text-muted-foreground text-sm">
-                    {t("CURRENT_GOAL", {
-                      GOAL: currentGoal,
-                    })}
-                  </span>
-                </div>
-                <Progress value={progressPercent} />
-              </div>
-            </CardFooter>
-            <Goal className="absolute right-4 top-4 text-muted-foreground" />
+            <CardContent className="text-sm text-muted-foreground">
+              {t("AGENCY_GOAL_DESCRIPTION")}
+            </CardContent>
+            <TicketIcon className="absolute right-4 top-4 text-muted-foreground" />
           </Card>
         </div>
         <div className="grid auto-rows-min gap-4 md:grid-cols-4 grid-cols-1">

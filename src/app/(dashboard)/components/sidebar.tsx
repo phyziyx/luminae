@@ -312,7 +312,9 @@ const DashboardSidebar = ({
                   sidebar.open ? "" : "-mx-1"
                 )}
               >
-                <Logo className="text-blue-500" />
+                <Link href={"/"}>
+                  <Logo className="text-blue-500 h-[36px]" />
+                </Link>
                 <NotificationsProvider>
                   <NotificationsPopover />
                 </NotificationsProvider>
