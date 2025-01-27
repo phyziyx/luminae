@@ -161,9 +161,18 @@ export default function SignUpPage() {
                     <CardTitle>{t("CONTINUE_REGISTRATION")}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <Clerk.Field name="username" className="space-y-2">
-                      <Clerk.Label>
-                        <Label>{t("USERNAME")}</Label>
+                    <Clerk.Field name="firstName" className="space-y-2">
+                      <Clerk.Label asChild>
+                        <Label>{t("FIRSTNAME")}</Label>
+                      </Clerk.Label>
+                      <Clerk.Input type="text" required asChild>
+                        <Input />
+                      </Clerk.Input>
+                      <Clerk.FieldError className="block text-sm text-destructive" />
+                    </Clerk.Field>
+                    <Clerk.Field name="lastName" className="space-y-2">
+                      <Clerk.Label asChild>
+                        <Label>{t("LASTNAME")}</Label>
                       </Clerk.Label>
                       <Clerk.Input type="text" required asChild>
                         <Input />

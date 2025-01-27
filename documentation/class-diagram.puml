@@ -49,15 +49,17 @@ class Admin {
 class Workspace {
   - String name
   - String description
-  + manageTasks()
+  + manageTickets()
   + manageClients()
   + assignRoles()
 }
 
-class Task {
+class Ticket {
   - String title
   - String status
   - String assignee
+  - Client client
+  - User assigned
   + updateStatus()
   + add()
   + delete()
@@ -92,7 +94,11 @@ class Payment {
 class Notification {
   - String message
   - Date timestamp
+  - String resourceId
+  - String resourceType
   + sendNotification()
+  + markAsRead()
+  + markAllAsRead()
 }
 
 class Media {
@@ -111,7 +117,7 @@ Agency -- Workspace : "contains"
 Agency -- Client : "manages"
 Agency -- Notification : "receives"
 Agency -- Payment : "handles"
-Workspace -- Task : "contains"
+Workspace -- Ticket : "contains"
 Workspace -- TeamMember : "assigns"
 Workspace -- Client : "manages"
 Luminae -- Payment : "integrates"

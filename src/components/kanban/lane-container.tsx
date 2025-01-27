@@ -389,7 +389,20 @@ function LaneContainerHeader({
           )}
           <DropdownMenuItem
             className="flex items-center gap-2"
-            onClick={() => alert("Create ticket")}
+            onClick={() => {
+              openModal(
+                <CustomModal
+                  title="Add a Ticket"
+                  caption="Add a ticket to the lane"
+                >
+                  <LaneTicketModal
+                    workspaceId={lane.workspaceId}
+                    laneId={lane.id}
+                    ticketId=""
+                  />
+                </CustomModal>
+              );
+            }}
           >
             <PlusCircleIcon size={15} />
             Create Ticket

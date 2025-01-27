@@ -14,6 +14,8 @@
   "AGENCIES": "Agencies",
   "PACKAGES": "Packages",
   "USERS": "Users",
+  "NEXT": "Next",
+  "WORKING_HARD": "We're working hard to bring you an amazing community experience. Stay tuned for updates, and thank you for your patience!",
 
   "FIRSTNAME": "First Name",
   "LASTNAME": "Last Name",
@@ -30,7 +32,6 @@
   "CONTINUE": "Continue",
   "ALREADY_HAVE_AN_ACCOUNT": "Already have an account? Sign in",
   "CONTINUE_REGISTRATION": "Continue registration",
-  "USERNAME": "Username",
   "VERIFY_EMAIL": "Verify your email",
   "VERIFICATION_EMAIL_SENT": "Use the verification link sent to your email address",
   "DIDNT_RECEIVE_CODE_RESEND": "Didn't receive a code? Resend",
@@ -65,11 +66,13 @@
   "POTENTIAL_INCOME_DESCRIPTION": "This is how much you can close.",
   "ACTIVE_WORKSPACES": "Active Workspaces",
   "ACTIVE_WORKSPACES_DESCRIPTION": "Reflects the number of workspaces you own and manage.",
-  "AGENCY_GOAL": "Agency Goal",
-  "AGENCY_GOAL_DESCRIPTION": "This is the target you need to achieve to meet your goal.",
+  "AGENCY_GOAL": "Total Active Tickets",
+  "AGENCY_GOAL_DESCRIPTION": "Reflects the number of tickets you currently have open",
+  "PLATFORM_GOAL_DESCRIPTION": "Reflects the agency goal for the year",
   "CURRENT_GOAL_ACHIEVED": "Current: {GOAL}",
   "CURRENT_GOAL": "Goal: {GOAL}",
   "INCOME_TIMELINE": "Income Timeline",
+  "CLIENT_TIMELINE": "Client Timeline",
   "SALES_PIPELINE": "Sales Pipeline",
   "CREATE_WORKSPACE_CAPTION": "You can switch between your agency and workspaces from the sidebar",
 
@@ -85,6 +88,9 @@
   "SUBJECT": "Subject",
   "DESCRIPTION": "Description",
   "SUBMIT": "Submit",
+
+  "LATEST_AGENCIES": "Latest Agencies",
+  "LATEST_AGENCIES_DESCRIPTION": "A list of the latest agencies created on Luminae.",
 
   "AGENCY_DETAILS": {
     "SAVE_AGENCY_INFORMATION": "Save Agency Information",

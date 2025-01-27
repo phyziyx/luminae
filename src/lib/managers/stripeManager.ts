@@ -3,6 +3,7 @@ import AgencyManager from "./agencyManager";
 import prisma from "../db";
 import { Subscription, SubscriptionStatus } from "@prisma/client";
 import PackageManager from "./packageManager";
+import { v7 } from "uuid";
 
 class StripeManager {
   private _stripe: Stripe;
@@ -131,7 +132,7 @@ class StripeManager {
       where: {
         agencyId: agency.id,
       },
-      create: data,
+      create: { ...data, id: v7() },
       update: data,
     });
 

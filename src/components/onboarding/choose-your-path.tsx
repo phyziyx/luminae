@@ -53,7 +53,7 @@ export default function ChooseYourPath() {
               disabled={!selectedOption}
               variant={"default"}
             >
-              {t("NEXT")}
+              {t("ONBOARDING.NEXT")}
             </Button>
           </div>
         </>
