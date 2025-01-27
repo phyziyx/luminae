@@ -17,6 +17,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { BirdIcon } from "lucide-react";
 
 // Define the type for chart data
 interface ChartData {
@@ -74,6 +75,8 @@ export function ClosingRateChart({
     },
   ];
 
+  const isEmpty = totalClients === 0;
+
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
@@ -83,58 +86,66 @@ export function ClosingRateChart({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfig}
-          className="mx-auto aspect-square max-h-[250px]"
-        >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={chartData}
-              dataKey="clients"
-              nameKey="status"
-              innerRadius={60}
-              strokeWidth={5}
-            >
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
-                        x={viewBox.cx}
-                        y={viewBox.cy}
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                      >
-                        <tspan
+        {isEmpty ? (
+          <BirdIcon className="mt-2 mb-2 w-20 h-20 mx-auto text-muted-foreground" />
+        ) : (
+          <ChartContainer
+            config={chartConfig}
+            className="mx-auto aspect-square max-h-[250px]"
+          >
+            <PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Pie
+                data={chartData}
+                dataKey="clients"
+                nameKey="status"
+                innerRadius={60}
+                strokeWidth={5}
+              >
+                <Label
+                  content={({ viewBox }) => {
+                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                      return (
+                        <text
                           x={viewBox.cx}
                           y={viewBox.cy}
-                          className="fill-foreground text-3xl font-bold"
+                          textAnchor="middle"
+                          dominantBaseline="middle"
                         >
-                          {closingRate.toLocaleString()}%
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
-                        >
-                          Closing Rate
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
-            </Pie>
-          </PieChart>
-        </ChartContainer>
+                          <tspan
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            className="fill-foreground text-3xl font-bold"
+                          >
+                            {closingRate.toLocaleString()}%
+                          </tspan>
+                          <tspan
+                            x={viewBox.cx}
+                            y={(viewBox.cy || 0) + 24}
+                            className="fill-muted-foreground"
+                          >
+                            Closing Rate
+                          </tspan>
+                        </text>
+                      );
+                    }
+                  }}
+                />
+              </Pie>
+            </PieChart>
+          </ChartContainer>
+        )}
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="leading-none text-muted-foreground">
-          Showing data for {totalClients.toLocaleString()} total clients
+          {isEmpty ? (
+            <>Wow, such empty</>
+          ) : (
+            <>Showing data for {totalClients.toLocaleString()} total clients</>
+          )}
         </div>
       </CardFooter>
     </Card>
