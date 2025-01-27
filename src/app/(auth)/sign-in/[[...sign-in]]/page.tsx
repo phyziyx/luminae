@@ -96,6 +96,16 @@ export default function SignInPage() {
                       </Clerk.Input>
                       <Clerk.FieldError className="block text-sm text-destructive" />
                     </Clerk.Field>
+
+                    <Clerk.Field name="password" className="space-y-2">
+                      <Clerk.Label className="text-sm  font-medium text-zinc-950">
+                        Password
+                      </Clerk.Label>
+                      <Clerk.Input type="password" required asChild>
+                        <PasswordInput />
+                      </Clerk.Input>
+                      <Clerk.FieldError className="block text-sm text-red-400" />
+                    </Clerk.Field>
                   </CardContent>
                   <CardFooter>
                     <div className="grid w-full gap-y-4">

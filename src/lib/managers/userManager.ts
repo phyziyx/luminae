@@ -157,6 +157,10 @@ class UserManager {
 
     return user?.isAdmin || false;
   }
+
+  public static getAllUsersCount() {
+    return prisma.user.count();
+  }
 }
 
 export default UserManager;

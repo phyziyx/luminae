@@ -10,11 +10,26 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-import { DollarSign, Goal, UsersRoundIcon } from "lucide-react";
+import {
+  DollarSign,
+  Goal,
+  TrendingUpDownIcon,
+  UsersRoundIcon,
+} from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
-import { SampleChart } from "@/app/(dashboard)/components/chart/area-chart";
-import { ClosingRateChart } from "@/app/(dashboard)/components/chart/closing-rate-chart";
+import AgencyManager from "@/lib/managers/agencyManager";
+import UserManager from "@/lib/managers/userManager";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import stripeManager from "@/lib/managers/stripeManager";
 
 const Dashboard = async () => {
   const { userId } = await auth();
@@ -26,15 +41,20 @@ const Dashboard = async () => {
     return <div>Not authenticated!</div>;
   }
 
-  // const currentYear = new Date().getFullYear();
+  const agencyCount = await AgencyManager.getAllAgenciesCount();
+  const userCount = await UserManager.getAllUsersCount();
+  const communityPosts = 1007;
 
-  // const income = Intl.NumberFormat("en-US").format(1337);
-  // const potentialIncome = Intl.NumberFormat("en-US").format(4200);
-  // const activeClients = 12;
-  const goalProgress = 6;
-  const currentGoal = 9;
-
+  const goalProgress = 100;
+  const currentGoal = 1000;
   const progressPercent = (goalProgress / currentGoal) * 100;
+
+  const subscriptions = await stripeManager.stripe.subscriptions.list({
+    limit: 10,
+  });
+
+  const { difference, lastMonth, thisMonth } =
+    await AgencyManager.getRegistrationRate();
 
   return (
     <>
@@ -50,7 +70,7 @@ const Dashboard = async () => {
           <Card className="bg-muted/50 dark:bg-muted flex-1 relative">
             <CardHeader>
               <CardDescription>Total Agencies</CardDescription>
-              <CardTitle className="text-4xl">104</CardTitle>
+              <CardTitle className="text-4xl">{agencyCount}</CardTitle>
               {/* <small className="text-xs text-muted-foreground">
                 {t("FOR_THE_YEAR", {
                   YEAR: currentYear,
@@ -66,7 +86,7 @@ const Dashboard = async () => {
           <Card className="bg-muted/50 dark:bg-muted flex-1 relative">
             <CardHeader>
               <CardDescription>Total Users</CardDescription>
-              <CardTitle className="text-4xl">606</CardTitle>
+              <CardTitle className="text-4xl">{userCount}</CardTitle>
               {/* <small className="text-xs text-muted-foreground">
                 {t("FOR_THE_YEAR", {
                   YEAR: currentYear,
@@ -82,7 +102,7 @@ const Dashboard = async () => {
           <Card className="bg-muted/50 dark:bg-muted flex-1 relative">
             <CardHeader>
               <CardDescription>Total Community Posts</CardDescription>
-              <CardTitle className="text-4xl">1007</CardTitle>
+              <CardTitle className="text-4xl">{communityPosts}</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-muted-foreground">
               Total number of community posts in the system
@@ -120,11 +140,36 @@ const Dashboard = async () => {
         <div className="grid auto-rows-min gap-4 md:grid-cols-4 grid-cols-1">
           <Card className="bg-muted/50 dark:bg-muted md:col-span-3">
             <CardHeader>
-              <CardTitle>{t("INCOME_TIMELINE")}</CardTitle>
+              <CardTitle>{t("LATEST_AGENCIES")}</CardTitle>
             </CardHeader>
             <CardContent>
-              {/* TODO: */}
-              <SampleChart />
+              <Table>
+                <TableCaption>{t("LATEST_AGENCIES_DESCRIPTION")}</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">ID</TableHead>
+                    <TableHead>Plan</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {subscriptions.data.map((sub, id) => (
+                    <TableRow key={sub.id}>
+                      <TableCell className="w-fit font-medium">
+                        {id + 1}
+                      </TableCell>
+                      <TableCell>{sub.items.data[0].plan.nickname}</TableCell>
+                      <TableCell>{sub.status}</TableCell>
+                      <TableCell>{sub.customer.toString()}</TableCell>
+                      <TableCell className="text-right">
+                        ${(sub.plan.amount / 100).toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
           <Card className="bg-muted/50 dark:bg-muted w-full">
@@ -132,8 +177,19 @@ const Dashboard = async () => {
               <CardTitle>Retention Breakdown</CardTitle>
             </CardHeader>
             <CardContent>
-              {/* TODO: */}
-              <ClosingRateChart />
+              <Card className="flex flex-col">
+                <CardHeader className="items-center pb-0">
+                  <CardTitle>Agencies Registered This Month</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-2 flex flex-col items-center place-items-center pb-0">
+                  <div>Trending by</div>
+                  <div className="text-4xl font-semibold flex flex-row gap-2 items-center">
+                    {difference}% <TrendingUpDownIcon className="h-4 w-4" />
+                  </div>
+                  <div>this month</div>
+                </CardContent>
+                <CardFooter className="flex-col gap-2 text-sm"></CardFooter>
+              </Card>
             </CardContent>
           </Card>
         </div>

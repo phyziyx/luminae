@@ -88,6 +88,9 @@
   "DESCRIPTION": "Description",
   "SUBMIT": "Submit",
 
+  "LATEST_AGENCIES": "Latest Agencies",
+  "LATEST_AGENCIES_DESCRIPTION": "A list of the latest agencies created on Luminae.",
+
   "AGENCY_DETAILS": {
     "SAVE_AGENCY_INFORMATION": "Save Agency Information",
     "EDIT_AGENCY_INFORMATION": "Edit Agency Details",

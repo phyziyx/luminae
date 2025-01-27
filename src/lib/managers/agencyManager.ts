@@ -10,7 +10,6 @@ import prisma from "../db";
 import { v7 } from "uuid";
 import { clerkClient } from "@clerk/nextjs/server";
 import { isAgencyAdmin } from "../utils";
-import SubscriptionManager from "./subscriptionManager";
 
 type CreateAgency = Omit<
   Agency,
@@ -60,7 +59,7 @@ class AgencyManager {
           },
         });
 
-        await SubscriptionManager.createFreePlan(agencyId);
+        // await SubscriptionManager.createFreePlan(agencyId);
       }
 
       return createdAgency;
@@ -550,6 +549,10 @@ class AgencyManager {
     }
   }
 
+  public static async getAllAgenciesCount() {
+    return await prisma.agency.count();
+  }
+
   public static async findClients(agencyId: string) {
     return await prisma.client.findMany({
       where: {
@@ -588,6 +591,41 @@ class AgencyManager {
         agencyId,
       },
     });
+  }
+
+  public static async getRegistrationRate() {
+    // Find the number of agencies that have registered in the last 30 days (this month)
+    // and compare it to the 30 days before that (last 60-30 days).
+
+    const now = new Date();
+    const thirtyDaysAgo = new Date();
+    const sixtyDaysAgo = new Date();
+
+    thirtyDaysAgo.setDate(now.getDate() - 30);
+    sixtyDaysAgo.setDate(now.getDate() - 60);
+
+    const thisMonthCount = await prisma.agency.count({
+      where: {
+        createdAt: {
+          gte: thirtyDaysAgo, // Registered in the last 30 days
+        },
+      },
+    });
+
+    const lastMonthCount = await prisma.agency.count({
+      where: {
+        createdAt: {
+          gte: sixtyDaysAgo, // Registered in the 30 days before this month
+          lt: thirtyDaysAgo,
+        },
+      },
+    });
+
+    return {
+      thisMonth: thisMonthCount,
+      lastMonth: lastMonthCount,
+      difference: (thisMonthCount - lastMonthCount) / (lastMonthCount || 1),
+    };
   }
 }
 
