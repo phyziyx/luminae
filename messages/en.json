@@ -30,7 +30,6 @@
   "CONTINUE": "Continue",
   "ALREADY_HAVE_AN_ACCOUNT": "Already have an account? Sign in",
   "CONTINUE_REGISTRATION": "Continue registration",
-  "USERNAME": "Username",
   "VERIFY_EMAIL": "Verify your email",
   "VERIFICATION_EMAIL_SENT": "Use the verification link sent to your email address",
   "DIDNT_RECEIVE_CODE_RESEND": "Didn't receive a code? Resend",
