@@ -164,7 +164,10 @@ const Dashboard = async () => {
                       <TableCell>{sub.status}</TableCell>
                       <TableCell>{sub.customer.toString()}</TableCell>
                       <TableCell className="text-right">
-                        ${(sub.plan.amount / 100).toFixed(2)}
+                        $
+                        {sub?.items?.data[0]?.plan?.amount
+                          ? (sub.items.data[0].plan.amount / 100).toFixed(2)
+                          : "N/A"}
                       </TableCell>
                     </TableRow>
                   ))}
