@@ -534,11 +534,19 @@ class AgencyManager {
       },
     });
 
-    if (!agency || !agency.subscription) {
-      throw new Error("Agency or subscription not found");
+    if (!agency) {
+      throw new Error("Agency not found");
     }
 
-    const feature = agency.subscription.package.features.find(
+    let subPack = await PackageManager.getPackageByPriceId(
+      PackageManager.FREE_PLAN_PRICE_ID
+    );
+
+    if (agency.subscription) {
+      subPack = agency.subscription.package;
+    }
+
+    const feature = subPack!.features.find(
       (feature) => feature.code === featureCode
     );
 
