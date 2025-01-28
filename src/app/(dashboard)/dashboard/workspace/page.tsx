@@ -8,7 +8,6 @@ import { getTranslations } from "next-intl/server";
 import AgencyManager from "@/lib/managers/agencyManager";
 import WorkspaceCard from "./components/workspace-card";
 import CreateWorkspaceCard from "./components/create-workspace-card";
-import SubscriptionManager from "@/lib/managers/subscriptionManager";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import { isAgencyAdmin } from "@/lib/utils";
@@ -25,18 +24,6 @@ const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
 
   // Workspaces filtered for the user
   const workspaces = await AgencyManager.findAndFilterWorkspaces(userEmail);
-  const subscribedPackage = await SubscriptionManager.findByAgency(
-    agencyMember.agencyId
-  );
-
-  if (!subscribedPackage) {
-    console.error("Unreachable code");
-    return (
-      <div>
-        If you are seeing this, something went wrong terribly! (Just Kidding)
-      </div>
-    );
-  }
 
   const t = await getTranslations();
 
