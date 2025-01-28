@@ -12,7 +12,6 @@ import SubscriptionManager from "@/lib/managers/subscriptionManager";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import { isAgencyAdmin } from "@/lib/utils";
-import PackageManager from "@/lib/managers/packageManager";
 
 const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
   const agencyMember = await AgencyManager.findUserAgency(userEmail);
@@ -21,17 +20,16 @@ const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
     return <div>You are not a member of any agency.</div>;
   }
 
+  // Total workspaces created in the agency
+  const workspacesCount = await AgencyManager.findWorkspacesCount(agencyMember.agencyId);
+
+  // Workspaces filtered for the user
   const workspaces = await AgencyManager.findAndFilterWorkspaces(userEmail);
-
-  const agencyId = agencyMember.agencyId;
-  const subscription = await SubscriptionManager.findByAgency(agencyId);
-
-  // Get the subscription associated and then fetch the information for that package.
-  const pricingPackage = await PackageManager.getPackageByPriceId(
-    subscription?.priceId || PackageManager.FREE_PLAN_PRICE_ID
+  const subscribedPackage = await SubscriptionManager.findByAgency(
+    agencyMember.agencyId
   );
 
-  if (!pricingPackage) {
+  if (!subscribedPackage) {
     console.error("Unreachable code");
     return (
       <div>
@@ -42,14 +40,13 @@ const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
 
   const t = await getTranslations();
 
-  const created = workspaces.length;
   const max =
     (await AgencyManager.getFeatureMaxCount(
       agencyMember.agencyId,
       "WORKSPACE"
     )) || -1;
 
-  if (!isAgencyAdmin(agencyMember.role) && created === 0) {
+  if (!isAgencyAdmin(agencyMember.role) && workspacesCount === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-4">
         {t("NO_WORKSPACES_ASSIGNED")}
@@ -70,7 +67,7 @@ const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
         ))}
 
       {isAgencyAdmin(agencyMember.role) && (
-        <CreateWorkspaceCard created={created} max={max} />
+        <CreateWorkspaceCard created={workspacesCount} max={max} />
       )}
     </div>
   );

@@ -28,6 +28,7 @@ import { LoadingSpinner } from "@/components/site/loading-spinner";
 
 import formSchema from "./schema";
 import onUpdateAgency from "./action";
+import { useModal } from "@/providers/modal-provider";
 
 type WorkspaceDetailsProps = {
   data?: Partial<Workspace>;
@@ -36,6 +37,7 @@ type WorkspaceDetailsProps = {
 const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
   const t = useTranslations();
   const { toast } = useToast();
+  const { closeModal } = useModal();
 
   const form = useForm<z.infer<typeof formSchema>>({
     mode: "onChange",
@@ -53,8 +55,7 @@ const WorkspaceDetails = ({ data }: WorkspaceDetailsProps) => {
   async function handleSubmit(values: z.infer<typeof formSchema>) {
     try {
       const result = await onUpdateAgency(values);
-
-      console.log(result);
+      closeModal();
 
       toast({
         title: result?.error || "Workspace information saved successfully",

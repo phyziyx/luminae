@@ -122,10 +122,10 @@ const Billing = async () => {
               {data.isFree
                 ? t("BILLING.YOUR_PLAN_EXPIRES_ON_FREE")
                 : !data.isExpired
-                ? t("BILLING.YOUR_PLAN_EXPIRES_ON", {
+                  ? t("BILLING.YOUR_PLAN_EXPIRES_ON", {
                     DATE: data.expiryDate,
                   })
-                : t("BILLING.YOUR_PLAN_HAS_EXPIRED_ON", {
+                  : t("BILLING.YOUR_PLAN_HAS_EXPIRED_ON", {
                     DATE: data.expiryDate,
                   })}
             </div>
