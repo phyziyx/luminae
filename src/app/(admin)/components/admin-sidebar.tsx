@@ -21,7 +21,6 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { UserButton } from "@clerk/nextjs";
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -220,7 +219,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem className="flex items-center place-content-between gap-2">
-              <UserButton
+              {/* <UserButton
                 showName
                 appearance={{
                   elements: {
@@ -230,7 +229,8 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
                     userButtonOuterIdentifier: "truncate pl-0 dark:text-white",
                   },
                 }}
-              />
+              /> */}
+              {/* TODO */}
               <ModeToggle />
             </SidebarMenuItem>
           </SidebarMenu>

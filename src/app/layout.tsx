@@ -4,7 +4,6 @@ import { getLocale, getMessages } from "next-intl/server";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Suspense } from "react";
 import { ModalProvider } from "@/providers/modal-provider";
@@ -54,12 +53,10 @@ export default async function RootLayout({
         >
           <NextIntlClientProvider messages={messages}>
             <Suspense fallback={<FallbackSpinner />}>
-              <ClerkProvider>
-                <ModalProvider>
-                  {children}
-                  <Toaster />
-                </ModalProvider>
-              </ClerkProvider>
+              <ModalProvider>
+                {children}
+                <Toaster />
+              </ModalProvider>
             </Suspense>
           </NextIntlClientProvider>
         </ThemeProvider>

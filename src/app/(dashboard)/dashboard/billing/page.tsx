@@ -1,7 +1,5 @@
 "use server";
 
-import { auth, currentUser } from "@clerk/nextjs/server";
-
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -29,6 +27,8 @@ import {
 import { Progress } from "@/components/ui/progress";
 import React, { JSX } from "react";
 import Link from "next/link";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const usages = [
   {
@@ -50,19 +50,20 @@ const usages = [
 ];
 
 const Billing = async () => {
-  const { userId } = await auth();
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   const t = await getTranslations();
   const locale = await getLocale();
 
-  if (!userId || !user) {
+  if (!user) {
     return <div>Not authenticated!</div>;
   }
 
-  const agencyMember = await AgencyManager.findUserAgency(
-    user.emailAddresses[0].emailAddress
-  );
+  const agencyMember = await AgencyManager.findUserAgency(user.email);
   const agency = agencyMember?.agency;
 
   if (!agency) {
@@ -122,15 +123,15 @@ const Billing = async () => {
               {data.isFree
                 ? t("BILLING.YOUR_PLAN_EXPIRES_ON_FREE")
                 : !data.isExpired
-                  ? t("BILLING.YOUR_PLAN_EXPIRES_ON", {
+                ? t("BILLING.YOUR_PLAN_EXPIRES_ON", {
                     DATE: data.expiryDate,
                   })
-                  : t("BILLING.YOUR_PLAN_HAS_EXPIRED_ON", {
+                : t("BILLING.YOUR_PLAN_HAS_EXPIRED_ON", {
                     DATE: data.expiryDate,
                   })}
             </div>
             <Link
-              href={`https://billing.stripe.com/p/login/test_3csg2ieAa6yFel27ss?prefilled_email=${user.emailAddresses[0].emailAddress}`}
+              href={`https://billing.stripe.com/p/login/test_3csg2ieAa6yFel27ss?prefilled_email=${user.email}`}
             >
               <Button>{t("BILLING.EXPLORE_PLANS")}</Button>
             </Link>

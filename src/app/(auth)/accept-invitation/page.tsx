@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useSignUp, useUser } from "@clerk/nextjs";
-import { useSearchParams, useRouter } from "next/navigation";
+
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import Logo from "@/components/logo";
 import {
@@ -34,50 +34,50 @@ import { Input } from "@/components/ui/input";
 export default function Page() {
   const t = useTranslations();
 
-  const { user } = useUser();
-  const router = useRouter();
+  // const { user } = useUser();
+  // const router = useRouter();
   const token = useSearchParams().get("__clerk_ticket");
-  const { isLoaded, signUp, setActive } = useSignUp();
+  // const { isLoaded, signUp, setActive } = useSignUp();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      name: "",
       password: "",
     },
   });
 
-  React.useEffect(() => {
-    if (user?.id) {
-      router.push("/");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  // React.useEffect(() => {
+  //   if (user?.id) {
+  //     router.push("/");
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [user]);
 
   if (!token) {
     return <p>No invitation token found.</p>;
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!isLoaded) return;
+    // if (!isLoaded) return;
 
     try {
       if (!token) return null;
 
-      const signUpAttempt = await signUp.create({
-        strategy: "ticket",
-        ticket: token,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        password: values.password,
-      });
+      console.log("values", values);
 
-      if (signUpAttempt.status === "complete") {
-        await setActive({ session: signUpAttempt.createdSessionId });
-      } else {
-        console.error(JSON.stringify(signUpAttempt, null, 2));
-      }
+      // const signUpAttempt = await signUp.create({
+      //   strategy: "ticket",
+      //   ticket: token,
+      //   name: values.name,
+      //   password: values.password,
+      // });
+
+      // if (signUpAttempt.status === "complete") {
+      //   await setActive({ session: signUpAttempt.createdSessionId });
+      // } else {
+      //   console.error(JSON.stringify(signUpAttempt, null, 2));
+      // }
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));
     }
@@ -101,26 +101,10 @@ export default function Page() {
               >
                 <FormField
                   control={form.control}
-                  name="firstName"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="firstName">
-                        Enter first name
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="lastName">Enter last name</FormLabel>
+                      <FormLabel htmlFor="name">Enter full name</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>

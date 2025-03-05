@@ -1,11 +1,16 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { currentUser } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
 
 const fetchAgencyDetails = async (agencyId: string) => {
   // Ensure the user is authenticated
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   if (!user) {
     console.error("Unauthenticated user tried to fetch agency details.");

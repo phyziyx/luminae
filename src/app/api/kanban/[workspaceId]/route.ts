@@ -1,12 +1,17 @@
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
-import { currentUser } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ workspaceId: string }> }
 ) {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   if (!user) {
     return new NextResponse("Unauthorized", { status: 401 });

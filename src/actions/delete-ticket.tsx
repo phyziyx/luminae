@@ -1,11 +1,16 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
-import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 export default async function deleteTicket(values: { ticketId: string }) {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   let error = "An error occurred while saving the workspace information";
 

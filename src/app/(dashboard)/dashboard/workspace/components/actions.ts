@@ -1,23 +1,25 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { currentUser } from "@clerk/nextjs/server";
+
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 export const deleteWorkspace = async (workspaceId: string) => {
   try {
-    const user = await currentUser();
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    const user = session?.user;
 
     if (!user) {
       console.error("User is not authenticated to delete workspace");
       return;
     }
 
-    console.log("Deleting workspace", workspaceId);
-
-    const member = await AgencyManager.findUserAgency(
-      user.emailAddresses[0].emailAddress
-    );
+    const member = await AgencyManager.findUserAgency(user.email);
     if (!member) {
       console.error("User is not a member of any agency");
       return;

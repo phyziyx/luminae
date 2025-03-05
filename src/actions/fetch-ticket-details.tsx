@@ -1,10 +1,13 @@
 "use server";
 
 import prisma from "@/lib/db";
-// import { currentUser } from "@clerk/nextjs/server";
 
 export default async function fetchTicketDetails(ticketId: string) {
-  // const user = await currentUser();
+  // const session = await auth.api.getSession({
+  //   headers: await headers(),
+  // });
+
+  // const user = session?.user;
 
   // let error = "An error occurred while saving the workspace information";
 

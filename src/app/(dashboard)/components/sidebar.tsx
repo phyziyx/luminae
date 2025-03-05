@@ -3,6 +3,7 @@
 import Logo from "@/components/logo";
 import { NotificationsPopover } from "@/components/notifications/notifications";
 import ModeToggle from "@/components/site/mode-toggle";
+import { NavUser } from "@/components/site/nav-user";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -38,7 +39,7 @@ import {
 } from "@/components/ui/sidebar";
 import { cn, isAgencyAdmin } from "@/lib/utils";
 import { NotificationsProvider } from "@/providers/notifications-provider";
-import { UserButton } from "@clerk/nextjs";
+
 import { Agency, Workspace, Role } from "@prisma/client";
 import {
   Collapsible,
@@ -427,17 +428,7 @@ const DashboardSidebar = ({
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem className="flex items-center place-content-between gap-2">
-              <UserButton
-                showName
-                appearance={{
-                  elements: {
-                    avatarBox: "rounded-lg",
-                    rootBox: "flex overflow-hidden",
-                    userButtonBox: "flex-row-reverse",
-                    userButtonOuterIdentifier: "truncate pl-0 dark:text-white",
-                  },
-                }}
-              />
+              <NavUser />
               <ModeToggle />
             </SidebarMenuItem>
           </SidebarMenu>

@@ -1,18 +1,21 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { currentUser } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
 
 export default async function fetchClients() {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   if (!user) {
     return [];
   }
 
-  const member = await AgencyManager.findUserAgency(
-    user.emailAddresses[0].emailAddress
-  );
+  const member = await AgencyManager.findUserAgency(user.email);
 
   if (!member) {
     return [];

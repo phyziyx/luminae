@@ -1,11 +1,16 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
 import DashboardSidebar from "../components/admin-sidebar";
-import { currentUser } from "@clerk/nextjs/server";
 import UserManager from "@/lib/managers/userManager";
 import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   if (!user) {
     return;

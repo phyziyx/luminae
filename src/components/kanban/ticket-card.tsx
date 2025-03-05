@@ -159,12 +159,12 @@ export function TicketCard({ ticket }: { ticket: LaneTicket }) {
 
   function TicketAssignedUser({ user }: { user: User | null | undefined }) {
     const assigned = !!user;
-    const fullName = assigned ? `${user.firstName} ${user.lastName}` : "";
+    const fullName = assigned ? `${user.name}` : "";
 
     return (
       <div className="flex item-center gap-2">
         <Avatar className="w-8 h-8">
-          <AvatarImage alt="contact" src={user?.avatarUrl} />
+          <AvatarImage alt="contact" src={user?.image} />
           <AvatarFallback className="bg-primary text-sm text-white">
             {fullName}
             {!assigned && <User2Icon size={22} />}

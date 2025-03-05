@@ -1,6 +1,5 @@
 "use server";
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DataTable } from "./components/data-table";
@@ -9,6 +8,8 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import UserManager from "@/lib/managers/userManager";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const t = await getTranslations({ locale: "en" });
 
@@ -21,21 +22,24 @@ const UsersList = async () => {
       columns={columns}
       data={users.map((user) => ({
         id: user.id,
-        name: user.firstName + " " + user.lastName,
+        name: user.name,
         email: user.email,
         role: user.AgencyMembers?.role || "N/A", // Role if part of an agency
         status: "Active",
-        isLocked: user.isLocked,
+        isLocked: !!user.banned,
       }))}
     />
   );
 };
 
 const UserPage = async () => {
-  const { userId } = await auth();
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  if (!userId || !user) {
+  const user = session?.user;
+
+  if (!user) {
     return <div>{t("ERROR_MESSAGES.NOT_AUTHENTICATED")}</div>;
   }
 

@@ -1,7 +1,5 @@
 "use client";
 
-import * as Clerk from "@clerk/elements/common";
-import * as SignIn from "@clerk/elements/sign-in";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,126 +11,163 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/ui/icons";
 import { useTranslations } from "next-intl";
 import Logo from "@/components/logo";
 import { PasswordInput } from "@/components/ui/password-input";
+import { useState } from "react";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+
+const getEmailSchema = () =>
+  z
+    .string({ required_error: "Email is required" })
+    .min(1, "Email is required.")
+    .email("Email is invalid");
+
+const formSchema = z.object({
+  emailAddress: getEmailSchema(),
+  password: z.string().min(8),
+  rememberMe: z.boolean(),
+});
 
 export default function SignInPage() {
+  const [isPending, setPending] = useState(false);
+
+  const router = useRouter();
+
   const t = useTranslations();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    mode: "onChange",
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      emailAddress: "",
+      password: "",
+      rememberMe: true,
+    },
+  });
+
+  const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    await authClient.signIn.email(
+      {
+        email: data.emailAddress,
+        password: data.password,
+        rememberMe: data.rememberMe,
+      },
+      {
+        onRequest: () => {
+          setPending(true);
+        },
+        onSuccess: () => {
+          router.push("/dashboard");
+        },
+        onError: (ctx) => {
+          console.error(ctx.error.message);
+        },
+      }
+    );
+
+    setPending(false);
+  };
 
   return (
     <div className="grid w-full grow items-center px-4 sm:justify-center">
-      <SignIn.Root>
-        <Clerk.Loading>
-          {(isGlobalLoading) => (
-            <>
-              <Logo className="text-blue-500" />
+      <Logo className="text-blue-500" />
 
-              {/* Start */}
-              <SignIn.Step name="start">
-                <Card className="w-full sm:w-96 bg-white dark:bg-muted/30">
-                  <CardHeader>
-                    <CardTitle>{t("SIGN_IN_HEADER")}</CardTitle>
-                    <CardDescription>
-                      {t("SIGN_IN_DESCRIPTION")}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="grid gap-y-4">
-                    <div className="grid grid-cols-1 gap-x-4">
-                      {/* <Clerk.Connection name="github" asChild>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          type="button"
-                          disabled={isGlobalLoading}
-                        >
-                          <Clerk.Loading scope="provider:github">
-                            {(isLoading) =>
-                              isLoading ? (
-                                <Icons.spinner className="size-4 animate-spin" />
-                              ) : (
-                                <>
-                                  <Icons.gitHub className="mr-2 size-4" />
-                                  GitHub
-                                </>
-                              )
-                            }
-                          </Clerk.Loading>
-                        </Button>
-                      </Clerk.Connection> */}
-                      <Clerk.Connection name="google" asChild>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          type="button"
-                          disabled={isGlobalLoading}
-                        >
-                          <Clerk.Loading scope="provider:google">
-                            {(isLoading) =>
-                              isLoading ? (
-                                <Icons.spinner className="size-4 animate-spin" />
-                              ) : (
-                                <>
-                                  <Icons.google className="mr-2 size-4" />
-                                  {t("GOOGLE")}
-                                </>
-                              )
-                            }
-                          </Clerk.Loading>
-                        </Button>
-                      </Clerk.Connection>
-                    </div>
-                    <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
-                      or
-                    </p>
-                    <Clerk.Field name="identifier" className="space-y-2">
-                      <Clerk.Label asChild>
-                        <Label>{t("EMAIL")}</Label>
-                      </Clerk.Label>
-                      <Clerk.Input type="email" required asChild>
-                        <Input />
-                      </Clerk.Input>
-                      <Clerk.FieldError className="block text-sm text-destructive" />
-                    </Clerk.Field>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit((e) => {
+            return handleSubmit(e);
+          })}
+          className="space-y-4"
+        >
+          <Card className="w-full sm:w-96 bg-white dark:bg-muted/30">
+            <CardHeader>
+              <CardTitle>{t("SIGN_IN_HEADER")}</CardTitle>
+              <CardDescription>{t("SIGN_IN_DESCRIPTION")}</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-y-4">
+              <div className="grid grid-cols-1 gap-x-4">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  type="button"
+                  disabled={isPending}
+                >
+                  {isPending ? (
+                    <Icons.spinner className="size-4 animate-spin" />
+                  ) : (
+                    <>
+                      <Icons.google className="mr-2 size-4" />
+                      {t("GOOGLE")}
+                    </>
+                  )}
+                </Button>
+              </div>
+              <p className="flex items-center gap-x-3 text-sm text-muted-foreground before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
+                or
+              </p>
+              <FormField
+                control={form.control}
+                name="emailAddress"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("EMAIL")}</FormLabel>
+                    <FormControl>
+                      <Input disabled={isPending} {...field} />
+                    </FormControl>
+                    <FormMessage className="block text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("PASSWORD")}</FormLabel>
+                    <FormControl>
+                      <PasswordInput disabled={isPending} {...field} />
+                    </FormControl>
+                    <FormMessage className="block text-sm text-destructive" />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+            <CardFooter>
+              <div className="grid w-full gap-y-4">
+                <Button disabled={isPending}>
+                  {isPending ? (
+                    <Icons.spinner className="size-4 animate-spin" />
+                  ) : (
+                    t("CONTINUE")
+                  )}
+                </Button>
 
-                    <Clerk.Field name="password" className="space-y-2">
-                      <Clerk.Label className="text-sm  font-medium text-zinc-950">
-                        Password
-                      </Clerk.Label>
-                      <Clerk.Input type="password" required asChild>
-                        <PasswordInput />
-                      </Clerk.Input>
-                      <Clerk.FieldError className="block text-sm text-red-400" />
-                    </Clerk.Field>
-                  </CardContent>
-                  <CardFooter>
-                    <div className="grid w-full gap-y-4">
-                      <SignIn.Action submit asChild>
-                        <Button disabled={isGlobalLoading}>
-                          <Clerk.Loading>
-                            {(isLoading) => {
-                              return isLoading ? (
-                                <Icons.spinner className="size-4 animate-spin" />
-                              ) : (
-                                t("CONTINUE")
-                              );
-                            }}
-                          </Clerk.Loading>
-                        </Button>
-                      </SignIn.Action>
+                <Button variant="link" size="sm" asChild>
+                  <Link href="/sign-up">{t("DONT_HAVE_AN_ACCOUNT")}</Link>
+                </Button>
+              </div>
+            </CardFooter>
+          </Card>
+        </form>
+      </Form>
 
-                      <Button variant="link" size="sm" asChild>
-                        <Link href="/sign-up">{t("DONT_HAVE_AN_ACCOUNT")}</Link>
-                      </Button>
-                    </div>
-                  </CardFooter>
-                </Card>
-              </SignIn.Step>
-
-              {/* Choose Strategy */}
-              <SignIn.Step name="choose-strategy">
+      {/* Choose Strategy */}
+      {/* <SignIn.Step name="choose-strategy">
                 <Card className="w-full sm:w-96">
                   <CardHeader>
                     <CardTitle>{t("USE_ANOTHER_METHOD")}</CardTitle>
@@ -178,10 +213,10 @@ export default function SignInPage() {
                     </div>
                   </CardFooter>
                 </Card>
-              </SignIn.Step>
+              </SignIn.Step> */}
 
-              {/* Verification */}
-              <SignIn.Step name="verifications">
+      {/* Verification */}
+      {/* <SignIn.Step name="verifications">
                 <SignIn.Strategy name="password">
                   <Card className="w-full sm:w-96">
                     <CardHeader>
@@ -309,11 +344,7 @@ export default function SignInPage() {
                     </CardFooter>
                   </Card>
                 </SignIn.Strategy>
-              </SignIn.Step>
-            </>
-          )}
-        </Clerk.Loading>
-      </SignIn.Root>
+              </SignIn.Step> */}
     </div>
   );
 }

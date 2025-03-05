@@ -1,5 +1,4 @@
 import prisma from "../db";
-// import { Client } from "@clerk/backend";
 import AgencyManager from "./agencyManager";
 
 class KpiManager {

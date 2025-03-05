@@ -1,33 +1,22 @@
 import Logo from "@/components/logo";
 import ChooseYourPath from "@/components/onboarding/choose-your-path";
 import AgencyManager from "@/lib/managers/agencyManager";
-import UserManager from "@/lib/managers/userManager";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function Onboarding() {
-  const user = await currentUser();
-  const { redirectToSignIn } = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   if (!user) {
-    redirectToSignIn();
     return;
   }
 
-  const email = user.emailAddresses[0].emailAddress;
-
-  const foundUser = await UserManager.findUser(email);
-  if (!foundUser) {
-    // User not found, lets create an account...
-    await UserManager.createUser({
-      id: user.id,
-      email: email,
-      firstName: user.firstName!,
-      lastName: user.lastName!,
-      avatarUrl: user.imageUrl,
-    });
-  }
-
+  const { email } = user;
   const agencyMember = await AgencyManager.findUserAgency(email);
 
   if (agencyMember) {

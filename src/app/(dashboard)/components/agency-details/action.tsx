@@ -3,11 +3,16 @@
 import { z } from "zod";
 import formSchema from "./schema";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const onSubmit = async (values: z.infer<typeof formSchema>) => {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   if (!user) {
     console.error("A user who is not authenticated tried to create an agency.");
@@ -54,7 +59,7 @@ const onSubmit = async (values: z.infer<typeof formSchema>) => {
           companyEmail: values.companyEmail,
           companyPhone: values.companyPhone,
         },
-        user.emailAddresses[0].emailAddress
+        user.email
       );
 
       if (!agency) {

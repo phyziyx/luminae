@@ -3,12 +3,17 @@
 import { z } from "zod";
 import formSchema from "@/app/(dashboard)/components/agency-details/schema";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import UserManager from "@/lib/managers/userManager";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const onAgencyUpdate = async (values: z.infer<typeof formSchema>) => {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   let error = "An error occurred while updating.";
 

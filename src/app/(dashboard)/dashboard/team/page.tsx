@@ -1,6 +1,5 @@
 "use server";
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DataTable } from "./components/data-table";
@@ -10,6 +9,8 @@ import { getTranslations } from "next-intl/server";
 
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 const t = await getTranslations({ locale: "en" });
 
@@ -17,7 +18,7 @@ const TeamList = async ({ agencyId }: { agencyId: string }) => {
   const members = await AgencyManager.findAgencyMembers(agencyId);
   const data: TeamMember[] = members.map((member) => ({
     id: member.id,
-    name: member.user.firstName + " " + member.user.lastName,
+    name: member.user.name,
     email: member.email,
     role: member.role,
     status: "Active",
@@ -27,14 +28,17 @@ const TeamList = async ({ agencyId }: { agencyId: string }) => {
 };
 
 const Team = async () => {
-  const { userId } = await auth();
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  if (!userId || !user) {
+  const user = session?.user;
+
+  if (!user) {
     return <div>{t("ERROR_MESSAGES.NOT_AUTHENTICATED")}</div>;
   }
 
-  const email = user.emailAddresses[0].emailAddress;
+  const { email } = user;
   const agencyMember = await AgencyManager.findUserAgency(email);
 
   if (!agencyMember) {

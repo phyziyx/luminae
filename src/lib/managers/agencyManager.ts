@@ -8,7 +8,6 @@ import {
 } from "@prisma/client";
 import prisma from "../db";
 import { v7 } from "uuid";
-import { clerkClient } from "@clerk/nextjs/server";
 import { isAgencyAdmin } from "../utils";
 import PackageManager from "./packageManager";
 
@@ -121,18 +120,18 @@ class AgencyManager {
     agencyId: string,
     role: Role
   ) {
-    const clerk = await clerkClient();
+    // const clerk = await clerkClient();
 
-    const response = await clerk.invitations.createInvitation({
-      emailAddress: email,
-      redirectUrl: `${process.env.NEXT_PUBLIC_URL}${process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL}`,
-      notify: true,
-      ignoreExisting: true,
-    });
+    // const response = await clerk.invitations.createInvitation({
+    //   emailAddress: email,
+    //   redirectUrl: `${process.env.NEXT_PUBLIC_URL}${process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL}`,
+    //   notify: true,
+    //   ignoreExisting: true,
+    // });
 
-    if (!response) {
-      throw new Error("An error occurred while sending an invite.");
-    }
+    // if (!response) {
+    //   throw new Error("An error occurred while sending an invite.");
+    // }
 
     return await prisma.invitation.create({
       data: {

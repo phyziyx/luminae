@@ -1,7 +1,5 @@
 "use server";
 
-import { auth, currentUser } from "@clerk/nextjs/server";
-
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
@@ -11,6 +9,8 @@ import CreateWorkspaceCard from "./components/create-workspace-card";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import { isAgencyAdmin } from "@/lib/utils";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
   const agencyMember = await AgencyManager.findUserAgency(userEmail);
@@ -20,7 +20,9 @@ const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
   }
 
   // Total workspaces created in the agency
-  const workspacesCount = await AgencyManager.findWorkspacesCount(agencyMember.agencyId);
+  const workspacesCount = await AgencyManager.findWorkspacesCount(
+    agencyMember.agencyId
+  );
 
   // Workspaces filtered for the user
   const workspaces = await AgencyManager.findAndFilterWorkspaces(userEmail);
@@ -61,12 +63,15 @@ const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
 };
 
 const Workspaces = async () => {
-  const { userId } = await auth();
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   const t = await getTranslations();
 
-  if (!userId || !user) {
+  if (!user) {
     return <div>Not authenticated!</div>;
   }
 
@@ -80,7 +85,7 @@ const Workspaces = async () => {
         </div>
       </header>
       <Suspense fallback={<FallbackSpinner />}>
-        <WorkspacesList userEmail={user.emailAddresses[0].emailAddress} />
+        <WorkspacesList userEmail={user.email} />
       </Suspense>
     </>
   );

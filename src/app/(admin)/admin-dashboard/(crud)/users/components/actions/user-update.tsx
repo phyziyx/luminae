@@ -3,11 +3,16 @@
 import { z } from "zod";
 import formSchema from "../user-details/schema";
 import UserManager from "@/lib/managers/userManager";
-import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const onUserUpdate = async (values: z.infer<typeof formSchema>) => {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   let error = "An error occurred while updating the user.";
 
@@ -38,19 +43,8 @@ const onUserUpdate = async (values: z.infer<typeof formSchema>) => {
   }
 
   try {
-    await UserManager.updateUser(userId, {
-      firstName: userFields.firstName,
-      lastName: userFields.lastName,
-      email: userFields.email,
-      avatarUrl: userFields.avatarUrl || "",
-    });
-
-    const clerk = await clerkClient();
-
-    await clerk.users.updateUser(userId, {
-      firstName: userFields.firstName,
-      lastName: userFields.lastName,
-    });
+    // TODO: Update the user
+    console.log(userFields);
 
     error = "";
   } catch (err) {

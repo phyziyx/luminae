@@ -10,10 +10,6 @@ const nextConfig = {
 				protocol: 'https',
 				hostname: 'files.stripes.com',
 			},
-			{
-				protocol: 'https',
-				hostname: 'img.clerk.com',
-			}
 		]
 	},
 	reactStrictMode: true

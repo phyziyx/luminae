@@ -1,6 +1,5 @@
 "use server";
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 // import { DataTable } from "./components/data-table";
@@ -13,6 +12,8 @@ import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import { DataTable } from "./components/data-table";
 import { columns } from "./components/columns";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 const t = await getTranslations({ locale: "en" });
 
@@ -37,14 +38,17 @@ const ClientsList = async ({ agencyId }: { agencyId: string }) => {
 };
 
 const Clients = async () => {
-  const { userId } = await auth();
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  if (!userId || !user) {
+  const user = session?.user;
+
+  if (!user) {
     return <div>{t("ERROR_MESSAGES.NOT_AUTHENTICATED")}</div>;
   }
 
-  const email = user.emailAddresses[0].emailAddress;
+  const email = user.email;
   const agencyMember = await AgencyManager.findUserAgency(email);
 
   if (!agencyMember) {

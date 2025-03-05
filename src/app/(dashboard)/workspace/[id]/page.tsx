@@ -3,7 +3,8 @@
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import AgencyManager from "@/lib/managers/agencyManager";
@@ -18,10 +19,13 @@ export default async function WorkspacePage({
   const id = (await params).id;
 
   const t = await getTranslations();
-  const { userId } = await auth();
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  if (!userId || !user) {
+  const user = session?.user;
+
+  if (!user) {
     return <div>Not authenticated!</div>;
   }
 

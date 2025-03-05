@@ -2,12 +2,9 @@ import { z } from "zod";
 
 const userFormSchema = z.object({
   id: z.string().min(1).optional(),
-  firstName: z
+  name: z
     .string()
-    .min(3, { message: "First name must be at least 3 characters." }),
-  lastName: z
-    .string()
-    .min(3, { message: "Last name must be at least 3 characters." }),
+    .min(3, { message: "Full name must be at least 3 characters." }),
   avatarUrl: z.string().url().optional(),
   email: z
     .string()

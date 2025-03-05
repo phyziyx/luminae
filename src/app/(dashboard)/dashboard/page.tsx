@@ -1,5 +1,3 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
-
 import {
   Card,
   CardContent,
@@ -17,20 +15,23 @@ import { isAgencyAdmin } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import KpiManager from "@/lib/managers/kpiManager";
 import { Component } from "../components/chart/bar-chart";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const Dashboard = async () => {
-  const { userId } = await auth();
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   const t = await getTranslations();
 
-  if (!userId || !user) {
+  if (!user) {
     return <div>Not authenticated!</div>;
   }
 
-  const agencyMember = await AgencyManager.findUserAgency(
-    user.emailAddresses[0].emailAddress
-  );
+  const agencyMember = await AgencyManager.findUserAgency(user.email);
 
   if (agencyMember && !isAgencyAdmin(agencyMember.role)) {
     redirect("/dashboard/workspace");

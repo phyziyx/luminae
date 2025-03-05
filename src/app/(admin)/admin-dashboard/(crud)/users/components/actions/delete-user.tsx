@@ -1,9 +1,11 @@
 "use server";
 
 import { z } from "zod";
-import { currentUser } from "@clerk/nextjs/server";
+
 import UserManager from "@/lib/managers/userManager";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 // Zod schema for the user deletion, expecting only the user ID
 const deleteUserSchema = z.object({
@@ -11,7 +13,11 @@ const deleteUserSchema = z.object({
 });
 
 const onUserDelete = async (values: z.infer<typeof deleteUserSchema>) => {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   let error = "An error occurred while locking the user.";
 

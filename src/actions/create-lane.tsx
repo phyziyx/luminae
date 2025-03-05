@@ -1,14 +1,19 @@
 "use server";
 
 import AgencyManager from "@/lib/managers/agencyManager";
-import { currentUser } from "@clerk/nextjs/server";
 import prisma from "@/lib/db";
 import { v7 } from "uuid";
 import { createLaneSchema, CreateLaneSchema } from "@/lib/forms";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export default async function onCreateLane(values: CreateLaneSchema) {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   let error = "An error occurred while saving the workspace information";
 
@@ -27,9 +32,7 @@ export default async function onCreateLane(values: CreateLaneSchema) {
   const laneId = values.id;
 
   try {
-    const agency = await AgencyManager.findUserAgency(
-      user.emailAddresses[0].emailAddress
-    );
+    const agency = await AgencyManager.findUserAgency(user.email);
 
     // There is no agency associated with this account,
     // so this action cannot take place.
