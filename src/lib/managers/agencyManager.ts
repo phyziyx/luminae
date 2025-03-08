@@ -10,6 +10,7 @@ import prisma from "../db";
 import { v7 } from "uuid";
 import { isAgencyAdmin } from "../utils";
 import PackageManager from "./packageManager";
+import { sendEmail } from "@/lib/email";
 
 type CreateAgency = Omit<
   Agency,
@@ -120,20 +121,17 @@ class AgencyManager {
     agencyId: string,
     role: Role
   ) {
-    // const clerk = await clerkClient();
+    const agency = await prisma.agency.findFirst({
+      where: {
+        id: agencyId,
+      },
+    });
 
-    // const response = await clerk.invitations.createInvitation({
-    //   emailAddress: email,
-    //   redirectUrl: `${process.env.NEXT_PUBLIC_URL}${process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL}`,
-    //   notify: true,
-    //   ignoreExisting: true,
-    // });
+    if (!agency) {
+      throw new Error("Agency not found");
+    }
 
-    // if (!response) {
-    //   throw new Error("An error occurred while sending an invite.");
-    // }
-
-    return await prisma.invitation.create({
+    const invite = await prisma.invitation.create({
       data: {
         email,
         agencyId,
@@ -141,6 +139,18 @@ class AgencyManager {
         status: "PENDING",
       },
     });
+
+    const { success, message } = await sendEmail({
+      to: email,
+      subject: `Invitation to join ${agency.name}`,
+      text: `Please click on ${process.env.NEXT_PUBLIC_URL}accept-invitation?invite=${invite.id} to accept the invitation.`,
+    });
+
+    if (!success) {
+      throw new Error(message);
+    }
+
+    return success;
   }
 
   public static async findWorkspace(workspaceId: string) {

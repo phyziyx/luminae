@@ -1,8 +1,8 @@
 import { betterAuth, BetterAuthOptions } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "@/lib/db";
-import { v7 } from "uuid";
-import { sendEmail } from "@/actions/email";
+// import { v7 } from "uuid";
+// import { sendEmail } from "@/lib/email";
 import { admin, openAPI } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 
@@ -15,6 +15,10 @@ export const auth = betterAuth({
   },
   session: {
     modelName: "Session",
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // Cache duration in seconds
+    },
   },
   verification: {
     modelName: "Verification",

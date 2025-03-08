@@ -1,19 +1,11 @@
 "use client";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -27,11 +19,13 @@ import {
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
 import { LoadingSpinner } from "./loading-spinner";
+import { useTranslations } from "next-intl";
 
 export function NavUser() {
+  const t = useTranslations();
   const { data, isPending } = authClient.useSession();
-
   const { isMobile } = useSidebar();
+  const name = data?.user.name || "Loading...";
 
   return (
     <SidebarMenu>
@@ -47,17 +41,14 @@ export function NavUser() {
               ) : (
                 <>
                   <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage
-                      src={data.user.image || ""}
-                      alt={data?.user.name}
-                    />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    <AvatarImage src={data.user.image || ""} alt={name} />
+                    <AvatarFallback className="rounded-lg">
+                      {name.split(" ")[0][0]}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      {data?.user.name}
-                    </span>
-                    <span className="truncate text-xs">{data?.user.email}</span>
+                    <span className="truncate font-semibold">{name}</span>
+                    <span className="truncate text-xs">{data.user.email}</span>
                   </div>
                 </>
               )}
@@ -77,16 +68,13 @@ export function NavUser() {
                 ) : (
                   <>
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage
-                        src={data.user.image || ""}
-                        alt={data.user.name}
-                      />
-                      <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                      <AvatarImage src={data.user.image || ""} alt={name} />
+                      <AvatarFallback className="rounded-lg">
+                        {name.split(" ")[0][0]}
+                      </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-semibold">
-                        {data.user.name}
-                      </span>
+                      <span className="truncate font-semibold">{name}</span>
                       <span className="truncate text-xs">
                         {data.user.email}
                       </span>
@@ -96,7 +84,7 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Sparkles />
                 Upgrade to Pro
@@ -117,10 +105,10 @@ export function NavUser() {
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuSeparator /> */}
+            <DropdownMenuItem className="text-red-500 bg-red-50 hover:bg-red-100">
               <LogOut />
-              Log out
+              {t("SIGN_OUT")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

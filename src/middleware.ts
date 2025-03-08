@@ -3,7 +3,7 @@ import type { Session } from "@/lib/auth";
 import { betterFetch } from "@better-fetch/fetch";
 
 const publicRoutes = ["/"];
-const authRoutes = ["/sign-in", "/sign-up"];
+const authRoutes = ["/sign-in", "/sign-up", "/accept-invitation"];
 const passwordRoutes = ["/forgot-password", "/reset-password"];
 const adminRoutes = ["/admin-dashboard"];
 

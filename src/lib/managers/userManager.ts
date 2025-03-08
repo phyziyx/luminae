@@ -3,7 +3,9 @@ import prisma from "../db";
 import NotificationManager from "./notificationManager";
 import { auth } from "../auth";
 
-type CreateUser = Pick<User, "id" | "email" | "name" | "image">;
+type CreateUser = Pick<User, "email" | "name" | "image"> & {
+  password: string;
+};
 
 class UserManager {
   public static async fetchUsers() {
@@ -21,16 +23,12 @@ class UserManager {
    * @returns user
    */
   public static async createUser(user: CreateUser) {
-    const createdUser = await prisma.user.upsert({
-      where: {
-        email: user.email,
-      },
-      update: {},
-      create: {
-        email: user.email,
-        id: user.id,
+    const { user: createdUser } = await auth.api.createUser({
+      body: {
         name: user.name,
-        image: user.image,
+        email: user.email,
+        password: user.password,
+        role: "user",
       },
     });
 
