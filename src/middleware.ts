@@ -56,21 +56,15 @@ export default async function middleware(request: NextRequest) {
   return NextResponse.next();
 }
 
-// export const config = {
-//   matcher: [
-//     // Skip Next.js internals, api/auth and all static files, unless found in search params
-//     "/((?!api/auth|_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-//     // Always run for API routes
-//     "/(api|trpc)(.*)",
-//   ],
-// };
+// TODO: Implement proper matcher
+// - Add skipping for api/auth routes
 
 export const config = {
   matcher: [
-    // Skip Next.js internals, api/auth, and all static files, unless found in search params
+    // Skip Next.js internals, api, and all static files, unless found in search params
     "/((?!api|_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes (excluding api/auth)
-    // "/api/(.*)",
+    // Always run
+    // "/api(.*)",
     "/trpc(.*)",
   ],
 };

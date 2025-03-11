@@ -124,7 +124,7 @@ export default function TeamMemberDetailsForm({
     <div className="space-y-2">
       <div className="gap-4 flex flex-row justify-between place-items-center">
         <Avatar>
-          <AvatarImage src={data.member.image} />
+          <AvatarImage src={data.member.image || ""} />
           <AvatarFallback>{data.member.name.split(" ")[0]}</AvatarFallback>
         </Avatar>
         <h2 className="font-semibold text-black dark:text-white">
