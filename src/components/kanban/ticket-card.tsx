@@ -164,7 +164,7 @@ export function TicketCard({ ticket }: { ticket: LaneTicket }) {
     return (
       <div className="flex item-center gap-2">
         <Avatar className="w-8 h-8">
-          <AvatarImage alt="contact" src={user?.image} />
+          <AvatarImage alt="contact" src={user?.image || ""} />
           <AvatarFallback className="bg-primary text-sm text-white">
             {fullName}
             {!assigned && <User2Icon size={22} />}
