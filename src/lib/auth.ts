@@ -27,9 +27,9 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
-    requireEmailVerification: false,
+    // requireEmailVerification: false,
     autoSignIn: true,
-    disableSignUp: false,
+    // disableSignUp: false,
     // async sendResetPassword({ user, url }) {
     //   await sendEmail({
     //     to: user.email,
@@ -43,7 +43,6 @@ export const auth = betterAuth({
   //   autoSignInAfterVerification: false,
   //   async sendVerificationEmail({ user, token }) {
   //     const verificationUrl = `${process.env.BETTER_AUTH_URL}/api/auth/verify-email?token=${token}&callbackURL=${process.env.EMAIL_VERIFICATION_CALLBACK_URL}`;
-
   //     await sendEmail({
   //       to: user.email,
   //       subject: "Verify your email address",

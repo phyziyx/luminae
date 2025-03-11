@@ -1,11 +1,12 @@
 "use client";
 
-import { ChevronsUpDown, LogOut } from "lucide-react";
+import { BadgeCheck, LogOut } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -20,6 +21,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { LoadingSpinner } from "./loading-spinner";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 export function NavUser() {
   const t = useTranslations();
@@ -34,7 +36,7 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent hover:bg-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               {isPending || !data ? (
                 <LoadingSpinner />
@@ -52,7 +54,7 @@ export function NavUser() {
                   </div>
                 </>
               )}
-              <ChevronsUpDown className="ml-auto size-4" />
+              {/* <ChevronsUpDown className="ml-auto size-4" /> */}
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -84,28 +86,30 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuGroup>
-              <DropdownMenuItem>
+            <DropdownMenuGroup>
+              {/* <DropdownMenuItem>
                 <Sparkles />
                 Upgrade to Pro
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
+              <Link href="/account">
+                <DropdownMenuItem>
+                  <BadgeCheck />
+                  Account
+                </DropdownMenuItem>
+              </Link>
+              {/* <DropdownMenuItem>
                 <CreditCard />
                 Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Bell />
                 Notifications
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuGroup>
-            <DropdownMenuSeparator /> */}
+            <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-500 bg-red-50 hover:bg-red-100">
               <LogOut />
               {t("SIGN_OUT")}
