@@ -1,10 +1,15 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import NotificationManager from "@/lib/managers/notificationManager";
-import { currentUser } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
 
 export const fetchNotificationsAction = async () => {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
   if (!user) {
     return [];
   }
@@ -13,7 +18,11 @@ export const fetchNotificationsAction = async () => {
 };
 
 export const markAsReadAction = async (id: string) => {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   if (!user) {
     return;
@@ -23,7 +32,11 @@ export const markAsReadAction = async (id: string) => {
 };
 
 export const markAllAsReadAction = async () => {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   if (!user) {
     return;

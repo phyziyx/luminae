@@ -135,7 +135,7 @@ function LaneTicketForm({ onSubmit, data, workspaceId }: LaneTicketFormProps) {
     () =>
       rawMembersData?.map((e) => {
         return {
-          label: `${e.user.firstName} ${e.user.lastName}`,
+          label: `${e.user.name}`,
           value: e.user.id,
           data: {
             ...e.user,
@@ -262,16 +262,14 @@ function LaneTicketForm({ onSubmit, data, workspaceId }: LaneTicketFormProps) {
                     renderFn={(value, checked) => (
                       <div className="flex flex-row gap-2 place-items-center">
                         <Avatar>
-                          <AvatarImage src={value.avatarUrl} />
-                          <AvatarFallback>
-                            {`${value.firstName} ${value.lastName}`}
-                          </AvatarFallback>
+                          <AvatarImage src={value.image || ""} />
+                          <AvatarFallback>{`${value.name}`}</AvatarFallback>
                         </Avatar>
                         <span
                           className={clsx({
                             "font-bold": checked,
                           })}
-                        >{`${value.firstName} ${value.lastName}`}</span>
+                        >{`${value.name}`}</span>
                       </div>
                     )}
                   />

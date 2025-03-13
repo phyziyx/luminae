@@ -17,8 +17,7 @@
   "NEXT": "Next",
   "WORKING_HARD": "We're working hard to bring you an amazing community experience. Stay tuned for updates, and thank you for your patience!",
 
-  "FIRSTNAME": "First Name",
-  "LASTNAME": "Last Name",
+  "FULL_NAME": "Full Name",
 
   "WORKSPACE": "Workspace",
 
@@ -29,6 +28,7 @@
   "CREATE_ACCOUNT_DESCRIPTION": "Welcome! Please fill in the details to get started.",
   "EMAIL": "Email address",
   "PASSWORD": "Password",
+  "CONFIRM_PASSWORD": "Confirm password",
   "CONTINUE": "Continue",
   "ALREADY_HAVE_AN_ACCOUNT": "Already have an account? Sign in",
   "CONTINUE_REGISTRATION": "Continue registration",
@@ -372,5 +372,19 @@
     "WELCOME": "Welcome, Community Member!",
     "COMING_SOON": "Our community forums are coming soon...",
     "WORKING_HARD": "We're working hard to bring you an amazing community experience. Stay tuned for updates, and thank you for your patience!"
+  },
+
+  "CHANGE_PASSWORD": {
+    "HEADER": "Change your password",
+    "DESCRIPTION": "Please enter your current password and the new password you'd like to set.",
+    "ENTER_CURRENT_PASSWORD": "Enter your current password",
+    "ENTER_NEW_PASSWORD": "Enter a new password",
+    "ENTER_NEW_PASSWORD_CONFIRM": "Confirm your new password",
+    "CHANGE": "Change Password"
+  },
+
+  "PROFILE": {
+    "HEADER": "Profile",
+    "DESCRIPTION": "Manage your profile information and security settings."
   }
 }

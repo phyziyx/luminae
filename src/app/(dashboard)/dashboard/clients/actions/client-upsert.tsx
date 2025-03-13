@@ -1,16 +1,22 @@
 "use server";
 
 import { z } from "zod";
-import { currentUser } from "@clerk/nextjs/server";
+
 import { revalidatePath } from "next/cache";
 import formSchema from "../client-details/schema";
 import ClientManager from "@/lib/managers/clientManager";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { isAgencyAdmin } from "@/lib/utils";
 import { v7 } from "uuid";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const onClientUpsert = async (values: z.infer<typeof formSchema>) => {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   let error = "An error occurred while updating or creating a client.";
 
@@ -33,9 +39,7 @@ const onClientUpsert = async (values: z.infer<typeof formSchema>) => {
     return { error };
   }
 
-  const agencyMember = await AgencyManager.findUserAgency(
-    user.emailAddresses[0].emailAddress
-  );
+  const agencyMember = await AgencyManager.findUserAgency(user.email);
 
   if (!agencyMember) {
     error = "User is not a member of an agency.";

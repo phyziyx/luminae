@@ -6,10 +6,9 @@ import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Heading from "./heading";
 import { PricingPackage } from "@/lib/types";
-import { useUser } from "@clerk/clerk-react";
 
 interface PricingCardProps {
   data: PricingPackage;
@@ -135,9 +134,14 @@ interface PricingProps {
   packages: PricingPackage[];
 }
 
+import { authClient } from "@/lib/auth-client";
+
 export const Pricing = ({ packages }: PricingProps) => {
   const t = useTranslations();
-  const { user } = useUser();
+
+  const { data: session } = authClient.useSession();
+
+  const user = useMemo(() => session?.user, [session]);
 
   const [isAnnual, setAnnual] = useState<boolean>(false);
 
@@ -146,9 +150,7 @@ export const Pricing = ({ packages }: PricingProps) => {
       return "#";
     }
 
-    return !user
-      ? "/sign-in"
-      : link + "?prefilled_email=" + user.emailAddresses[0].emailAddress;
+    return !user ? "/sign-in" : link + "?prefilled_email=" + user.email;
   };
 
   return (

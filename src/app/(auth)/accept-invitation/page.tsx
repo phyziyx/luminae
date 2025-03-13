@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { useSignUp, useUser } from "@clerk/nextjs";
-import { useSearchParams, useRouter } from "next/navigation";
+
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import Logo from "@/components/logo";
 import {
@@ -23,61 +23,49 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
 import { PasswordInput } from "@/components/ui/password-input";
-
-import { formSchema } from "./types";
 import { Input } from "@/components/ui/input";
+import {
+  invitationRegistrationSchema,
+  InvitationRegistrationSchema,
+} from "@/lib/forms";
+import onAcceptInvite from "@/actions/accept-invitation";
+import { toast } from "@/hooks/use-toast";
 
 export default function Page() {
   const t = useTranslations();
 
-  const { user } = useUser();
   const router = useRouter();
-  const token = useSearchParams().get("__clerk_ticket");
-  const { isLoaded, signUp, setActive } = useSignUp();
+  const token = useSearchParams().get("invite");
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<InvitationRegistrationSchema>({
+    resolver: zodResolver(invitationRegistrationSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      name: "",
       password: "",
     },
   });
 
-  React.useEffect(() => {
-    if (user?.id) {
-      router.push("/");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  const isLoading = form.formState.isSubmitting;
 
   if (!token) {
     return <p>No invitation token found.</p>;
   }
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (!isLoaded) return;
-
+  const onSubmit = async (values: InvitationRegistrationSchema) => {
     try {
       if (!token) return null;
 
-      const signUpAttempt = await signUp.create({
-        strategy: "ticket",
-        ticket: token,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        password: values.password,
+      const response = await onAcceptInvite(values);
+
+      toast({
+        title: response?.error || "Team member invitation sent successfully",
+        variant: response?.error ? "destructive" : "default",
       });
 
-      if (signUpAttempt.status === "complete") {
-        await setActive({ session: signUpAttempt.createdSessionId });
-      } else {
-        console.error(JSON.stringify(signUpAttempt, null, 2));
-      }
+      router.push("/dashboard");
     } catch (err) {
       console.error(JSON.stringify(err, null, 2));
     }
@@ -101,26 +89,10 @@ export default function Page() {
               >
                 <FormField
                   control={form.control}
-                  name="firstName"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="firstName">
-                        Enter first name
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="lastName">Enter last name</FormLabel>
+                      <FormLabel htmlFor="name">{t("FULL_NAME")}</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -134,7 +106,7 @@ export default function Page() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="password">Enter password</FormLabel>
+                      <FormLabel htmlFor="password">{t("PASSWORD")}</FormLabel>
                       <FormControl>
                         <PasswordInput {...field} />
                       </FormControl>
@@ -149,7 +121,7 @@ export default function Page() {
         <CardFooter>
           <div className="grid w-full gap-y-4">
             <Button onClick={form.handleSubmit(onSubmit)} type="button">
-              {false ? (
+              {isLoading ? (
                 <Icons.spinner className="size-4 animate-spin" />
               ) : (
                 t("CONTINUE")

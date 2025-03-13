@@ -1,12 +1,11 @@
 import { User } from "@prisma/client";
 import prisma from "../db";
-import { clerkClient } from "@clerk/nextjs/server";
 import NotificationManager from "./notificationManager";
+import { auth } from "../auth";
 
-type CreateUser = Pick<
-  User,
-  "id" | "email" | "firstName" | "lastName" | "avatarUrl"
->;
+type CreateUser = Pick<User, "email" | "name" | "image"> & {
+  password: string;
+};
 
 class UserManager {
   public static async fetchUsers() {
@@ -24,17 +23,12 @@ class UserManager {
    * @returns user
    */
   public static async createUser(user: CreateUser) {
-    const createdUser = await prisma.user.upsert({
-      where: {
+    const { user: createdUser } = await auth.api.createUser({
+      body: {
+        name: user.name,
         email: user.email,
-      },
-      update: {},
-      create: {
-        email: user.email,
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        avatarUrl: user.avatarUrl,
+        password: user.password,
+        role: "user",
       },
     });
 
@@ -69,30 +63,13 @@ class UserManager {
    * @returns user
    */
   public static async toggleUserBan(userId: string) {
-    const clerk = await clerkClient();
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      select: {
-        isLocked: true,
+    const user = await auth.api.banUser({
+      body: {
+        userId: userId,
       },
     });
-    if (!user) {
-      return false;
-    }
-    const ban = user.isLocked
-      ? await clerk.users.unbanUser(userId)
-      : await clerk.users.banUser(userId);
-    console.log(ban);
-    return await prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        isLocked: ban.banned,
-      },
-    });
+
+    return !!user;
   }
 
   /**
@@ -133,7 +110,7 @@ class UserManager {
    */
   public static async updateUser(
     id: string,
-    data: Pick<User, "firstName" | "lastName" | "email" | "avatarUrl">
+    data: Pick<User, "name" | "email" | "image">
   ) {
     return await prisma.user.update({
       where: { id },
@@ -148,14 +125,14 @@ class UserManager {
   public static async isAdmin(userId: string) {
     const user = await prisma.user.findUnique({
       select: {
-        isAdmin: true,
+        role: true,
       },
       where: {
         id: userId,
       },
     });
 
-    return user?.isAdmin || false;
+    return user?.role === "admin" || false;
   }
 
   public static getAllUsersCount() {

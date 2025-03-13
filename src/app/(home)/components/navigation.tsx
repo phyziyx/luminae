@@ -21,8 +21,11 @@ import {
 } from "@/components/ui/sheet";
 import ModeToggle from "@/components/site/mode-toggle";
 import Logo from "@/components/logo";
-import { SignOutButton } from "@clerk/nextjs";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
+import { LoadingSpinner } from "@/components/site/loading-spinner";
 
 type Props = {
   user?: boolean;
@@ -42,6 +45,43 @@ const navbarLinks = [
     href: "/support",
   },
 ] as const;
+
+const SignOutButton = () => {
+  const router = useRouter();
+  const t = useTranslations();
+  const [pending, setPending] = useState<boolean>(false);
+
+  const handleSignOut = async () => {
+    try {
+      setPending(true);
+
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/");
+          },
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setPending(false);
+    }
+  };
+
+  return (
+    <Button variant={"destructive"} onClick={handleSignOut} disabled={pending}>
+      {pending ? (
+        <LoadingSpinner />
+      ) : (
+        <>
+          <UserRoundXIcon />
+          {t("SIGN_OUT")}
+        </>
+      )}
+    </Button>
+  );
+};
 
 const Navigation = ({ user }: Props) => {
   const pathName = usePathname();
@@ -103,12 +143,8 @@ const Navigation = ({ user }: Props) => {
                         {t("DASHBOARD")}
                       </Button>
                     </Link>
-                    <SignOutButton>
-                      <Button variant={"destructive"}>
-                        <UserRoundXIcon />
-                        {t("SIGN_OUT")}
-                      </Button>
-                    </SignOutButton>
+
+                    <SignOutButton />
                   </>
                 ) : (
                   <>
@@ -160,12 +196,8 @@ const Navigation = ({ user }: Props) => {
                     {t("DASHBOARD")}
                   </Button>
                 </Link>
-                <SignOutButton>
-                  <Button variant={"destructive"}>
-                    <UserRoundXIcon />
-                    {t("SIGN_OUT")}
-                  </Button>
-                </SignOutButton>
+
+                <SignOutButton />
               </>
             ) : (
               <>

@@ -1,15 +1,20 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { laneTicketFormSchema, LaneTicketFormSchema } from "@/lib/forms";
 import AgencyManager from "@/lib/managers/agencyManager";
 import NotificationManager from "@/lib/managers/notificationManager";
-import { currentUser } from "@clerk/nextjs/server";
 import { TicketTag } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 export default async function onUpdateTicket(values: LaneTicketFormSchema) {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   let error = "An error occurred while saving the workspace information";
 
@@ -25,9 +30,7 @@ export default async function onUpdateTicket(values: LaneTicketFormSchema) {
   }
 
   try {
-    const agency = await AgencyManager.findUserAgency(
-      user.emailAddresses[0].emailAddress
-    );
+    const agency = await AgencyManager.findUserAgency(user.email);
 
     // There is no agency associated with this account,
     // so this action cannot take place.

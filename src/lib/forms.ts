@@ -1,5 +1,38 @@
 import { z } from "zod";
 
+//
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(8),
+    newPassword: z.string().min(8),
+    newPasswordConfirm: z.string().min(8),
+  })
+  .refine((data) => data.newPassword === data.newPasswordConfirm, {
+    message: "Passwords do not match",
+    path: ["newPasswordConfirm"],
+  });
+
+export type ChangePasswordSchema = z.infer<typeof changePasswordSchema>;
+
+//
+
+export const invitationRegistrationSchema = z.object({
+  name: z.string().min(3, {
+    message: "Name must be at least 3 characters.",
+  }),
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters.",
+  }),
+  invitationId: z.string().min(1, {
+    message: "Invalid invitation ID",
+  }),
+});
+
+export type InvitationRegistrationSchema = z.infer<
+  typeof invitationRegistrationSchema
+>;
+
 // Kanban Board: Lane Name Edit
 
 export const laneNameEditSchema = z.object({

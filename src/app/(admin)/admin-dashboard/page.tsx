@@ -1,5 +1,3 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
-
 import {
   Card,
   CardContent,
@@ -30,14 +28,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import stripeManager from "@/lib/managers/stripeManager";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 const Dashboard = async () => {
-  const { userId } = await auth();
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   const t = await getTranslations();
 
-  if (!userId || !user) {
+  if (!user) {
     return <div>Not authenticated!</div>;
   }
 

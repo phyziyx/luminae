@@ -1,27 +1,28 @@
 "use server";
 
-import { auth, currentUser } from "@clerk/nextjs/server";
-
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
 import AgencyDetails from "../../components/agency-details/agency-details";
 import AgencyManager from "@/lib/managers/agencyManager";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const Settings = async () => {
-  const { userId } = await auth();
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   const t = await getTranslations();
 
-  if (!userId || !user) {
+  if (!user) {
     return <div>Not authenticated!</div>;
   }
 
-  const agencyMember = await AgencyManager.findUserAgency(
-    user.emailAddresses[0].emailAddress
-  );
-  const email = user.emailAddresses[0].emailAddress;
+  const agencyMember = await AgencyManager.findUserAgency(user.email);
+  const email = user.email;
   const agency = agencyMember?.agency;
 
   if (!agency) {

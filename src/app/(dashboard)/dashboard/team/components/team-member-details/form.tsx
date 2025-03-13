@@ -41,7 +41,7 @@ import { User } from "@prisma/client";
 
 interface TeamMemberDetailsFormProps {
   data: {
-    member: Pick<User, "firstName" | "lastName" | "email" | "avatarUrl">;
+    member: Pick<User, "name" | "email" | "image">;
     role: "AGENCY_ADMIN" | "AGENCY_USER" | "AGENCY_OWNER";
     workspaces: {
       id: string;
@@ -124,11 +124,11 @@ export default function TeamMemberDetailsForm({
     <div className="space-y-2">
       <div className="gap-4 flex flex-row justify-between place-items-center">
         <Avatar>
-          <AvatarImage src={data.member.avatarUrl} />
-          <AvatarFallback>{data.member.firstName}</AvatarFallback>
+          <AvatarImage src={data.member.image || ""} />
+          <AvatarFallback>{data.member.name.split(" ")[0]}</AvatarFallback>
         </Avatar>
         <h2 className="font-semibold text-black dark:text-white">
-          {`${data.member.firstName} ${data.member.lastName}`}
+          {`${data.member.name}`}
         </h2>
         <Badge className="text-center" variant={"default"}>
           {t(`ROLES.${data.role}`)}

@@ -35,8 +35,7 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       id: userData.id,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
+      name: userData.name,
       avatarUrl: userData.avatarUrl,
       email: userData.email,
     },
@@ -66,22 +65,10 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
         <div className="flex flex-row gap-x-2">
           <FormField
             control={form.control}
-            name="firstName"
+            name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("FIRSTNAME")}</FormLabel>
-                <FormControl>
-                  <Input {...field} required />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("LASTNAME")}</FormLabel>
+                <FormLabel>{t("FULL_NAME")}</FormLabel>
                 <FormControl>
                   <Input {...field} required />
                 </FormControl>
@@ -94,7 +81,7 @@ const UpdateUserForm: React.FC<UpdateUserFormProps> = ({
           <Label>{t("FORMS.AVATAR")}</Label>
           <Avatar>
             <AvatarImage src={form.getValues().avatarUrl} />
-            <AvatarFallback>{form.getValues().firstName}</AvatarFallback>
+            <AvatarFallback>{form.getValues().name}</AvatarFallback>
           </Avatar>
         </div>
 

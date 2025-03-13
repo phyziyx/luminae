@@ -21,24 +21,67 @@ enum Role {
   AGENCY_USER // Dependent on the permissions
 }
 
-model User {
-  id        String  @id @default(uuid())
-  firstName String  @db.VarChar(255)
-  lastName  String  @db.VarChar(255)
-  avatarUrl String  @db.Text
-  email     String  @unique
-  isAdmin   Boolean @default(false)
-  isLocked  Boolean @default(false)
-
-  stripeConnectAccountId String? @default("")
-  stripeCustomerId       String? @default("")
-
-  Notification  Notification[]
-  AgencyMembers AgencyMember?
+model Session {
+  id             String   @id @default(uuid())
+  userId         String
+  token          String
+  expiresAt      DateTime
+  ipAddress      String?
+  userAgent      String?
+  impersonatedBy String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Ticket    Ticket[]
+
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id @default(uuid())
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  User User @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  image         String?  @db.Text
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  role          String   @default("user")
+  banned        Boolean? @default(false)
+  banReason     String?
+  banExpires    Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Notification  Notification[]
+  AgencyMembers AgencyMember?
+  Ticket        Ticket[]
+  Session       Session[]
+  Account       Account[]
+}
+
+model Verification {
+  id         String   @id @default(uuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model AgencyMember {

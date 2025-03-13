@@ -3,11 +3,16 @@
 import { z } from "zod";
 import formSchema from "./schema";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 const onUpdateAgency = async (values: z.infer<typeof formSchema>) => {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   let error = "An error occurred while saving the workspace information";
 
@@ -19,9 +24,7 @@ const onUpdateAgency = async (values: z.infer<typeof formSchema>) => {
   const workspaceId = values.id;
 
   try {
-    const agency = await AgencyManager.findUserAgency(
-      user.emailAddresses[0].emailAddress
-    );
+    const agency = await AgencyManager.findUserAgency(user.email);
 
     // There is no agency associated with this account,
     // so this action cannot take place.

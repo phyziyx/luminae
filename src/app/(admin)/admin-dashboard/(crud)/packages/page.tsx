@@ -1,6 +1,5 @@
 "use server";
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { DataTable } from "./components/data-table";
@@ -9,6 +8,8 @@ import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import PackageManager from "@/lib/managers/packageManager";
 import { getTranslations } from "next-intl/server";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 const t = await getTranslations({ locale: "en" });
 
@@ -26,10 +27,13 @@ const PackagesList = ({ data }: PackageListProps) => {
 };
 
 const PackagesPage = async () => {
-  const { userId } = await auth();
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  if (!userId || !user) {
+  const user = session?.user;
+
+  if (!user) {
     return <div>{t("ERROR_MESSAGES.NOT_AUTHENTICATED")}</div>;
   }
 

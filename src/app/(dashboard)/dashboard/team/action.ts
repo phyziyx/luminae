@@ -1,12 +1,18 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import AgencyManager from "@/lib/managers/agencyManager";
 import UserManager from "@/lib/managers/userManager";
-import { currentUser } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
 
 export default async function getTeamMemberDetails(memberId: string) {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
+
   if (!user) {
     console.log("User not found");
     throw new Error("User not found");

@@ -1,10 +1,15 @@
 "use server";
 
+import { auth } from "@/lib/auth";
 import PackageManager from "@/lib/managers/packageManager";
-import { currentUser } from "@clerk/nextjs/server";
+import { headers } from "next/headers";
 
 const fetchPackageDetails = async (packageId: string) => {
-  const user = await currentUser();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
 
   if (!user) {
     console.error("Unauthenticated user tried to fetch package details.");

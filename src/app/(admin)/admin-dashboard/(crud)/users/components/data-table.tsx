@@ -92,7 +92,7 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   style={
-                    row.original["isLocked" as keyof TData]
+                    row.original["isBanned" as keyof TData]
                       ? { backgroundColor: "rgba(207, 96, 66, 102)" }
                       : {}
                   }
