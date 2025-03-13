@@ -77,7 +77,7 @@
     "svix": "^1.61.2",
     "swr": "^2.3.2",
     "tailwind-merge": "^2.5.4",
-    "tailwind-variants": "^0.2.1",
+    "tailwind-variants": "^1.0.0",
     "tailwindcss-animate": "^1.0.7",
     "use-isomorphic-layout-effect": "^1.2.0",
     "uuid": "^11.0.2",
