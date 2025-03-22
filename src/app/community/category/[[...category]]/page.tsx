@@ -15,12 +15,12 @@ const getCategoryData = (category: string) => {
   };
 };
 
-export default function CategoryPage({
+export default async function CategoryPage({
   params,
 }: {
-  params: { category: string };
+  params: Promise<{ category: string }>;
 }) {
-  const category = params.category;
+  const { category } = await params;
   const categoryData = getCategoryData(category);
 
   return (

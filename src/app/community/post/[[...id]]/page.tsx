@@ -2,8 +2,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import PostContent from "../components/post-content";
-import CommentSection from "../components/comment-section";
+import PostContent from "../../components/post-content";
+import CommentSection from "../../components/comment-section";
 
 // This would typically come from a database or API
 const getPostData = (id: string) => {
@@ -62,8 +62,14 @@ In conclusion, these principles form the foundation of effective implementation.
   };
 };
 
-export default function PostPage({ params }: { params: { id: string } }) {
-  const postData = getPostData(params.id);
+export default async function PostPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
+  const postData = getPostData(id);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -83,7 +89,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
 
         <div className="my-12 h-px w-full bg-gray-200"></div>
 
-        <CommentSection postId={params.id} />
+        <CommentSection postId={id} />
       </main>
     </div>
   );
