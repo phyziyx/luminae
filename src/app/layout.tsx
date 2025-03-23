@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import { ModalProvider } from "@/providers/modal-provider";
 import { Toaster } from "@/components/ui/toaster";
 import FallbackSpinner from "@/components/site/fallback-spinner";
+import ReactQueryProvider from "@/providers/react-query-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -52,12 +53,14 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider messages={messages}>
-            <Suspense fallback={<FallbackSpinner />}>
-              <ModalProvider>
-                {children}
-                <Toaster />
-              </ModalProvider>
-            </Suspense>
+            <ReactQueryProvider>
+              <Suspense fallback={<FallbackSpinner />}>
+                <ModalProvider>
+                  {children}
+                  <Toaster />
+                </ModalProvider>
+              </Suspense>
+            </ReactQueryProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>
