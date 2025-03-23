@@ -24,7 +24,7 @@ enum Role {
 model Session {
   id             String   @id @default(uuid())
   userId         String
-  token          String
+  token          String   @unique
   expiresAt      DateTime
   ipAddress      String?
   userAgent      String?
