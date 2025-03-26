@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import CategoryPostsList from "../../components/category-posts-list";
+import CategoryPostsList from "../components/category-posts-list";
 
 // This would typically come from a database or API
 const getCategoryData = (category: string) => {
@@ -21,6 +21,9 @@ export default async function CategoryPage({
   params: Promise<{ category: string }>;
 }) {
   const { category } = await params;
+
+  console.log("category", category);
+
   const categoryData = getCategoryData(category);
 
   return (
@@ -32,7 +35,7 @@ export default async function CategoryPage({
             className="mb-4 -ml-2 text-gray-600 hover:text-primary"
             asChild
           >
-            <Link href="/">
+            <Link href="/community/">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Home
             </Link>

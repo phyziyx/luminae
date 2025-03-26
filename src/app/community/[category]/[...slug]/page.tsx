@@ -65,11 +65,13 @@ In conclusion, these principles form the foundation of effective implementation.
 export default async function PostPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string[] }>;
 }) {
-  const { id } = await params;
+  const { slug } = await params;
 
-  const postData = getPostData(id);
+  const [postId] = slug;
+
+  const postData = getPostData(postId);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
@@ -89,7 +91,7 @@ export default async function PostPage({
 
         <div className="my-12 h-px w-full bg-gray-200"></div>
 
-        <CommentSection postId={id} />
+        <CommentSection postId={postId} />
       </main>
     </div>
   );

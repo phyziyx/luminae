@@ -11,6 +11,7 @@ export default async function Page() {
     headers: await headers(),
   });
   const userId = session?.user?.id;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <Navigation user={!!userId} />

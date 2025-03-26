@@ -93,7 +93,7 @@ function CategorySection({
           className="text-primary hover:text-primary/90 hover:bg-primary/5"
           asChild
         >
-          <Link href={`/category/${category}`}>See More</Link>
+          <Link href={`/community/${category}`}>See More</Link>
         </Button>
       </div>
 
@@ -104,7 +104,10 @@ function CategorySection({
             className="overflow-hidden transition-all hover:shadow-soft bg-white"
           >
             <CardContent className="p-5">
-              <Link href={`/post/${post.id}`} className="group">
+              <Link
+                href={`/community/${category}/${post.id}`}
+                className="group"
+              >
                 <h3 className="mb-2 text-lg font-bold text-gray-800 group-hover:text-primary transition-colors">
                   {post.title}
                 </h3>

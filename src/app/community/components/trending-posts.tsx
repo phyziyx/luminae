@@ -4,55 +4,94 @@ import Link from "next/link";
 import { MessageSquare, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { LoadingSpinner } from "@/components/site/loading-spinner";
 
-// Sample data for trending posts
-const trendingPosts = [
-  {
-    id: 1,
-    title: "10 Essential UI Design Principles Every Designer Should Know",
-    content:
-      "User interface design is crucial for creating engaging digital experiences. Here are the top 10 principles that every designer should follow to create intuitive and user-friendly interfaces...",
-    author: "Sarah Johnson",
-    category: "Design",
-    comments: 42,
-    likes: 156,
-    date: "2 days ago",
-  },
-  {
-    id: 2,
-    title: "The Future of Web Development: What to Expect in 2025",
-    content:
-      "The web development landscape is constantly evolving. From WebAssembly to AI-driven development tools, here's what you can expect to see in the coming years...",
-    author: "Michael Chen",
-    category: "Development",
-    comments: 38,
-    likes: 124,
-    date: "3 days ago",
-  },
-  {
-    id: 3,
-    title:
-      "How We Increased Conversion Rates by 300% Using This Simple Strategy",
-    content:
-      "Our marketing team implemented a data-driven approach that led to a significant increase in conversion rates. Learn about our methodology and how you can apply it to your business...",
-    author: "Emily Rodriguez",
-    category: "Marketing",
-    comments: 27,
-    likes: 98,
-    date: "4 days ago",
-  },
-  {
-    id: 4,
-    title: "Building Scalable Microservices with Node.js and Docker",
-    content:
-      "Microservices architecture offers numerous benefits for large-scale applications. This guide walks through creating a scalable system using Node.js and containerization with Docker...",
-    author: "David Kim",
-    category: "Development",
-    comments: 31,
-    likes: 112,
-    date: "1 day ago",
-  },
-];
+const fetchTrendingPosts = async ({ pageParam }: { pageParam?: number }) => {
+  const response = await fetch(
+    `/api/community?${pageParam ? `cursor=${pageParam}` : ""}`
+  );
+  return response.json();
+};
+
+const useTrendingPosts = () => {
+  return useInfiniteQuery({
+    queryKey: ["trendingPosts"],
+    queryFn: fetchTrendingPosts,
+    initialPageParam: undefined as number | undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+};
+
+function Posts() {
+  const {
+    data,
+    hasNextPage,
+    isPending,
+    isError,
+    isFetchingNextPage,
+    // error,
+    fetchNextPage,
+  } = useTrendingPosts();
+
+  const trendingPosts = useMemo(
+    () => data?.pages.flatMap((page) => page.posts),
+    [data]
+  );
+
+  if (isPending) {
+    return <LoadingSpinner />;
+  }
+
+  return (
+    <>
+      <div className="flex flex-col items-center justify-center">
+        {trendingPosts?.length === 0 ? (
+          <div className="text-center text-gray-500">
+            No trending posts found...
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
+              {trendingPosts?.map((post) => (
+                <PostCard key={post.id} post={post} />
+              ))}
+            </div>
+            <div className="mt-6 flex items-center justify-center">
+              {hasNextPage ? (
+                <Button
+                  size="lg"
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                  className="bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all"
+                >
+                  {isFetchingNextPage ? "Loading..." : "Load more"}
+                </Button>
+              ) : (
+                <span>No more posts to load.</span>
+              )}
+            </div>
+          </div>
+        )}
+        {isError && (
+          <div>
+            <span>Failed to load posts.</span>
+            <Button
+              variant="link"
+              onClick={() => fetchNextPage()}
+              className="text-primary"
+            >
+              {"Retry"}
+            </Button>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-8 text-center flex justify-center items-center flex-col"></div>
+    </>
+  );
+}
 
 export default function TrendingPosts() {
   return (
@@ -64,20 +103,7 @@ export default function TrendingPosts() {
         </h2>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-        {trendingPosts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
-      </div>
-
-      <div className="mt-8 text-center">
-        <Button
-          size="lg"
-          className="bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all"
-        >
-          See More Posts
-        </Button>
-      </div>
+      <Posts />
     </section>
   );
 }
@@ -93,7 +119,10 @@ function PostCard({ post }: { post: any }) {
           </span>
           <span className="text-xs text-gray-500">{post.date}</span>
         </div>
-        <Link href={`/post/${post.id}`} className="group">
+        <Link
+          href={`community/${post.category}/post/${post.id}`}
+          className="group"
+        >
           <h3 className="mb-2 text-xl font-bold text-gray-800 group-hover:text-primary transition-colors">
             {post.title}
           </h3>

@@ -139,8 +139,8 @@ export default function FeaturedAgencies() {
             {current} of {count}
           </span>
           <div className="flex gap-2">
-            <CarouselPrevious className="static translate-y-0" />
-            <CarouselNext className="static translate-y-0" />
+            <CarouselPrevious className="bg-white dark:bg-muted/30 static translate-y-0" />
+            <CarouselNext className="bg-white dark:bg-muted/30 static translate-y-0" />
           </div>
         </div>
       </Carousel>
@@ -149,26 +149,13 @@ export default function FeaturedAgencies() {
 }
 
 function AgencyCard({ agency }: { agency: Agency }) {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setMousePosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
-
   return (
-    <Card
-      className="relative overflow-hidden border-0 bg-transparent transition-all duration-300 hover:shadow-soft"
-      onMouseMove={handleMouseMove}
-    >
+    <Card className="relative overflow-hidden border-0 bg-transparent transition-all duration-300 hover:shadow-soft">
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 hover:opacity-100"
-        style={{
-          background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(91, 154, 255, 0.15), transparent 40%)`,
-        }}
+        // style={{
+        //   background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(91, 154, 255, 0.15), transparent 40%)`,
+        // }}
       />
       <CardContent className="relative z-10 flex flex-col items-center gap-4 rounded-lg bg-white/90 p-6 backdrop-blur-sm shadow-soft">
         <div className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
