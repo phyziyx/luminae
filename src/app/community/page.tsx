@@ -2,7 +2,7 @@ import Navigation from "../(home)/components/navigation";
 import Categories from "./components/categories";
 import FeaturedAgencies from "./components/featured-agencies";
 import SearchSection from "./components/search-section";
-import TrendingPosts from "./components/trending-posts";
+import TrendingPostsSection from "./components/trending-posts-section";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
@@ -18,7 +18,7 @@ export default async function Page() {
       <main className="container mx-auto px-4 py-8">
         <FeaturedAgencies />
         <SearchSection />
-        <TrendingPosts />
+        <TrendingPostsSection />
         <Categories />
       </main>
     </div>

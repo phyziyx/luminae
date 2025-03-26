@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
   const cursorParam = request.nextUrl.searchParams.get("cursor");
   const cursor = cursorParam ? parseInt(cursorParam) : undefined;
 
-  const pageSize = 3;
+  const pageSize = 6;
 
   const delay = 500;
   await new Promise((resolve) => setTimeout(resolve, delay));
