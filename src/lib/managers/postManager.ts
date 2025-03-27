@@ -1,18 +1,51 @@
-interface Post {
-  id: number;
-  title: string;
-  content: string;
-  author: string;
-  category: string;
-  comments: number;
-  likes: number;
-  relativeDate: string;
+import { Comment, Post } from "@prisma/client";
+import prisma from "../db";
+import { v7 } from "uuid";
+
+/*
+class PostManager {
+  public static async create(data: Exclude<Post, "id">) {
+    const post = await prisma.post.create({
+      data: {
+        ...data,
+        id: v7(),
+      },
+    });
+
+    return post;
+  }
+
+  public static async createComment(comment: Comment) {
+    const createdComment = await prisma.comment.create({
+      data: {
+        ...comment,
+        id: v7(),
+      },
+    });
+
+    return createdComment;
+  }
+
+  public static async getPostById(id: string) {
+    const post = await prisma.post.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        comments: {
+          include: {
+            replies: true,
+          },
+        },
+      },
+    });
+
+    return post;
+  }
 }
 
-interface TrendingPosts {
-  posts: Post[];
-  nextCursor: number | undefined;
-}
+export default PostManager;
+*/
 
 export const fetchTrendingPosts = async ({
   pageParam = 0,
@@ -22,14 +55,12 @@ export const fetchTrendingPosts = async ({
   const response = await fetch(
     `/api/community/trending-posts?cursor=${pageParam}`
   );
-  const data: TrendingPosts = await response.json();
+  const data: {
+    posts: Post[];
+    nextCursor: number | undefined;
+  } = await response.json();
   return data;
 };
-
-interface CategoryPosts {
-  posts: Post[];
-  nextCursor: number | undefined;
-}
 
 export async function fetchCategoryPosts({
   category,
@@ -41,6 +72,9 @@ export async function fetchCategoryPosts({
   const response = await fetch(
     `/api/community/category?name=${category}&page=${pageParam}`
   );
-  const data: CategoryPosts = await response.json();
+  const data: {
+    posts: Post[];
+    nextCursor: number | undefined;
+  } = await response.json();
   return data;
 }
