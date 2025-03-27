@@ -73,6 +73,11 @@ export async function GET(request: NextRequest) {
           Likes: true,
         },
       },
+      Category: {
+        select: {
+          name: true,
+        },
+      },
       author: {
         select: {
           name: true,

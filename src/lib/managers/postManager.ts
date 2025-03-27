@@ -1,9 +1,49 @@
 import { Comment, Post } from "@prisma/client";
 import prisma from "../db";
 import { v7 } from "uuid";
-import { CategoryPostsResponse } from "../types";
+import { CategoryPost, CategoryPostsResponse } from "../types";
 
 class PostManager {
+  public static async findTrending() {
+    const posts: CategoryPost[] = await prisma.post.findMany({
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        authorId: true,
+        createdAt: true,
+        _count: {
+          select: {
+            comments: {
+              where: {
+                deletedAt: null,
+              },
+            },
+            Likes: true,
+          },
+        },
+        Category: {
+          select: {
+            name: true,
+          },
+        },
+        author: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: {
+        Likes: {
+          _count: "desc",
+        },
+      },
+      take: 10,
+    });
+
+    return posts;
+  }
+
   public static async create(data: Exclude<Post, "id">) {
     const post = await prisma.post.create({
       data: {

@@ -1,16 +1,15 @@
-import { Post, Feature, Package, Prisma } from "@prisma/client";
+import { Post, Feature, Package, Prisma, Category, User } from "@prisma/client";
 
 export type CategoryPost = Omit<
   Post,
   "updatedAt" | "deletedAt" | "categoryId"
 > & {
+  Category: Pick<Category, "name">;
   _count: {
     comments: number;
     Likes: number;
   };
-  author: {
-    name: string;
-  };
+  author: Pick<User, "name">;
 };
 
 export type CategoryPostsResponse = {
