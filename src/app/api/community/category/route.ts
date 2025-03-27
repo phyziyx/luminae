@@ -49,19 +49,6 @@ export async function GET(request: NextRequest) {
     LIMIT 10 OFFSET 0;
   */
 
-  // const posts = await prisma.$queryRaw`
-  //   SELECT Post.id, Post.title, Post.content, Post.authorId, Post.createdAt,
-  //   User.name, COUNT(Comment.postId) commentsCount, COUNT(Likes.postId) likesCount
-  //   FROM Post
-  //   INNER JOIN User ON User.id = Post.authorId
-  //   LEFT JOIN Comment ON Comment.postId = Post.id AND Comment.deletedAt IS NULL
-  //   LEFT JOIN Likes ON Likes.postId = Post.id
-  //   WHERE categoryId = ${id} AND Post.deletedAt IS NULL
-  //   GROUP BY Post.id
-  //   ORDER BY Post.id DESC
-  //   LIMIT ${takeLimit} OFFSET ${cursor || 0};
-  // `;
-
   const posts: CategoryPost[] = await prisma.post.findMany({
     take: takeLimit,
     skip: cursor ? 1 : undefined,
@@ -92,10 +79,11 @@ export async function GET(request: NextRequest) {
         },
       },
     },
+    where: {
+      categoryId: id,
+      deletedAt: null,
+    },
   });
-
-  const delay = 500;
-  await new Promise((resolve) => setTimeout(resolve, delay));
 
   const totalPosts = await prisma.post.count({
     where: {
@@ -104,11 +92,12 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  console.log("totalPosts", totalPosts);
-  console.log("posts", posts);
+  const delay = 50;
+  await new Promise((resolve) => setTimeout(resolve, delay));
 
   return NextResponse.json({
     posts,
-    nextCursor: totalPosts > takeLimit ? posts[posts.length - 1].id : undefined,
+    nextCursor:
+      totalPosts > takeLimit ? posts[posts.length - 1]?.id : undefined,
   });
 }

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export default function PostCard({ post }: { post: CategoryPost }) {
   return (
-    <Card className="overflow-hidden transition-all duration-200 hover:shadow-soft bg-white dark:bg-gray-800">
+    <Card className="overflow-hidden w-full transition-all duration-200 hover:shadow-soft bg-white dark:bg-gray-800">
       <CardContent className="p-6">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
