@@ -43,7 +43,7 @@ export default function TrendingPosts() {
             </div>
 
             {/* Load more button */}
-            <div className="mt-6 flex items-center justify-center">
+            {/* <div className="mt-6 flex items-center justify-center">
               {hasNextPage ? (
                 <Button
                   size="lg"
@@ -55,7 +55,7 @@ export default function TrendingPosts() {
                   {isFetchingNextPage ? "Loading..." : "Load more"}
                 </Button>
               ) : null}
-            </div>
+            </div> */}
           </div>
         )}
 
