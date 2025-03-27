@@ -55,11 +55,15 @@ export default function CategoryPostsList({ category }: { category: string }) {
   return (
     <div>
       <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div className="text-gray-600">Showing {posts?.length} posts</div>
+        <div className="text-gray-600 dark:text-gray-300">
+          Showing {posts.length} posts
+        </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">Sort by:</span>
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            Sort by:
+          </span>
           <Select value={sortOption} onValueChange={setSortOption}>
-            <SelectTrigger className="w-[180px] border-gray-200">
+            <SelectTrigger className="w-[180px] border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -91,7 +95,7 @@ export default function CategoryPostsList({ category }: { category: string }) {
                   size="lg"
                   onClick={() => fetchNextPage()}
                   disabled={isFetchingNextPage}
-                  className="bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all"
+                  className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90 shadow-md hover:shadow-lg transition-all"
                 >
                   {isFetchingNextPage ? "Loading..." : "Load more"}
                 </Button>
@@ -119,36 +123,38 @@ export default function CategoryPostsList({ category }: { category: string }) {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function PostCard({ post }: { post: any }) {
   return (
-    <Card className="overflow-hidden transition-all duration-200 hover:shadow-soft bg-white">
+    <Card className="overflow-hidden transition-all duration-200 hover:shadow-soft bg-white dark:bg-gray-800">
       <CardContent className="p-6">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
+            <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
               {post.author.charAt(0)}
             </div>
-            <span className="text-sm text-gray-600">
-              <span className="font-medium text-gray-800">{post.author}</span> •{" "}
-              {post.date}
+            <span className="text-sm text-gray-600 dark:text-gray-300">
+              <span className="font-medium text-gray-800 dark:text-gray-200">
+                {post.author}
+              </span>{" "}
+              • {post.date}
             </span>
           </div>
         </div>
-        <Link href={`/community/${post.category}/${post.id}`} className="group">
-          <h3 className="mb-2 text-xl font-bold text-gray-800 group-hover:text-primary transition-colors">
+        <Link href={`/post/${post.id}`} className="group">
+          <h3 className="mb-2 text-xl font-bold text-gray-800 dark:text-gray-100 group-hover:text-primary dark:group-hover:text-primary-light transition-colors">
             {post.title}
           </h3>
         </Link>
-        <p className="mb-4 text-sm text-gray-600 line-clamp-3">
+        <p className="mb-4 text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
           {post.content}
         </p>
       </CardContent>
-      <CardFooter className="flex items-center justify-between border-t border-gray-100 bg-blue-50/30 p-4">
+      <CardFooter className="flex items-center justify-between border-t border-gray-100 dark:border-gray-700 bg-blue-50/30 dark:bg-blue-900/10 p-4">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1">
-            <MessageSquare className="h-4 w-4 text-gray-600" />
+            <MessageSquare className="h-4 w-4 text-gray-600 dark:text-gray-400" />
             <span className="text-sm">{post.comments}</span>
           </div>
           <div className="flex items-center gap-1">
-            <ThumbsUp className="h-4 w-4 text-gray-600" />
+            <ThumbsUp className="h-4 w-4 text-gray-600 dark:text-gray-400" />
             <span className="text-sm">{post.likes}</span>
           </div>
         </div>
@@ -156,14 +162,14 @@ function PostCard({ post }: { post: any }) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-gray-600 hover:text-primary hover:bg-primary/5"
+            className="h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
           >
             <ThumbsUp className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-gray-600 hover:text-primary hover:bg-primary/5"
+            className="h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
           >
             <ThumbsDown className="h-4 w-4" />
           </Button>

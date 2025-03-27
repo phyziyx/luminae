@@ -83,17 +83,17 @@ function CategorySection({
   return (
     <section className="mb-10">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-800 sm:text-2xl">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 sm:text-2xl">
           {title}
-          <div className="mt-1 h-1 w-16 bg-[#5B9AFF]"></div>
+          <div className="mt-1 h-1 w-16 bg-[#5B9AFF] dark:bg-[#7BABFF]"></div>
         </h2>
         <Button
           variant="ghost"
           size="sm"
-          className="text-primary hover:text-primary/90 hover:bg-primary/5"
+          className="text-primary dark:text-primary-light hover:text-primary/90 dark:hover:text-primary-light/90 hover:bg-primary/5 dark:hover:bg-primary-light/10"
           asChild
         >
-          <Link href={`/community/${category}`}>See More</Link>
+          <Link href={`/community/category/${category}`}>See More</Link>
         </Button>
       </div>
 
@@ -101,34 +101,33 @@ function CategorySection({
         {posts.map((post) => (
           <Card
             key={post.id}
-            className="overflow-hidden transition-all hover:shadow-soft bg-white"
+            className="overflow-hidden transition-all hover:shadow-soft bg-white dark:bg-gray-800"
           >
             <CardContent className="p-5">
-              <Link
-                href={`/community/${category}/${post.id}`}
-                className="group"
-              >
-                <h3 className="mb-2 text-lg font-bold text-gray-800 group-hover:text-primary transition-colors">
+              <Link href={`/post/${post.id}`} className="group">
+                <h3 className="mb-2 text-lg font-bold text-gray-800 dark:text-gray-100 group-hover:text-primary dark:group-hover:text-primary-light transition-colors">
                   {post.title}
                 </h3>
               </Link>
-              <p className="mb-3 text-sm text-gray-600 line-clamp-2">
+              <p className="mb-3 text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
                 {post.content}
               </p>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 dark:text-gray-400">
                 By{" "}
-                <span className="font-medium text-gray-700">{post.author}</span>{" "}
+                <span className="font-medium text-gray-700 dark:text-gray-300">
+                  {post.author}
+                </span>{" "}
                 • {post.date}
               </div>
             </CardContent>
-            <CardFooter className="flex items-center justify-between border-t border-gray-100 bg-blue-50/30 p-3">
+            <CardFooter className="flex items-center justify-between border-t border-gray-100 dark:border-gray-700 bg-blue-50/30 dark:bg-blue-900/10 p-3">
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1">
-                  <MessageSquare className="h-3.5 w-3.5 text-gray-600" />
+                  <MessageSquare className="h-3.5 w-3.5 text-gray-600 dark:text-gray-400" />
                   <span className="text-xs">{post.comments}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <ThumbsUp className="h-3.5 w-3.5 text-gray-600" />
+                  <ThumbsUp className="h-3.5 w-3.5 text-gray-600 dark:text-gray-400" />
                   <span className="text-xs">{post.likes}</span>
                 </div>
               </div>
@@ -148,17 +147,17 @@ function SidebarSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-gray-100 bg-white p-5 shadow-soft">
-      <h3 className="mb-4 text-lg font-bold text-primary">
+    <div className="rounded-lg border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-soft">
+      <h3 className="mb-4 text-lg font-bold text-primary dark:text-primary-light">
         {title}
-        <div className="mt-1 h-1 w-full bg-[#5B9AFF]"></div>
+        <div className="mt-1 h-1 w-full bg-[#5B9AFF] dark:bg-[#7BABFF]"></div>
       </h3>
       {children}
     </div>
   );
 }
 
-export default function Categories() {
+export default function TwoColumnLayout() {
   return (
     <div className="grid gap-8 lg:grid-cols-3">
       <div className="lg:col-span-2">
@@ -179,17 +178,17 @@ export default function Categories() {
             {topContributors.map((contributor, index) => (
               <li
                 key={contributor.username}
-                className="flex items-center justify-between rounded-md p-2 hover:bg-blue-50/50 transition-colors"
+                className="flex items-center justify-between rounded-md p-2 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 dark:bg-primary-light/20 text-xs font-medium text-primary dark:text-primary-light">
                     {index + 1}
                   </span>
-                  <span className="font-medium text-gray-800">
+                  <span className="font-medium text-gray-800 dark:text-gray-200">
                     @{contributor.username}
                   </span>
                 </div>
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
                   {contributor.contributions} contributions
                 </span>
               </li>
@@ -203,7 +202,7 @@ export default function Categories() {
               <li key={page.title}>
                 <Link
                   href={page.url}
-                  className="block rounded-md p-2 text-gray-600 transition-colors hover:bg-blue-50/50 hover:text-primary"
+                  className="block rounded-md p-2 text-gray-600 dark:text-gray-300 transition-colors hover:bg-blue-50/50 dark:hover:bg-blue-900/20 hover:text-primary dark:hover:text-primary-light"
                 >
                   {page.title}
                 </Link>

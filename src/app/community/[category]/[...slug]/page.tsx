@@ -74,11 +74,12 @@ export default async function PostPage({
   const postData = getPostData(postId);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-black">
       <main className="container mx-auto px-4 py-8">
+        {/* Back Button */}
         <Button
           variant="ghost"
-          className="mb-6 -ml-2 text-gray-600 hover:text-primary"
+          className="mb-6 -ml-2 text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary/80"
           asChild
         >
           <Link href="/community/">
@@ -87,10 +88,13 @@ export default async function PostPage({
           </Link>
         </Button>
 
+        {/* Post Content */}
         <PostContent post={postData} />
 
-        <div className="my-12 h-px w-full bg-gray-200"></div>
+        {/* Divider */}
+        <div className="my-12 h-px w-full bg-gray-200 dark:bg-gray-700"></div>
 
+        {/* Comment Section */}
         <CommentSection postId={postId} />
       </main>
     </div>

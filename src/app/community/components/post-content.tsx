@@ -44,12 +44,12 @@ export default function PostContent({ post }: { post: any }) {
 
   return (
     <div>
-      <Card className="overflow-hidden bg-white shadow-soft">
+      <Card className="overflow-hidden bg-white dark:bg-gray-800 shadow-soft">
         <div className="p-6 sm:p-8">
           {/* Post Header */}
           <div className="mb-6">
             <div className="mb-2 flex flex-wrap items-start justify-between gap-4">
-              <h1 className="text-2xl font-bold text-gray-800 sm:text-3xl md:text-4xl">
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 sm:text-3xl md:text-4xl">
                 {post.title}
               </h1>
               <div className="flex items-center gap-2">
@@ -61,8 +61,8 @@ export default function PostContent({ post }: { post: any }) {
                         size="icon"
                         className={`h-10 w-10 ${
                           hasLiked
-                            ? "bg-primary/10 text-primary"
-                            : "text-gray-600 hover:text-primary hover:bg-primary/5"
+                            ? "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light"
+                            : "text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
                         }`}
                         onClick={handleLike}
                       >
@@ -75,7 +75,7 @@ export default function PostContent({ post }: { post: any }) {
                   </Tooltip>
                 </TooltipProvider>
 
-                <span className="min-w-10 text-center text-lg font-medium text-gray-800">
+                <span className="min-w-10 text-center text-lg font-medium text-gray-800 dark:text-gray-200">
                   {likes}
                 </span>
 
@@ -87,8 +87,8 @@ export default function PostContent({ post }: { post: any }) {
                         size="icon"
                         className={`h-10 w-10 ${
                           hasDisliked
-                            ? "bg-primary/10 text-primary"
-                            : "text-gray-600 hover:text-primary hover:bg-primary/5"
+                            ? "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light"
+                            : "text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
                         }`}
                         onClick={handleDislike}
                       >
@@ -103,12 +103,14 @@ export default function PostContent({ post }: { post: any }) {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
+                <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
                   {post.author.charAt(0)}
                 </div>
-                <span className="font-medium text-gray-800">{post.author}</span>
+                <span className="font-medium text-gray-800 dark:text-gray-200">
+                  {post.author}
+                </span>
               </div>
               <span>{post.date}</span>
               <div className="flex items-center gap-1">
@@ -116,17 +118,17 @@ export default function PostContent({ post }: { post: any }) {
                 <span>{post.comments} comments</span>
               </div>
               <div className="flex items-center gap-1">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <span className="rounded-full bg-primary/10 dark:bg-primary-light/20 px-3 py-1 text-xs font-medium text-primary dark:text-primary-light">
                   {post.category}
                 </span>
               </div>
             </div>
           </div>
 
-          <Separator className="my-6" />
+          <Separator className="my-6 bg-gray-200 dark:bg-gray-700" />
 
           {/* Post Content */}
-          <div className="prose prose-blue max-w-none">
+          <div className="prose prose-blue dark:prose-invert max-w-none">
             <MarkdownRenderer content={post.content} />
           </div>
 
@@ -135,7 +137,7 @@ export default function PostContent({ post }: { post: any }) {
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
-                className="border-primary text-primary hover:bg-primary/5"
+                className="border-primary text-primary dark:border-primary-light dark:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
                 size="sm"
               >
                 <MessageSquare className="mr-2 h-4 w-4" />
@@ -144,13 +146,13 @@ export default function PostContent({ post }: { post: any }) {
               <Button
                 variant="outline"
                 size="sm"
-                className="border-gray-200 text-gray-600"
+                className="border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300"
               >
                 <Share2 className="mr-2 h-4 w-4" />
                 Share
               </Button>
             </div>
-            <div className="flex items-center gap-4 text-sm text-gray-600">
+            <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
               <span>Report</span>
               <span>Bookmark</span>
             </div>

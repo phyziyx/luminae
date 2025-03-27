@@ -114,8 +114,10 @@ export default function FeaturedAgencies() {
 
   return (
     <section className="mb-12">
-      <h2 className="mb-6 text-2xl font-bold text-gray-800 sm:text-3xl">
-        Top Ranked Agencies
+      <h2 className="mb-6 text-2xl font-bold text-gray-800 sm:text-3xl dark:text-white">
+        Top Ranked{" "}
+        <span className="text-[#5B9AFF] dark:text-[#3B82F6]">Agencies</span>
+        <div className="mt-1 h-1 w-24 bg-[#5B9AFF] dark:bg-[#3B82F6]"></div>
       </h2>
       <Carousel
         setApi={setApi}
@@ -157,12 +159,12 @@ function AgencyCard({ agency }: { agency: Agency }) {
         //   background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(91, 154, 255, 0.15), transparent 40%)`,
         // }}
       />
-      <CardContent className="relative z-10 flex flex-col items-center gap-4 rounded-lg bg-white/90 p-6 backdrop-blur-sm shadow-soft">
-        <div className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
+      <CardContent className="relative z-10 flex flex-col items-center gap-4 rounded-lg bg-white/90 dark:bg-gray-800/90 p-6 backdrop-blur-sm shadow-soft">
+        <div className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary dark:bg-primary-light text-sm font-bold text-primary-foreground dark:text-gray-900">
           #{agency.rank}
         </div>
         <div className="mt-4 flex flex-col items-center">
-          <div className="relative mb-3 h-20 w-20 overflow-hidden rounded-full border-4 border-primary">
+          <div className="relative mb-3 h-20 w-20 overflow-hidden rounded-full border-4 border-primary dark:border-primary-light">
             <Image
               src={agency.profilePic || "/placeholder.svg"}
               alt={agency.name}
@@ -170,9 +172,11 @@ function AgencyCard({ agency }: { agency: Agency }) {
               className="object-cover"
             />
           </div>
-          <h3 className="text-xl font-bold text-gray-800">{agency.name}</h3>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+            {agency.name}
+          </h3>
         </div>
-        <div className="flex w-full justify-between text-sm text-gray-600">
+        <div className="flex w-full justify-between text-sm text-gray-600 dark:text-gray-300">
           <div className="flex items-center gap-1">
             <span className="font-medium">{agency.posts}</span> posts
           </div>
@@ -186,9 +190,9 @@ function AgencyCard({ agency }: { agency: Agency }) {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="bg-white/90 p-4 backdrop-blur-sm shadow-soft">
+      <CardFooter className="bg-white/90 dark:bg-gray-800/90 p-4 backdrop-blur-sm shadow-soft">
         <Button
-          className="w-full bg-primary hover:bg-primary/90 transition-colors duration-200 shadow-md hover:shadow-lg"
+          className="w-full bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90 transition-colors duration-200 shadow-md hover:shadow-lg"
           asChild
         >
           <Link href={`/agency/${agency.id}`}>View Profile</Link>

@@ -169,26 +169,29 @@ export default function CommentSection({ postId }: { postId: string }) {
 
   return (
     <div>
-      <h2 className="mb-6 text-2xl font-bold text-gray-800">
-        Comments <span className="text-[#5B9AFF]">({comments.length})</span>
-        <div className="mt-1 h-1 w-24 bg-[#5B9AFF]"></div>
+      <h2 className="mb-6 text-2xl font-bold text-gray-800 dark:text-gray-100">
+        Comments{" "}
+        <span className="text-[#5B9AFF] dark:text-[#7BABFF]">
+          ({comments.length})
+        </span>
+        <div className="mt-1 h-1 w-24 bg-[#5B9AFF] dark:bg-[#7BABFF]"></div>
       </h2>
 
       {/* Comment Input */}
-      <div className="mb-8 rounded-lg border border-gray-200 bg-white p-4 shadow-soft">
+      <div className="mb-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-soft">
         <Textarea
           placeholder="Write your comment in markdown..."
-          className="mb-4 min-h-32 resize-y border-gray-200 focus-visible:ring-primary"
+          className="mb-4 min-h-32 resize-y border-gray-200 dark:border-gray-700 focus-visible:ring-primary dark:focus-visible:ring-primary-light dark:bg-gray-800 dark:text-gray-100"
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
         />
         <div className="flex justify-between">
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
             Supports markdown formatting
           </div>
           <Button
             onClick={handleAddComment}
-            className="bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all"
+            className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90 shadow-md hover:shadow-lg transition-all"
           >
             Post Comment
           </Button>
@@ -200,20 +203,22 @@ export default function CommentSection({ postId }: { postId: string }) {
         {comments.map((comment) => (
           <div
             key={comment.id}
-            className="rounded-lg border border-gray-200 bg-white shadow-soft"
+            className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-soft"
           >
             {/* Comment */}
             <div className="p-4 sm:p-6">
               <div className="mb-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
                     {comment.author.charAt(0)}
                   </div>
                   <div>
-                    <div className="font-medium text-gray-800">
+                    <div className="font-medium text-gray-800 dark:text-gray-200">
                       {comment.author}
                     </div>
-                    <div className="text-xs text-gray-500">{comment.date}</div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      {comment.date}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
@@ -223,7 +228,7 @@ export default function CommentSection({ postId }: { postId: string }) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-gray-600 hover:text-primary hover:bg-primary/5"
+                          className="h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
                           onClick={() => handleLike(comment.id)}
                         >
                           <ThumbsUp className="h-4 w-4" />
@@ -234,13 +239,13 @@ export default function CommentSection({ postId }: { postId: string }) {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     {comment.likes}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-3 text-gray-700">
+              <div className="mt-3 text-gray-700 dark:text-gray-300">
                 <MarkdownRenderer content={comment.content} />
               </div>
 
@@ -248,7 +253,7 @@ export default function CommentSection({ postId }: { postId: string }) {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 text-gray-600 hover:text-primary hover:bg-primary/5"
+                  className="h-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
                   onClick={() =>
                     setReplyingTo(replyingTo === comment.id ? null : comment.id)
                   }
@@ -259,17 +264,17 @@ export default function CommentSection({ postId }: { postId: string }) {
 
               {/* Reply Input */}
               {replyingTo === comment.id && (
-                <div className="mt-4 rounded-md border border-gray-200 bg-gray-50 p-4">
+                <div className="mt-4 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
                   <Textarea
                     placeholder="Write your reply..."
-                    className="mb-3 min-h-24 resize-y border-gray-200 focus-visible:ring-primary"
+                    className="mb-3 min-h-24 resize-y border-gray-200 dark:border-gray-700 focus-visible:ring-primary dark:focus-visible:ring-primary-light dark:bg-gray-800 dark:text-gray-100"
                     value={replyContent}
                     onChange={(e) => setReplyContent(e.target.value)}
                   />
                   <div className="flex justify-end">
                     <Button
                       onClick={() => handleAddReply(comment.id)}
-                      className="bg-primary hover:bg-primary/90"
+                      className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90"
                     >
                       Post Reply
                     </Button>
@@ -279,20 +284,23 @@ export default function CommentSection({ postId }: { postId: string }) {
 
               {/* Replies */}
               {comment.replies.length > 0 && (
-                <div className="mt-4 border-l-2 border-gray-200 pl-4">
+                <div className="mt-4 border-l-2 border-gray-200 dark:border-gray-700 pl-4">
                   <div className="space-y-4">
                     {comment.replies.map((reply) => (
-                      <div key={reply.id} className="rounded-md bg-gray-50 p-4">
+                      <div
+                        key={reply.id}
+                        className="rounded-md bg-gray-50 dark:bg-gray-900 p-4"
+                      >
                         <div className="mb-2 flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center text-primary font-medium text-xs">
+                            <div className="h-6 w-6 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium text-xs">
                               {reply.author.charAt(0)}
                             </div>
                             <div>
-                              <div className="font-medium text-gray-800">
+                              <div className="font-medium text-gray-800 dark:text-gray-200">
                                 {reply.author}
                               </div>
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
                                 {reply.date}
                               </div>
                             </div>
@@ -304,7 +312,7 @@ export default function CommentSection({ postId }: { postId: string }) {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="h-6 w-6 text-gray-600 hover:text-primary hover:bg-primary/5"
+                                    className="h-6 w-6 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
                                     onClick={() =>
                                       handleLike(reply.id, true, comment.id)
                                     }
@@ -317,12 +325,12 @@ export default function CommentSection({ postId }: { postId: string }) {
                                 </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
-                            <span className="text-xs font-medium text-gray-700">
+                            <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
                               {reply.likes}
                             </span>
                           </div>
                         </div>
-                        <div className="mt-2 text-sm text-gray-700">
+                        <div className="mt-2 text-sm text-gray-700 dark:text-gray-300">
                           <MarkdownRenderer content={reply.content} />
                         </div>
                       </div>
@@ -339,7 +347,7 @@ export default function CommentSection({ postId }: { postId: string }) {
         <div className="mt-8 text-center">
           <Button
             variant="outline"
-            className="border-primary text-primary hover:bg-primary/5"
+            className="border-primary text-primary dark:border-primary-light dark:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
           >
             Load More Comments
           </Button>

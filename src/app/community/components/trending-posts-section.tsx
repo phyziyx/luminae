@@ -16,16 +16,16 @@ export default async function TrendingPostsSection() {
 
   return (
     <section className="mb-12">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-gray-800 sm:text-3xl">
-          Trending <span className="text-[#5B9AFF]">Posts</span>
-          <div className="mt-1 h-1 w-24 bg-[#5B9AFF]"></div>
-        </h2>
-      </div>
 
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <TrendingPosts />
-      </HydrationBoundary>
-    </section>
+    <div className="mb-6 flex items-center justify-between">
+      <h2 className="text-2xl font-bold text-gray-800 dark:text-white sm:text-3xl">
+        Trending <span className="text-[#5B9AFF] dark:text-[#3B82F6]">Posts</span>
+        <div className="mt-1 h-1 w-24 bg-[#5B9AFF] dark:bg-[#3B82F6]"></div>
+      </h2>
+    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <TrendingPosts />
+    </HydrationBoundary>
+  </section>
   );
 }
