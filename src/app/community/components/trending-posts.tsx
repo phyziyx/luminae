@@ -48,9 +48,7 @@ export default function TrendingPosts() {
                 >
                   {isFetchingNextPage ? "Loading..." : "Load more"}
                 </Button>
-              ) : (
-                <span>No more posts to load.</span>
-              )}
+              ) : null}
             </div>
           </div>
         )}
