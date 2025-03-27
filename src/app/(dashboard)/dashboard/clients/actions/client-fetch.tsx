@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import ClientManager from "@/lib/managers/clientManager";
 import { headers } from "next/headers";
 

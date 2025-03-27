@@ -5,7 +5,7 @@ import UserManager from "@/lib/managers/userManager";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {

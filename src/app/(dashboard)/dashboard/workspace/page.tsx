@@ -9,7 +9,7 @@ import CreateWorkspaceCard from "./components/create-workspace-card";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import { isAgencyAdmin } from "@/lib/utils";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {

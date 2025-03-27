@@ -5,7 +5,7 @@ import AgencyManager from "@/lib/managers/agencyManager";
 import { revalidatePath } from "next/cache";
 import UserManager from "@/lib/managers/userManager";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 
 // Zod schema for agency deletion, expecting only the agency ID
 const deleteAgencySchema = z.object({

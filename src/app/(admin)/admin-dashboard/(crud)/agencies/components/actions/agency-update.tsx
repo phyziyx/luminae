@@ -5,7 +5,7 @@ import formSchema from "@/app/(dashboard)/components/agency-details/schema";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { revalidatePath } from "next/cache";
 import UserManager from "@/lib/managers/userManager";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 const onAgencyUpdate = async (values: z.infer<typeof formSchema>) => {

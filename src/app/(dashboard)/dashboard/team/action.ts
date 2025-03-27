@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
 import AgencyManager from "@/lib/managers/agencyManager";
 import UserManager from "@/lib/managers/userManager";

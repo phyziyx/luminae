@@ -15,7 +15,7 @@ import { isAgencyAdmin } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import KpiManager from "@/lib/managers/kpiManager";
 import { Component } from "../components/chart/bar-chart";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 const Dashboard = async () => {

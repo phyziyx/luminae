@@ -2,7 +2,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import DashboardSidebar from "../components/admin-sidebar";
 import UserManager from "@/lib/managers/userManager";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {

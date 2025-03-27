@@ -3,7 +3,7 @@ import Categories from "./components/categories";
 import FeaturedAgencies from "./components/featured-agencies";
 import SearchSection from "./components/search-section";
 import TrendingPostsSection from "./components/trending-posts-section";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 export default async function Page() {

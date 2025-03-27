@@ -9,7 +9,7 @@ import FallbackSpinner from "@/components/site/fallback-spinner";
 import PackageManager from "@/lib/managers/packageManager";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 
 const t = await getTranslations({ locale: "en" });
 

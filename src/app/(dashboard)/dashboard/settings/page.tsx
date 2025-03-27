@@ -5,7 +5,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
 import AgencyDetails from "../../components/agency-details/agency-details";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 const Settings = async () => {

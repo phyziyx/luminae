@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import UserManager from "@/lib/managers/userManager";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 // Zod schema for the user deletion, expecting only the user ID

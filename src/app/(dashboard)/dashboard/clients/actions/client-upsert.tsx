@@ -8,7 +8,7 @@ import ClientManager from "@/lib/managers/clientManager";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { isAgencyAdmin } from "@/lib/utils";
 import { v7 } from "uuid";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 const onClientUpsert = async (values: z.infer<typeof formSchema>) => {

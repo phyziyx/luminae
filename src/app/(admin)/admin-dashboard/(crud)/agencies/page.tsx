@@ -7,7 +7,7 @@ import { AgencyData, columns } from "./components/columns";
 import prisma from "@/lib/db";
 import { getTranslations } from "next-intl/server";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 
 const t = await getTranslations({ locale: "en" });
 

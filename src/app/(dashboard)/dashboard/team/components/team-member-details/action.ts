@@ -7,7 +7,7 @@ import AgencyManager from "@/lib/managers/agencyManager";
 import prisma from "@/lib/db";
 import NotificationManager from "@/lib/managers/notificationManager";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 
 const onUpdateMember = async (values: z.infer<typeof formSchema>) => {
   const session = await auth.api.getSession({

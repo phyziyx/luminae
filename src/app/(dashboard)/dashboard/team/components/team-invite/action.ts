@@ -7,7 +7,7 @@ import AgencyManager from "@/lib/managers/agencyManager";
 import { revalidatePath } from "next/cache";
 import UserManager from "@/lib/managers/userManager";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 
 const onCreateInvite = async (values: z.infer<typeof formSchema>) => {
   const session = await auth.api.getSession({

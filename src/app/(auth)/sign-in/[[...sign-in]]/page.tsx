@@ -28,7 +28,7 @@ import { useForm } from "react-hook-form";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { useRouter } from "next/navigation";
 
 const getEmailSchema = () =>

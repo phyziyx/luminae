@@ -1,7 +1,7 @@
 import { User } from "@prisma/client";
 import prisma from "../db";
 import NotificationManager from "./notificationManager";
-import { auth } from "../auth";
+import { auth } from "../auth/auth";
 
 type CreateUser = Pick<User, "email" | "name" | "image"> & {
   password: string;

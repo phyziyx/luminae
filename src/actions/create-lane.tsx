@@ -5,7 +5,7 @@ import prisma from "@/lib/db";
 import { v7 } from "uuid";
 import { createLaneSchema, CreateLaneSchema } from "@/lib/forms";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 export default async function onCreateLane(values: CreateLaneSchema) {

@@ -8,7 +8,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import UserManager from "@/lib/managers/userManager";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 const t = await getTranslations({ locale: "en" });

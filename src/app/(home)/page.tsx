@@ -11,7 +11,7 @@ import Pricing from "./components/pricing";
 import Testimonials from "./components/testimonials";
 
 import PackageManager from "@/lib/managers/packageManager";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 // This is a server-side component, which means it is rendered on the server and handled by Next.js internally.

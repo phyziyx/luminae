@@ -3,7 +3,7 @@
 import AgencyManager from "@/lib/managers/agencyManager";
 import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 export default async function deleteLane(values: {

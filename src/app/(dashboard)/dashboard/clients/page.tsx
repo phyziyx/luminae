@@ -13,7 +13,7 @@ import FallbackSpinner from "@/components/site/fallback-spinner";
 import { DataTable } from "./components/data-table";
 import { columns } from "./components/columns";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 
 const t = await getTranslations({ locale: "en" });
 

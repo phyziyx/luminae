@@ -27,7 +27,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import React, { JSX } from "react";
 import Link from "next/link";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 
 const usages = [

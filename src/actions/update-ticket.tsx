@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
 import { laneTicketFormSchema, LaneTicketFormSchema } from "@/lib/forms";
 import AgencyManager from "@/lib/managers/agencyManager";

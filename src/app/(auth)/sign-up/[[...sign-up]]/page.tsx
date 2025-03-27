@@ -29,7 +29,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { useToast } from "@/hooks/use-toast";
 import { redirect } from "next/navigation";
 

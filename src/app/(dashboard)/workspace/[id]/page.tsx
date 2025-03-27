@@ -3,7 +3,7 @@
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";

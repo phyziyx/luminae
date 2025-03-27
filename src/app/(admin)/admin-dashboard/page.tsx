@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/table";
 import stripeManager from "@/lib/managers/stripeManager";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 
 const Dashboard = async () => {
   const session = await auth.api.getSession({

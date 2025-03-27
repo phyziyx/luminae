@@ -134,7 +134,7 @@ interface PricingProps {
   packages: PricingPackage[];
 }
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 
 export const Pricing = ({ packages }: PricingProps) => {
   const t = useTranslations();

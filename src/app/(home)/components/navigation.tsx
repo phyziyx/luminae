@@ -24,7 +24,7 @@ import Logo from "@/components/logo";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
 
 type Props = {

@@ -10,7 +10,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 
 const t = await getTranslations({ locale: "en" });
 

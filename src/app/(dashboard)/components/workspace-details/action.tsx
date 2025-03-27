@@ -3,7 +3,7 @@
 import { z } from "zod";
 import formSchema from "./schema";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
