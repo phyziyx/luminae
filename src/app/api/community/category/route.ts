@@ -11,9 +11,50 @@ interface Post {
   relativeDate: string;
 }
 
+export async function GET(request: NextRequest) {
+  console.log("category route called");
+
+  const name = request.nextUrl.searchParams.get("name");
+
+  if (!name) {
+    return NextResponse.json(
+      {
+        error: "Category name is required",
+      },
+      {
+        status: 400,
+      }
+    );
+  }
+
+  const pageParam = request.nextUrl.searchParams.get("page");
+  const page = pageParam ? parseInt(pageParam) : undefined;
+
+  const pageSize = 3;
+
+  const delay = 500;
+  await new Promise((resolve) => setTimeout(resolve, delay));
+
+  const startIndex = page ? page * pageSize : 0;
+  const endIndex = startIndex + pageSize;
+
+  const totalPosts = generateCategoryPosts(name);
+  const posts = totalPosts.slice(startIndex, endIndex);
+
+  console.log({
+    posts,
+    nextCursor: totalPosts.length > endIndex ? (page || 0) + 1 : undefined,
+  });
+
+  return NextResponse.json({
+    posts,
+    nextCursor: totalPosts.length >= endIndex ? (page || 0) + 1 : undefined,
+  });
+}
+
 // Sample data generator for category posts
 const generateCategoryPosts = (category: string) => {
-  const posts = [];
+  const posts: Post[] = [];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const categories: Record<string, any> = {
     design: {
@@ -93,33 +134,10 @@ const generateCategoryPosts = (category: string) => {
       author: categoryData.authors[i % categoryData.authors.length],
       comments: Math.floor(Math.random() * 100),
       likes: Math.floor(Math.random() * 500),
-      date: `${Math.floor(Math.random() * 7) + 1} days ago`,
+      relativeDate: `${Math.floor(Math.random() * 7) + 1} days ago`,
+      category,
     });
   }
 
   return posts;
 };
-
-// export async function GET(request: NextRequest) {
-//   const cursorParam = request.nextUrl.searchParams.get("cursor");
-//   const cursor = cursorParam ? parseInt(cursorParam) : undefined;
-
-//   const pageSize = 3;
-
-//   const delay = 500;
-//   await new Promise((resolve) => setTimeout(resolve, delay));
-
-//   const startIndex = cursor
-//     ? trendingPosts.findIndex((post) => post.id === cursor)
-//     : 0;
-
-//   const endIndex = startIndex + pageSize;
-
-//   const trendingPostsPaginated = trendingPosts.slice(startIndex, endIndex);
-
-//   return NextResponse.json({
-//     posts: trendingPostsPaginated,
-//     nextCursor:
-//       trendingPosts.length > endIndex ? trendingPosts[endIndex]?.id : undefined,
-//   });
-// }

@@ -3,6 +3,10 @@ import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import CategoryPostsList from "../components/category-posts-list";
+// import { type SearchParams } from "next/dist/server/request/search-params";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import getQueryClient from "@/lib/react-query";
+import { fetchCategoryPosts } from "@/lib/managers/postManager";
 
 // This would typically come from a database or API
 const getCategoryData = (category: string) => {
@@ -17,12 +21,28 @@ const getCategoryData = (category: string) => {
 
 export default async function CategoryPage({
   params,
-}: {
+}: // searchParams,
+{
   params: Promise<{ category: string }>;
+  // searchParams: Promise<SearchParams>;
 }) {
+  const queryClient = getQueryClient();
   const { category } = await params;
 
-  console.log("category", category);
+  queryClient.prefetchInfiniteQuery({
+    queryKey: ["community/category", category],
+    queryFn: ({ pageParam = 0 }) => {
+      return fetchCategoryPosts({
+        category,
+        pageParam,
+      });
+    },
+    initialPageParam: undefined as number | undefined,
+    getNextPageParam: (lastPage: { nextCursor?: number }) =>
+      lastPage.nextCursor,
+  });
+
+  console.log("fetching category", category, "!");
 
   const categoryData = getCategoryData(category);
 
@@ -51,7 +71,9 @@ export default async function CategoryPage({
           </p>
         </div>
 
-        <CategoryPostsList category={category} />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <CategoryPostsList category={category} />
+        </HydrationBoundary>
       </main>
     </div>
   );

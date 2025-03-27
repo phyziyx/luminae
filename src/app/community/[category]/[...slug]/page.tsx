@@ -81,7 +81,7 @@ export default async function PostPage({
           className="mb-6 -ml-2 text-gray-600 hover:text-primary"
           asChild
         >
-          <Link href="/">
+          <Link href="/community/">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Home
           </Link>

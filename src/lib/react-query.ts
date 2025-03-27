@@ -19,11 +19,11 @@ export default function getQueryClient() {
     // On the server, always create a new client for each request
     return makeQueryClient();
   }
+
   // On the client, we always re-use the existing client. This is very
   // important, so we don't re-make a new client if React suspends
   // during the initial render. This may not be needed if we have
   // a suspense boundary BELOW the creation of the query client.
-
   if (!browserQueryClient) {
     browserQueryClient = makeQueryClient();
   }

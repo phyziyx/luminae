@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { MessageSquare, ThumbsDown, ThumbsUp } from "lucide-react";
 
@@ -13,12 +13,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { fetchCategoryPosts } from "@/lib/managers/postManager";
 
 export default function CategoryPostsList({ category }: { category: string }) {
   const [sortOption, setSortOption] = useState("latest");
 
-  const posts = [];
-  const sortedPosts = [...posts];
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isError } =
+    useSuspenseInfiniteQuery({
+      queryKey: ["community/category", category],
+      queryFn: ({ pageParam = 0 }) => {
+        return fetchCategoryPosts({
+          category,
+          pageParam,
+        });
+      },
+      initialPageParam: undefined as number | undefined,
+      getNextPageParam: (lastPage: { nextCursor?: number }) =>
+        lastPage.nextCursor,
+    });
+
+  const posts = useMemo(
+    () => data?.pages.flatMap((page) => page.posts),
+    [data]
+  );
 
   // // Sort posts based on selected option
   // const sortedPosts = [...posts].sort((a, b) => {
@@ -37,7 +55,7 @@ export default function CategoryPostsList({ category }: { category: string }) {
   return (
     <div>
       <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-        <div className="text-gray-600">Showing {posts.length} posts</div>
+        <div className="text-gray-600">Showing {posts?.length} posts</div>
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-600">Sort by:</span>
           <Select value={sortOption} onValueChange={setSortOption}>
@@ -53,16 +71,46 @@ export default function CategoryPostsList({ category }: { category: string }) {
         </div>
       </div>
 
-      <div className="space-y-6">
-        {sortedPosts.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
-      </div>
+      {JSON.stringify({
+        data: data?.pages?.length,
+        hasNextPage,
+        isFetchingNextPage,
+      })}
 
-      <div className="mt-8 flex justify-center">
-        <Button className="bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all">
-          Load More
-        </Button>
+      <div className="space-y-6">
+        {posts?.length === 0 ? (
+          <div className="text-center text-gray-500">No posts found...</div>
+        ) : (
+          <div className="flex flex-col items-center justify-center space-y-6">
+            {posts?.map((post) => (
+              <PostCard key={post.id} post={post} />
+            ))}
+            <div className="mt-6 flex items-center justify-center">
+              {hasNextPage ? (
+                <Button
+                  size="lg"
+                  onClick={() => fetchNextPage()}
+                  disabled={isFetchingNextPage}
+                  className="bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all"
+                >
+                  {isFetchingNextPage ? "Loading..." : "Load more"}
+                </Button>
+              ) : null}
+            </div>
+          </div>
+        )}
+        {isError && (
+          <div>
+            <span>Failed to load posts.</span>
+            <Button
+              variant="link"
+              onClick={() => fetchNextPage()}
+              className="text-primary"
+            >
+              {"Retry"}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

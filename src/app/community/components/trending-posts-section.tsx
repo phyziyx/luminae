@@ -6,7 +6,7 @@ import { fetchTrendingPosts } from "@/lib/managers/postManager";
 export default async function TrendingPostsSection() {
   const queryClient = getQueryClient();
 
-  await queryClient.prefetchInfiniteQuery({
+  queryClient.prefetchInfiniteQuery({
     queryKey: ["trendingPosts"],
     queryFn: fetchTrendingPosts,
     initialPageParam: undefined as number | undefined,

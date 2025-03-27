@@ -76,6 +76,8 @@ export async function GET(request: NextRequest) {
 
   const pageSize = 2;
 
+  console.log("trending-posts called", request.mode);
+
   const delay = 500;
   await new Promise((resolve) => setTimeout(resolve, delay));
 

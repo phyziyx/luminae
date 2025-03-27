@@ -2,16 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { useMemo } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import PostCard from "./post-card";
 import { fetchTrendingPosts } from "@/lib/managers/postManager";
 
 const useTrendingPosts = () => {
-  return useInfiniteQuery({
+  return useSuspenseInfiniteQuery({
     queryKey: ["trendingPosts"],
     queryFn: fetchTrendingPosts,
     initialPageParam: undefined as number | undefined,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    getNextPageParam: (lastPage: { nextCursor?: number }) =>
+      lastPage.nextCursor,
   });
 };
 
@@ -26,6 +27,7 @@ export default function TrendingPosts() {
 
   return (
     <>
+      {JSON.stringify({ data, hasNextPage, isFetchingNextPage })}
       <div className="flex flex-col items-center justify-center">
         {trendingPosts?.length === 0 ? (
           <div className="text-center text-gray-500">
