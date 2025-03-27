@@ -73,6 +73,9 @@ model User {
   Ticket        Ticket[]
   Session       Session[]
   Account       Account[]
+  Post          Post[]
+  Comment       Comment[]
+  Likes         Likes[]
 }
 
 model Verification {
@@ -343,4 +346,51 @@ model Subscription {
   @@index([agencyId])
   @@index([stripeCustomerId])
   @@index([stripeSubscriptionId])
+}
+
+model Post {
+  id       String    @id @default(cuid()) // UUIDv7 for post ID
+  title    String
+  content  String
+  authorId String
+  author   User      @relation(fields: [authorId], references: [id])
+  comments Comment[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  Likes     Likes[]
+
+  @@index([id])
+}
+
+model Comment {
+  id       String    @id @default(cuid()) // UUIDv7 for comment ID
+  postId   String
+  post     Post      @relation(fields: [postId], references: [id])
+  parentId String?
+  parent   Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
+  replies  Comment[] @relation("CommentToComment")
+  content  String
+  authorId String
+  author   User      @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([id])
+}
+
+model Likes {
+  id     String @id @default(cuid()) // UUIDv7 for like ID
+  postId String
+  post   Post   @relation(fields: [postId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
 }
