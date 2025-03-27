@@ -44,6 +44,10 @@ const navbarLinks = [
     name: "Support",
     href: "/support",
   },
+  {
+    name: "Community",
+    href: "/community",
+  },
 ] as const;
 
 const SignOutButton = () => {

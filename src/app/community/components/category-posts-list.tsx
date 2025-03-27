@@ -16,7 +16,11 @@ import {
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { fetchCategoryPosts } from "@/lib/managers/postManager";
 
-export default function CategoryPostsList({ category }: { category: string }) {
+export default function CategoryPostsList({
+  categoryId: category,
+}: {
+  categoryId: string;
+}) {
   const [sortOption, setSortOption] = useState("latest");
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isError } =
@@ -75,11 +79,15 @@ export default function CategoryPostsList({ category }: { category: string }) {
         </div>
       </div>
 
-      {JSON.stringify({
-        data: data?.pages?.length,
-        hasNextPage,
-        isFetchingNextPage,
-      })}
+      {JSON.stringify(
+        {
+          data: data?.pages?.length,
+          hasNextPage,
+          isFetchingNextPage,
+        },
+        null,
+        2
+      )}
 
       <div className="space-y-6">
         {posts?.length === 0 ? (

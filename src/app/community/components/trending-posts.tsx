@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useMemo } from "react";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
-import PostCard from "./post-card";
+import PostCardLarge from "./post-card-large";
 import { fetchTrendingPosts } from "@/lib/managers/postManager";
 
 const useTrendingPosts = () => {
@@ -17,8 +17,7 @@ const useTrendingPosts = () => {
 };
 
 export default function TrendingPosts() {
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isError } =
-    useTrendingPosts();
+  const { data, fetchNextPage, isError } = useTrendingPosts();
 
   const trendingPosts = useMemo(
     () => data?.pages.flatMap((page) => page.posts),
@@ -27,7 +26,6 @@ export default function TrendingPosts() {
 
   return (
     <>
-      {JSON.stringify({ data, hasNextPage, isFetchingNextPage })}
       <div className="flex flex-col items-center justify-center">
         {/* No trending posts */}
         {trendingPosts?.length === 0 ? (
@@ -38,24 +36,9 @@ export default function TrendingPosts() {
           <div className="flex flex-col items-center justify-center">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
               {trendingPosts?.map((post) => (
-                <PostCard key={post.id} post={post} />
+                <PostCardLarge key={post.id} post={post} />
               ))}
             </div>
-
-            {/* Load more button */}
-            {/* <div className="mt-6 flex items-center justify-center">
-              {hasNextPage ? (
-                <Button
-                  size="lg"
-                  onClick={() => fetchNextPage()}
-                  disabled={isFetchingNextPage}
-                  className="bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg transition-all 
-            dark:bg-primary/80 dark:hover:bg-primary/70 dark:shadow-lg dark:hover:shadow-xl"
-                >
-                  {isFetchingNextPage ? "Loading..." : "Load more"}
-                </Button>
-              ) : null}
-            </div> */}
           </div>
         )}
 

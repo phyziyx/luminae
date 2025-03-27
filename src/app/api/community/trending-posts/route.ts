@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
   const cursorParam = request.nextUrl.searchParams.get("cursor");
   const cursor = cursorParam ? parseInt(cursorParam) : undefined;
 
-  const pageSize = 2;
+  const pageSize = 10;
 
   console.log("trending-posts called", request.mode);
 

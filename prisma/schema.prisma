@@ -286,7 +286,7 @@ enum FeatureCode {
 }
 
 model Package {
-  id           String  @id @default(cuid()) // UUIDv7 for package ID
+  id           String  @id @default(uuid()) // UUIDv7 for package ID
   name         String // Unique name for the package
   monthlyPrice Decimal // Monthly price for the package
 
@@ -303,7 +303,7 @@ model Package {
 }
 
 model Feature {
-  id        String      @id @default(cuid()) // UUIDv7 for feature ID
+  id        String      @id @default(uuid()) // UUIDv7 for feature ID
   code      FeatureCode // Enum type for feature code
   name      String // Descriptive name for the feature
   maxLimit  Int? // Optional max limit, e.g., 3 team members
@@ -323,7 +323,7 @@ enum SubscriptionStatus {
 }
 
 model Subscription {
-  id        String  @id @default(cuid()) // UUIDv7 for subscription ID
+  id        String  @id @default(uuid()) // UUIDv7 for subscription ID
   packageId String // Package ID
   price     String? // Price of the package
   agencyId  String  @unique() // Agency ID
@@ -348,24 +348,35 @@ model Subscription {
   @@index([stripeSubscriptionId])
 }
 
+model Category {
+  id          String @id @default(uuid())
+  name        String @unique
+  title       String
+  description String
+
+  posts Post[]
+}
+
 model Post {
-  id       String    @id @default(cuid()) // UUIDv7 for post ID
-  title    String
-  content  String
-  authorId String
-  author   User      @relation(fields: [authorId], references: [id])
-  comments Comment[]
+  id         String    @id @default(uuid()) // UUIDv7 for post ID
+  title      String
+  content    String
+  authorId   String
+  author     User      @relation(fields: [authorId], references: [id])
+  comments   Comment[]
+  categoryId String
+  Category   Category  @relation(fields: [categoryId], references: [id])
+  Likes      Likes[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  Likes     Likes[]
 
   @@index([id])
 }
 
 model Comment {
-  id       String    @id @default(cuid()) // UUIDv7 for comment ID
+  id       String    @id @default(uuid()) // UUIDv7 for comment ID
   postId   String
   post     Post      @relation(fields: [postId], references: [id])
   parentId String?
@@ -383,7 +394,7 @@ model Comment {
 }
 
 model Likes {
-  id     String @id @default(cuid()) // UUIDv7 for like ID
+  id     String @id @default(uuid()) // UUIDv7 for like ID
   postId String
   post   Post   @relation(fields: [postId], references: [id])
   userId String

@@ -2,7 +2,6 @@ import { Comment, Post } from "@prisma/client";
 import prisma from "../db";
 import { v7 } from "uuid";
 
-/*
 class PostManager {
   public static async create(data: Exclude<Post, "id">) {
     const post = await prisma.post.create({
@@ -45,7 +44,6 @@ class PostManager {
 }
 
 export default PostManager;
-*/
 
 export const fetchTrendingPosts = async ({
   pageParam = 0,

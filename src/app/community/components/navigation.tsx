@@ -29,21 +29,21 @@ const communityLinks = [
 
 // Categories for Mega Menu
 const categories = [
-  { name: "Gen. Discussion", href: "/community/categories/gen-discussion" },
-  { name: "Bug Reporting", href: "/community/categories/bug-reporting" },
-  { name: "Delete/Combine Pages", href: "/community/categories/delete-combine-pages" },
-  { name: "Artist Show-Off", href: "/community/categories/artist-show-off" },
-  { name: "Off-Topic", href: "/community/categories/off-topic" },
-  { name: "Contests", href: "/community/categories/contests" },
-  { name: "Battles", href: "/community/categories/battles" },
-  { name: "Fan-Fic", href: "/community/categories/fan-fic" },
-  { name: "RPG", href: "/community/categories/rpg" },
-  { name: "Comic Book Preview", href: "/community/categories/comic-book-preview" },
-  { name: "API Developers", href: "/community/categories/api-developers" },
-  { name: "Editing & Tools", href: "/community/categories/editing-tools" },
-  { name: "Podcast", href: "/community/categories/podcast" },
-  { name: "Quests", href: "/community/categories/quests" },
-  { name: "Feats and Analysis", href: "/community/categories/feats-and-analysis" },
+  { name: "Gen. Discussion", href: "/community/gen-discussion" },
+  { name: "Bug Reporting", href: "/community/bug-reporting" },
+  { name: "Delete/Combine Pages", href: "/community/delete-combine-pages" },
+  { name: "Artist Show-Off", href: "/community/artist-show-off" },
+  { name: "Off-Topic", href: "/community/off-topic" },
+  { name: "Contests", href: "/community/contests" },
+  { name: "Battles", href: "/community/battles" },
+  { name: "Fan-Fic", href: "/community/fan-fic" },
+  { name: "RPG", href: "/community/rpg" },
+  { name: "Comic Book Preview", href: "/community/comic-book-preview" },
+  { name: "API Developers", href: "/community/api-developers" },
+  { name: "Editing & Tools", href: "/community/editing-tools" },
+  { name: "Podcast", href: "/community/podcast" },
+  { name: "Quests", href: "/community/quests" },
+  { name: "Feats and Analysis", href: "/community/feats-and-analysis" },
 ];
 
 const CommunityNavbar = () => {
@@ -105,7 +105,10 @@ const CommunityNavbar = () => {
                 <MenuIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-64 bg-white dark:bg-gray-950">
+            <SheetContent
+              side="left"
+              className="w-64 bg-white dark:bg-gray-950"
+            >
               <div className="flex flex-col gap-4 p-4">
                 {communityLinks.map((link) => (
                   <Link
@@ -120,10 +123,17 @@ const CommunityNavbar = () => {
                 {/* Collapsible Categories Dropdown in Sidebar */}
                 <div className="mt-2">
                   <button
-                    onClick={() => setIsSidebarCategoriesOpen(!isSidebarCategoriesOpen)}
+                    onClick={() =>
+                      setIsSidebarCategoriesOpen(!isSidebarCategoriesOpen)
+                    }
                     className="text-gray-700 dark:text-gray-300 font-semibold mb-2 w-full text-left flex items-center justify-between"
                   >
-                    Categories {isSidebarCategoriesOpen ? <ChevronUpIcon className="h-4 w-4" /> : <ChevronDownIcon className="h-4 w-4" />}
+                    Categories{" "}
+                    {isSidebarCategoriesOpen ? (
+                      <ChevronUpIcon className="h-4 w-4" />
+                    ) : (
+                      <ChevronDownIcon className="h-4 w-4" />
+                    )}
                   </button>
                   {isSidebarCategoriesOpen && (
                     <div className="grid grid-cols-1 gap-2">

@@ -93,7 +93,7 @@ function CategorySection({
           className="text-primary dark:text-primary-light hover:text-primary/90 dark:hover:text-primary-light/90 hover:bg-primary/5 dark:hover:bg-primary-light/10"
           asChild
         >
-          <Link href={`/community/category/${category}`}>See More</Link>
+          <Link href={`/community/${category}`}>See More</Link>
         </Button>
       </div>
 
