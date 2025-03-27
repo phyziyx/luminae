@@ -1,6 +1,7 @@
 import { Comment, Post } from "@prisma/client";
 import prisma from "../db";
 import { v7 } from "uuid";
+import { CategoryPostsResponse } from "../types";
 
 class PostManager {
   public static async create(data: Exclude<Post, "id">) {
@@ -62,17 +63,15 @@ export const fetchTrendingPosts = async ({
 
 export async function fetchCategoryPosts({
   category,
-  pageParam = 0,
+  pageParam,
 }: {
   category: string;
-  pageParam?: number;
+  pageParam?: string | undefined;
 }) {
   const response = await fetch(
-    `/api/community/category?name=${category}&page=${pageParam}`
+    `/api/community/category?id=${category}` +
+      (pageParam ? `&cursor=${pageParam}` : "")
   );
-  const data: {
-    posts: Post[];
-    nextCursor: number | undefined;
-  } = await response.json();
+  const data: CategoryPostsResponse = await response.json();
   return data;
 }

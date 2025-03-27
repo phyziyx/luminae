@@ -1,4 +1,22 @@
-import { Feature, Package, Prisma } from "@prisma/client";
+import { Post, Feature, Package, Prisma } from "@prisma/client";
+
+export type CategoryPost = Omit<
+  Post,
+  "updatedAt" | "deletedAt" | "categoryId"
+> & {
+  _count: {
+    comments: number;
+    Likes: number;
+  };
+  author: {
+    name: string;
+  };
+};
+
+export type CategoryPostsResponse = {
+  posts: CategoryPost[];
+  nextCursor?: string | undefined;
+};
 
 export type NotificationType = "workspace" | "ticket";
 

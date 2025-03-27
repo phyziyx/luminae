@@ -1,25 +1,14 @@
+import prisma from "@/lib/db";
+import { CategoryPost } from "@/lib/types";
 import { NextResponse, type NextRequest } from "next/server";
 
-interface Post {
-  id: number;
-  title: string;
-  content: string;
-  author: string;
-  category: string;
-  comments: number;
-  likes: number;
-  relativeDate: string;
-}
-
 export async function GET(request: NextRequest) {
-  console.log("category route called");
+  const id = request.nextUrl.searchParams.get("id");
 
-  const name = request.nextUrl.searchParams.get("name");
-
-  if (!name) {
+  if (!id) {
     return NextResponse.json(
       {
-        error: "Category name is required",
+        error: "Category id is required",
       },
       {
         status: 400,
@@ -27,117 +16,99 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const pageParam = request.nextUrl.searchParams.get("page");
-  const page = pageParam ? parseInt(pageParam) : undefined;
+  const foundCategory = await prisma.category.findUnique({
+    where: {
+      id,
+    },
+  });
 
-  const pageSize = 3;
+  if (!foundCategory) {
+    return NextResponse.json(
+      {
+        error: "Category not found",
+      },
+      {
+        status: 404,
+      }
+    );
+  }
+
+  const cursorParam = request.nextUrl.searchParams.get("cursor");
+  const cursor = cursorParam ? cursorParam : undefined;
+  const takeLimit = 10;
+
+  /*
+    SELECT Post.id, Post.title, Post.content, Post.authorId, Post.createdAt,
+    User.`name`, COUNT(Comment.postId) commentsCount, COUNT(Likes.postId)
+    FROM Post
+    INNER JOIN User ON User.id = Post.authorId
+    LEFT JOIN Comment ON Comment.postId = Post.id AND Comment.deletedAt IS NULL
+    LEFT JOIN Likes ON Likes.postId = Post.id
+    WHERE categoryId = '0195d962-411b-7417-9af1-acee0335c886' AND Post.deletedAt IS NULL
+    ORDER BY Post.id DESC
+    LIMIT 10 OFFSET 0;
+  */
+
+  // const posts = await prisma.$queryRaw`
+  //   SELECT Post.id, Post.title, Post.content, Post.authorId, Post.createdAt,
+  //   User.name, COUNT(Comment.postId) commentsCount, COUNT(Likes.postId) likesCount
+  //   FROM Post
+  //   INNER JOIN User ON User.id = Post.authorId
+  //   LEFT JOIN Comment ON Comment.postId = Post.id AND Comment.deletedAt IS NULL
+  //   LEFT JOIN Likes ON Likes.postId = Post.id
+  //   WHERE categoryId = ${id} AND Post.deletedAt IS NULL
+  //   GROUP BY Post.id
+  //   ORDER BY Post.id DESC
+  //   LIMIT ${takeLimit} OFFSET ${cursor || 0};
+  // `;
+
+  const posts: CategoryPost[] = await prisma.post.findMany({
+    take: takeLimit,
+    skip: cursor ? 1 : undefined,
+    cursor: cursor
+      ? {
+          id: cursor,
+        }
+      : undefined,
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      authorId: true,
+      createdAt: true,
+      _count: {
+        select: {
+          comments: {
+            where: {
+              deletedAt: null,
+            },
+          },
+          Likes: true,
+        },
+      },
+      author: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
 
   const delay = 500;
   await new Promise((resolve) => setTimeout(resolve, delay));
 
-  const startIndex = page ? page * pageSize : 0;
-  const endIndex = startIndex + pageSize;
-
-  const totalPosts = generateCategoryPosts(name);
-  const posts = totalPosts.slice(startIndex, endIndex);
-
-  console.log({
-    posts,
-    nextCursor: totalPosts.length > endIndex ? (page || 0) + 1 : undefined,
+  const totalPosts = await prisma.post.count({
+    where: {
+      categoryId: id,
+      deletedAt: null,
+    },
   });
+
+  console.log("totalPosts", totalPosts);
+  console.log("posts", posts);
 
   return NextResponse.json({
     posts,
-    nextCursor: totalPosts.length >= endIndex ? (page || 0) + 1 : undefined,
+    nextCursor: totalPosts > takeLimit ? posts[posts.length - 1].id : undefined,
   });
 }
-
-// Sample data generator for category posts
-const generateCategoryPosts = (category: string) => {
-  const posts: Post[] = [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const categories: Record<string, any> = {
-    design: {
-      titles: [
-        "Color Theory Fundamentals for Digital Design",
-        "Typography Trends That Will Dominate This Year",
-        "UI Animation Principles: Creating Delightful Experiences",
-        "Designing for Accessibility: Best Practices",
-        "The Psychology of Color in UX Design",
-        "Minimalism vs. Maximalism in Modern Web Design",
-        "Creating Effective Design Systems for Scale",
-        "Visual Hierarchy: Guiding Users Through Your Design",
-        "The Art of Whitespace in UI Design",
-        "Responsive Design Patterns for Complex Interfaces",
-      ],
-      authors: [
-        "Jessica Lee",
-        "Mark Wilson",
-        "Sophia Chen",
-        "David Park",
-        "Emma Rodriguez",
-      ],
-    },
-    development: {
-      titles: [
-        "Getting Started with React Server Components",
-        "Building Accessible Web Applications: A Complete Guide",
-        "Optimizing Next.js Applications for Performance",
-        "TypeScript Best Practices for Large Codebases",
-        "Implementing Authentication with NextAuth.js",
-        "State Management Patterns in Modern React",
-        "Building a Headless CMS with Next.js and Sanity",
-        "Serverless Functions: When and How to Use Them",
-        "Testing Strategies for React Applications",
-        "Micro-Frontends: Architecture and Implementation",
-      ],
-      authors: [
-        "Alex Turner",
-        "Sophia Martinez",
-        "James Wilson",
-        "Olivia Kim",
-        "Ethan Chen",
-      ],
-    },
-    marketing: {
-      titles: [
-        "How We Increased Conversion Rates by 300% Using This Simple Strategy",
-        "Content Marketing Strategies That Drive Engagement",
-        "SEO Techniques for 2025: What's Changed?",
-        "Building a Social Media Strategy That Converts",
-        "Email Marketing Automation: Beyond the Basics",
-        "Data-Driven Marketing: Measuring What Matters",
-        "Influencer Marketing: Finding the Right Partners",
-        "A/B Testing Methodologies for Marketing Campaigns",
-        "Customer Journey Mapping for Better Marketing Results",
-        "Video Marketing Trends and Best Practices",
-      ],
-      authors: [
-        "Emily Rodriguez",
-        "Michael Johnson",
-        "Sarah Thompson",
-        "Daniel Lee",
-        "Rachel Kim",
-      ],
-    },
-  };
-
-  // Default to development if category doesn't exist
-  const categoryData = categories[category] || categories.development;
-
-  for (let i = 0; i < 10; i++) {
-    posts.push({
-      id: i + 1,
-      title: categoryData.titles[i] || `Post ${i + 1} about ${category}`,
-      content:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-      author: categoryData.authors[i % categoryData.authors.length],
-      comments: Math.floor(Math.random() * 100),
-      likes: Math.floor(Math.random() * 500),
-      relativeDate: `${Math.floor(Math.random() * 7) + 1} days ago`,
-      category,
-    });
-  }
-
-  return posts;
-};

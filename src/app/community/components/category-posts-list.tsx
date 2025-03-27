@@ -1,11 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-import { MessageSquare, ThumbsDown, ThumbsUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -15,27 +12,33 @@ import {
 } from "@/components/ui/select";
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { fetchCategoryPosts } from "@/lib/managers/postManager";
+import { CategoryPostsResponse } from "@/lib/types";
+import PostCard from "./post-card";
+
+function useCategoryPosts({ categoryId }: { categoryId: string }) {
+  return useSuspenseInfiniteQuery<CategoryPostsResponse>({
+    queryKey: ["community/category", categoryId],
+    queryFn: ({ pageParam }) => {
+      return fetchCategoryPosts({
+        category: categoryId,
+        pageParam: pageParam as string | undefined,
+      });
+    },
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage: { nextCursor?: string }) =>
+      lastPage.nextCursor,
+  });
+}
 
 export default function CategoryPostsList({
-  categoryId: category,
+  categoryId,
 }: {
   categoryId: string;
 }) {
   const [sortOption, setSortOption] = useState("latest");
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isError } =
-    useSuspenseInfiniteQuery({
-      queryKey: ["community/category", category],
-      queryFn: ({ pageParam = 0 }) => {
-        return fetchCategoryPosts({
-          category,
-          pageParam,
-        });
-      },
-      initialPageParam: undefined as number | undefined,
-      getNextPageParam: (lastPage: { nextCursor?: number }) =>
-        lastPage.nextCursor,
-    });
+    useCategoryPosts({ categoryId });
 
   const posts = useMemo(
     () => data?.pages.flatMap((page) => page.posts),
@@ -125,64 +128,5 @@ export default function CategoryPostsList({
         )}
       </div>
     </div>
-  );
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function PostCard({ post }: { post: any }) {
-  return (
-    <Card className="overflow-hidden transition-all duration-200 hover:shadow-soft bg-white dark:bg-gray-800">
-      <CardContent className="p-6">
-        <div className="mb-2 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
-              {post.author.charAt(0)}
-            </div>
-            <span className="text-sm text-gray-600 dark:text-gray-300">
-              <span className="font-medium text-gray-800 dark:text-gray-200">
-                {post.author}
-              </span>{" "}
-              • {post.date}
-            </span>
-          </div>
-        </div>
-        <Link href={`/post/${post.id}`} className="group">
-          <h3 className="mb-2 text-xl font-bold text-gray-800 dark:text-gray-100 group-hover:text-primary dark:group-hover:text-primary-light transition-colors">
-            {post.title}
-          </h3>
-        </Link>
-        <p className="mb-4 text-sm text-gray-600 dark:text-gray-300 line-clamp-3">
-          {post.content}
-        </p>
-      </CardContent>
-      <CardFooter className="flex items-center justify-between border-t border-gray-100 dark:border-gray-700 bg-blue-50/30 dark:bg-blue-900/10 p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1">
-            <MessageSquare className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-            <span className="text-sm">{post.comments}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <ThumbsUp className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-            <span className="text-sm">{post.likes}</span>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
-          >
-            <ThumbsUp className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
-          >
-            <ThumbsDown className="h-4 w-4" />
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
   );
 }

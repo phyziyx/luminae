@@ -8,6 +8,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import getQueryClient from "@/lib/react-query";
 import { fetchCategoryPosts } from "@/lib/managers/postManager";
 import prisma from "@/lib/db";
+import { CategoryPostsResponse } from "@/lib/types";
 
 export default async function CategoryPage({
   // searchParams,
@@ -49,16 +50,16 @@ export default async function CategoryPage({
 
   const queryClient = getQueryClient();
 
-  queryClient.prefetchInfiniteQuery({
+  queryClient.prefetchInfiniteQuery<CategoryPostsResponse>({
     queryKey: ["community/category", category],
-    queryFn: ({ pageParam = 0 }) => {
+    queryFn: ({ pageParam }: { pageParam: unknown }) => {
       return fetchCategoryPosts({
         category,
-        pageParam,
+        pageParam: pageParam as string | undefined,
       });
     },
-    initialPageParam: undefined as number | undefined,
-    getNextPageParam: (lastPage: { nextCursor?: number }) =>
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage: { nextCursor?: string }) =>
       lastPage.nextCursor,
   });
 
