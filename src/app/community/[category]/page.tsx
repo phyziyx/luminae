@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import CategoryPostsList from "../components/category-posts-list";
 // import { type SearchParams } from "next/dist/server/request/search-params";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import getQueryClient from "@/lib/react-query";
+import getQueryClient, { queryKeys } from "@/lib/react-query";
 import { fetchCategoryPosts } from "@/lib/managers/postManager";
 import prisma from "@/lib/db";
 import { CategoryPostsResponse } from "@/lib/types";
@@ -51,7 +51,7 @@ export default async function CategoryPage({
   const queryClient = getQueryClient();
 
   queryClient.prefetchInfiniteQuery<CategoryPostsResponse>({
-    queryKey: ["community/category", category],
+    queryKey: queryKeys.community.categoryPosts(category),
     queryFn: ({ pageParam }: { pageParam: unknown }) => {
       return fetchCategoryPosts({
         category,
@@ -59,7 +59,7 @@ export default async function CategoryPage({
       });
     },
     initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage: { nextCursor?: string }) =>
+    getNextPageParam: (lastPage: { nextCursor?: string | null }) =>
       lastPage.nextCursor,
   });
 

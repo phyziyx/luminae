@@ -1,19 +1,19 @@
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import CommentForm from "./comment-form";
 import CommentList from "./comments-list";
-import getQueryClient from "@/lib/react-query";
+import getQueryClient, { queryKeys } from "@/lib/react-query";
 import { fetchComments } from "@/lib/managers/postManager";
 
 export default async function CommentSection({ postId }: { postId: string }) {
   const queryClient = getQueryClient();
 
   await queryClient.prefetchInfiniteQuery({
-    queryKey: ["community/comments", postId],
+    queryKey: queryKeys.community.postComments(postId),
     queryFn: ({ pageParam }) => {
       return fetchComments({ postId, pageParam });
     },
     initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage: { nextCursor?: string }) =>
+    getNextPageParam: (lastPage: { nextCursor?: string | null }) =>
       lastPage.nextCursor,
   });
 

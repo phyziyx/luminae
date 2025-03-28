@@ -1,7 +1,11 @@
 import { Comment, Post } from "@prisma/client";
 import prisma from "../db";
 import { v7 } from "uuid";
-import { CategoryPost, CategoryPostsResponse } from "../types";
+import {
+  CategoryPost,
+  CategoryPostsResponse,
+  PostCommentResponse,
+} from "../types";
 
 class PostManager {
   public static async findTrending() {
@@ -122,7 +126,8 @@ export async function fetchComments({
     throw new Error("Failed to fetch comments");
   }
 
-  return await response.json();
+  const data: PostCommentResponse = await response.json();
+  return data;
 }
 
 export async function fetchCategoryPosts({

@@ -6,16 +6,19 @@ import { useMemo } from "react";
 import Comment from "./comment";
 import { fetchComments } from "@/lib/managers/postManager";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
+import { queryKeys } from "@/lib/react-query";
 
 function useComments(postId: string) {
   return useSuspenseInfiniteQuery({
-    queryKey: ["community/comments", postId],
+    queryKey: queryKeys.community.postComments(postId),
     queryFn: ({ pageParam }) => {
-      return fetchComments({ postId, pageParam });
+      return fetchComments({
+        postId,
+        pageParam: pageParam,
+      });
     },
     initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage: { nextCursor?: string }) =>
-      lastPage.nextCursor,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 }
 
@@ -23,7 +26,7 @@ export default function CommentsList({ postId }: { postId: string }) {
   const { data, hasNextPage, fetchNextPage, isFetching } = useComments(postId);
 
   const comments = useMemo(
-    () => data?.pages.flatMap((page) => page?.comments || []),
+    () => data?.pages.flatMap((page) => page?.items),
     [data]
   );
 

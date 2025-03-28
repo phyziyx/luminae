@@ -1,8 +1,21 @@
 import { isServer, QueryClient } from "@tanstack/react-query";
 
+// Query key factories
 export const queryKeys = {
-  // Add your query keys here
-  // e.g., users: ["users"],
+  community: {
+    all: ["comments"],
+    categoryPosts: (category: string) => [
+      ...queryKeys.community.all,
+      "category",
+      category,
+    ],
+    postComments: (postId: string) => [
+      ...queryKeys.community.all,
+      "post",
+      postId,
+      "comments",
+    ],
+  },
 };
 
 function makeQueryClient() {

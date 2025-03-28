@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { CategoryPost } from "@/lib/types";
+import { CategoryPost, CategoryPostsResponse } from "@/lib/types";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -101,8 +101,8 @@ export async function GET(request: NextRequest) {
   await new Promise((resolve) => setTimeout(resolve, delay));
 
   return NextResponse.json({
-    posts,
+    items: posts,
     nextCursor:
       totalPosts > takeLimit ? posts[posts.length - 1]?.id : undefined,
-  });
+  } satisfies CategoryPostsResponse);
 }

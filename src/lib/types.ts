@@ -12,10 +12,13 @@ export type CategoryPost = Omit<
   author: Pick<User, "name">;
 };
 
-export type CategoryPostsResponse = {
-  posts: CategoryPost[];
-  nextCursor?: string | undefined;
+export type InfiniteQueryResponse<T> = {
+  items: T[];
+  nextCursor?: string | null;
 };
+
+export type PostCommentResponse = InfiniteQueryResponse<PostComment>;
+export type CategoryPostsResponse = InfiniteQueryResponse<CategoryPost>;
 
 export type PostComment = {
   id: string;

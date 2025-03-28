@@ -14,10 +14,11 @@ import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { fetchCategoryPosts } from "@/lib/managers/postManager";
 import { CategoryPostsResponse } from "@/lib/types";
 import PostCard from "./post-card";
+import { queryKeys } from "@/lib/react-query";
 
 function useCategoryPosts({ categoryId }: { categoryId: string }) {
   return useSuspenseInfiniteQuery<CategoryPostsResponse>({
-    queryKey: ["community/category", categoryId],
+    queryKey: queryKeys.community.categoryPosts(categoryId),
     queryFn: ({ pageParam }) => {
       return fetchCategoryPosts({
         category: categoryId,
@@ -25,8 +26,7 @@ function useCategoryPosts({ categoryId }: { categoryId: string }) {
       });
     },
     initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage: { nextCursor?: string }) =>
-      lastPage.nextCursor,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
   });
 }
 
@@ -41,7 +41,7 @@ export default function CategoryPostsList({
     useCategoryPosts({ categoryId });
 
   const posts = useMemo(
-    () => data?.pages.flatMap((page) => page.posts),
+    () => data?.pages.flatMap((page) => page.items),
     [data]
   );
 

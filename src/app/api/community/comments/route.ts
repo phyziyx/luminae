@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import { PostCommentResponse } from "@/lib/types";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -29,6 +30,7 @@ export async function GET(request: NextRequest) {
       : undefined,
     select: {
       id: true,
+      postId: true,
       content: true,
       authorId: true,
       createdAt: true,
@@ -57,7 +59,7 @@ export async function GET(request: NextRequest) {
   });
 
   return NextResponse.json({
-    comments,
+    items: comments,
     nextCursor: totalComments > takeLimit ? comments.at(-1)?.id : null,
-  });
+  } satisfies PostCommentResponse);
 }
