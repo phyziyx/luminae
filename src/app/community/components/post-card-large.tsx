@@ -3,16 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react";
 import { CategoryPost } from "@/lib/types";
-import { Badge } from "@/components/ui/badge";
 
 export default function PostCardLarge({ post }: { post: CategoryPost }) {
   return (
     <Card className="flex flex-col relative w-full h-full overflow-hidden transition-all duration-200 hover:shadow-soft bg-white dark:bg-gray-800">
       <CardContent className="p-4 top-0 flex flex-col flex-grow">
         <div className="relative mb-2 flex items-center justify-between">
-          <Badge className="rounded-full bg-primary/10 dark:bg-primary/20 px-3 py-1 text-xs font-medium text-primary dark:text-white">
+          <div className="rounded-full bg-primary/10 dark:bg-primary/20 px-3 py-1 text-xs font-medium text-primary dark:text-white">
             {post.Category.name}
-          </Badge>
+          </div>
           {/* Date */}
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {post.createdAt.toString()}
