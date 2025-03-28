@@ -55,7 +55,7 @@ export default function CommentsList({ postId }: { postId: string }) {
       {comments.map((comment) => (
         <Comment key={comment.id} comment={comment} />
       ))}
-      {!isError && !isFetching && (
+      {!isError && !isFetching && comments && !comments.length && (
         <div className="flex flex-col items-center align-middle justify-center py-4 text-gray-500 dark:text-gray-100 gap-4">
           No comments yet. Be the first to comment!
           <BirdIcon size={52} />

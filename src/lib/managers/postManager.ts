@@ -149,3 +149,20 @@ export async function fetchCategoryPosts({
   const data: CategoryPostsResponse = await response.json();
   return data;
 }
+
+export async function fetchTrendingPosts({
+  pageParam,
+}: {
+  pageParam?: string | undefined;
+}) {
+  const response = await fetch(
+    `/api/community/trending` + (pageParam ? `?cursor=${pageParam}` : "")
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch posts");
+  }
+
+  const data: CategoryPostsResponse = await response.json();
+  return data;
+}

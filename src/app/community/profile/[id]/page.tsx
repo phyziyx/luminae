@@ -3,6 +3,7 @@ import ProfileInfo from "../components/profile-info";
 import StatsOverview from "../components/stats-overview";
 import BadgesSection from "../components/badges-section";
 import RecentActivity from "../components/recent-activity";
+import prisma from "@/lib/db";
 
 // This would typically come from a database or API
 const getProfileData = (id: string) => {
@@ -107,44 +108,100 @@ const getProfileData = (id: string) => {
   };
 };
 
-export default function ProfilePage({ params }: { params: { id: string } }) {
+function CommunityProfile({ profileData }: { profileData: any }) {
+  return (
+    <>
+      <ProfileHeader
+        profileImage={profileData.profileImage}
+        bannerImage={profileData.bannerImage}
+        name={profileData.name}
+        isAgency={profileData.isAgency}
+      />
+
+      <div className="mt-8 grid gap-8 md:grid-cols-3">
+        <div className="md:col-span-2">
+          <ProfileInfo
+            name={profileData.name}
+            title={profileData.title}
+            tagline={profileData.tagline}
+            description={profileData.description}
+            isAgency={profileData.isAgency}
+            verified={profileData.verified}
+          />
+
+          <div className="mt-8">
+            <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
+              Recent Activity
+              <div className="mt-1 h-1 w-24 bg-[#5B9AFF] dark:bg-[#7BABFF]"></div>
+            </h2>
+            <RecentActivity activities={profileData.recentActivity} />
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          <StatsOverview stats={profileData.stats} />
+          <BadgesSection badges={profileData.badges} />
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default async function ProfilePage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const profileData = getProfileData(params.id);
+
+  const foundUser = await prisma.user.findUnique({
+    select: {
+      image: true,
+      name: true,
+      _count: {
+        select: {
+          Post: true,
+          Likes: true,
+          Comment: true,
+        },
+      },
+    },
+    where: {
+      id: params.id,
+    },
+  });
+
+  const isValidProfile = foundUser !== null;
+
+  console.log(foundUser);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-950">
       <main className="container mx-auto px-4 pb-12">
-        <ProfileHeader
-          profileImage={profileData.profileImage}
-          bannerImage={profileData.bannerImage}
-          name={profileData.name}
-          isAgency={profileData.isAgency}
-        />
-
-        <div className="mt-8 grid gap-8 md:grid-cols-3">
-          <div className="md:col-span-2">
-            <ProfileInfo
-              name={profileData.name}
-              title={profileData.title}
-              tagline={profileData.tagline}
-              description={profileData.description}
-              isAgency={profileData.isAgency}
-              verified={profileData.verified}
-            />
-
-            <div className="mt-8">
-              <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
-                Recent Activity
-                <div className="mt-1 h-1 w-24 bg-[#5B9AFF] dark:bg-[#7BABFF]"></div>
-              </h2>
-              <RecentActivity activities={profileData.recentActivity} />
-            </div>
+        {isValidProfile ? (
+          <CommunityProfile
+            profileData={{
+              ...profileData,
+              name: foundUser.name || profileData.name,
+              profileImage: foundUser.image || profileData.profileImage,
+              stats: {
+                posts: foundUser._count.Post,
+                likes: foundUser._count.Likes,
+                comments: foundUser._count.Comment,
+              },
+              verified: profileData.verified,
+            }}
+          />
+        ) : (
+          <div className="text-center py-20">
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+              Profile Not Found
+            </h1>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">
+              The profile you are looking for does not exist.
+            </p>
           </div>
-
-          <div className="space-y-8">
-            <StatsOverview stats={profileData.stats} />
-            <BadgesSection badges={profileData.badges} />
-          </div>
-        </div>
+        )}
       </main>
     </div>
   );

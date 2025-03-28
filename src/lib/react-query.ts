@@ -3,7 +3,7 @@ import { isServer, QueryClient } from "@tanstack/react-query";
 // Query key factories
 export const queryKeys = {
   community: {
-    all: ["comments"],
+    all: ["community"],
     categoryPosts: (category: string) => [
       ...queryKeys.community.all,
       "category",
@@ -14,6 +14,11 @@ export const queryKeys = {
       "post",
       postId,
       "comments",
+    ],
+    trending: ({ sortBy = "latest" }: { sortBy: "latest" | "all-time" }) => [
+      ...queryKeys.community.all,
+      "trending",
+      { sortBy },
     ],
   },
 };

@@ -3,7 +3,6 @@ import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import CategoryPostsList from "../components/category-posts-list";
-// import { type SearchParams } from "next/dist/server/request/search-params";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import getQueryClient, { queryKeys } from "@/lib/react-query";
 import { fetchCategoryPosts } from "@/lib/managers/postManager";
