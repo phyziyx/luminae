@@ -1,5 +1,10 @@
 import { isServer, QueryClient } from "@tanstack/react-query";
 
+export const queryKeys = {
+  // Add your query keys here
+  // e.g., users: ["users"],
+};
+
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {

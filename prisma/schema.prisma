@@ -360,7 +360,7 @@ model Category {
 model Post {
   id         String    @id @default(uuid()) // UUIDv7 for post ID
   title      String
-  content    String
+  content    String    @db.Text
   authorId   String
   author     User      @relation(fields: [authorId], references: [id])
   comments   Comment[]
@@ -382,7 +382,7 @@ model Comment {
   parentId String?
   parent   Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
   replies  Comment[] @relation("CommentToComment")
-  content  String
+  content  String    @db.Text
   authorId String
   author   User      @relation(fields: [authorId], references: [id])
 

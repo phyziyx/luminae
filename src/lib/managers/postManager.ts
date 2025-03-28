@@ -106,20 +106,24 @@ class PostManager {
 
 export default PostManager;
 
-export const fetchTrendingPosts = async ({
-  pageParam = 0,
+export async function fetchComments({
+  postId,
+  pageParam,
 }: {
-  pageParam?: number;
-}) => {
+  postId: string;
+  pageParam?: string | undefined;
+}) {
   const response = await fetch(
-    `/api/community/trending-posts?cursor=${pageParam}`
+    `/api/community/comments?postId=${postId}` +
+      (pageParam ? `&cursor=${pageParam}` : "")
   );
-  const data: {
-    posts: Post[];
-    nextCursor: number | undefined;
-  } = await response.json();
-  return data;
-};
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch comments");
+  }
+
+  return await response.json();
+}
 
 export async function fetchCategoryPosts({
   category,
@@ -132,6 +136,11 @@ export async function fetchCategoryPosts({
     `/api/community/category?id=${category}` +
       (pageParam ? `&cursor=${pageParam}` : "")
   );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch posts");
+  }
+
   const data: CategoryPostsResponse = await response.json();
   return data;
 }

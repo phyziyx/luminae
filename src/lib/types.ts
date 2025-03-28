@@ -17,6 +17,19 @@ export type CategoryPostsResponse = {
   nextCursor?: string | undefined;
 };
 
+export type PostComment = {
+  id: string;
+  postId: string;
+  authorId: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  author: {
+    name: string;
+    id: string;
+  };
+};
+
 export type PostWithComments = CategoryPost & {
   comments: Prisma.CommentGetPayload<{
     include: {

@@ -1,5 +1,21 @@
 import { z } from "zod";
 
+export const commentFormSchema = z.object({
+  postId: z.string().min(1, {
+    message: "Post ID is required",
+  }),
+  content: z
+    .string()
+    .min(4, {
+      message: "Comment content is required",
+    })
+    .max(2048, {
+      message: "Comment content is too long",
+    }),
+});
+
+export type CommentFormSchema = z.infer<typeof commentFormSchema>;
+
 //
 
 export const changePasswordSchema = z

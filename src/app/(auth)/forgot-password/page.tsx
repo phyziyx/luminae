@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useTranslations } from "next-intl";
 import {
   Card,
@@ -30,7 +30,6 @@ import { authClient } from "@/lib/auth/auth-client";
 
 export default function Page() {
   const t = useTranslations();
-  const [pending, setPending] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,8 +39,6 @@ export default function Page() {
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    setPending(true);
-
     const { error } = await authClient.forgetPassword({
       email: data.email,
       redirectTo: "/reset-password",
@@ -50,8 +47,6 @@ export default function Page() {
     if (error) {
       //
     }
-
-    setPending(true);
   };
 
   return (
@@ -80,8 +75,6 @@ export default function Page() {
                           type="email"
                           placeholder="e.g john@doe.com"
                           {...field}
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value)}
                         />
                       </FormControl>
                       <FormMessage />
@@ -92,8 +85,8 @@ export default function Page() {
             </CardContent>
             <CardFooter>
               <div className="grid w-full gap-y-4">
-                <Button type="submit" disabled={pending}>
-                  {pending ? (
+                <Button type="submit" disabled={form.formState.isLoading}>
+                  {form.formState.isLoading ? (
                     <LoadingSpinner />
                   ) : (
                     t("FORGOT_PASSWORD.SEND_RESET_CODE")
