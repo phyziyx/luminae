@@ -26,6 +26,7 @@ function useComments(postId: string) {
 export default function CommentsList({ postId }: { postId: string }) {
   const {
     data,
+    isPending,
     isError,
     hasNextPage,
     fetchNextPage,
@@ -37,6 +38,14 @@ export default function CommentsList({ postId }: { postId: string }) {
     () => data?.pages.flatMap((page) => page?.items),
     [data]
   );
+
+  if (isPending) {
+    return (
+      <div className="flex justify-center py-4 text-primary">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <InfiniteScrollContainer
