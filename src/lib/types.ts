@@ -17,6 +17,19 @@ export type CategoryPostsResponse = {
   nextCursor?: string | undefined;
 };
 
+export type PostWithComments = CategoryPost & {
+  comments: Prisma.CommentGetPayload<{
+    include: {
+      author: {
+        select: {
+          name: true;
+          avatar: true;
+        };
+      };
+    };
+  }>[];
+};
+
 export type NotificationType = "workspace" | "ticket";
 
 export type PricingPackage = Omit<Package, "monthlyPrice"> & {

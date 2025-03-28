@@ -21,7 +21,10 @@ export default function PostCard({ post }: { post: CategoryPost }) {
             </span>
           </div>
         </div>
-        <Link href={`/post/${post.id}`} className="group">
+        <Link
+          href={`/community/${post.Category.name}/${post.id}`}
+          className="group"
+        >
           <h3 className="mb-2 text-xl font-bold text-gray-800 dark:text-gray-100 group-hover:text-primary dark:group-hover:text-primary-light transition-colors">
             {post.title}
           </h3>

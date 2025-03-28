@@ -13,10 +13,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { MarkdownRenderer } from "./markdown-renderer";
+import { CategoryPost } from "@/lib/types";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default function PostContent({ post }: { post: any }) {
-  const [likes, setLikes] = useState(post.likes);
+export default function PostContent({ post }: { post: CategoryPost }) {
+  const [likes, setLikes] = useState(post._count.Likes);
   const [hasLiked, setHasLiked] = useState(false);
   const [hasDisliked, setHasDisliked] = useState(false);
 
@@ -106,20 +106,20 @@ export default function PostContent({ post }: { post: any }) {
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
-                  {post.author.charAt(0)}
+                  {post.author.name.charAt(0)}
                 </div>
                 <span className="font-medium text-gray-800 dark:text-gray-200">
-                  {post.author}
+                  {post.author.name}
                 </span>
               </div>
-              <span>{post.date}</span>
+              <span>{post.createdAt.toString()}</span>
               <div className="flex items-center gap-1">
                 <MessageSquare className="h-4 w-4" />
-                <span>{post.comments} comments</span>
+                <span>{post._count.comments} comments</span>
               </div>
               <div className="flex items-center gap-1">
                 <span className="rounded-full bg-primary/10 dark:bg-primary-light/20 px-3 py-1 text-xs font-medium text-primary dark:text-primary-light">
-                  {post.category}
+                  {post.Category.name}
                 </span>
               </div>
             </div>

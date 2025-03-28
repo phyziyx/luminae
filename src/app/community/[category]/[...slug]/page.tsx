@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PostContent from "../../components/post-content";
 import CommentSection from "../../components/comment-section";
+import PostManager from "@/lib/managers/postManager";
 
 // This would typically come from a database or API
 const getPostData = (id: string) => {
@@ -69,9 +70,21 @@ export default async function PostPage({
 }) {
   const { slug } = await params;
 
+  console.log("slug:", slug.toString());
+
   const [postId] = slug;
 
-  const postData = getPostData(postId);
+  // This part of the code is never reached
+  if (!postId) {
+    return <div>Invalid Post ID</div>;
+  }
+
+  const postData = await PostManager.getPostById(postId);
+
+  // TODO
+  if (!postData) {
+    return <div>Post Not Found</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-black">

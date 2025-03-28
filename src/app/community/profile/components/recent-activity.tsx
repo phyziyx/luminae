@@ -1,32 +1,39 @@
-import Link from "next/link"
-import { Calendar, MessageSquare, ThumbsUp } from "lucide-react"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import Link from "next/link";
+import { Calendar, MessageSquare, ThumbsUp } from "lucide-react";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 interface Activity {
-  id: number
-  type: "post" | "comment"
-  title?: string
-  postTitle?: string
-  preview?: string
-  comment?: string
-  date: string
+  id: number;
+  type: "post" | "comment";
+  title?: string;
+  postTitle?: string;
+  preview?: string;
+  comment?: string;
+  date: string;
   engagement: {
-    comments?: number
-    likes: number
-  }
+    comments?: number;
+    likes: number;
+  };
 }
 
 interface RecentActivityProps {
-  activities: Activity[]
+  activities: Activity[];
 }
 
 export default function RecentActivity({ activities }: RecentActivityProps) {
   return (
     <div className="space-y-4">
       {activities.map((activity) => (
-        <Card key={activity.id} className="overflow-hidden bg-white dark:bg-gray-800 shadow-soft">
+        <Card
+          key={activity.id}
+          className="overflow-hidden bg-white dark:bg-gray-800 shadow-soft"
+        >
           <CardContent className="p-5">
-            {activity.type === "post" ? <PostActivity activity={activity} /> : <CommentActivity activity={activity} />}
+            {activity.type === "post" ? (
+              <PostActivity activity={activity} />
+            ) : (
+              <CommentActivity activity={activity} />
+            )}
           </CardContent>
           <CardFooter className="flex items-center justify-between border-t border-gray-100 dark:border-gray-700 bg-blue-50/30 dark:bg-blue-900/10 p-3">
             <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
@@ -49,7 +56,7 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
             </div>
 
             <Link
-              href={`/post/${activity.id}`}
+              href={`/community/${activity.id}/${activity.id}`}
               className="text-sm font-medium text-primary dark:text-primary-light hover:underline"
             >
               View {activity.type === "post" ? "Post" : "Comment"}
@@ -58,7 +65,7 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
         </Card>
       ))}
     </div>
-  )
+  );
 }
 
 function PostActivity({ activity }: { activity: Activity }) {
@@ -70,15 +77,17 @@ function PostActivity({ activity }: { activity: Activity }) {
         </span>
       </div>
 
-      <Link href={`/post/${activity.id}`} className="group">
+      <Link href={`/community/${activity.id}/${activity.id}`} className="group">
         <h3 className="mb-2 text-lg font-bold text-gray-800 dark:text-gray-100 group-hover:text-primary dark:group-hover:text-primary-light transition-colors">
           {activity.title}
         </h3>
       </Link>
 
-      <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{activity.preview}</p>
+      <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+        {activity.preview}
+      </p>
     </>
-  )
+  );
 }
 
 function CommentActivity({ activity }: { activity: Activity }) {
@@ -91,7 +100,7 @@ function CommentActivity({ activity }: { activity: Activity }) {
         <span className="text-sm text-gray-600 dark:text-gray-400">
           on{" "}
           <Link
-            href={`/post/${activity.id}`}
+            href={`/community/${activity.id}/${activity.id}`}
             className="font-medium text-gray-800 dark:text-gray-200 hover:text-primary dark:hover:text-primary-light"
           >
             {activity.postTitle}
@@ -99,8 +108,9 @@ function CommentActivity({ activity }: { activity: Activity }) {
         </span>
       </div>
 
-      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 italic">&quot;{activity.comment}&quot;</p>
+      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 italic">
+        &quot;{activity.comment}&quot;
+      </p>
     </>
-  )
+  );
 }
-

@@ -104,7 +104,10 @@ function CategorySection({
             className="overflow-hidden transition-all hover:shadow-soft bg-white dark:bg-gray-800"
           >
             <CardContent className="p-5">
-              <Link href={`/post/${post.id}`} className="group">
+              <Link
+                href={`/community/${category}/${post.id}`}
+                className="group"
+              >
                 <h3 className="mb-2 text-lg font-bold text-gray-800 dark:text-gray-100 group-hover:text-primary dark:group-hover:text-primary-light transition-colors">
                   {post.title}
                 </h3>

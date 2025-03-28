@@ -12,6 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { MarkdownRenderer } from "./markdown-renderer";
+import InfiniteScrollContainer from "@/components/site/infinite-scroll-container";
 
 // Generate sample comments for demo
 const generateComments = (postId: string) => {
@@ -199,7 +200,10 @@ export default function CommentSection({ postId }: { postId: string }) {
       </div>
 
       {/* Comments List */}
-      <div className="space-y-6">
+      <InfiniteScrollContainer
+        className="space-y-6"
+        onBottomReached={() => ({})}
+      >
         {comments.map((comment) => (
           <div
             key={comment.id}
@@ -341,7 +345,7 @@ export default function CommentSection({ postId }: { postId: string }) {
             </div>
           </div>
         ))}
-      </div>
+      </InfiniteScrollContainer>
 
       {comments.length > 3 && (
         <div className="mt-8 text-center">

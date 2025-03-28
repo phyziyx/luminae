@@ -43,7 +43,7 @@ export default function SearchSection() {
           <Input
             type="search"
             placeholder="Search posts, topics, or keywords..."
-            className="pl-10 border-gray-200 dark:border-gray-700 focus-visible:ring-primary dark:focus-visible:ring-primary-light dark:bg-gray-800 dark:text-gray-100"
+            className="pl-10 border-gray-200 dark:border-gray-700 focus-visible:ring-primary dark:focus-visible:ring-primary-light bg-white dark:bg-gray-800 dark:text-gray-100"
           />
         </div>
         <DropdownMenu>
@@ -65,7 +65,7 @@ export default function SearchSection() {
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button className="w-full sm:w-auto bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90 shadow-md hover:shadow-lg transition-all">
+        <Button className="w-full sm:w-auto bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-white dark:hover:bg-primary-light/90 shadow-md hover:shadow-lg transition-all">
           Search
         </Button>
       </div>

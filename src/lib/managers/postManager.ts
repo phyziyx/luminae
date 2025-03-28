@@ -67,14 +67,34 @@ class PostManager {
   }
 
   public static async getPostById(id: string) {
-    const post = await prisma.post.findUnique({
+    const post: CategoryPost | null = await prisma.post.findUnique({
       where: {
         id,
       },
-      include: {
-        comments: {
-          include: {
-            replies: true,
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        authorId: true,
+        createdAt: true,
+        _count: {
+          select: {
+            comments: {
+              where: {
+                deletedAt: null,
+              },
+            },
+            Likes: true,
+          },
+        },
+        Category: {
+          select: {
+            name: true,
+          },
+        },
+        author: {
+          select: {
+            name: true,
           },
         },
       },
