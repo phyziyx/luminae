@@ -85,3 +85,15 @@ export const laneTicketFormSchema = z.object({
 });
 
 export type LaneTicketFormSchema = z.infer<typeof laneTicketFormSchema>;
+
+// Searcg Bar
+
+export const searchBarSchema = z.object({
+  search: z.string().min(3, {
+    message: "Search query must be at least 3 characters",
+  }).max(100, {
+    message: "Search query is too long",
+  }),
+});
+
+export type SearchBarSchema = z.infer<typeof searchBarSchema>;
