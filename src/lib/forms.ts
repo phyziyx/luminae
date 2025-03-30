@@ -1,5 +1,37 @@
 import { z } from "zod";
 
+// Like Schema
+
+export const LikeType = z.enum(["LIKE", "DISLIKE"]);
+
+export type LikeType = z.infer<typeof LikeType>;
+
+export const likeSchema = z.object({
+  type: LikeType,
+});
+
+export type LikeSchema = z.infer<typeof likeSchema>;
+
+// Post Like Schema
+
+export const postLikeSchema = z.object({
+  postId: z.string().min(1, {
+    message: "Post ID is required",
+  }),
+  ...likeSchema.shape,
+});
+
+// Comment Like Schema
+
+export const commentLikeSchema = z.object({
+  commentId: z.string().min(1, {
+    message: "Comment ID is required",
+  }),
+  ...likeSchema.shape,
+});
+
+// Comment Form Schema
+
 export const commentFormSchema = z.object({
   postId: z.string().min(1, {
     message: "Post ID is required",
@@ -86,14 +118,17 @@ export const laneTicketFormSchema = z.object({
 
 export type LaneTicketFormSchema = z.infer<typeof laneTicketFormSchema>;
 
-// Searcg Bar
+// Search Bar
 
 export const searchBarSchema = z.object({
-  search: z.string().min(3, {
-    message: "Search query must be at least 3 characters",
-  }).max(100, {
-    message: "Search query is too long",
-  }),
+  search: z
+    .string()
+    .min(3, {
+      message: "Search query must be at least 3 characters",
+    })
+    .max(100, {
+      message: "Search query is too long",
+    }),
 });
 
 export type SearchBarSchema = z.infer<typeof searchBarSchema>;

@@ -16,7 +16,7 @@ import { MarkdownRenderer } from "./markdown-renderer";
 import { CategoryPost } from "@/lib/types";
 
 export default function PostContent({ post }: { post: CategoryPost }) {
-  const [likes, setLikes] = useState(post._count.Likes);
+  const [likes, setLikes] = useState(post._count.likes);
   const [hasLiked, setHasLiked] = useState(false);
   const [hasDisliked, setHasDisliked] = useState(false);
 

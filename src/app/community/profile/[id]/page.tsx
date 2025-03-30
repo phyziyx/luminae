@@ -160,9 +160,9 @@ export default async function ProfilePage({
       name: true,
       _count: {
         select: {
-          Post: true,
-          Likes: true,
-          Comment: true,
+          posts: true,
+          likes: true,
+          comments: true,
         },
       },
     },
@@ -185,9 +185,9 @@ export default async function ProfilePage({
               name: foundUser.name || profileData.name,
               profileImage: foundUser.image || profileData.profileImage,
               stats: {
-                posts: foundUser._count.Post,
-                likes: foundUser._count.Likes,
-                comments: foundUser._count.Comment,
+                posts: foundUser._count.posts,
+                likes: foundUser._count.likes,
+                comments: foundUser._count.comments,
               },
               verified: profileData.verified,
             }}

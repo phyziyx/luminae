@@ -41,7 +41,7 @@ export default function PostCard({ post }: { post: CategoryPost }) {
           </div>
           <div className="flex items-center gap-1">
             <ThumbsUp className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-            <span className="text-sm">{post._count.Likes}</span>
+            <span className="text-sm">{post._count.likes}</span>
           </div>
         </div>
         <div className="flex gap-2">

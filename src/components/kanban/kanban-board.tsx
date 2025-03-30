@@ -36,7 +36,7 @@ function KanbanBoard({ data }: { data: KanbanLane[] }) {
 
   useEffect(() => {
     setLanes(data);
-    setTickets(data.flatMap((lane) => lane.Tickets));
+    setTickets(data.flatMap((lane) => lane.tickets));
   }, [data]);
 
   const sensors = useSensors(

@@ -7,7 +7,7 @@ export type CategoryPost = Omit<
   Category: Pick<Category, "name">;
   _count: {
     comments: number;
-    Likes: number;
+    likes: number;
   };
   author: Pick<User, "name">;
 };
@@ -55,16 +55,16 @@ export type PricingPackage = Omit<Package, "monthlyPrice"> & {
 
 export type LaneTicket = Prisma.TicketGetPayload<{
   include: {
-    Client: true;
+    client: true;
     assigneeUser: true;
   };
 }>;
 
 export type KanbanLane = Prisma.LaneGetPayload<{
   include: {
-    Tickets: {
+    tickets: {
       include: {
-        Client: true;
+        client: true;
         assigneeUser: true;
       };
     };

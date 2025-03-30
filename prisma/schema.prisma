@@ -68,14 +68,15 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Notification  Notification[]
-  AgencyMembers AgencyMember?
-  Ticket        Ticket[]
-  Session       Session[]
-  Account       Account[]
-  Post          Post[]
-  Comment       Comment[]
-  Likes         Likes[]
+  notifications Notification[]
+  agencyMember  AgencyMember?
+  tickets       Ticket[]
+  session       Session[]
+  account       Account[]
+  posts         Post[]
+  comments      Comment[]
+  likes         Likes[]
+  CommentLikes  CommentLikes[]
 }
 
 model Verification {
@@ -159,7 +160,7 @@ model Workspace {
 
   agency      Agency       @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   permissions Permission[]
-  Lane        Lane[]
+  lane        Lane[]
 
   @@index([agencyId])
 }
@@ -200,39 +201,35 @@ enum TicketTag {
 }
 
 model Lane {
-  id     String @id
-  name   String
-  order  Int
-  colour String @db.VarChar(6)
-
+  id          String    @id
+  name        String
+  order       Int
+  colour      String    @db.VarChar(6)
   workspaceId String
-  Workspace   Workspace @relation(fields: [workspaceId], references: [id])
-
-  Tickets Ticket[]
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  tickets     Ticket[]
 
   @@index([id])
   @@index([workspaceId])
 }
 
 model Ticket {
-  id          String    @id @default(uuid()) // UUIDv7 for ticket ID
-  title       String // Title of the ticket
-  description String    @db.Text // Description of the ticket
-  value       Int // Value of the ticket (in currency)
-  open        Boolean // Indicates if the ticket is open or closed
-  tag         TicketTag // Tag for the ticket
-  order       Int // Order of the ticket in the lane
+  id             String    @id @default(uuid()) // UUIDv7 for ticket ID
+  title          String // Title of the ticket
+  description    String    @db.Text // Description of the ticket
+  value          Int // Value of the ticket (in currency)
+  open           Boolean // Indicates if the ticket is open or closed
+  tag            TicketTag // Tag for the ticket
+  order          Int // Order of the ticket in the lane
+  clientId       String? // Client ID
+  client         Client?   @relation(fields: [clientId], references: [id])
+  assigneeUserId String? // User ID
+  assigneeUser   User?     @relation(fields: [assigneeUserId], references: [id])
+  lane           Lane      @relation(fields: [laneId], references: [id])
+  laneId         String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  clientId String? // Client ID
-  Client   Client? @relation(fields: [clientId], references: [id])
-
-  assigneeUserId String? // User ID
-  assigneeUser   User?   @relation(fields: [assigneeUserId], references: [id])
-  Lane           Lane    @relation(fields: [laneId], references: [id])
-  laneId         String
 
   @@index([clientId])
   @@index([assigneeUserId])
@@ -250,11 +247,10 @@ model Invitation {
   agencyId String // Agency ID
   role     Role // Role of the user
   status   InvitationStatus @default(PENDING) // Status of the invitation
+  agency   Agency           @relation(fields: [agencyId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  agency Agency @relation(fields: [agencyId], references: [id])
 
   @@index([email])
   @@index([agencyId])
@@ -267,13 +263,11 @@ model Notification {
   metadata     String? // metadata for the notification
   resourceId   String? // Resource ID
   resourceType String? // Resource type
-
-  userId String // User ID
+  userId       String // User ID
+  user         User    @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now()) // Creation date of the notification
   updatedAt DateTime @updatedAt // Last update date of the notification
-
-  user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -286,18 +280,16 @@ enum FeatureCode {
 }
 
 model Package {
-  id           String  @id @default(uuid()) // UUIDv7 for package ID
-  name         String // Unique name for the package
-  monthlyPrice Decimal // Monthly price for the package
-
-  stripePriceIdMonthly  String @default("")
-  stripeLinkMonthly     String @default("")
-  stripePriceIdAnnually String @default("")
-  stripeLinkAnnually    String @default("")
-
-  features      Feature[] // Features included in the package
-  subscriptions Subscription[] // Subscriptions for the package
-  retired       Boolean        @default(false) // Indicates if the package is retired
+  id                    String         @id @default(uuid()) // UUIDv7 for package ID
+  name                  String // Unique name for the package
+  monthlyPrice          Decimal // Monthly price for the package
+  features              Feature[] // Features included in the package
+  subscriptions         Subscription[] // Subscriptions for the package
+  retired               Boolean        @default(false) // Indicates if the package is retired
+  stripePriceIdMonthly  String         @default("")
+  stripeLinkMonthly     String         @default("")
+  stripePriceIdAnnually String         @default("")
+  stripeLinkAnnually    String         @default("")
 
   @@index([id])
 }
@@ -323,24 +315,21 @@ enum SubscriptionStatus {
 }
 
 model Subscription {
-  id        String  @id @default(uuid()) // UUIDv7 for subscription ID
-  packageId String // Package ID
-  price     String? // Price of the package
-  agencyId  String  @unique() // Agency ID
-
+  id                   String             @id @default(uuid()) // UUIDv7 for subscription ID
+  packageId            String // Package ID
+  price                String? // Price of the package
+  agencyId             String             @unique() // Agency ID
   priceId              String // Price ID of the package
-  stripeSubscriptionId String   @unique // Stripe subscription ID
+  stripeSubscriptionId String             @unique // Stripe subscription ID
   stripeCustomerId     String // Stripe customer ID for tracking user on Stripe
   currentPeriodEnd     DateTime // End of the current billing period
-
-  active Boolean            @default(false) // Active status of the package
-  status SubscriptionStatus // Enum field to track subscription status
+  active               Boolean            @default(false) // Active status of the package
+  status               SubscriptionStatus // Enum field to track subscription status
+  package              Package            @relation(fields: [packageId], references: [id])
+  agency               Agency             @relation(fields: [agencyId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  package Package @relation(fields: [packageId], references: [id])
-  agency  Agency  @relation(fields: [agencyId], references: [id])
 
   @@index([id])
   @@index([agencyId])
@@ -365,8 +354,8 @@ model Post {
   author     User      @relation(fields: [authorId], references: [id])
   comments   Comment[]
   categoryId String
-  Category   Category  @relation(fields: [categoryId], references: [id])
-  Likes      Likes[]
+  category   Category  @relation(fields: [categoryId], references: [id])
+  likes      Likes[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -376,15 +365,16 @@ model Post {
 }
 
 model Comment {
-  id       String    @id @default(uuid()) // UUIDv7 for comment ID
+  id       String         @id @default(uuid()) // UUIDv7 for comment ID
+  content  String         @db.Text
   postId   String
-  post     Post      @relation(fields: [postId], references: [id])
+  post     Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
   parentId String?
-  parent   Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
-  replies  Comment[] @relation("CommentToComment")
-  content  String    @db.Text
+  parent   Comment?       @relation("ParentChild", fields: [parentId], references: [id], onDelete: Cascade)
+  children Comment[]      @relation("ParentChild")
   authorId String
-  author   User      @relation(fields: [authorId], references: [id])
+  author   User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  likes    CommentLikes[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -393,15 +383,32 @@ model Comment {
   @@index([id])
 }
 
+enum LikeType {
+  LIKE
+  DISLIKE
+}
+
 model Likes {
-  id     String @id @default(uuid()) // UUIDv7 for like ID
-  postId String
-  post   Post   @relation(fields: [postId], references: [id])
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postId String
+  post   Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  type   LikeType
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([id])
+  @@id([userId, postId])
+  @@index([userId, postId])
+}
+
+model CommentLikes {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  commentId String
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  type      LikeType
+
+  @@id([userId, commentId])
+  @@index([userId, commentId])
 }

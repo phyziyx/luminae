@@ -58,7 +58,7 @@ export default async function deleteLane(values: {
       select: {
         _count: {
           select: {
-            Tickets: {
+            tickets: {
               where: {
                 laneId: {
                   equals: values.laneId,
@@ -76,7 +76,7 @@ export default async function deleteLane(values: {
       return { error };
     }
 
-    if (lane._count.Tickets > 0) {
+    if (lane._count.tickets > 0) {
       error = "Lane has tickets. Cannot delete a lane with tickets.";
 
       return { error };

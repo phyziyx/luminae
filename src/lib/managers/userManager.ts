@@ -11,7 +11,7 @@ class UserManager {
   public static async fetchUsers() {
     const users = await prisma.user.findMany({
       include: {
-        AgencyMembers: true,
+        agencyMember: true,
       },
     });
     return users;

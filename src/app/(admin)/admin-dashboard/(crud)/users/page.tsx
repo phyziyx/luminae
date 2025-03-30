@@ -24,7 +24,7 @@ const UsersList = async () => {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.AgencyMembers?.role || "N/A", // Role if part of an agency
+        role: user.agencyMember?.role || "N/A", // Role if part of an agency
         status: "Active",
         isLocked: !!user.banned,
       }))}
