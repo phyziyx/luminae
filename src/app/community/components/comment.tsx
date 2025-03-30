@@ -10,10 +10,20 @@ import {
 import { MarkdownRenderer } from "./markdown-renderer";
 import CommentReplies from "./comment-replies";
 import { PostComment } from "@/lib/types";
-
-// TODO: Add reply functionality
+import { useMemo } from "react";
 
 export default function Comment({ comment }: { comment: PostComment }) {
+  const likes = useMemo(() => {
+    return comment.likes.reduce((acc, like) => {
+      if (like.type === "LIKE") {
+        return acc + 1;
+      } else if (like.type === "DISLIKE") {
+        return acc - 1;
+      }
+      return acc;
+    }, 0);
+  }, [comment.likes]);
+
   return (
     <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-soft">
       {/* Comment */}
@@ -51,7 +61,7 @@ export default function Comment({ comment }: { comment: PostComment }) {
               </Tooltip>
             </TooltipProvider>
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {comment.likes}
+              {likes}
             </span>
           </div>
         </div>
@@ -92,7 +102,7 @@ export default function Comment({ comment }: { comment: PostComment }) {
         )} */}
 
         {/* Replies */}
-        <CommentReplies replies={null} />
+        <CommentReplies replies={comment.replies} />
       </div>
     </div>
   );

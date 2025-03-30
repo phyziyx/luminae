@@ -1,9 +1,10 @@
-import CommentReply from "./comment-reply";
+import { PostComment } from "@/lib/types";
+import Comment from "./comment";
 
 export default function CommentReplies({
   replies,
 }: {
-  replies: any[] | null | undefined;
+  replies: PostComment[] | null | undefined;
 }) {
   if (!replies) {
     return null;
@@ -13,7 +14,7 @@ export default function CommentReplies({
     <div className="mt-4 border-l-2 border-gray-200 dark:border-gray-700 pl-4">
       <div className="space-y-4">
         {replies.map((reply) => (
-          <CommentReply key={reply.id} reply={reply} />
+          <Comment key={reply.id} comment={reply} />
         ))}
       </div>
     </div>

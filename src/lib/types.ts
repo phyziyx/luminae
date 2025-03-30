@@ -1,4 +1,12 @@
-import { Post, Feature, Package, Prisma, Category, User } from "@prisma/client";
+import {
+  Post,
+  Feature,
+  Package,
+  Prisma,
+  Category,
+  User,
+  $Enums,
+} from "@prisma/client";
 
 export type CategoryPost = Omit<
   Post,
@@ -27,10 +35,17 @@ export type PostComment = {
   content: string;
   createdAt: Date;
   updatedAt: Date;
+  parentId: string | null;
   author: {
     name: string;
     id: string;
   };
+  likes: {
+    userId: string;
+    type: $Enums.LikeType;
+    commentId: string;
+  }[];
+  replies?: PostComment[];
 };
 
 export type PostWithComments = CategoryPost & {

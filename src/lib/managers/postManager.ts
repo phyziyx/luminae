@@ -65,7 +65,9 @@ class PostManager {
     return post;
   }
 
-  public static async createComment(comment: Comment) {
+  public static async createComment(
+    comment: Pick<Comment, "content" | "authorId" | "postId" | "parentId">
+  ) {
     const createdComment = await prisma.comment.create({
       data: {
         ...comment,
@@ -74,6 +76,28 @@ class PostManager {
     });
 
     return createdComment;
+  }
+
+  public static async doesCommentExist(id: string) {
+    return await prisma.comment.findUnique({
+      select: {
+        id: true,
+      },
+      where: {
+        id,
+      },
+    });
+  }
+
+  public static async doesPostExist(id: string) {
+    return await prisma.post.findUnique({
+      select: {
+        id: true,
+      },
+      where: {
+        id,
+      },
+    });
   }
 
   public static async getPostById(id: string) {

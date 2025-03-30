@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
       : undefined,
     select: {
       id: true,
+      parentId: true,
       postId: true,
       content: true,
       authorId: true,
@@ -41,10 +42,18 @@ export async function GET(request: NextRequest) {
           name: true,
         },
       },
+      likes: {
+        select: {
+          commentId: true,
+          type: true,
+          userId: true,
+        },
+      },
     },
     where: {
       postId: id,
-      deletedAt: null,
+      // parentId: null,
+      // deletedAt: null,
     },
     orderBy: {
       createdAt: "desc",
@@ -54,7 +63,8 @@ export async function GET(request: NextRequest) {
   const totalComments = await prisma.comment.count({
     where: {
       postId: id,
-      deletedAt: null,
+      // parentId: null,
+      // deletedAt: null,
     },
   });
 

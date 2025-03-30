@@ -39,6 +39,21 @@ export default function CommentsList({ postId }: { postId: string }) {
     [data]
   );
 
+  const groupedComments = useMemo(() => {
+    return Object.groupBy(comments, (comment) => comment.parentId || "null");
+  }, [comments]);
+
+  const filteredComments = useMemo(() => {
+    return (
+      groupedComments["null"]?.map((comment) => {
+        return {
+          ...comment,
+          replies: groupedComments[comment.id] || [],
+        };
+      }) || []
+    );
+  }, [groupedComments]);
+
   if (isPending) {
     return (
       <div className="flex justify-center py-4 text-primary">
@@ -52,7 +67,7 @@ export default function CommentsList({ postId }: { postId: string }) {
       className="space-y-6"
       onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
     >
-      {comments.map((comment) => (
+      {filteredComments.map((comment) => (
         <Comment key={comment.id} comment={comment} />
       ))}
       {!isError && !isFetching && comments && !comments.length && (

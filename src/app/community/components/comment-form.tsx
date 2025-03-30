@@ -1,5 +1,7 @@
 "use client";
 
+import onSubmitComment from "@/actions/submit-comment";
+import { LoadingSpinner } from "@/components/site/loading-spinner";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -29,18 +31,32 @@ export default function CommentForm({ postId }: { postId: string }) {
 
   const isLoading = form.formState.isSubmitting;
 
-  const onSubmit = useCallback(async (values: CommentFormSchema) => {
-    try {
-      //
-    } catch (err) {
-      //   toast({
-      //     title: "Failed to add comment",
-      //     description: "Please try again later.",
-      //     variant: "destructive",
-      //   });
-      console.log(err);
-    }
-  }, []);
+  const onSubmit = useCallback(
+    async (values: CommentFormSchema) => {
+      try {
+        await onSubmitComment(values);
+
+        form.reset({
+          content: "",
+        });
+
+        toast({
+          title: "Comment added",
+          description: "Comment successfully posted.",
+          variant: "default",
+        });
+      } catch (err) {
+        toast({
+          title: "Failed to add comment",
+          description: "Please try again later.",
+          variant: "destructive",
+        });
+
+        console.log(err);
+      }
+    },
+    [form, toast]
+  );
 
   return (
     <div className="mb-8 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-soft">
@@ -70,7 +86,7 @@ export default function CommentForm({ postId }: { postId: string }) {
               disabled={isLoading}
               className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90 shadow-md hover:shadow-lg transition-all"
             >
-              Post Comment
+              {isLoading ? <LoadingSpinner /> : "Submit"}
             </Button>
           </div>
         </form>
