@@ -5,10 +5,12 @@ import { headers } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
+  const body = await request.json();
+
   if (!request.bodyUsed)
     return NextResponse.json({ error: "No body" }, { status: 400 });
 
-  const validatedFields = commentLikeSchema.safeParse(request.body);
+  const validatedFields = commentLikeSchema.safeParse(body);
   if (!validatedFields.success) {
     return NextResponse.json(
       {
