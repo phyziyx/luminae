@@ -14,11 +14,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { commentFormSchema, CommentFormSchema } from "@/lib/forms";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 
 export default function CommentForm({ postId }: { postId: string }) {
   const { toast } = useToast();
+  const t = useTranslations();
 
   const form = useForm<CommentFormSchema>({
     resolver: zodResolver(commentFormSchema),
@@ -84,9 +86,9 @@ export default function CommentForm({ postId }: { postId: string }) {
             </div>
             <Button
               disabled={isLoading}
-              className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90 shadow-md hover:shadow-lg transition-all"
+              className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:hover:bg-primary-light/90 shadow-md hover:shadow-lg transition-all"
             >
-              {isLoading ? <LoadingSpinner /> : "Submit"}
+              {isLoading ? <LoadingSpinner /> : t("SUBMIT")}
             </Button>
           </div>
         </form>

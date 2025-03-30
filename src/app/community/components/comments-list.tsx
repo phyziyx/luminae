@@ -56,7 +56,7 @@ export default function CommentsList({ postId }: { postId: string }) {
 
   if (isPending) {
     return (
-      <div className="flex justify-center py-4 text-primary">
+      <div className="flex justify-center py-4 text-primary" aria-live="polite">
         <LoadingSpinner />
       </div>
     );

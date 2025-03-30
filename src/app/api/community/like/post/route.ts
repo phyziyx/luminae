@@ -39,6 +39,39 @@ export async function POST(request: NextRequest) {
 
   const { type, postId } = validatedFields.data;
 
+  // Let us first check, if the user has already (dis)liked the comment
+  const existingLike = await prisma.likes.findUnique({
+    where: {
+      userId_postId: {
+        userId: user.id,
+        postId,
+      },
+    },
+  });
+
+  // If the user has already liked the post,
+  // we will check if the type is the same
+  if (existingLike && existingLike.type === type) {
+    // If the type is the same, we will remove the like
+    await prisma.likes.delete({
+      where: {
+        userId_postId: {
+          userId: user.id,
+          postId,
+        },
+      },
+    });
+
+    return NextResponse.json(
+      {
+        message: "Post like removed successfully.",
+      },
+      {
+        status: 200,
+      }
+    );
+  }
+
   await prisma.likes.upsert({
     create: {
       type,

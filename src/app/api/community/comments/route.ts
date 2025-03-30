@@ -68,8 +68,9 @@ export async function GET(request: NextRequest) {
     },
   });
 
+  const nextCursor = totalComments > takeLimit ? comments.at(-1)?.id : null;
   return NextResponse.json({
     items: comments,
-    nextCursor: totalComments > takeLimit ? comments.at(-1)?.id : null,
+    nextCursor,
   } satisfies PostCommentResponse);
 }
