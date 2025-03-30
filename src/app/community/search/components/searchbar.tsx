@@ -9,33 +9,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { SearchIcon, XCircleIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { searchBarSchema, SearchBarSchema } from "@/lib/forms";
+import { SearchBarSchema } from "@/lib/forms";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
 import { cn } from "@/lib/utils";
 
 export default function SearchBar({
-  handleSearch,
+  form,
+  onSubmit,
 }: {
-  handleSearch: (data: SearchBarSchema) => void;
+  form: ReturnType<typeof useForm<SearchBarSchema>>;
+  onSubmit: (data: SearchBarSchema) => void;
 }) {
-  const form = useForm<SearchBarSchema>({
-    resolver: zodResolver(searchBarSchema),
-    defaultValues: {
-      search: "",
-    },
-    mode: "onChange",
-  });
-
   const isLoading = form.formState.isSubmitting;
 
   return (
     <div className="mb-8 rounded-xl bg-white dark:bg-gray-800 p-4 shadow-soft">
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(handleSearch)}
+          onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-4 sm:flex-row items-baseline place-items-center"
         >
           <FormField

@@ -7,11 +7,12 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import SearchBar from "./components/searchbar";
-import { SearchBarSchema } from "@/lib/forms";
+import { searchBarSchema, SearchBarSchema } from "@/lib/forms";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/react-query";
-import SearchResultsList from "./components/search-results-list";
-// import { type SearchParams } from "next/dist/server/request/search-params";
+import SearchResultsList from "./components/search-results-list"; // import { type SearchParams } from "next/dist/server/request/search-params";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 function useSearchQuery({
   query,
@@ -40,7 +41,15 @@ function useSearchQuery({
 
 export default function SearchPage() {
   const [sortOption] = useState("latest");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const form = useForm<SearchBarSchema>({
+    resolver: zodResolver(searchBarSchema),
+    defaultValues: {
+      search: "",
+    },
+    mode: "onChange",
+  });
 
   const {
     data,
@@ -52,7 +61,7 @@ export default function SearchPage() {
     isFetchingNextPage,
     refetch: refetchSearch,
   } = useSearchQuery({
-    query: searchQuery,
+    query: form.getValues().search,
     sort: sortOption,
   });
 
@@ -94,7 +103,7 @@ export default function SearchPage() {
           </p>
         </div>
 
-        <SearchBar handleSearch={handleSearch} />
+        <SearchBar form={form} onSubmit={handleSearch} />
 
         <SearchResultsList
           searchQuery={searchQuery}
