@@ -24,6 +24,10 @@ export default function SearchResultsList({
   isFetchingNextPage: boolean;
   searchQuery: string;
 }) {
+  if (!searchQuery) {
+    return null;
+  }
+
   if (isPending) {
     // Fetching for the first time...
     return <LoadingSpinner />;

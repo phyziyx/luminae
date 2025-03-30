@@ -34,11 +34,12 @@ function useSearchQuery({
     },
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+    enabled: false,
   });
 }
 
 export default function SearchPage() {
-  const [sortOption, setSortOption] = useState("latest");
+  const [sortOption] = useState("latest");
   const [searchQuery, setSearchQuery] = useState("");
 
   const {
@@ -49,18 +50,22 @@ export default function SearchPage() {
     fetchNextPage,
     isFetching,
     isFetchingNextPage,
+    refetch: refetchSearch,
   } = useSearchQuery({
     query: searchQuery,
     sort: sortOption,
   });
 
-  const handleSearch = useCallback((data: SearchBarSchema) => {
-    setSearchQuery(data.search);
-    alert("Search submitted: " + data.search);
-  }, []);
+  const handleSearch = useCallback(
+    (data: SearchBarSchema) => {
+      setSearchQuery(data.search);
+      refetchSearch();
+    },
+    [refetchSearch]
+  );
 
   const searchResults = useMemo(
-    () => data?.pages.flatMap((page) => page.results) || [],
+    () => data?.pages?.flatMap((page) => page.items) || [],
     [data]
   );
 
