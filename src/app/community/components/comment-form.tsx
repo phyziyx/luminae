@@ -13,7 +13,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { commentFormSchema, CommentFormSchema } from "@/lib/forms";
+import { queryKeys } from "@/lib/react-query";
+import { PostComment } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
@@ -21,7 +24,7 @@ import { useForm } from "react-hook-form";
 export default function CommentForm({ postId }: { postId: string }) {
   const { toast } = useToast();
   const t = useTranslations();
-
+  const queryClient = useQueryClient();
   const form = useForm<CommentFormSchema>({
     resolver: zodResolver(commentFormSchema),
     defaultValues: {
@@ -36,7 +39,7 @@ export default function CommentForm({ postId }: { postId: string }) {
   const onSubmit = useCallback(
     async (values: CommentFormSchema) => {
       try {
-        await onSubmitComment(values);
+        const response = await onSubmitComment(values);
 
         form.reset({
           content: "",
@@ -47,6 +50,18 @@ export default function CommentForm({ postId }: { postId: string }) {
           description: "Comment successfully posted.",
           variant: "default",
         });
+
+        queryClient.setQueryData(
+          queryKeys.community.postComments(postId),
+          (oldData: PostComment[] | undefined) => {
+            return [
+              ...(oldData || []),
+              {
+                ...response.comment,
+              },
+            ];
+          }
+        );
       } catch (err) {
         toast({
           title: "Failed to add comment",
@@ -57,7 +72,7 @@ export default function CommentForm({ postId }: { postId: string }) {
         console.log(err);
       }
     },
-    [form, toast]
+    [form, toast, queryClient, postId]
   );
 
   return (

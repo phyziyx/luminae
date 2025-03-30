@@ -49,6 +49,24 @@ export async function GET(request: NextRequest) {
           userId: true,
         },
       },
+      // children: {
+      //   include: {
+      //     author: {
+      //       select: {
+      //         id: true,
+      //         name: true,
+      //         image: true,
+      //       },
+      //     },
+      //     likes: {
+      //       select: {
+      //         commentId: true,
+      //         type: true,
+      //         userId: true,
+      //       },
+      //     },
+      //   },
+      // },
     },
     where: {
       postId: id,

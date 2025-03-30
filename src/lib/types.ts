@@ -45,7 +45,7 @@ export type PostComment = {
     type: $Enums.LikeType;
     commentId: string;
   }[];
-  replies?: PostComment[];
+  // children?: Exclude<PostComment, "children">[];
 };
 
 export type PostWithComments = CategoryPost & {

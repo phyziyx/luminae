@@ -6,14 +6,9 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import getQueryClient, { queryKeys } from "@/lib/react-query";
 import { fetchTrendingPosts } from "@/lib/managers/postManager";
 import { CategoryPostsResponse } from "@/lib/types";
-import { type SearchParams } from "next/dist/server/request/search-params";
 import TrendingPostsList from "../components/trending-posts-list";
 
-export default async function CategoryPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParams>;
-}) {
+export default async function CategoryPage() {
   const queryClient = getQueryClient();
 
   queryClient.prefetchInfiniteQuery<CategoryPostsResponse>({

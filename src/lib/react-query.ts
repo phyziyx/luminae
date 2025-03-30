@@ -20,6 +20,11 @@ export const queryKeys = {
       "trending",
       { sortBy },
     ],
+    search: ({ query, sort = "latest" }: { query: string; sort?: string }) => [
+      ...queryKeys.community.all,
+      "search",
+      { query, sort },
+    ],
   },
 };
 
@@ -29,7 +34,11 @@ function makeQueryClient() {
       queries: {
         // With SSR, we want to set some stale time above 0 to
         // avoid re-fetching data immediately on the client.
-        staleTime: 30 * 1000,
+        staleTime: Infinity,
+        // No need to refetch data on window focus or reconnect
+        // If needed, we can set this on a per-query basis.
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
       },
     },
   });

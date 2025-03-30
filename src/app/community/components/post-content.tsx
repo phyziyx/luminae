@@ -15,56 +15,43 @@ import {
 import { MarkdownRenderer } from "./markdown-renderer";
 import { CategoryPost } from "@/lib/types";
 import { authClient } from "@/lib/auth/auth-client";
-import { PostLikeSchema } from "@/lib/forms";
+import { LikeType, PostLikeSchema } from "@/lib/forms";
+import { useMutation } from "@tanstack/react-query";
 
 export default function PostContent({ post }: { post: CategoryPost }) {
   const { data, isPending } = authClient.useSession();
+
+  // TODO: Handle like/dislike state based on user interaction
+  const [likeState, setLikeState] = useState<
+    "LIKE" | "DISLIKE" | null | undefined
+  >(null);
 
   const userId = useMemo(() => {
     return data?.user?.id;
   }, [data]);
 
-  // const { mutate: handleLike } = useMutation({
-  //   mutationFn: async (type: LikeType) => {
-  //     const payload: PostLikeSchema = {
-  //       type,
-  //       commentId: post.id,
-  //     };
-  //     return await fetch("/api/community/like/post", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(payload),
-  //     });
-  //   },
-  // });
+  console.log("Post", Object.keys(post));
+  console.log("User ID", userId);
 
-  const [likes, setLikes] = useState(post._count.likes);
-  const [hasLiked, setHasLiked] = useState(false);
-  const [hasDisliked, setHasDisliked] = useState(false);
-
-  const handleLike = () => {
-    if (hasLiked) {
-      setLikes(likes - 1);
-      setHasLiked(false);
-    } else {
-      setLikes(hasDisliked ? likes + 2 : likes + 1);
-      setHasLiked(true);
-      setHasDisliked(false);
-    }
-  };
-
-  const handleDislike = () => {
-    if (hasDisliked) {
-      setLikes(likes + 1);
-      setHasDisliked(false);
-    } else {
-      setLikes(hasLiked ? likes - 2 : likes - 1);
-      setHasDisliked(true);
-      setHasLiked(false);
-    }
-  };
+  const { mutate: handleLike } = useMutation({
+    mutationFn: async (type: LikeType) => {
+      const payload: PostLikeSchema = {
+        type,
+        postId: post.id,
+      };
+      return await fetch("/api/community/like/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+    },
+    onSuccess() {
+      // TODO: Handle success state (e.g., show a toast notification)
+      setLikeState(null);
+    },
+  });
 
   return (
     <div>
@@ -85,11 +72,11 @@ export default function PostContent({ post }: { post: CategoryPost }) {
                         variant="ghost"
                         size="icon"
                         className={`h-10 w-10 ${
-                          hasLiked
+                          likeState === "LIKE"
                             ? "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light"
                             : "text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
                         }`}
-                        onClick={handleLike}
+                        onClick={() => handleLike("LIKE")}
                       >
                         <ThumbsUp className="h-5 w-5" />
                       </Button>
@@ -101,7 +88,7 @@ export default function PostContent({ post }: { post: CategoryPost }) {
                 </TooltipProvider>
 
                 <span className="min-w-10 text-center text-lg font-medium text-gray-800 dark:text-gray-200">
-                  {likes}
+                  {post._count.likes}
                 </span>
 
                 <TooltipProvider>
@@ -112,11 +99,11 @@ export default function PostContent({ post }: { post: CategoryPost }) {
                         variant="ghost"
                         size="icon"
                         className={`h-10 w-10 ${
-                          hasDisliked
+                          likeState === "DISLIKE"
                             ? "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light"
                             : "text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
                         }`}
-                        onClick={handleDislike}
+                        onClick={() => handleLike("DISLIKE")}
                       >
                         <ThumbsDown className="h-5 w-5" />
                       </Button>
