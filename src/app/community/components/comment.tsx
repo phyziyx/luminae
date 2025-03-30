@@ -11,8 +11,35 @@ import { MarkdownRenderer } from "./markdown-renderer";
 import CommentReplies from "./comment-replies";
 import { PostComment } from "@/lib/types";
 import { useMemo } from "react";
+import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth/auth-client";
+import { useMutation } from "@tanstack/react-query";
+import { CommentLikeSchema, LikeType } from "@/lib/forms";
 
 export default function Comment({ comment }: { comment: PostComment }) {
+  const { data, isPending } = authClient.useSession();
+
+  const userId = useMemo(() => {
+    return data?.user?.id;
+  }, [data]);
+
+  const { mutate: handleLike } = useMutation({
+    mutationFn: async (type: LikeType) => {
+      const payload: CommentLikeSchema = {
+        type,
+        commentId: comment.id,
+      };
+
+      return await fetch("/api/community/like/comment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+    },
+  });
+
   const likes = useMemo(() => {
     return comment.likes.reduce((acc, like) => {
       if (like.type === "LIKE") {
@@ -23,6 +50,12 @@ export default function Comment({ comment }: { comment: PostComment }) {
       return acc;
     }, 0);
   }, [comment.likes]);
+
+  const isLiked = useMemo(() => {
+    return comment.likes.some(
+      (like) => like.type === "LIKE" && like.userId === userId
+    );
+  }, [comment.likes, userId]);
 
   return (
     <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-soft">
@@ -49,14 +82,21 @@ export default function Comment({ comment }: { comment: PostComment }) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
-                    onClick={() => alert("handleLike")}
+                    className={cn(
+                      `h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10`
+                    )}
+                    disabled={isPending}
+                    onClick={() => handleLike("LIKE")}
                   >
-                    <ThumbsUp className="h-4 w-4" />
+                    <ThumbsUp
+                      className={cn("h-4 w-4", {
+                        "fill-primary": isLiked,
+                      })}
+                    />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Like this comment</p>
+                  <p>{isLiked ? "Unlike this comment" : "Like this comment"}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

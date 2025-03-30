@@ -21,6 +21,8 @@ export const postLikeSchema = z.object({
   ...likeSchema.shape,
 });
 
+export type PostLikeSchema = z.infer<typeof postLikeSchema>;
+
 // Comment Like Schema
 
 export const commentLikeSchema = z.object({
@@ -29,6 +31,8 @@ export const commentLikeSchema = z.object({
   }),
   ...likeSchema.shape,
 });
+
+export type CommentLikeSchema = z.infer<typeof commentLikeSchema>;
 
 // Comment Form Schema
 

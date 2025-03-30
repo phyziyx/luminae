@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { MessageSquare, Share2, ThumbsDown, ThumbsUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -14,8 +14,32 @@ import {
 } from "@/components/ui/tooltip";
 import { MarkdownRenderer } from "./markdown-renderer";
 import { CategoryPost } from "@/lib/types";
+import { authClient } from "@/lib/auth/auth-client";
+import { PostLikeSchema } from "@/lib/forms";
 
 export default function PostContent({ post }: { post: CategoryPost }) {
+  const { data, isPending } = authClient.useSession();
+
+  const userId = useMemo(() => {
+    return data?.user?.id;
+  }, [data]);
+
+  // const { mutate: handleLike } = useMutation({
+  //   mutationFn: async (type: LikeType) => {
+  //     const payload: PostLikeSchema = {
+  //       type,
+  //       commentId: post.id,
+  //     };
+  //     return await fetch("/api/community/like/post", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
+  //   },
+  // });
+
   const [likes, setLikes] = useState(post._count.likes);
   const [hasLiked, setHasLiked] = useState(false);
   const [hasDisliked, setHasDisliked] = useState(false);
@@ -57,6 +81,7 @@ export default function PostContent({ post }: { post: CategoryPost }) {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
+                        disabled={isPending}
                         variant="ghost"
                         size="icon"
                         className={`h-10 w-10 ${
@@ -83,6 +108,7 @@ export default function PostContent({ post }: { post: CategoryPost }) {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
+                        disabled={isPending}
                         variant="ghost"
                         size="icon"
                         className={`h-10 w-10 ${
