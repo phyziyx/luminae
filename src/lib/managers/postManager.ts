@@ -8,6 +8,20 @@ import {
 } from "../types";
 
 class PostManager {
+  private static selectAuthor = {
+    select: {
+      id: true,
+      name: true,
+      image: true,
+    },
+  };
+
+  private static selectCategory = {
+    select: {
+      name: true,
+    },
+  };
+
   public static async findTrending() {
     const posts: CategoryPost[] = await prisma.post.findMany({
       select: {
@@ -23,22 +37,14 @@ class PostManager {
                 deletedAt: null,
               },
             },
-            Likes: true,
+            likes: true,
           },
         },
-        Category: {
-          select: {
-            name: true,
-          },
-        },
-        author: {
-          select: {
-            name: true,
-          },
-        },
+        category: { ...PostManager.selectCategory },
+        author: { ...PostManager.selectAuthor },
       },
       orderBy: {
-        Likes: {
+        likes: {
           _count: "desc",
         },
       },
@@ -88,19 +94,11 @@ class PostManager {
                 deletedAt: null,
               },
             },
-            Likes: true,
+            likes: true,
           },
         },
-        Category: {
-          select: {
-            name: true,
-          },
-        },
-        author: {
-          select: {
-            name: true,
-          },
-        },
+        category: { ...PostManager.selectCategory },
+        author: { ...PostManager.selectAuthor },
       },
     });
 

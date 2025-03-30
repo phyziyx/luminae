@@ -10,7 +10,7 @@ export default function PostCardLarge({ post }: { post: CategoryPost }) {
       <CardContent className="p-4 top-0 flex flex-col flex-grow">
         <div className="relative mb-2 flex items-center justify-between">
           <div className="rounded-full bg-primary/10 dark:bg-primary/20 px-3 py-1 text-xs font-medium text-primary dark:text-white">
-            {post.Category.name}
+            {post.category.name}
           </div>
           {/* Date */}
           <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -20,7 +20,7 @@ export default function PostCardLarge({ post }: { post: CategoryPost }) {
 
         {/* Post Title Link */}
         <Link
-          href={`community/${post.Category.name}/${post.id}`}
+          href={`community/${post.category.name}/${post.id}`}
           className="group"
         >
           <h3 className="mb-2 text-xl font-bold text-gray-800 group-hover:text-primary transition-colors dark:text-gray-100 dark:group-hover:text-primary/80">

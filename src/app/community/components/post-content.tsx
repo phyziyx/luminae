@@ -119,7 +119,7 @@ export default function PostContent({ post }: { post: CategoryPost }) {
               </div>
               <div className="flex items-center gap-1">
                 <span className="rounded-full bg-primary/10 dark:bg-primary-light/20 px-3 py-1 text-xs font-medium text-primary dark:text-primary-light">
-                  {post.Category.name}
+                  {post.category.name}
                 </span>
               </div>
             </div>

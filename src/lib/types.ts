@@ -4,7 +4,7 @@ export type CategoryPost = Omit<
   Post,
   "updatedAt" | "deletedAt" | "categoryId"
 > & {
-  Category: Pick<Category, "name">;
+  category: Pick<Category, "name">;
   _count: {
     comments: number;
     likes: number;
