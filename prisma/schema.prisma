@@ -48,8 +48,9 @@ model Account {
   scope                 String?
   idToken               String?
   password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   User User @relation(fields: [userId], references: [id])
 }
@@ -73,10 +74,11 @@ model User {
   tickets       Ticket[]
   session       Session[]
   account       Account[]
-  posts         Post[]
   comments      Comment[]
   likes         Likes[]
-  CommentLikes  CommentLikes[]
+  commentLikes  CommentLikes[]
+  userPosts     UserPost[]
+  userProfile   UserProfile?
 }
 
 model Verification {
@@ -137,14 +139,16 @@ model Agency {
   state   String
   country String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   agencyMembers AgencyMember[]
   workspaces    Workspace[]
   invitations   Invitation[]
   clients       Client[]
   subscription  Subscription?
+  agencyPosts   AgencyPost[]
+  agencyProfile AgencyProfile?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([id])
 }
@@ -155,12 +159,12 @@ model Workspace {
   name        String // Name of the workspace
   description String @db.Text // Description of the workspace
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   agency      Agency       @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   permissions Permission[]
   lane        Lane[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([agencyId])
 }
@@ -201,13 +205,14 @@ enum TicketTag {
 }
 
 model Lane {
-  id          String    @id
+  id          String @id
   name        String
   order       Int
-  colour      String    @db.VarChar(6)
+  colour      String @db.VarChar(6)
   workspaceId String
-  workspace   Workspace @relation(fields: [workspaceId], references: [id])
-  tickets     Ticket[]
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  tickets   Ticket[]
 
   @@index([id])
   @@index([workspaceId])
@@ -222,11 +227,12 @@ model Ticket {
   tag            TicketTag // Tag for the ticket
   order          Int // Order of the ticket in the lane
   clientId       String? // Client ID
-  client         Client?   @relation(fields: [clientId], references: [id])
-  assigneeUserId String? // User ID
-  assigneeUser   User?     @relation(fields: [assigneeUserId], references: [id])
-  lane           Lane      @relation(fields: [laneId], references: [id])
   laneId         String
+  assigneeUserId String? // User ID
+
+  client       Client? @relation(fields: [clientId], references: [id])
+  assigneeUser User?   @relation(fields: [assigneeUserId], references: [id])
+  lane         Lane    @relation(fields: [laneId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -247,7 +253,8 @@ model Invitation {
   agencyId String // Agency ID
   role     Role // Role of the user
   status   InvitationStatus @default(PENDING) // Status of the invitation
-  agency   Agency           @relation(fields: [agencyId], references: [id])
+
+  agency Agency @relation(fields: [agencyId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -280,16 +287,17 @@ enum FeatureCode {
 }
 
 model Package {
-  id                    String         @id @default(uuid()) // UUIDv7 for package ID
+  id                    String  @id @default(uuid()) // UUIDv7 for package ID
   name                  String // Unique name for the package
   monthlyPrice          Decimal // Monthly price for the package
-  features              Feature[] // Features included in the package
-  subscriptions         Subscription[] // Subscriptions for the package
-  retired               Boolean        @default(false) // Indicates if the package is retired
-  stripePriceIdMonthly  String         @default("")
-  stripeLinkMonthly     String         @default("")
-  stripePriceIdAnnually String         @default("")
-  stripeLinkAnnually    String         @default("")
+  retired               Boolean @default(false) // Indicates if the package is retired
+  stripePriceIdMonthly  String  @default("")
+  stripeLinkMonthly     String  @default("")
+  stripePriceIdAnnually String  @default("")
+  stripeLinkAnnually    String  @default("")
+
+  features      Feature[] // Features included in the package
+  subscriptions Subscription[] // Subscriptions for the package
 
   @@index([id])
 }
@@ -301,7 +309,8 @@ model Feature {
   maxLimit  Int? // Optional max limit, e.g., 3 team members
   hasAccess Boolean? // Optional, represents access (true/false)
   packageId String // Package ID that the feature belongs to
-  package   Package     @relation(fields: [packageId], references: [id])
+
+  package Package @relation(fields: [packageId], references: [id])
 }
 
 enum SubscriptionStatus {
@@ -325,8 +334,9 @@ model Subscription {
   currentPeriodEnd     DateTime // End of the current billing period
   active               Boolean            @default(false) // Active status of the package
   status               SubscriptionStatus // Enum field to track subscription status
-  package              Package            @relation(fields: [packageId], references: [id])
-  agency               Agency             @relation(fields: [agencyId], references: [id])
+
+  package Package @relation(fields: [packageId], references: [id])
+  agency  Agency  @relation(fields: [agencyId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -347,19 +357,19 @@ model Category {
 }
 
 model Post {
-  id         String    @id @default(uuid()) // UUIDv7 for post ID
+  id         String @id @default(uuid()) // UUIDv7 for post ID
   title      String
-  content    String    @db.Text
-  authorId   String
-  author     User      @relation(fields: [authorId], references: [id])
-  comments   Comment[]
+  content    String @db.Text
   categoryId String
-  category   Category  @relation(fields: [categoryId], references: [id])
-  likes      Likes[]
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  comments    Comment[]
+  likes       Likes[]
+  category    Category     @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  deletedAt   DateTime?
+  userPosts   UserPost[]
+  agencyPosts AgencyPost[]
 
   @@index([id])
 }
@@ -372,13 +382,13 @@ model Comment {
   parentId String?
   parent   Comment?       @relation("ParentChild", fields: [parentId], references: [id], onDelete: Cascade)
   children Comment[]      @relation("ParentChild")
-  authorId String
-  author   User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   likes    CommentLikes[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
+  User      User?     @relation(fields: [userId], references: [id])
+  userId    String?
 
   @@index([id])
 }
@@ -390,10 +400,11 @@ enum LikeType {
 
 model Likes {
   userId String
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   postId String
-  post   Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   type   LikeType
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -404,11 +415,69 @@ model Likes {
 
 model CommentLikes {
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   commentId String
-  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
   type      LikeType
+
+  user    User    @relation(fields: [userId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   @@id([userId, commentId])
   @@index([userId, commentId])
+}
+
+model UserPost {
+  userId String
+  postId String
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  @@id([userId, postId])
+  @@index([userId])
+  @@index([postId])
+}
+
+model AgencyPost {
+  agencyId String
+  postId   String
+
+  agency Agency @relation(fields: [agencyId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
+
+  @@id([agencyId, postId])
+  @@index([agencyId])
+  @@index([postId])
+}
+
+model Profile {
+  id      String  @id @default(uuid())
+  tagline String? @db.Text
+  content String? @db.Text
+  website String? @db.Text
+
+  userProfile   UserProfile[]
+  agencyProfile AgencyProfile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
+}
+
+model UserProfile {
+  id        String @id @default(uuid())
+  userId    String @unique
+  profileId String
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model AgencyProfile {
+  id        String @id @default(uuid())
+  agencyId  String @unique
+  profileId String
+
+  agency  Agency  @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
