@@ -33,13 +33,30 @@ export async function GET(request: NextRequest) {
       parentId: true,
       postId: true,
       content: true,
-      authorId: true,
       createdAt: true,
       updatedAt: true,
-      author: {
+      agencyComments: {
         select: {
-          id: true,
-          name: true,
+          agencyId: true,
+          agency: {
+            select: {
+              id: true,
+              name: true,
+              agencyLogo: true,
+            },
+          },
+        },
+      },
+      userComments: {
+        select: {
+          userId: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
         },
       },
       likes: {
@@ -87,6 +104,7 @@ export async function GET(request: NextRequest) {
   });
 
   const nextCursor = totalComments > takeLimit ? comments.at(-1)?.id : null;
+
   return NextResponse.json({
     items: comments,
     nextCursor,

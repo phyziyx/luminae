@@ -37,7 +37,7 @@ export default function PostCardLarge({ post }: { post: CategoryPost }) {
         <div className="text-sm text-gray-500 dark:text-gray-400">
           By{" "}
           <span className="font-medium text-gray-700 dark:text-gray-200">
-            {post.author.name}
+            {post.userPosts[0]?.user.name || post.agencyPosts[0]?.agency.name}
           </span>
         </div>
       </CardContent>

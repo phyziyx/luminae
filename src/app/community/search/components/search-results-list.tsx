@@ -30,7 +30,7 @@ export default function SearchResultsList({
 
   if (isPending) {
     // Fetching for the first time...
-    return <LoadingSpinner />;
+    return <LoadingSpinner className="text-primary" />;
   }
 
   if (!isError && !isFetching && searchResults.length === 0) {

@@ -57,6 +57,14 @@ export default function Comment({ comment }: { comment: PostComment }) {
     );
   }, [comment.likes, userId]);
 
+  const commenterName = useMemo(() => {
+    return (
+      comment.agencyComments[0]?.agency.name ||
+      comment.userComments[0]?.user.name ||
+      "Unknown"
+    );
+  }, [comment.agencyComments, comment.userComments]);
+
   return (
     <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-soft">
       {/* Comment */}
@@ -64,11 +72,11 @@ export default function Comment({ comment }: { comment: PostComment }) {
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
-              {comment.author.name.charAt(0)}
+              {commenterName.charAt(0)}
             </div>
             <div>
               <div className="font-medium text-gray-800 dark:text-gray-200">
-                {comment.author.name}
+                {commenterName}
               </div>
               <div className="text-xs text-gray-500 dark:text-gray-400">
                 {comment.createdAt.toString()}
@@ -142,7 +150,7 @@ export default function Comment({ comment }: { comment: PostComment }) {
         )} */}
 
         {/* Replies */}
-        <CommentReplies replies={comment.replies} />
+        <CommentReplies replies={null} />
       </div>
     </div>
   );

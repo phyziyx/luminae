@@ -4,6 +4,7 @@ import { v7 } from "uuid";
 import {
   CategoryPost,
   CategoryPostsResponse,
+  CommentOwner,
   PostCommentResponse,
 } from "../types";
 
@@ -28,7 +29,6 @@ class PostManager {
         id: true,
         title: true,
         content: true,
-        authorId: true,
         createdAt: true,
         _count: {
           select: {
@@ -41,7 +41,28 @@ class PostManager {
           },
         },
         category: { ...PostManager.selectCategory },
-        author: { ...PostManager.selectAuthor },
+        userPosts: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              },
+            },
+          },
+        },
+        agencyPosts: {
+          select: {
+            agency: {
+              select: {
+                id: true,
+                name: true,
+                agencyLogo: true,
+              },
+            },
+          },
+        },
       },
       orderBy: {
         likes: {
@@ -66,12 +87,45 @@ class PostManager {
   }
 
   public static async createComment(
-    comment: Pick<Comment, "content" | "authorId" | "postId" | "parentId">
+    comment: Pick<Comment, "content" | "postId" | "parentId">,
+    ownerDetails: CommentOwner
   ) {
     const createdComment = await prisma.comment.create({
       data: {
         ...comment,
         id: v7(),
+        agencyComments:
+          "agencyId" in ownerDetails
+            ? {
+                connectOrCreate: {
+                  create: {
+                    agencyId: ownerDetails.agencyId,
+                  },
+                  where: {
+                    agencyId_commentId: {
+                      agencyId: ownerDetails.agencyId,
+                      commentId: comment.postId,
+                    },
+                  },
+                },
+              }
+            : undefined,
+        userComments:
+          "userId" in ownerDetails
+            ? {
+                connectOrCreate: {
+                  create: {
+                    userId: ownerDetails.userId,
+                  },
+                  where: {
+                    userId_commentId: {
+                      userId: ownerDetails.userId,
+                      commentId: comment.postId,
+                    },
+                  },
+                },
+              }
+            : undefined,
       },
     });
 
@@ -109,7 +163,6 @@ class PostManager {
         id: true,
         title: true,
         content: true,
-        authorId: true,
         createdAt: true,
         _count: {
           select: {
@@ -122,7 +175,28 @@ class PostManager {
           },
         },
         category: { ...PostManager.selectCategory },
-        author: { ...PostManager.selectAuthor },
+        userPosts: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              },
+            },
+          },
+        },
+        agencyPosts: {
+          select: {
+            agency: {
+              select: {
+                id: true,
+                name: true,
+                agencyLogo: true,
+              },
+            },
+          },
+        },
       },
     });
 

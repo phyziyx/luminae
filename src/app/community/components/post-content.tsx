@@ -119,10 +119,12 @@ export default function PostContent({ post }: { post: CategoryPost }) {
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
-                  {post.author.name.charAt(0)}
+                  {post.userPosts[0]?.user.name.charAt(0) ||
+                    post.agencyPosts[0]?.agency.name.charAt(0)}
                 </div>
                 <span className="font-medium text-gray-800 dark:text-gray-200">
-                  {post.author.name}
+                  {post.userPosts[0]?.user.name ||
+                    post.agencyPosts[0]?.agency.name}
                 </span>
               </div>
               <span>{post.createdAt.toString()}</span>

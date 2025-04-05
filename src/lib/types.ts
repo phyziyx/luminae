@@ -6,7 +6,16 @@ import {
   Category,
   User,
   $Enums,
+  Agency,
 } from "@prisma/client";
+
+export type CommentOwner =
+  | {
+      agencyId: string;
+    }
+  | {
+      userId: string;
+    };
 
 export type CategoryPost = Omit<
   Post,
@@ -17,7 +26,12 @@ export type CategoryPost = Omit<
     comments: number;
     likes: number;
   };
-  author: Pick<User, "name">;
+  userPosts: {
+    user: Pick<User, "id" | "name" | "image">;
+  }[];
+  agencyPosts: {
+    agency: Pick<Agency, "id" | "name" | "agencyLogo">;
+  }[];
 };
 
 export type InfiniteQueryResponse<T> = {
@@ -31,15 +45,18 @@ export type CategoryPostsResponse = InfiniteQueryResponse<CategoryPost>;
 export type PostComment = {
   id: string;
   postId: string;
-  authorId: string;
   content: string;
   createdAt: Date;
   updatedAt: Date;
   parentId: string | null;
-  author: {
-    name: string;
-    id: string;
-  };
+  agencyComments: {
+    agencyId: string;
+    agency: Pick<Agency, "id" | "name" | "agencyLogo">;
+  }[];
+  userComments: {
+    userId: string;
+    user: Pick<User, "id" | "name" | "image">;
+  }[];
   likes: {
     userId: string;
     type: $Enums.LikeType;
@@ -51,10 +68,28 @@ export type PostComment = {
 export type PostWithComments = CategoryPost & {
   comments: Prisma.CommentGetPayload<{
     include: {
-      author: {
+      agencyComments: {
         select: {
-          name: true;
-          avatar: true;
+          agencyId: true;
+          agency: {
+            select: {
+              id: true;
+              name: true;
+              agencyLogo: true;
+            };
+          };
+        };
+      };
+      userComments: {
+        select: {
+          userId: true;
+          user: {
+            select: {
+              id: true;
+              name: true;
+              image: true;
+            };
+          };
         };
       };
     };

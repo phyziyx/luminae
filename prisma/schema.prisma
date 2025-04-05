@@ -74,7 +74,7 @@ model User {
   tickets       Ticket[]
   session       Session[]
   account       Account[]
-  comments      Comment[]
+  comments      UserComment[]
   likes         Likes[]
   commentLikes  CommentLikes[]
   userPosts     UserPost[]
@@ -144,8 +144,9 @@ model Agency {
   invitations   Invitation[]
   clients       Client[]
   subscription  Subscription?
-  agencyPosts   AgencyPost[]
-  agencyProfile AgencyProfile?
+  posts         AgencyPost[]
+  comments      AgencyComment[]
+  profile       AgencyProfile?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -375,22 +376,46 @@ model Post {
 }
 
 model Comment {
-  id       String         @id @default(uuid()) // UUIDv7 for comment ID
-  content  String         @db.Text
-  postId   String
-  post     Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
-  parentId String?
-  parent   Comment?       @relation("ParentChild", fields: [parentId], references: [id], onDelete: Cascade)
-  children Comment[]      @relation("ParentChild")
-  likes    CommentLikes[]
+  id             String          @id @default(uuid()) // UUIDv7 for comment ID
+  content        String          @db.Text
+  postId         String
+  post           Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parentId       String?
+  parent         Comment?        @relation("ParentChild", fields: [parentId], references: [id], onDelete: Cascade)
+  children       Comment[]       @relation("ParentChild")
+  likes          CommentLikes[]
+  userComments   UserComment[]
+  agencyComments AgencyComment[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
-  User      User?     @relation(fields: [userId], references: [id])
-  userId    String?
 
   @@index([id])
+}
+
+model UserComment {
+  userId    String
+  commentId String
+
+  user    User    @relation(fields: [userId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
+
+  @@id([userId, commentId])
+  @@index([userId])
+  @@index([commentId])
+}
+
+model AgencyComment {
+  agencyId  String
+  commentId String
+
+  agency  Agency  @relation(fields: [agencyId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
+
+  @@id([agencyId, commentId])
+  @@index([agencyId])
+  @@index([commentId])
 }
 
 enum LikeType {
