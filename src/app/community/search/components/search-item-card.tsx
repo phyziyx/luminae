@@ -2,8 +2,17 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { CategoryPost } from "@/lib/types";
 import { MessageSquare, ThumbsUp } from "lucide-react";
 import Link from "next/link";
+import { memo, useMemo } from "react";
 
-export default function SearchItemCard({ result }: { result: CategoryPost }) {
+const SearchItemCard = memo(function SearchItemCard({
+  result,
+}: {
+  result: CategoryPost;
+}) {
+  const name = useMemo(() => {
+    return result.agencyPosts[0]?.agency.name || result.userPosts[0]?.user.name;
+  }, [result.agencyPosts, result.userPosts]);
+
   return (
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-soft bg-white dark:bg-gray-800">
       <CardContent className="p-6">
@@ -32,7 +41,7 @@ export default function SearchItemCard({ result }: { result: CategoryPost }) {
         <div className="text-sm text-gray-500 dark:text-gray-400">
           By{" "}
           <span className="font-medium text-gray-700 dark:text-gray-300">
-            {result.author.name}
+            {name}
           </span>
         </div>
       </CardContent>
@@ -58,4 +67,6 @@ export default function SearchItemCard({ result }: { result: CategoryPost }) {
       </CardFooter>
     </Card>
   );
-}
+});
+
+export default SearchItemCard;

@@ -10,9 +10,10 @@ import SearchBar from "./components/searchbar";
 import { searchBarSchema, SearchBarSchema } from "@/lib/forms";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/react-query";
-import SearchResultsList from "./components/search-results-list"; // import { type SearchParams } from "next/dist/server/request/search-params";
+import SearchResultsList from "./components/search-results-list";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useSearchParams } from "next/navigation";
 
 function useSearchQuery({
   query,
@@ -40,13 +41,30 @@ function useSearchQuery({
 }
 
 export default function SearchPage() {
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
+
+  // Get a new searchParams string by merging the current
+  // searchParams with a provided key/value pair
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
   const [sortOption] = useState("latest");
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>(
+    Array.isArray(query) ? query[0] : query || ""
+  );
 
   const form = useForm<SearchBarSchema>({
     resolver: zodResolver(searchBarSchema),
     defaultValues: {
-      search: "",
+      search: searchQuery,
     },
     mode: "onChange",
   });
@@ -68,9 +86,10 @@ export default function SearchPage() {
   const handleSearch = useCallback(
     (data: SearchBarSchema) => {
       setSearchQuery(data.search);
+      createQueryString("query", data.search);
       refetchSearch();
     },
-    [refetchSearch]
+    [refetchSearch, createQueryString]
   );
 
   const searchResults = useMemo(
