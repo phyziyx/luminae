@@ -129,13 +129,13 @@ function CommunityProfile({ profileData }: { profileData: any }) {
             verified={profileData.verified}
           />
 
-          <div className="mt-8">
+          {/* <div className="mt-8">
             <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
               Recent Activity
               <div className="mt-1 h-1 w-24 bg-[#5B9AFF] dark:bg-[#7BABFF]"></div>
             </h2>
             <RecentActivity activities={profileData.recentActivity} />
-          </div>
+          </div> */}
         </div>
 
         <div className="space-y-8">
@@ -160,8 +160,9 @@ export default async function ProfilePage({
       name: true,
       _count: {
         select: {
-          posts: true,
+          userPosts: true,
           likes: true,
+          commentLikes: true,
           comments: true,
         },
       },
@@ -185,8 +186,8 @@ export default async function ProfilePage({
               name: foundUser.name || profileData.name,
               profileImage: foundUser.image || profileData.profileImage,
               stats: {
-                posts: foundUser._count.posts,
-                likes: foundUser._count.likes,
+                posts: foundUser._count.userPosts,
+                likes: foundUser._count.likes + foundUser._count.commentLikes,
                 comments: foundUser._count.comments,
               },
               verified: profileData.verified,
