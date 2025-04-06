@@ -3,26 +3,35 @@ import { MessageSquare, ThumbsDown, ThumbsUp } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { CategoryPost } from "@/lib/types";
 import { Button } from "@/components/ui/button";
+import { useMemo } from "react";
 
 export default function PostCard({ post }: { post: CategoryPost }) {
+  const authorName = useMemo(
+    () =>
+      post.agencyPosts[0]?.agency.name ||
+      post.userPosts[0]?.user.name ||
+      "Unknown Author",
+    [post]
+  );
+
   return (
     <Card className="overflow-hidden w-full transition-all duration-200 hover:shadow-soft bg-white dark:bg-gray-800">
       <CardContent className="p-6">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
-              {post.author.name.charAt(0)}
+              {authorName.charAt(0)}
             </div>
             <span className="text-sm text-gray-600 dark:text-gray-300">
               <span className="font-medium text-gray-800 dark:text-gray-200">
-                {post.author.name}
+                {authorName}
               </span>{" "}
               • {post.createdAt.toString()}
             </span>
           </div>
         </div>
         <Link
-          href={`/community/${post.Category.name}/${post.id}`}
+          href={`/community/${post.category.name}/${post.id}`}
           className="group"
         >
           <h3 className="mb-2 text-xl font-bold text-gray-800 dark:text-gray-100 group-hover:text-primary dark:group-hover:text-primary-light transition-colors">

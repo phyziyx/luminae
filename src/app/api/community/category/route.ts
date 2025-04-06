@@ -61,7 +61,6 @@ export async function GET(request: NextRequest) {
       id: true,
       title: true,
       content: true,
-      authorId: true,
       createdAt: true,
       _count: {
         select: {
@@ -78,9 +77,26 @@ export async function GET(request: NextRequest) {
           name: true,
         },
       },
-      author: {
+      agencyPosts: {
         select: {
-          name: true,
+          agency: {
+            select: {
+              id: true,
+              name: true,
+              agencyLogo: true,
+            },
+          },
+        },
+      },
+      userPosts: {
+        select: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
         },
       },
     },
