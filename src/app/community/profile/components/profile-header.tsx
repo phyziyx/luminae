@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import { Camera, Pencil } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -21,6 +21,7 @@ export default function ProfileHeader({
   isAgency,
 }: ProfileHeaderProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const myself = useMemo(() => true, []);
 
   const initials = name
     .split(" ")
@@ -41,7 +42,7 @@ export default function ProfileHeader({
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
         </div>
 
         {/* Profile Picture */}
@@ -53,26 +54,30 @@ export default function ProfileHeader({
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <Button
-              className="absolute bottom-1 right-1 rounded-full bg-primary dark:bg-primary-light p-2 text-white dark:text-gray-900 shadow-md hover:bg-primary/90 dark:hover:bg-primary-light/90 transition-colors"
-              onClick={() => setIsModalOpen(true)}
-              aria-label="Change profile picture"
-            >
-              <Camera className="h-4 w-4" />
-            </Button>
+            {myself && (
+              <Button
+                className="absolute bottom-1 right-1 rounded-full bg-primary dark:bg-primary-light p-2 text-white dark:text-gray-900 shadow-md hover:bg-primary/90 dark:hover:bg-primary-light/90 transition-colors"
+                onClick={() => setIsModalOpen(true)}
+                aria-label="Change profile picture"
+              >
+                <Camera className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
 
         {/* Edit Profile Button */}
-        <div className="absolute bottom-4 right-4">
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90"
-          >
-            <Pencil className="mr-2 h-4 w-4" />
-            Edit Profile
-          </Button>
-        </div>
+        {myself && (
+          <div className="absolute bottom-4 right-4">
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90"
+            >
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit Profile
+            </Button>
+          </div>
+        )}
       </div>
 
       <EditProfileModal

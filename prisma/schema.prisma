@@ -77,8 +77,8 @@ model User {
   comments      UserComment[]
   likes         Likes[]
   commentLikes  CommentLikes[]
-  userPosts     UserPost[]
-  userProfile   UserProfile?
+  posts         UserPost[]
+  profile       UserProfile?
 }
 
 model Verification {
@@ -480,8 +480,8 @@ model Profile {
   content String? @db.Text
   website String? @db.Text
 
-  userProfile   UserProfile[]
-  agencyProfile AgencyProfile[]
+  userProfile   UserProfile?
+  agencyProfile AgencyProfile?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -490,19 +490,23 @@ model Profile {
 }
 
 model UserProfile {
-  id        String @id @default(uuid())
   userId    String @unique
-  profileId String
+  profileId String @unique
 
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@id([userId, profileId])
+  @@index([userId, profileId])
 }
 
 model AgencyProfile {
-  id        String @id @default(uuid())
   agencyId  String @unique
-  profileId String
+  profileId String @unique
 
   agency  Agency  @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@id([agencyId, profileId])
+  @@index([agencyId, profileId])
 }

@@ -58,6 +58,11 @@ export default function BadgesSection({ badges }: BadgesSectionProps) {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {badges.length === 0 && (
+          <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-gray-500 dark:text-gray-400">
+            No badges earned yet.
+          </div>
+        )}
         {badges.map((badge) => (
           <TooltipProvider key={badge.id}>
             <Tooltip>

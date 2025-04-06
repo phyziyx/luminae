@@ -1,6 +1,8 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { MarkdownRenderer } from "../../components/markdown-renderer";
+import { LucideCheckCircle2 } from "lucide-react";
 
 interface ProfileInfoProps {
   name: string;
@@ -22,35 +24,33 @@ export default function ProfileInfo({
   return (
     <div className="rounded-xl bg-white dark:bg-gray-800 p-6 shadow-soft">
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 sm:text-3xl flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 sm:text-3xl flex items-center gap-2 align-middle content-center">
           {name}
           {isAgency && verified && (
-            <span className="inline-flex items-center" title="Verified Agency">
-              <svg
-                className="h-5 w-5 text-primary dark:text-primary-light"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </span>
+            <LucideCheckCircle2 className="h-6 w-6 text-primary dark:text-primary-light" />
           )}
         </h1>
-        <p className="text-gray-600 dark:text-gray-300">{title}</p>
+        <p
+          className={cn("text-gray-600 dark:text-gray-300", {
+            italic: !title,
+          })}
+        >
+          {title || "No title provided."}
+        </p>
       </div>
 
       <div className="mb-6">
         <h2 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-100">
           {isAgency ? "About Our Agency" : "About Me"}
         </h2>
-        <p className="text-gray-600 dark:text-gray-300">{tagline}</p>
+
+        <p
+          className={cn("text-gray-600 dark:text-gray-300", {
+            italic: !tagline,
+          })}
+        >
+          {tagline || "No tagline provided."}
+        </p>
       </div>
 
       <div className="prose prose-blue dark:prose-invert max-w-none">
