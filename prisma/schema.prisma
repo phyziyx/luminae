@@ -478,7 +478,7 @@ model Profile {
   id      String  @id @default(uuid())
   tagline String? @db.Text
   content String? @db.Text
-  website String? @db.Text
+  title   String? @db.Text
 
   userProfile   UserProfile?
   agencyProfile AgencyProfile?

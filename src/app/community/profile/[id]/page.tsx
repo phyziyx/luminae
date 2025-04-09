@@ -99,9 +99,7 @@ const getProfileData = async (id: string) => {
     };
     data.tagline = foundAgency?.profile?.profile?.tagline || "";
     data.exists = true;
-
-    // There is no such thing as a title...
-    // data.title = foundUser?.profile?.profile?.website || "";
+    data.title = foundAgency?.profile?.profile?.title || "";
   } else {
     const foundUser = await prisma.user.findUnique({
       select: {
@@ -145,9 +143,7 @@ const getProfileData = async (id: string) => {
     };
     data.tagline = foundUser?.profile?.profile?.tagline || "";
     data.exists = true;
-
-    // There is no such thing as a title...
-    // data.title = foundUser?.profile?.profile?.website || "";
+    data.title = foundUser?.profile?.profile?.title || "";
   }
 
   return data;

@@ -26,9 +26,11 @@ import {
   FormControl,
   FormDescription,
 } from "@/components/ui/form";
-import { useTranslations } from "next-intl";
+// import { useTranslations } from "next-intl";
 import { useCallback, useMemo } from "react";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
+import updateUserProfile from "@/app/community/search/components/actions/edit-profile";
+import { toast } from "sonner";
 
 interface ProfileData {
   name: string;
@@ -69,7 +71,7 @@ export default function EditProfileModal({
   });
 
   const isLoading = form.formState.isSubmitting;
-  const t = useTranslations();
+  // const t = useTranslations();
 
   const initials = useMemo(
     () =>
@@ -84,10 +86,25 @@ export default function EditProfileModal({
 
   const onSubmit = useCallback(
     async (data: z.infer<typeof profileFormSchema>) => {
-      console.log("Form submitted:", data);
-      onClose();
+      console.log("Submitting profile data:", data);
+
+      const result = await updateUserProfile(
+        {
+          title: data.title ?? "",
+          tagline: data.tagline ?? "",
+          content: data.description ?? "",
+        },
+        profileData.isAgency
+      );
+
+      if (result?.error) {
+        toast.error("Something went wrong. Please try again.");
+      } else {
+        toast.success("Profile updated successfully!");
+        onClose();
+      }
     },
-    [onClose]
+    [onClose, profileData.isAgency]
   );
 
   return (
@@ -130,22 +147,30 @@ export default function EditProfileModal({
                         accept="image/*"
                         className="sr-only"
                         onChange={(e) => {
-                          // In a real app, you would handle file upload here
-                          console.log(
-                            "Banner file selected:",
-                            e.target.files?.[0]
-                          );
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const imageUrl = URL.createObjectURL(file);
+                            form.setValue("bannerImage", imageUrl);
+                          }
                         }}
                       />
                     </Label>
                   </div>
                 </div>
-                <Input
+                <FormField
+                  control={form.control}
                   name="bannerImage"
-                  placeholder="Or enter image URL"
-                  value={form.getValues("bannerImage")}
-                  // onChange={handleChange}
-                  className="dark:bg-gray-800 dark:text-gray-100"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Or enter image URL"
+                          className="dark:bg-gray-800 dark:text-gray-100"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
                 />
               </div>
             </div>
@@ -175,11 +200,11 @@ export default function EditProfileModal({
                       accept="image/*"
                       className="sr-only"
                       onChange={(e) => {
-                        // In a real app, you would handle file upload here
-                        console.log(
-                          "Profile file selected:",
-                          e.target.files?.[0]
-                        );
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const imageUrl = URL.createObjectURL(file);
+                          form.setValue("profileImage", imageUrl);
+                        }
                       }}
                     />
                   </Label>
@@ -208,7 +233,7 @@ export default function EditProfileModal({
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>name</FormLabel>
+                        <FormLabel>Name</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -225,7 +250,7 @@ export default function EditProfileModal({
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>title</FormLabel>
+                        <FormLabel>Title</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
@@ -245,7 +270,7 @@ export default function EditProfileModal({
                   name="tagline"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>tagline</FormLabel>
+                      <FormLabel>Tagline</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
