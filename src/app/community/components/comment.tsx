@@ -1,4 +1,4 @@
-import { ThumbsUp } from "lucide-react";
+import { ThumbsUp, ThumbsDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -57,6 +57,12 @@ export default function Comment({ comment }: { comment: PostComment }) {
     );
   }, [comment.likes, userId]);
 
+  const isDisliked = useMemo(() => {
+    return comment.likes.some(
+      (like) => like.type === "DISLIKE" && like.userId === userId
+    );
+  }, [comment.likes, userId]);
+
   const commenterName = useMemo(() => {
     return (
       comment.agencyComments[0]?.agency.name ||
@@ -83,7 +89,7 @@ export default function Comment({ comment }: { comment: PostComment }) {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -91,16 +97,16 @@ export default function Comment({ comment }: { comment: PostComment }) {
                     variant="ghost"
                     size="icon"
                     className={cn(
-                      `h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10`
+                      "h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10",
+                      {
+                        "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light":
+                          isLiked,
+                      }
                     )}
                     disabled={isPending}
                     onClick={() => handleLike("LIKE")}
                   >
-                    <ThumbsUp
-                      className={cn("h-4 w-4", {
-                        "fill-primary": isLiked,
-                      })}
-                    />
+                    <ThumbsUp className="h-4 w-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -111,6 +117,32 @@ export default function Comment({ comment }: { comment: PostComment }) {
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               {likes}
             </span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn(
+                      "h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10",
+                      {
+                        "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light":
+                          isDisliked,
+                      }
+                    )}
+                    disabled={isPending}
+                    onClick={() => handleLike("DISLIKE")}
+                  >
+                    <ThumbsDown className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    {isDisliked ? "Remove dislike" : "Dislike this comment"}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
 
