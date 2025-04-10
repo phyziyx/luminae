@@ -1,12 +1,53 @@
+"use client";
+
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { CategoryPost } from "@/lib/types";
+import LikeDislikeCounter from "./like-dislike-counter";
+import { useMemo } from "react";
+import { authClient } from "@/lib/auth/auth-client";
+import { PostLikeSchema } from "@/lib/forms";
+import { LikeType } from "@prisma/client";
+import { useMutation } from "@tanstack/react-query";
 
 export default function PostCardLarge({ post }: { post: CategoryPost }) {
+  const { isPending, data: session } = authClient.useSession();
+
+  const { isPending: isLikePending, mutate: handleLike } = useMutation({
+    mutationFn: async (type: LikeType) => {
+      const payload: PostLikeSchema = {
+        type,
+        postId: post.id,
+      };
+      return await fetch("/api/community/like/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+    },
+  });
+
+  const likeState = useMemo(() => {
+    const like = post.likes?.find((like) => like.userId === session?.user.id);
+    return like ? like.type : null;
+  }, [post.likes, session?.user.id]);
+
+  const likes = useMemo(() => {
+    return post.likes?.reduce((acc, like) => {
+      if (like.type === "LIKE") {
+        return acc + 1;
+      } else if (like.type === "DISLIKE") {
+        return acc - 1;
+      }
+      return acc;
+    }, 0);
+  }, [post.likes]);
+
   return (
-    <Card className="flex flex-col relative w-full h-full overflow-hidden transition-all duration-200 hover:shadow-soft bg-white dark:bg-gray-800">
+    <Card className="flex flex-grow min-w-full flex-col relative h-full overflow-hidden transition-all duration-200 hover:shadow-soft bg-white dark:bg-gray-800">
       <CardContent className="p-4 top-0 flex flex-col flex-grow">
         <div className="relative mb-2 flex items-center justify-between">
           <div className="rounded-full bg-primary/10 dark:bg-primary/20 px-3 py-1 text-xs font-medium text-primary dark:text-white">
@@ -14,7 +55,7 @@ export default function PostCardLarge({ post }: { post: CategoryPost }) {
           </div>
           {/* Date */}
           <span className="text-xs text-gray-500 dark:text-gray-400">
-            {post.createdAt.toString()}
+            {new Date(post.createdAt).toLocaleString()}
           </span>
         </div>
 
@@ -52,36 +93,17 @@ export default function PostCardLarge({ post }: { post: CategoryPost }) {
               {post._count.comments}
             </span>
           </div>
-
-          {/* Likes Section */}
-          <div className="flex items-center gap-1">
-            <ThumbsUp className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-            <span className="text-sm text-gray-700 dark:text-gray-300">
-              {post._count.likes}
-            </span>
-          </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-2">
-          {/* Like Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-gray-600 hover:text-primary hover:bg-primary/5 dark:text-gray-400 dark:hover:text-primary/80 dark:hover:bg-primary/10"
-          >
-            <ThumbsUp className="h-4 w-4" />
-          </Button>
-
-          {/* Dislike Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-gray-600 hover:text-primary hover:bg-primary/5 dark:text-gray-400 dark:hover:text-primary/80 dark:hover:bg-primary/10"
-          >
-            <ThumbsDown className="h-4 w-4" />
-          </Button>
-        </div>
+        <LikeDislikeCounter
+          handleLike={handleLike}
+          isDisliked={likeState === "DISLIKE"}
+          isLiked={likeState === "LIKE"}
+          isLikePending={isLikePending}
+          isPending={isPending}
+          likes={likes}
+          type="post"
+        />
       </CardFooter>
     </Card>
   );

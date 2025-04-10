@@ -62,6 +62,13 @@ export async function GET(request: NextRequest) {
       title: true,
       content: true,
       createdAt: true,
+      likes: {
+        select: {
+          postId: true,
+          type: true,
+          userId: true,
+        },
+      },
       _count: {
         select: {
           comments: {
@@ -69,7 +76,6 @@ export async function GET(request: NextRequest) {
               deletedAt: null,
             },
           },
-          likes: true,
         },
       },
       category: {

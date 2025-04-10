@@ -1,11 +1,19 @@
+"use client";
+
 import Link from "next/link";
-import { MessageSquare, ThumbsDown, ThumbsUp } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { CategoryPost } from "@/lib/types";
-import { Button } from "@/components/ui/button";
 import { useMemo } from "react";
+import LikeDislikeCounter from "./like-dislike-counter";
+import { LikeType } from "@prisma/client";
+import { PostLikeSchema } from "@/lib/forms";
+import { useMutation } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth/auth-client";
 
 export default function PostCard({ post }: { post: CategoryPost }) {
+  const { isPending, data: session } = authClient.useSession();
+
   const authorName = useMemo(
     () =>
       post.agencyPosts[0]?.agency.name ||
@@ -13,6 +21,38 @@ export default function PostCard({ post }: { post: CategoryPost }) {
       "Unknown Author",
     [post]
   );
+
+  const likeState = useMemo(() => {
+    const like = post.likes?.find((like) => like.userId === session?.user.id);
+    return like ? like.type : null;
+  }, [post.likes, session?.user.id]);
+
+  const likes = useMemo(() => {
+    return post.likes?.reduce((acc, like) => {
+      if (like.type === "LIKE") {
+        return acc + 1;
+      } else if (like.type === "DISLIKE") {
+        return acc - 1;
+      }
+      return acc;
+    }, 0);
+  }, [post.likes]);
+
+  const { isPending: isLikePending, mutate: handleLike } = useMutation({
+    mutationFn: async (type: LikeType) => {
+      const payload: PostLikeSchema = {
+        type,
+        postId: post.id,
+      };
+      return await fetch("/api/community/like/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+    },
+  });
 
   return (
     <Card className="overflow-hidden w-full transition-all duration-200 hover:shadow-soft bg-white dark:bg-gray-800">
@@ -26,7 +66,7 @@ export default function PostCard({ post }: { post: CategoryPost }) {
               <span className="font-medium text-gray-800 dark:text-gray-200">
                 {authorName}
               </span>{" "}
-              • {post.createdAt.toString()}
+              • {new Date(post.createdAt).toLocaleString()}
             </span>
           </div>
         </div>
@@ -48,27 +88,16 @@ export default function PostCard({ post }: { post: CategoryPost }) {
             <MessageSquare className="h-4 w-4 text-gray-600 dark:text-gray-400" />
             <span className="text-sm">{post._count.comments}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <ThumbsUp className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-            <span className="text-sm">{post._count.likes}</span>
-          </div>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
-          >
-            <ThumbsUp className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
-          >
-            <ThumbsDown className="h-4 w-4" />
-          </Button>
-        </div>
+        <LikeDislikeCounter
+          handleLike={handleLike}
+          isDisliked={likeState === "DISLIKE"}
+          isLikePending={isLikePending}
+          isLiked={likeState === "LIKE"}
+          isPending={isPending}
+          likes={likes}
+          type="post"
+        />
       </CardFooter>
     </Card>
   );

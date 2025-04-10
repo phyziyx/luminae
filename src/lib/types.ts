@@ -35,8 +35,12 @@ export type CategoryPost = Omit<
   category: Pick<Category, "name">;
   _count: {
     comments: number;
-    likes: number;
   };
+  likes: {
+    userId: string;
+    type: $Enums.LikeType;
+    postId: string;
+  }[];
   userPosts: {
     user: Pick<User, "id" | "name" | "image">;
   }[];

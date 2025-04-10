@@ -6,19 +6,17 @@ export default async function TrendingPosts() {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center w-full">
         {/* No trending posts */}
         {trendingPosts?.length === 0 ? (
           <div className="text-center text-gray-500 dark:text-gray-400">
             No trending posts found...
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-              {trendingPosts?.map((post) => (
-                <PostCardLarge key={post.id} post={post} />
-              ))}
-            </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 w-full">
+            {trendingPosts?.map((post) => (
+              <PostCardLarge key={post.id} post={post} />
+            ))}
           </div>
         )}
       </div>

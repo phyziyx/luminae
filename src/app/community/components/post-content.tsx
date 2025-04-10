@@ -1,39 +1,39 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { MessageSquare, Share2, ThumbsDown, ThumbsUp } from "lucide-react";
+import { MessageSquare, Share2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { MarkdownRenderer } from "./markdown-renderer";
 import { CategoryPost } from "@/lib/types";
 import { authClient } from "@/lib/auth/auth-client";
 import { LikeType, PostLikeSchema } from "@/lib/forms";
 import { useMutation } from "@tanstack/react-query";
+import Avatar from "@/components/site/avatar";
+import LikeDislikeCounter from "./like-dislike-counter";
 
 export default function PostContent({ post }: { post: CategoryPost }) {
-  const { data, isPending } = authClient.useSession();
+  const { isPending } = authClient.useSession();
 
   // TODO: Handle like/dislike state based on user interaction
   const [likeState, setLikeState] = useState<
     "LIKE" | "DISLIKE" | null | undefined
   >(null);
 
-  const userId = useMemo(() => {
-    return data?.user?.id;
-  }, [data]);
+  const likes = useMemo(() => {
+    return post.likes.reduce((acc, like) => {
+      if (like.type === "LIKE") {
+        return acc + 1;
+      } else if (like.type === "DISLIKE") {
+        return acc - 1;
+      }
+      return acc;
+    }, 0);
+  }, [post.likes]);
 
-  console.log("Post", Object.keys(post));
-  console.log("User ID", userId);
-
-  const { mutate: handleLike } = useMutation({
+  const { isPending: isLikePending, mutate: handleLike } = useMutation({
     mutationFn: async (type: LikeType) => {
       const payload: PostLikeSchema = {
         type,
@@ -63,71 +63,33 @@ export default function PostContent({ post }: { post: CategoryPost }) {
               <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 sm:text-3xl md:text-4xl">
                 {post.title}
               </h1>
-              <div className="flex items-center gap-2">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        disabled={isPending}
-                        variant="ghost"
-                        size="icon"
-                        className={`h-10 w-10 ${
-                          likeState === "LIKE"
-                            ? "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light"
-                            : "text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
-                        }`}
-                        onClick={() => handleLike("LIKE")}
-                      >
-                        <ThumbsUp className="h-5 w-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Upvote</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <span className="min-w-10 text-center text-lg font-medium text-gray-800 dark:text-gray-200">
-                  {post._count.likes}
-                </span>
-
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        disabled={isPending}
-                        variant="ghost"
-                        size="icon"
-                        className={`h-10 w-10 ${
-                          likeState === "DISLIKE"
-                            ? "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light"
-                            : "text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
-                        }`}
-                        onClick={() => handleLike("DISLIKE")}
-                      >
-                        <ThumbsDown className="h-5 w-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Downvote</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
+              <LikeDislikeCounter
+                handleLike={handleLike}
+                isDisliked={likeState === "DISLIKE"}
+                isLikePending={isLikePending}
+                isLiked={likeState === "LIKE"}
+                isPending={isPending}
+                likes={likes}
+                type="post"
+              />
             </div>
 
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
-                  {post.userPosts[0]?.user.name.charAt(0) ||
-                    post.agencyPosts[0]?.agency.name.charAt(0)}
-                </div>
+                <Avatar
+                  name={
+                    post.userPosts[0]?.user.name ||
+                    post.agencyPosts[0]?.agency.name
+                  }
+                  profileImage=""
+                  className="h-8 w-8"
+                />
                 <span className="font-medium text-gray-800 dark:text-gray-200">
                   {post.userPosts[0]?.user.name ||
                     post.agencyPosts[0]?.agency.name}
                 </span>
               </div>
-              <span>{post.createdAt.toString()}</span>
+              <span>{new Date(post.createdAt).toLocaleString()}</span>
               <div className="flex items-center gap-1">
                 <MessageSquare className="h-4 w-4" />
                 <span>{post._count.comments} comments</span>
