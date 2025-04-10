@@ -4,6 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   const id = request.nextUrl.searchParams.get("id");
+  const sortType = request.nextUrl.searchParams.get("sortType");
 
   if (!id) {
     return NextResponse.json(
@@ -109,6 +110,15 @@ export async function GET(request: NextRequest) {
     where: {
       categoryId: id,
       deletedAt: null,
+    },
+    orderBy: {
+      ...(sortType === "latest"
+        ? { createdAt: "desc" }
+        : {
+            comments: {
+              _count: "desc",
+            },
+          }),
     },
   });
 

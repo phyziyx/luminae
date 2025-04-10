@@ -266,13 +266,16 @@ export async function fetchComments({
 export async function fetchCategoryPosts({
   category,
   pageParam,
+  sortType = "latest",
 }: {
   category: string;
   pageParam?: string | undefined;
+  sortType?: "latest" | "comments";
 }) {
   const response = await fetch(
     `/api/community/category?id=${category}` +
-      (pageParam ? `&cursor=${pageParam}` : "")
+      (pageParam ? `&cursor=${pageParam}` : "") +
+      (sortType ? `&sortType=${sortType}` : "")
   );
 
   if (!response.ok) {

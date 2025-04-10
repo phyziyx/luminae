@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,13 +16,20 @@ import { CategoryPostsResponse } from "@/lib/types";
 import PostCard from "./post-card";
 import { queryKeys } from "@/lib/react-query";
 
-function useCategoryPosts({ categoryId }: { categoryId: string }) {
+function useCategoryPosts({
+  categoryId,
+  sortType = "latest",
+}: {
+  categoryId: string;
+  sortType: "latest" | "comments";
+}) {
   return useSuspenseInfiniteQuery<CategoryPostsResponse>({
     queryKey: queryKeys.community.categoryPosts(categoryId),
     queryFn: ({ pageParam }) => {
       return fetchCategoryPosts({
         category: categoryId,
         pageParam: pageParam as string | undefined,
+        sortType,
       });
     },
     initialPageParam: undefined as string | undefined,
@@ -35,29 +42,29 @@ export default function CategoryPostsList({
 }: {
   categoryId: string;
 }) {
-  const [sortOption, setSortOption] = useState("latest");
+  const [sortOption, setSortOption] = useState<"latest" | "comments">("latest");
 
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage, isError } =
-    useCategoryPosts({ categoryId });
+  const {
+    data,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    isError,
+    refetch,
+  } = useCategoryPosts({ categoryId, sortType: sortOption });
+
+  const onValueChange = useCallback((value: string) => {
+    setSortOption(value as "latest" | "comments");
+  }, []);
+
+  useEffect(() => {
+    refetch();
+  }, [sortOption, refetch]);
 
   const posts = useMemo(
     () => data?.pages.flatMap((page) => page.items),
     [data]
   );
-
-  // // Sort posts based on selected option
-  // const sortedPosts = [...posts].sort((a, b) => {
-  //   switch (sortOption) {
-  //     case "most-commented":
-  //       return b.comments - a.comments;
-  //     case "most-liked":
-  //       return b.likes - a.likes;
-  //     case "latest":
-  //     default:
-  //       // For demo purposes, we'll sort by ID (assuming higher ID = newer)
-  //       return b.id - a.id;
-  //   }
-  // });
 
   return (
     <div>
@@ -69,14 +76,14 @@ export default function CategoryPostsList({
           <span className="text-sm text-gray-600 dark:text-gray-300">
             Sort by:
           </span>
-          <Select value={sortOption} onValueChange={setSortOption}>
+          <Select value={sortOption} onValueChange={onValueChange}>
             <SelectTrigger className="w-[180px] border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="latest">Latest</SelectItem>
-              <SelectItem value="most-commented">Most Commented</SelectItem>
-              <SelectItem value="most-liked">Most Liked</SelectItem>
+              <SelectItem value="comments">Most Commented</SelectItem>
+              <SelectItem value="likes">Most Liked</SelectItem>
             </SelectContent>
           </Select>
         </div>

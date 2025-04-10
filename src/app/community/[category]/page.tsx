@@ -84,7 +84,7 @@ export default async function CategoryPage({
           <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-gray-100">
             Trending in{" "}
             <span className="text-[#5B9AFF] dark:text-[#3B82F6]">{title}</span>
-            <div className="mt-2 h-1 w-48 bg-[#5B9AFF] dark:bg-[#3B82F6]"></div>
+            <div className="mt-2 h-1 w-48 bg-[#5B9AFF] dark:bg-[#3B82F6]" />
           </h1>
 
           {/* Category Description */}
