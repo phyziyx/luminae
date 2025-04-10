@@ -49,6 +49,7 @@ export const commentFormSchema = z.object({
     .max(2048, {
       message: "Comment content is too long",
     }),
+  asAgency: z.boolean().optional(),
 });
 
 export type CommentFormSchema = z.infer<typeof commentFormSchema>;
