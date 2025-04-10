@@ -9,6 +9,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,6 +31,7 @@ export default function CommentForm({ postId }: { postId: string }) {
     defaultValues: {
       postId: postId,
       content: "",
+      asAgency: false,
     },
     mode: "onBlur",
   });
@@ -106,23 +108,26 @@ export default function CommentForm({ postId }: { postId: string }) {
             <div className="text-xs text-gray-500 dark:text-gray-400">
               Supports markdown formatting
             </div>
-            <div className="flex flex-row gap-2">
-              <FormField
-                control={form.control}
-                name="asAgency"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={(checked) => field.onChange(checked)}
-                      >
+            <div className="flex flex-row space-x-4 align-baseline">
+              {
+                <FormField
+                  control={form.control}
+                  name="asAgency"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row space-x-2 align-middle items-center place-items-center place-content-center">
+                      <FormLabel className="text-xs text-gray-500 dark:text-gray-400">
                         Post as Agency?
-                      </Checkbox>
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+                      </FormLabel>
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={(checked) => field.onChange(checked)}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              }
               <Button
                 disabled={isLoading}
                 className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:hover:bg-primary-light/90 shadow-md hover:shadow-lg transition-all"

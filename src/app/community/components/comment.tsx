@@ -15,6 +15,79 @@ import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth/auth-client";
 import { useMutation } from "@tanstack/react-query";
 import { CommentLikeSchema, LikeType } from "@/lib/forms";
+import { LoadingSpinner } from "@/components/site/loading-spinner";
+
+function LikeDislikeCounter({
+  isPending,
+  likes,
+  isLikePending,
+  handleLike,
+  isLiked,
+  isDisliked,
+}: {
+  isPending: boolean;
+  likes: number;
+  isLikePending: boolean;
+  handleLike: (type: LikeType) => void;
+  isLiked: boolean;
+  isDisliked: boolean;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10",
+                {
+                  "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light":
+                    isLiked,
+                }
+              )}
+              disabled={isPending}
+              onClick={() => handleLike("LIKE")}
+            >
+              <ThumbsUp className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{isLiked ? "Unlike this comment" : "Like this comment"}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <span className="text-sm font-medium min-w-4 items-center text-center place-items-center place-content-center text-gray-700 dark:text-gray-300">
+        {isLikePending ? <LoadingSpinner className="h-4 w-4" /> : likes}
+      </span>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                "h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10",
+                {
+                  "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light":
+                    isDisliked,
+                }
+              )}
+              disabled={isPending}
+              onClick={() => handleLike("DISLIKE")}
+            >
+              <ThumbsDown className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{isDisliked ? "Remove dislike" : "Dislike this comment"}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+  );
+}
 
 export default function Comment({ comment }: { comment: PostComment }) {
   const { data, isPending } = authClient.useSession();
@@ -23,7 +96,7 @@ export default function Comment({ comment }: { comment: PostComment }) {
     return data?.user?.id;
   }, [data]);
 
-  const { mutate: handleLike } = useMutation({
+  const { isPending: isLikePending, mutate: handleLike } = useMutation({
     mutationFn: async (type: LikeType) => {
       const payload: CommentLikeSchema = {
         type,
@@ -85,65 +158,18 @@ export default function Comment({ comment }: { comment: PostComment }) {
                 {commenterName}
               </div>
               <div className="text-xs text-gray-500 dark:text-gray-400">
-                {comment.createdAt.toString()}
+                {new Date(comment.createdAt).toLocaleString()}
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      "h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10",
-                      {
-                        "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light":
-                          isLiked,
-                      }
-                    )}
-                    disabled={isPending}
-                    onClick={() => handleLike("LIKE")}
-                  >
-                    <ThumbsUp className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{isLiked ? "Unlike this comment" : "Like this comment"}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {likes}
-            </span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      "h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10",
-                      {
-                        "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light":
-                          isDisliked,
-                      }
-                    )}
-                    disabled={isPending}
-                    onClick={() => handleLike("DISLIKE")}
-                  >
-                    <ThumbsDown className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    {isDisliked ? "Remove dislike" : "Dislike this comment"}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          <LikeDislikeCounter
+            handleLike={handleLike}
+            isDisliked={isDisliked}
+            isLikePending={isLikePending}
+            isLiked={isLiked}
+            isPending={isPending}
+            likes={likes}
+          />
         </div>
 
         <div className="mt-3 text-gray-700 dark:text-gray-300">
