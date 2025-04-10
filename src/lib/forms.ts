@@ -141,21 +141,40 @@ export type SearchBarSchema = z.infer<typeof searchBarSchema>;
 // Community Profile Schema
 
 export const communityProfileSchema = z.object({
-  tagline: z.string().min(4, {
-    message: "Tagline must be at least 4 characters",
-  }).max(50, {
-    message: "Tagline can be at most 50 characters",
-  }),
-  content: z.string().min(10, {
-    message: "Content must be at least 10 characters",
-  }).max(1000, {
-    message: "Content can be at most 1000 characters",
-  }),
-  title: z.string().min(4, {
-    message: "Title must be at least 4 characters",
-  }).max(100, {
-    message: "Title can be at most 100 characters",
-  }),
+  name: z
+    .string()
+    .min(4, {
+      message: "Name must be at least 4 characters long.",
+    })
+    .max(64, {
+      message: "Name can not be more than 64 characters long.",
+    }),
+  tagline: z
+    .string()
+    .min(4, {
+      message: "Tagline must be at least 4 characters",
+    })
+    .max(50, {
+      message: "Tagline can be at most 50 characters",
+    }),
+  content: z
+    .string()
+    .min(10, {
+      message: "Content must be at least 10 characters",
+    })
+    .max(1000, {
+      message: "Content can be at most 1000 characters",
+    }),
+  profileImage: z.any().refine((val) => val.length !== 1, "File is required"),
+  bannerImage: z.any().refine((val) => val.length !== 1, "File is required"),
+  title: z
+    .string()
+    .min(4, {
+      message: "Title must be at least 4 characters",
+    })
+    .max(100, {
+      message: "Title can be at most 100 characters",
+    }),
 });
 
 export type CommunityProfileSchema = z.infer<typeof communityProfileSchema>;

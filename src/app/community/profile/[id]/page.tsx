@@ -4,6 +4,7 @@ import StatsOverview from "../components/stats-overview";
 import BadgesSection from "../components/badges-section";
 // import RecentActivity from "../components/recent-activity";
 import prisma from "@/lib/db";
+import { CommunityProfile as ICommunityProfile } from "@/lib/types";
 
 const getProfileData = async (id: string) => {
   const isAgency = id.startsWith("a-");
@@ -84,12 +85,12 @@ const getProfileData = async (id: string) => {
 
     data.bannerImage =
       // foundAgency?.profile?.profile?.bannerImage ||
-      "/placeholder.svg?height=300&width=1200";
+      "/assets/banner_placeholder.webp";
     data.description = foundAgency?.profile?.profile?.content || "";
     data.id = idWithoutPrefix;
     data.name = foundAgency?.name || "";
     data.profileImage =
-      foundAgency?.agencyLogo || "/placeholder.svg?height=150&width=150";
+      foundAgency?.agencyLogo || "/assets/profile_placeholder.webp";
     data.stats = {
       comments: foundAgency?._count.comments ?? 0,
       likes:
@@ -128,12 +129,11 @@ const getProfileData = async (id: string) => {
 
     data.bannerImage =
       // foundUser?.profile?.profile?.bannerImage ||
-      "/placeholder.svg?height=300&width=1200";
+      "/assets/banner_placeholder.webp";
     data.description = foundUser?.profile?.profile?.content || "";
     data.id = idWithoutPrefix;
     data.name = foundUser?.name || "";
-    data.profileImage =
-      foundUser?.image || "/placeholder.svg?height=150&width=150";
+    data.profileImage = foundUser?.image || "/assets/banner_placeholder.webp";
     data.stats = {
       comments: foundUser?._count.comments ?? 0,
       likes:
@@ -242,7 +242,7 @@ const getProfileData = async (id: string) => {
   // };
 };
 
-function CommunityProfile({ profileData }: { profileData: any }) {
+function CommunityProfile({ profileData }: { profileData: ICommunityProfile }) {
   return (
     <>
       <ProfileHeader
@@ -250,17 +250,20 @@ function CommunityProfile({ profileData }: { profileData: any }) {
         bannerImage={profileData.bannerImage}
         name={profileData.name}
         isAgency={profileData.isAgency}
+        content={profileData.content || ""}
+        tagline={profileData.tagline || ""}
+        title={profileData.title || ""}
       />
 
       <div className="mt-8 grid gap-8 md:grid-cols-3">
         <div className="md:col-span-2">
           <ProfileInfo
             name={profileData.name}
-            title={profileData.title}
-            tagline={profileData.tagline}
-            description={profileData.description}
+            title={profileData.title || ""}
+            tagline={profileData.tagline || ""}
+            description={profileData.content || ""}
             isAgency={profileData.isAgency}
-            verified={profileData.verified}
+            verified={false}
           />
 
           {/* <div className="mt-8">
@@ -284,9 +287,9 @@ function CommunityProfile({ profileData }: { profileData: any }) {
 export default async function ProfilePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const profileData = await getProfileData(params.id);
+  const profileData = await getProfileData((await params).id);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-950">
