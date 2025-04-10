@@ -30,6 +30,13 @@ export async function GET(request: NextRequest) {
         }
       : undefined,
     select: {
+      likes: {
+        select: {
+          postId: true,
+          type: true,
+          userId: true,
+        },
+      },
       id: true,
       title: true,
       content: true,
@@ -41,7 +48,6 @@ export async function GET(request: NextRequest) {
               deletedAt: null,
             },
           },
-          likes: true,
         },
       },
       category: {
