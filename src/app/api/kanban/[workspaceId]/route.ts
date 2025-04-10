@@ -31,13 +31,13 @@ export async function GET(
       order: "asc",
     },
     include: {
-      Tickets: {
+      tickets: {
         // orderBy: {
         //   order: "asc",
         // },
         include: {
           assigneeUser: true,
-          Client: true,
+          client: true,
         },
       },
     },
