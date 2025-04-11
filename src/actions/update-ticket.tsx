@@ -1,19 +1,15 @@
 "use server";
 
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
 import { laneTicketFormSchema, LaneTicketFormSchema } from "@/lib/forms";
 import AgencyManager from "@/lib/managers/agencyManager";
 import NotificationManager from "@/lib/managers/notificationManager";
 import { TicketTag } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 
 export default async function onUpdateTicket(values: LaneTicketFormSchema) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   let error = "An error occurred while saving the workspace information";

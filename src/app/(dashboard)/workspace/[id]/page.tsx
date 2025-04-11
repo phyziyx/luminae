@@ -3,8 +3,7 @@
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import AgencyManager from "@/lib/managers/agencyManager";
@@ -19,10 +18,8 @@ export default async function WorkspacePage({
   const id = (await params).id;
 
   const t = await getTranslations();
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
 
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

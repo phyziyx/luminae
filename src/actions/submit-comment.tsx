@@ -1,16 +1,12 @@
 "use server";
 
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
 import { commentFormSchema, CommentFormSchema } from "@/lib/forms";
 import PostManager from "@/lib/managers/postManager";
-import { headers } from "next/headers";
 
 export default async function onSubmitComment(values: CommentFormSchema) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   let error = "An error occurred while creating comment...";

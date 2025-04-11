@@ -25,7 +25,9 @@ import { useForm } from "react-hook-form";
 export default function CommentForm({ postId }: { postId: string }) {
   const { toast } = useToast();
   const t = useTranslations();
+
   const queryClient = useQueryClient();
+
   const form = useForm<CommentFormSchema>({
     resolver: zodResolver(commentFormSchema),
     defaultValues: {
@@ -114,12 +116,13 @@ export default function CommentForm({ postId }: { postId: string }) {
                   control={form.control}
                   name="asAgency"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row space-x-2 align-middle items-center place-items-center place-content-center">
+                    <FormItem className="flex flex-row space-x-2 place-items-center space-y-0">
                       <FormLabel className="text-xs text-gray-500 dark:text-gray-400">
                         Post as Agency?
                       </FormLabel>
                       <FormControl>
                         <Checkbox
+                          className="p-0 m-0 space-x-0 place-items-stretch"
                           checked={field.value}
                           onCheckedChange={(checked) => field.onChange(checked)}
                         />

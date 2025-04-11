@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
-import { MessageSquare, Share2, ThumbsDown, ThumbsUp } from "lucide-react";
+import { useState, useMemo } from "react";
+import { MessageSquare, Share2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
@@ -11,24 +11,22 @@ import Avatar from "@/components/site/avatar";
 import LikeDislikeCounter from "./like-dislike-counter";
 import { MarkdownRenderer } from "./markdown-renderer";
 
-import { CategoryPost } from "@/lib/types";
+import { CategoryPostWithBookmark } from "@/lib/types";
 import { authClient } from "@/lib/auth/auth-client";
 import { LikeType, PostLikeSchema } from "@/lib/forms";
-import { onToggleBookmark } from "./actions/bookmarkPost";
-import { useToast } from "@/hooks/use-toast";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
-export default function PostContent({ post }: { post: CategoryPost }) {
+import { useToast } from "@/hooks/use-toast";
+import BookmarkPost from "./bookmark-post";
+
+export default function PostContent({
+  post,
+}: {
+  post: CategoryPostWithBookmark;
+}) {
   const { isPending } = authClient.useSession();
+
   const { toast } = useToast();
 
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-  const [bookmarkPending, startBookmarkTransition] = useTransition();
   const [likeState, setLikeState] = useState<"LIKE" | "DISLIKE" | null>(null);
 
   // SHARE: Copy post URL
@@ -43,28 +41,6 @@ export default function PostContent({ post }: { post: CategoryPost }) {
         description: "Failed to copy link!",
       });
     }
-  };
-
-  // BOOKMARK: Toggle bookmark
-  const handleBookmark = () => {
-    startBookmarkTransition(async () => {
-      try {
-        await onToggleBookmark({ postId: post.id });
-        setIsBookmarked((prev) => !prev);
-
-        toast({
-          description: isBookmarked
-            ? "Removed from bookmarks."
-            : "Post bookmarked!",
-        });
-      } catch (err) {
-        console.error("Bookmark error:", err);
-        toast({
-          variant: "destructive",
-          description: "Error bookmarking post.",
-        });
-      }
-    });
   };
 
   // LIKE COUNT: Derived from post.likes
@@ -96,6 +72,8 @@ export default function PostContent({ post }: { post: CategoryPost }) {
     },
   });
 
+  console.log("post", post);
+
   return (
     <div>
       <Card className="overflow-hidden bg-white dark:bg-gray-800 shadow-soft">
@@ -106,59 +84,6 @@ export default function PostContent({ post }: { post: CategoryPost }) {
               <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 sm:text-3xl md:text-4xl">
                 {post.title}
               </h1>
-              <div className="flex items-center gap-2">
-                {/* Like */}
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        disabled={isPending}
-                        variant="ghost"
-                        size="icon"
-                        className={`h-10 w-10 ${
-                          likeState === "LIKE"
-                            ? "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light"
-                            : "text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
-                        }`}
-                        onClick={() => handleLike("LIKE")}
-                      >
-                        <ThumbsUp className="h-5 w-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Upvote</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <span className="min-w-10 text-center text-lg font-medium text-gray-800 dark:text-gray-200">
-                  {post._count.likes}
-                </span>
-
-                {/* Dislike */}
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        disabled={isPending}
-                        variant="ghost"
-                        size="icon"
-                        className={`h-10 w-10 ${
-                          likeState === "DISLIKE"
-                            ? "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light"
-                            : "text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
-                        }`}
-                        onClick={() => handleLike("DISLIKE")}
-                      >
-                        <ThumbsDown className="h-5 w-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Downvote</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
 
               <LikeDislikeCounter
                 handleLike={handleLike}
@@ -228,14 +153,11 @@ export default function PostContent({ post }: { post: CategoryPost }) {
               </Button>
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-              <span>Report</span>
-              <button
-                onClick={handleBookmark}
-                disabled={bookmarkPending}
-                className="hover:underline"
-              >
-                {isBookmarked ? "Unbookmark" : "Bookmark"}
-              </button>
+              {/* <span>Report</span> */}
+              <BookmarkPost
+                postId={post.id}
+                initialBookmarkState={!!post.bookmarkedBy?.[0]?.id}
+              />
             </div>
           </div>
         </div>

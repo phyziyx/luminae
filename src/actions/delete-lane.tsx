@@ -3,17 +3,13 @@
 import AgencyManager from "@/lib/managers/agencyManager";
 import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
 export default async function deleteLane(values: {
   workspaceId: string;
   laneId: string;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   let error = "An error occurred while saving the workspace information";

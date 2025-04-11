@@ -5,6 +5,14 @@ import prisma from "@/lib/db";
 // import { sendEmail } from "@/lib/email";
 import { admin, openAPI } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
+import { cache } from "react";
+import { headers } from "next/headers";
+
+export const getSession = cache(async () => {
+  return await auth.api.getSession({
+    headers: await headers(),
+  });
+});
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {

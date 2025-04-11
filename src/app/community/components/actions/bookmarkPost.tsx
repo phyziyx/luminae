@@ -1,16 +1,13 @@
 // app/actions/toggleBookmark.ts
 "use server";
 
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/auth";
 import PostManager from "@/lib/managers/postManager";
 import { bookmarkPostFormSchema, BookmarkPostFormSchema } from "@/lib/forms";
 
 export async function onToggleBookmark(formData: BookmarkPostFormSchema) {
   // Validate session
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

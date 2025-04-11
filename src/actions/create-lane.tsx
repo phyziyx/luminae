@@ -5,13 +5,10 @@ import prisma from "@/lib/db";
 import { v7 } from "uuid";
 import { createLaneSchema, CreateLaneSchema } from "@/lib/forms";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
 export default async function onCreateLane(values: CreateLaneSchema) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   const user = session?.user;
 

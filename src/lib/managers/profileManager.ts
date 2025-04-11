@@ -1,6 +1,5 @@
-import { headers } from "next/headers";
 import prisma from "../db";
-import { auth } from "../auth/auth";
+import { getSession } from "../auth/auth";
 import { CommunityProfileSchema } from "../forms";
 
 class ProfileManager {
@@ -8,9 +7,7 @@ class ProfileManager {
     values: CommunityProfileSchema,
     isUpdatingAgency: boolean
   ) {
-    const userSession = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const userSession = await getSession();
 
     if (!userSession || !userSession.user) {
       return;

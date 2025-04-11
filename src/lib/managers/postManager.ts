@@ -4,6 +4,7 @@ import { v7 } from "uuid";
 import {
   CategoryPost,
   CategoryPostsResponse,
+  CategoryPostWithBookmark,
   CommentOwner,
   PostCommentResponse,
 } from "../types";
@@ -185,8 +186,8 @@ class PostManager {
     });
   }
 
-  public static async getPostById(id: string) {
-    const post: CategoryPost | null = await prisma.post.findUnique({
+  public static async getPostById(id: string, userId?: string) {
+    const post: CategoryPostWithBookmark | null = await prisma.post.findUnique({
       where: {
         id,
       },
@@ -202,6 +203,19 @@ class PostManager {
             userId: true,
           },
         },
+        ...(userId
+          ? {
+              bookmarkedBy: {
+                select: {
+                  id: true,
+                },
+                where: {
+                  id: userId,
+                },
+                take: 1,
+              },
+            }
+          : {}),
         _count: {
           select: {
             comments: {

@@ -1,7 +1,6 @@
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
 import { commentLikeSchema } from "@/lib/forms";
-import { headers } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -22,10 +21,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

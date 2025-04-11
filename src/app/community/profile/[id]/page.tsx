@@ -5,8 +5,7 @@ import BadgesSection from "../components/badges-section";
 import BookmarkedPostsList from "../components/bookmarked-posts";
 import prisma from "@/lib/db";
 import PostManager from "@/lib/managers/postManager";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 import { CommunityProfile as ICommunityProfile } from "@/lib/types";
 
 const getProfileData = async (id: string) => {
@@ -192,9 +191,7 @@ export default async function ProfilePage({
 }: {
   params: { id: string };
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   const currentUserId = session?.user?.id ?? null;
   const profileData = await getProfileData(params.id);

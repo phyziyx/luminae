@@ -17,17 +17,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { CameraIcon } from "lucide-react";
 import ChangePassword from "./change-password";
 import { getTranslations } from "next-intl/server";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { getSession } from "@/lib/auth/auth";
 
 export default async function Profile() {
   const t = await getTranslations();
 
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   const user = session?.user;
 

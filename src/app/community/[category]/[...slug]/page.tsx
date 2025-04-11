@@ -5,16 +5,17 @@ import { Button } from "@/components/ui/button";
 import PostContent from "../../components/post-content";
 import CommentSection from "../../components/comment-section";
 import PostManager from "@/lib/managers/postManager";
+import { getSession } from "@/lib/auth/auth";
 
 export default async function PostPage({
   params,
 }: {
   params: Promise<{ slug: string[] }>;
 }) {
+  const session = await getSession();
+  const userId = session?.user.id;
+
   const { slug } = await params;
-
-  console.log("slug:", slug.toString());
-
   const [postId] = slug;
 
   // This part of the code is never reached
@@ -22,7 +23,7 @@ export default async function PostPage({
     return <div>Invalid Post ID</div>;
   }
 
-  const postData = await PostManager.getPostById(postId);
+  const postData = await PostManager.getPostById(postId, userId);
 
   // TODO
   if (!postData) {

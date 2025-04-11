@@ -135,3 +135,9 @@ export type KanbanLane = Prisma.LaneGetPayload<{
     };
   };
 }>;
+
+export type CategoryPostWithBookmark = CategoryPost & {
+  bookmarkedBy?: {
+    id: string;
+  }[];
+};

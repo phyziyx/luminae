@@ -5,14 +5,10 @@ import formSchema from "@/app/(dashboard)/components/agency-details/schema";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { revalidatePath } from "next/cache";
 import UserManager from "@/lib/managers/userManager";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
 const onAgencyUpdate = async (values: z.infer<typeof formSchema>) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   let error = "An error occurred while updating.";
