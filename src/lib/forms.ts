@@ -141,21 +141,36 @@ export type SearchBarSchema = z.infer<typeof searchBarSchema>;
 // Community Profile Schema
 
 export const communityProfileSchema = z.object({
-  tagline: z.string().min(4, {
-    message: "Tagline must be at least 4 characters",
-  }).max(50, {
-    message: "Tagline can be at most 50 characters",
-  }),
-  content: z.string().min(10, {
-    message: "Content must be at least 10 characters",
-  }).max(1000, {
-    message: "Content can be at most 1000 characters",
-  }),
-  title: z.string().min(4, {
-    message: "Title must be at least 4 characters",
-  }).max(100, {
-    message: "Title can be at most 100 characters",
-  }),
+  tagline: z
+    .string()
+    .min(4, {
+      message: "Tagline must be at least 4 characters",
+    })
+    .max(50, {
+      message: "Tagline can be at most 50 characters",
+    }),
+  content: z
+    .string()
+    .min(10, {
+      message: "Content must be at least 10 characters",
+    })
+    .max(1000, {
+      message: "Content can be at most 1000 characters",
+    }),
+  title: z
+    .string()
+    .min(4, {
+      message: "Title must be at least 4 characters",
+    })
+    .max(100, {
+      message: "Title can be at most 100 characters",
+    }),
 });
 
 export type CommunityProfileSchema = z.infer<typeof communityProfileSchema>;
+
+export const bookmarkPostFormSchema = z.object({
+  postId: z.string().min(1, { message: "Post ID is required." }),
+});
+
+export type BookmarkPostFormSchema = z.infer<typeof bookmarkPostFormSchema>;

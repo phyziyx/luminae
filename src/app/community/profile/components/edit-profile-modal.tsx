@@ -324,8 +324,7 @@ export default function EditProfileModal({
               <Button
                 disabled={isLoading}
                 type="submit"
-                className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90"
-              >
+                className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90"              >
                 {isLoading ? <LoadingSpinner /> : "Save Changes"}
               </Button>
             </DialogFooter>

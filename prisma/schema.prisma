@@ -69,16 +69,17 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  notifications Notification[]
-  agencyMember  AgencyMember?
-  tickets       Ticket[]
-  session       Session[]
-  account       Account[]
-  comments      UserComment[]
-  likes         Likes[]
-  commentLikes  CommentLikes[]
-  posts         UserPost[]
-  profile       UserProfile?
+  notifications   Notification[]
+  agencyMember    AgencyMember?
+  tickets         Ticket[]
+  session         Session[]
+  account         Account[]
+  comments        UserComment[]
+  likes           Likes[]
+  commentLikes    CommentLikes[]
+  posts           UserPost[]
+  profile         UserProfile?
+  bookmarkedPosts Post[]         @relation("UserBookmarkedPosts")
 }
 
 model Verification {
@@ -371,6 +372,8 @@ model Post {
   deletedAt   DateTime?
   userPosts   UserPost[]
   agencyPosts AgencyPost[]
+
+  bookmarkedBy User[] @relation("UserBookmarkedPosts")
 
   @@index([id])
 }

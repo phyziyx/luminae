@@ -1,8 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState, useTransition } from "react";
 import { MessageSquare, Share2, ThumbsDown, ThumbsUp } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -18,20 +17,63 @@ import { authClient } from "@/lib/auth/auth-client";
 import { LikeType, PostLikeSchema } from "@/lib/forms";
 import { useMutation } from "@tanstack/react-query";
 
+// The server action we just created:
+import { onToggleBookmark } from "./actions/bookmarkPost";
+import { useToast } from "@/hooks/use-toast";
+
 export default function PostContent({ post }: { post: CategoryPost }) {
-  const { data, isPending } = authClient.useSession();
+  const { isPending } = authClient.useSession();
+  const { toast } = useToast();
 
-  // TODO: Handle like/dislike state based on user interaction
-  const [likeState, setLikeState] = useState<
-    "LIKE" | "DISLIKE" | null | undefined
-  >(null);
+  // Example: Track bookmark state locally
+  // If your API provides initial bookmark info, pass it in as a prop
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
 
-  const userId = useMemo(() => {
-    return data?.user?.id;
-  }, [data]);
+  // SHARE: Copy post URL
+  const handleShare = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast({
+        description: "Link copied to clipboard!",
+      });
+    } catch (err) {
+      console.error("Failed to copy link:", err);
+      toast({
+        variant: "destructive",
+        description: "Failed to copy link!",
+      });
+    }
+  };
 
-  console.log("Post", Object.keys(post));
-  console.log("User ID", userId);
+  // BOOKMARK: Toggle bookmark
+  // You can also use React’s useTransition or `useMutation` from React Query.
+  const [bookmarkPending, startBookmarkTransition] = useTransition();
+
+  const handleBookmark = () => {
+    startBookmarkTransition(async () => {
+      try {
+        await onToggleBookmark({ postId: post.id });
+        setIsBookmarked((prev) => !prev);
+
+        toast({
+          description: isBookmarked
+            ? "Removed from bookmarks."
+            : "Post bookmarked!",
+        });
+      } catch (err) {
+        console.error("Bookmark error:", err);
+        toast({
+          variant: "destructive",
+          description: "Error bookmarking post.",
+        });
+      }
+    });
+  };
+
+  // Like/Dislike placeholders:
+  const [likeState, setLikeState] = useState<"LIKE" | "DISLIKE" | null>(null);
+
+  // const userId = data?.user?.id;
 
   const { mutate: handleLike } = useMutation({
     mutationFn: async (type: LikeType) => {
@@ -48,7 +90,6 @@ export default function PostContent({ post }: { post: CategoryPost }) {
       });
     },
     onSuccess() {
-      // TODO: Handle success state (e.g., show a toast notification)
       setLikeState(null);
     },
   });
@@ -64,6 +105,7 @@ export default function PostContent({ post }: { post: CategoryPost }) {
                 {post.title}
               </h1>
               <div className="flex items-center gap-2">
+                {/* Like */}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -91,6 +133,7 @@ export default function PostContent({ post }: { post: CategoryPost }) {
                   {post._count.likes}
                 </span>
 
+                {/* Dislike */}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -162,6 +205,7 @@ export default function PostContent({ post }: { post: CategoryPost }) {
                 variant="outline"
                 size="sm"
                 className="border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300"
+                onClick={handleShare}
               >
                 <Share2 className="mr-2 h-4 w-4" />
                 Share
@@ -169,7 +213,14 @@ export default function PostContent({ post }: { post: CategoryPost }) {
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
               <span>Report</span>
-              <span>Bookmark</span>
+              {/* Toggle bookmark */}
+              <button
+                onClick={handleBookmark}
+                disabled={bookmarkPending}
+                className="hover:underline"
+              >
+                {isBookmarked ? "Unbookmark" : "Bookmark"}
+              </button>
             </div>
           </div>
         </div>
