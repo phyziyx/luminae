@@ -3,18 +3,19 @@
 import onSubmitComment from "@/actions/submit-comment";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { commentFormSchema, CommentFormSchema } from "@/lib/forms";
 import { queryKeys } from "@/lib/react-query";
-import { PostComment } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
@@ -30,6 +31,7 @@ export default function CommentForm({ postId }: { postId: string }) {
     defaultValues: {
       postId: postId,
       content: "",
+      asAgency: false,
     },
     mode: "onBlur",
   });
@@ -40,6 +42,16 @@ export default function CommentForm({ postId }: { postId: string }) {
     async (values: CommentFormSchema) => {
       try {
         const response = await onSubmitComment(values);
+
+        if (response.error) {
+          toast({
+            title: "Failed to add comment",
+            description: response.error,
+            variant: "destructive",
+          });
+
+          return;
+        }
 
         form.reset({
           content: "",
@@ -53,13 +65,10 @@ export default function CommentForm({ postId }: { postId: string }) {
 
         queryClient.setQueryData(
           queryKeys.community.postComments(postId),
-          (oldData: PostComment[] | undefined) => {
-            return [
-              ...(oldData || []),
-              {
-                ...response.comment,
-              },
-            ];
+          () => {
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.community.postComments(postId),
+            });
           }
         );
       } catch (err) {
@@ -99,12 +108,33 @@ export default function CommentForm({ postId }: { postId: string }) {
             <div className="text-xs text-gray-500 dark:text-gray-400">
               Supports markdown formatting
             </div>
-            <Button
-              disabled={isLoading}
-              className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:hover:bg-primary-light/90 shadow-md hover:shadow-lg transition-all"
-            >
-              {isLoading ? <LoadingSpinner /> : t("SUBMIT")}
-            </Button>
+            <div className="flex flex-row space-x-4 align-baseline">
+              {
+                <FormField
+                  control={form.control}
+                  name="asAgency"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row space-x-2 align-middle items-center place-items-center place-content-center">
+                      <FormLabel className="text-xs text-gray-500 dark:text-gray-400">
+                        Post as Agency?
+                      </FormLabel>
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={(checked) => field.onChange(checked)}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              }
+              <Button
+                disabled={isLoading}
+                className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:hover:bg-primary-light/90 shadow-md hover:shadow-lg transition-all"
+              >
+                {isLoading ? <LoadingSpinner /> : t("SUBMIT")}
+              </Button>
+            </div>
           </div>
         </form>
       </Form>

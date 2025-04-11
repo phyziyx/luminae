@@ -1,20 +1,12 @@
-import { ThumbsUp, ThumbsDown } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { MarkdownRenderer } from "./markdown-renderer";
 import CommentReplies from "./comment-replies";
 import { PostComment } from "@/lib/types";
 import { useMemo } from "react";
-import { cn } from "@/lib/utils";
 import { authClient } from "@/lib/auth/auth-client";
 import { useMutation } from "@tanstack/react-query";
 import { CommentLikeSchema, LikeType } from "@/lib/forms";
+import LikeDislikeCounter from "./like-dislike-counter";
+import Avatar from "@/components/site/avatar";
 
 export default function Comment({ comment }: { comment: PostComment }) {
   const { data, isPending } = authClient.useSession();
@@ -23,7 +15,7 @@ export default function Comment({ comment }: { comment: PostComment }) {
     return data?.user?.id;
   }, [data]);
 
-  const { mutate: handleLike } = useMutation({
+  const { isPending: isLikePending, mutate: handleLike } = useMutation({
     mutationFn: async (type: LikeType) => {
       const payload: CommentLikeSchema = {
         type,
@@ -77,73 +69,29 @@ export default function Comment({ comment }: { comment: PostComment }) {
       <div className="p-4 sm:p-6">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
-              {commenterName.charAt(0)}
-            </div>
+            <Avatar
+              name={commenterName}
+              profileImage={""}
+              className="h-8 w-8 text-xs"
+            />
             <div>
               <div className="font-medium text-gray-800 dark:text-gray-200">
                 {commenterName}
               </div>
               <div className="text-xs text-gray-500 dark:text-gray-400">
-                {comment.createdAt.toString()}
+                {new Date(comment.createdAt).toLocaleString()}
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      "h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10",
-                      {
-                        "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light":
-                          isLiked,
-                      }
-                    )}
-                    disabled={isPending}
-                    onClick={() => handleLike("LIKE")}
-                  >
-                    <ThumbsUp className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{isLiked ? "Unlike this comment" : "Like this comment"}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {likes}
-            </span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      "h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10",
-                      {
-                        "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light":
-                          isDisliked,
-                      }
-                    )}
-                    disabled={isPending}
-                    onClick={() => handleLike("DISLIKE")}
-                  >
-                    <ThumbsDown className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>
-                    {isDisliked ? "Remove dislike" : "Dislike this comment"}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          <LikeDislikeCounter
+            handleLike={handleLike}
+            isDisliked={isDisliked}
+            isLikePending={isLikePending}
+            isLiked={isLiked}
+            isPending={isPending}
+            likes={likes}
+            type="comment"
+          />
         </div>
 
         <div className="mt-3 text-gray-700 dark:text-gray-300">

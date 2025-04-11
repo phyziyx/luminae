@@ -49,6 +49,7 @@ export const commentFormSchema = z.object({
     .max(2048, {
       message: "Comment content is too long",
     }),
+  asAgency: z.boolean().optional(),
 });
 
 export type CommentFormSchema = z.infer<typeof commentFormSchema>;
@@ -141,6 +142,14 @@ export type SearchBarSchema = z.infer<typeof searchBarSchema>;
 // Community Profile Schema
 
 export const communityProfileSchema = z.object({
+  name: z
+    .string()
+    .min(4, {
+      message: "Name must be at least 4 characters long.",
+    })
+    .max(64, {
+      message: "Name can not be more than 64 characters long.",
+    }),
   tagline: z
     .string()
     .min(4, {
@@ -157,6 +166,8 @@ export const communityProfileSchema = z.object({
     .max(1000, {
       message: "Content can be at most 1000 characters",
     }),
+  profileImage: z.any().refine((val) => val.length !== 1, "File is required"),
+  bannerImage: z.any().refine((val) => val.length !== 1, "File is required"),
   title: z
     .string()
     .min(4, {

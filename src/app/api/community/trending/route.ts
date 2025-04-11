@@ -16,10 +16,16 @@ export async function GET(request: NextRequest) {
         }
       : undefined,
     select: {
+      likes: {
+        select: {
+          postId: true,
+          userId: true,
+          type: true,
+        },
+      },
       id: true,
       title: true,
       content: true,
-      authorId: true,
       createdAt: true,
       _count: {
         select: {
@@ -28,15 +34,31 @@ export async function GET(request: NextRequest) {
               deletedAt: null,
             },
           },
-          Likes: true,
         },
       },
-      Category: {
+      agencyPosts: {
         select: {
-          name: true,
+          agency: {
+            select: {
+              id: true,
+              name: true,
+              agencyLogo: true,
+            },
+          },
         },
       },
-      author: {
+      userPosts: {
+        select: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+        },
+      },
+      category: {
         select: {
           name: true,
         },
@@ -48,11 +70,6 @@ export async function GET(request: NextRequest) {
     orderBy: [
       {
         createdAt: "desc",
-      },
-      {
-        Likes: {
-          _count: "desc",
-        },
       },
     ],
   });

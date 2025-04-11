@@ -2,20 +2,19 @@
 
 import { useState, useTransition } from "react";
 import { MessageSquare, Share2, ThumbsDown, ThumbsUp } from "lucide-react";
+import { useMemo, useState } from "react";
+import { MessageSquare, Share2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { MarkdownRenderer } from "./markdown-renderer";
 import { CategoryPost } from "@/lib/types";
 import { authClient } from "@/lib/auth/auth-client";
 import { LikeType, PostLikeSchema } from "@/lib/forms";
 import { useMutation } from "@tanstack/react-query";
+import Avatar from "@/components/site/avatar";
+import LikeDislikeCounter from "./like-dislike-counter";
 
 // The server action we just created:
 import { onToggleBookmark } from "./actions/bookmarkPost";
@@ -76,6 +75,18 @@ export default function PostContent({ post }: { post: CategoryPost }) {
   // const userId = data?.user?.id;
 
   const { mutate: handleLike } = useMutation({
+  const likes = useMemo(() => {
+    return post.likes.reduce((acc, like) => {
+      if (like.type === "LIKE") {
+        return acc + 1;
+      } else if (like.type === "DISLIKE") {
+        return acc - 1;
+      }
+      return acc;
+    }, 0);
+  }, [post.likes]);
+
+  const { isPending: isLikePending, mutate: handleLike } = useMutation({
     mutationFn: async (type: LikeType) => {
       const payload: PostLikeSchema = {
         type,
@@ -157,20 +168,33 @@ export default function PostContent({ post }: { post: CategoryPost }) {
                   </Tooltip>
                 </TooltipProvider>
               </div>
+              <LikeDislikeCounter
+                handleLike={handleLike}
+                isDisliked={likeState === "DISLIKE"}
+                isLikePending={isLikePending}
+                isLiked={likeState === "LIKE"}
+                isPending={isPending}
+                likes={likes}
+                type="post"
+              />
             </div>
 
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-600 dark:text-gray-300">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
-                  {post.userPosts[0]?.user.name.charAt(0) ||
-                    post.agencyPosts[0]?.agency.name.charAt(0)}
-                </div>
+                <Avatar
+                  name={
+                    post.userPosts[0]?.user.name ||
+                    post.agencyPosts[0]?.agency.name
+                  }
+                  profileImage=""
+                  className="h-8 w-8"
+                />
                 <span className="font-medium text-gray-800 dark:text-gray-200">
                   {post.userPosts[0]?.user.name ||
                     post.agencyPosts[0]?.agency.name}
                 </span>
               </div>
-              <span>{post.createdAt.toString()}</span>
+              <span>{new Date(post.createdAt).toLocaleString()}</span>
               <div className="flex items-center gap-1">
                 <MessageSquare className="h-4 w-4" />
                 <span>{post._count.comments} comments</span>

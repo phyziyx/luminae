@@ -33,78 +33,111 @@ class ProfileManager {
 
     const agencyId = isUpdatingAgency ? agency?.id : undefined;
 
-    await prisma.profile.upsert({
-      update: {
-        tagline: values.tagline,
-        content: values.content,
-        title: values.title,
-
-        agencyProfile: {
-          ...(agencyId
-            ? {
-                connectOrCreate: {
-                  create: {
-                    agencyId: agencyId,
-                  },
-                  where: {
-                    agencyId: agencyId,
-                  },
-                },
-              }
-            : undefined),
-        },
-        userProfile: {
-          ...(!isUpdatingAgency
-            ? {
-                connectOrCreate: {
-                  create: {
-                    userId: userSession?.user.id,
-                  },
-                  where: {
-                    userId: userSession?.user.id,
-                  },
-                },
-              }
-            : undefined),
-        },
-      },
-      create: {
-        tagline: values.tagline,
-        content: values.content,
-        title: values.title,
-        agencyProfile: {
-          ...(agencyId
-            ? {
-                connectOrCreate: {
-                  create: {
-                    agencyId: agencyId,
-                  },
-                  where: {
-                    agencyId: agencyId,
-                  },
-                },
-              }
-            : undefined),
-        },
-        userProfile: {
-          ...(!isUpdatingAgency
-            ? {
-                connectOrCreate: {
-                  create: {
-                    userId: userSession.user.id,
-                  },
-                  where: {
-                    userId: userSession.user.id,
-                  },
-                },
-              }
-            : undefined),
-        },
+    const existingProfile = await prisma.profile.findFirst({
+      select: {
+        id: true,
       },
       where: {
-        id: userSession.user.id,
+        OR: [
+          {
+            agencyProfile: {
+              ...(agencyId
+                ? {
+                    agencyId: agencyId,
+                  }
+                : undefined),
+            },
+          },
+          {
+            userProfile: {
+              ...(!isUpdatingAgency
+                ? {
+                    userId: userSession?.user.id,
+                  }
+                : undefined),
+            },
+          },
+        ],
       },
     });
+
+    if (!existingProfile) {
+      await prisma.profile.create({
+        data: {
+          tagline: values.tagline,
+          content: values.content,
+          title: values.title,
+          agencyProfile: {
+            ...(agencyId
+              ? {
+                  connectOrCreate: {
+                    create: {
+                      agencyId: agencyId,
+                    },
+                    where: {
+                      agencyId: agencyId,
+                    },
+                  },
+                }
+              : undefined),
+          },
+          userProfile: {
+            ...(!isUpdatingAgency
+              ? {
+                  connectOrCreate: {
+                    create: {
+                      userId: userSession.user.id,
+                    },
+                    where: {
+                      userId: userSession.user.id,
+                    },
+                  },
+                }
+              : undefined),
+          },
+        },
+      });
+    } else {
+      // If the profile exists, we will update it
+      await prisma.profile.update({
+        data: {
+          tagline: values.tagline,
+          content: values.content,
+          title: values.title,
+          agencyProfile: {
+            ...(agencyId
+              ? {
+                  connectOrCreate: {
+                    create: {
+                      agencyId: agencyId,
+                    },
+                    where: {
+                      agencyId: agencyId,
+                    },
+                  },
+                }
+              : undefined),
+          },
+          userProfile: {
+            ...(!isUpdatingAgency
+              ? {
+                  connectOrCreate: {
+                    create: {
+                      userId: userSession.user.id,
+                    },
+                    where: {
+                      userId: userSession.user.id,
+                    },
+                  },
+                }
+              : undefined),
+          },
+        },
+        where: {
+          id: existingProfile.id,
+        },
+      });
+    }
   }
 }
 

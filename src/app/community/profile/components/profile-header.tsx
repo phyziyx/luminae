@@ -6,10 +6,9 @@ import { Camera, Pencil } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import EditProfileModal from "./edit-profile-modal";
+import { CommunityProfileSchema } from "@/lib/forms";
 
-interface ProfileHeaderProps {
-  profileImage: string;
-  bannerImage: string;
+interface ProfileHeaderProps extends CommunityProfileSchema {
   name: string;
   isAgency: boolean;
 }
@@ -36,7 +35,7 @@ export default function ProfileHeader({
         {/* Banner Image */}
         <div className="relative h-48 w-full sm:h-64 md:h-80 z-0">
           <Image
-            src={bannerImage || "/placeholder.svg"}
+            src={bannerImage || "/banner_placeholder.webp"}
             alt="Profile banner"
             fill
             className="object-cover"
@@ -84,10 +83,13 @@ export default function ProfileHeader({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         profileData={{
-          name,
           profileImage,
           bannerImage,
+          name,
           isAgency,
+          content: "This is a sample content",
+          tagline: "This is a sample tagline",
+          title: "This is a sample title",
         }}
       />
     </>

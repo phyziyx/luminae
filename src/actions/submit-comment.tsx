@@ -1,6 +1,7 @@
 "use server";
 
 import { auth } from "@/lib/auth/auth";
+import prisma from "@/lib/db";
 import { commentFormSchema, CommentFormSchema } from "@/lib/forms";
 import PostManager from "@/lib/managers/postManager";
 import { headers } from "next/headers";
@@ -27,7 +28,7 @@ export default async function onSubmitComment(values: CommentFormSchema) {
 
   try {
     // This is an optimisation to only select one field,
-    // as oppossed to more (or all) if we only want to
+    // as opposed to more (or all) if we only want to
     // verify whether the post exists or not
     //
     // - phyziyx
@@ -52,13 +53,34 @@ export default async function onSubmitComment(values: CommentFormSchema) {
       }
     }
 
+    let agencyId: string | undefined = undefined;
+    if (values.asAgency) {
+      // If the comment is being posted as an agency.
+      agencyId = (
+        await prisma.agencyMember.findFirst({
+          select: {
+            agencyId: true,
+          },
+          where: {
+            user: {
+              id: user.id,
+            },
+          },
+        })
+      )?.agencyId;
+    }
+
     // We can now create the comment!
-    const comment = await PostManager.createComment({
-      content: values.content,
-      authorId: user.id,
-      postId: values.postId,
-      parentId: values.parentId || null,
-    });
+    const comment = await PostManager.createComment(
+      {
+        content: values.content,
+        postId: values.postId,
+        parentId: values.parentId || null,
+      },
+      {
+        ...(agencyId ? { agencyId } : { userId: user.id }),
+      }
+    );
 
     error = "";
     return {

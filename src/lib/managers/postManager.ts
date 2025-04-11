@@ -24,12 +24,44 @@ class PostManager {
   };
 
   public static async findTrending() {
+    const postIds = await prisma.$queryRaw<
+      Array<{
+        id: string;
+        likeCount: number;
+        dislikeCount: number;
+        score: number;
+      }>
+    >`SELECT
+      id,
+      COUNT(CASE WHEN l.type = 'LIKE' THEN 1 END) AS "likeCount",
+      COUNT(CASE WHEN l.type = 'DISLIKE' THEN 1 END) AS "dislikeCount",
+      (COUNT(CASE WHEN l.type = 'LIKE' THEN 1 END) - COUNT(CASE WHEN l.type = 'DISLIKE' THEN 1 END)) AS score
+      FROM Post p
+      LEFT JOIN Likes l ON l.postId = p.id
+      WHERE p.deletedAt IS NULL
+      GROUP BY p.id
+      ORDER BY score DESC
+      LIMIT 10
+      `;
+
     const posts: CategoryPost[] = await prisma.post.findMany({
+      where: {
+        id: {
+          in: postIds.map((post) => post.id),
+        },
+      },
       select: {
         id: true,
         title: true,
         content: true,
         createdAt: true,
+        likes: {
+          select: {
+            postId: true,
+            type: true,
+            userId: true,
+          },
+        },
         _count: {
           select: {
             comments: {
@@ -37,7 +69,6 @@ class PostManager {
                 deletedAt: null,
               },
             },
-            likes: true,
           },
         },
         category: { ...PostManager.selectCategory },
@@ -164,6 +195,13 @@ class PostManager {
         title: true,
         content: true,
         createdAt: true,
+        likes: {
+          select: {
+            postId: true,
+            type: true,
+            userId: true,
+          },
+        },
         _count: {
           select: {
             comments: {
@@ -171,7 +209,6 @@ class PostManager {
                 deletedAt: null,
               },
             },
-            likes: true,
           },
         },
         category: { ...PostManager.selectCategory },
@@ -302,13 +339,16 @@ export async function fetchComments({
 export async function fetchCategoryPosts({
   category,
   pageParam,
+  sortType = "latest",
 }: {
   category: string;
   pageParam?: string | undefined;
+  sortType?: "latest" | "comments";
 }) {
   const response = await fetch(
     `/api/community/category?id=${category}` +
-      (pageParam ? `&cursor=${pageParam}` : "")
+      (pageParam ? `&cursor=${pageParam}` : "") +
+      (sortType ? `&sortType=${sortType}` : "")
   );
 
   if (!response.ok) {

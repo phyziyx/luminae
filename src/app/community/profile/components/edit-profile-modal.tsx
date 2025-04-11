@@ -1,6 +1,5 @@
 "use client";
 
-import { z } from "zod";
 import { Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,11 +11,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Image from "next/image";
-import { useForm } from "react-hook-form";
+import { useForm, UseFormRegister } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -25,36 +21,162 @@ import {
   FormLabel,
   FormControl,
   FormDescription,
+  FormMessage,
 } from "@/components/ui/form";
 // import { useTranslations } from "next-intl";
-import { useCallback, useMemo } from "react";
+import { ChangeEvent, useCallback, useRef, useState } from "react";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
 import updateUserProfile from "@/app/community/search/components/actions/edit-profile";
 import { toast } from "sonner";
+import Avatar from "@/components/site/avatar";
+import { communityProfileSchema, CommunityProfileSchema } from "@/lib/forms";
+import Image from "next/image";
+import { Label } from "@/components/ui/label";
 
-interface ProfileData {
-  name: string;
-  profileImage: string;
-  bannerImage: string;
+interface EditProfile extends CommunityProfileSchema {
   isAgency: boolean;
-  title?: string;
-  tagline?: string;
-  description?: string;
 }
-
-const profileFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  title: z.string().optional(),
-  tagline: z.string().optional(),
-  description: z.string().optional(),
-  profileImage: z.string().url("Invalid URL").optional(),
-  bannerImage: z.string().url("Invalid URL").optional(),
-});
 
 interface EditProfileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  profileData: ProfileData;
+  profileData: EditProfile;
+}
+
+function ProfileImage({
+  register,
+}: {
+  register: UseFormRegister<CommunityProfileSchema>;
+}) {
+  const hiddenInputRef = useRef<HTMLInputElement | null>(null);
+
+  const { ref: registerRef, ...rest } = register("profileImage");
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const handleUploadedFile = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.item(0);
+      if (!file) return;
+
+      const urlImage = URL.createObjectURL(file);
+
+      setPreview(urlImage);
+    },
+    [setPreview]
+  );
+
+  const onUpload = useCallback(() => {
+    if (!hiddenInputRef.current) return;
+
+    hiddenInputRef.current.click();
+  }, [hiddenInputRef]);
+
+  return (
+    <FormField
+      {...rest}
+      name="profileImage"
+      render={() => (
+        <FormItem className="flex flex-col gap-4">
+          <FormLabel>Profile Image</FormLabel>
+          <Input
+            type="file"
+            {...rest}
+            accept="image/*"
+            className="hidden"
+            onChange={handleUploadedFile}
+            ref={(e) => {
+              registerRef(e);
+              hiddenInputRef.current = e;
+            }}
+          />
+          <div className="relative">
+            <Avatar name="" profileImage={preview ?? ""} />
+            <Label
+              className="absolute -bottom-1 -right-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-primary dark:bg-primary-light text-white dark:text-gray-900 shadow-sm hover:bg-primary/90 dark:hover:bg-primary-light/90"
+              onClick={onUpload}
+            >
+              <Camera className="h-3 w-3" />
+            </Label>
+          </div>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+function BannerImage({
+  register,
+}: {
+  register: UseFormRegister<CommunityProfileSchema>;
+}) {
+  const hiddenInputRef = useRef<HTMLInputElement | null>(null);
+
+  const { ref: registerRef, ...rest } = register("bannerImage");
+
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const handleUploadedFile = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.item(0);
+      if (!file) return;
+
+      const urlImage = URL.createObjectURL(file);
+
+      setPreview(urlImage);
+    },
+    [setPreview]
+  );
+
+  const onUpload = useCallback(() => {
+    if (!hiddenInputRef.current) return;
+
+    hiddenInputRef.current.click();
+  }, [hiddenInputRef]);
+
+  return (
+    <FormField
+      {...rest}
+      name="bannerImage"
+      render={() => (
+        <FormItem>
+          <FormLabel>Banner Image</FormLabel>
+          <Input
+            type="file"
+            {...rest}
+            accept="image/*"
+            className="sr-only"
+            onChange={handleUploadedFile}
+            ref={(e) => {
+              registerRef(e);
+              hiddenInputRef.current = e;
+            }}
+          />
+          <div className="relative h-32 w-full overflow-hidden rounded-md bg-gray-100 dark:bg-gray-800">
+            <Image
+              src={preview ?? "/assets/banner_placeholder.webp"}
+              alt="Banner preview"
+              className="h-full w-full object-cover"
+              width={1200}
+              height={300}
+            />
+            <FormControl>
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                <Button
+                  onClick={onUpload}
+                  className="flex cursor-pointer items-center gap-2 rounded-md bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  <Camera className="h-4 w-4" />
+                  Change Banner
+                </Button>
+              </div>
+            </FormControl>
+          </div>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
 }
 
 export default function EditProfileModal({
@@ -62,8 +184,8 @@ export default function EditProfileModal({
   onClose,
   profileData,
 }: EditProfileModalProps) {
-  const form = useForm<z.infer<typeof profileFormSchema>>({
-    resolver: zodResolver(profileFormSchema),
+  const form = useForm<CommunityProfileSchema>({
+    resolver: zodResolver(communityProfileSchema),
     defaultValues: {
       ...profileData,
     },
@@ -73,26 +195,18 @@ export default function EditProfileModal({
   const isLoading = form.formState.isSubmitting;
   // const t = useTranslations();
 
-  const initials = useMemo(
-    () =>
-      profileData.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .substring(0, 2)
-        .toUpperCase(),
-    [profileData.name]
-  );
-
   const onSubmit = useCallback(
-    async (data: z.infer<typeof profileFormSchema>) => {
+    async (data: CommunityProfileSchema) => {
       console.log("Submitting profile data:", data);
 
       const result = await updateUserProfile(
         {
+          name: data.name ?? "",
+          bannerImage: data.bannerImage ?? "",
+          profileImage: data.profileImage ?? "",
           title: data.title ?? "",
           tagline: data.tagline ?? "",
-          content: data.description ?? "",
+          content: data.content ?? "",
         },
         profileData.isAgency
       );
@@ -110,205 +224,101 @@ export default function EditProfileModal({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>Edit Profile</DialogTitle>
+          <DialogDescription>
+            Update your profile information. Click save when you&apos;re done.
+          </DialogDescription>
+        </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <DialogHeader>
-              <DialogTitle>Edit Profile</DialogTitle>
-              <DialogDescription>
-                Update your profile information. Click save when you&apos;re
-                done.
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="mt-6 space-y-6">
-              {/* Banner Image */}
-              <div className="space-y-2">
-                <Label htmlFor="bannerImage">Banner Image</Label>
-                <div className="relative h-32 w-full overflow-hidden rounded-md bg-gray-100 dark:bg-gray-800">
-                  {profileData.bannerImage && (
-                    <Image
-                      src={profileData.bannerImage || "/placeholder.svg"}
-                      alt="Banner preview"
-                      className="h-full w-full object-cover"
-                      width={1200}
-                      height={300}
-                    />
-                  )}
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <Label
-                      htmlFor="bannerUpload"
-                      className="flex cursor-pointer items-center gap-2 rounded-md bg-white dark:bg-gray-800 px-3 py-2 text-sm font-medium text-gray-800 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700"
-                    >
-                      <Camera className="h-4 w-4" />
-                      Change Banner
-                      <Input
-                        name="bannerUpload"
-                        type="file"
-                        accept="image/*"
-                        className="sr-only"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const imageUrl = URL.createObjectURL(file);
-                            form.setValue("bannerImage", imageUrl);
-                          }
-                        }}
-                      />
-                    </Label>
-                  </div>
-                </div>
-                <FormField
-                  control={form.control}
-                  name="bannerImage"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Or enter image URL"
-                          className="dark:bg-gray-800 dark:text-gray-100"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
             {/* Profile Image */}
             <div className="space-y-2">
-              <Label htmlFor="profileImage">Profile Picture</Label>
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <Avatar className="h-20 w-20 border-2 border-white dark:border-gray-800 shadow-sm">
-                    <AvatarImage
-                      src={form.getValues("profileImage")}
-                      alt={form.getValues("name")}
-                    />
-                    <AvatarFallback className="bg-primary dark:bg-primary-light text-white dark:text-gray-900">
-                      {initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <Label
-                    htmlFor="profileUpload"
-                    className="absolute -bottom-1 -right-1 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-primary dark:bg-primary-light text-white dark:text-gray-900 shadow-sm hover:bg-primary/90 dark:hover:bg-primary-light/90"
-                  >
-                    <Camera className="h-3 w-3" />
-                    <Input
-                      name="profileUpload"
-                      type="file"
-                      accept="image/*"
-                      className="sr-only"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const imageUrl = URL.createObjectURL(file);
-                          form.setValue("profileImage", imageUrl);
-                        }
-                      }}
-                    />
-                  </Label>
-                </div>
-                <FormField
-                  control={form.control}
-                  name="profileImage"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input
-                          {...field}
-                          className="dark:bg-gray-800 dark:text-gray-100 w-full"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
+              {/* Banner Image */}
+              <BannerImage register={form.register} />
+
+              <ProfileImage register={form.register} />
 
               {/* Basic Info */}
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <FormField
-                    name="name"
-                    control={form.control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Name</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="bg-white dark:bg-gray-800 dark:text-gray-100"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="bg-white dark:bg-gray-800 dark:text-gray-100"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Tagline */}
-              <div className="space-y-2">
                 <FormField
+                  name="name"
                   control={form.control}
-                  name="tagline"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Tagline</FormLabel>
+                      <FormLabel>Name</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           className="bg-white dark:bg-gray-800 dark:text-gray-100"
                         />
                       </FormControl>
-                      <FormDescription className="text-xs text-gray-500 dark:text-gray-400">
-                        A short description that appears below your name
-                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          className="bg-white dark:bg-gray-800 dark:text-gray-100"
+                        />
+                      </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
+              {/* Tagline */}
+              <FormField
+                control={form.control}
+                name="tagline"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tagline</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className="bg-white dark:bg-gray-800 dark:text-gray-100"
+                      />
+                    </FormControl>
+                    <FormDescription className="text-xs text-gray-500 dark:text-gray-400">
+                      A short description that appears below your name
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               {/* Description */}
-              <div className="space-y-2">
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        About {profileData.isAgency ? "Agency" : "Me"}
-                      </FormLabel>
-                      <FormControl>
-                        <Textarea
-                          {...field}
-                          rows={5}
-                          className="bg-white resize-y dark:bg-gray-800 dark:text-gray-100"
-                        />
-                      </FormControl>
-                      <FormDescription className="text-xs text-gray-500 dark:text-gray-400">
-                        Markdown formatting is supported
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      About {profileData.isAgency ? "Agency" : "Me"}
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        rows={5}
+                        className="bg-white resize-y dark:bg-gray-800 dark:text-gray-100"
+                      />
+                    </FormControl>
+                    <FormDescription className="text-xs text-gray-500 dark:text-gray-400">
+                      Markdown formatting is supported
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
             <DialogFooter className="mt-6">

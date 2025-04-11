@@ -7,6 +7,7 @@ import prisma from "@/lib/db";
 import PostManager from "@/lib/managers/postManager";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
+import { CommunityProfile as ICommunityProfile } from "@/lib/types";
 
 const getProfileData = async (id: string) => {
   const isAgency = id.startsWith("a-");
@@ -77,10 +78,15 @@ const getProfileData = async (id: string) => {
 
     data.bannerImage = "/placeholder.svg?height=300&width=1200";
     data.description = foundAgency.profile?.profile?.content || "";
+    data.bannerImage =
+      // foundAgency?.profile?.profile?.bannerImage ||
+      "/assets/banner_placeholder.webp";
+    data.description = foundAgency?.profile?.profile?.content || "";
     data.id = idWithoutPrefix;
     data.name = foundAgency.name || "";
     data.profileImage =
       foundAgency.agencyLogo || "/placeholder.svg?height=150&width=150";
+      foundAgency?.agencyLogo || "/assets/profile_placeholder.webp";
     data.stats = {
       comments: foundAgency._count.comments ?? 0,
       likes: 0, // or fetch/aggregate if needed
@@ -124,6 +130,13 @@ const getProfileData = async (id: string) => {
     data.name = foundUser.name || "";
     data.profileImage =
       foundUser.image || "/placeholder.svg?height=150&width=150";
+    data.bannerImage =
+      // foundUser?.profile?.profile?.bannerImage ||
+      "/assets/banner_placeholder.webp";
+    data.description = foundUser?.profile?.profile?.content || "";
+    data.id = idWithoutPrefix;
+    data.name = foundUser?.name || "";
+    data.profileImage = foundUser?.image || "/assets/banner_placeholder.webp";
     data.stats = {
       comments: foundUser._count.comments ?? 0,
       likes: (foundUser._count.likes ?? 0) + (foundUser._count.commentLikes ?? 0),
@@ -168,6 +181,17 @@ function CommunityProfile({
         bannerImage={bannerImage}
         name={name}
         isAgency={isAgency}
+function CommunityProfile({ profileData }: { profileData: ICommunityProfile }) {
+  return (
+    <>
+      <ProfileHeader
+        profileImage={profileData.profileImage}
+        bannerImage={profileData.bannerImage}
+        name={profileData.name}
+        isAgency={profileData.isAgency}
+        content={profileData.content || ""}
+        tagline={profileData.tagline || ""}
+        title={profileData.title || ""}
       />
 
       <div className="mt-8 grid gap-8 md:grid-cols-3">
@@ -180,6 +204,12 @@ function CommunityProfile({
             description={description}
             isAgency={isAgency}
             verified={verified}
+            name={profileData.name}
+            title={profileData.title || ""}
+            tagline={profileData.tagline || ""}
+            description={profileData.content || ""}
+            isAgency={profileData.isAgency}
+            verified={false}
           />
 
           {/* Show "Saved Posts" ONLY if the user is viewing their own personal (non-agency) profile */}
@@ -215,6 +245,12 @@ export default async function ProfilePage({ params }: { params: { id: string } }
 
   // 2) Gather profile data
   const profileData = await getProfileData(params.id);
+export default async function ProfilePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const profileData = await getProfileData((await params).id);
 
   // 3) If the profile belongs to a user (not an agency) and it matches the signed-in user, fetch bookmarked posts
   let bookmarkedPosts = [];

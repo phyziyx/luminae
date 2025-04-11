@@ -9,6 +9,17 @@ import {
   Agency,
 } from "@prisma/client";
 
+export type CommunityProfile = {
+  id: string;
+  name: string;
+  profileImage: string | null;
+  bannerImage: string | null;
+  isAgency: boolean;
+  tagline: string | null;
+  content: string | null;
+  title: string | null;
+};
+
 export type CommentOwner =
   | {
       agencyId: string;
@@ -24,8 +35,12 @@ export type CategoryPost = Omit<
   category: Pick<Category, "name">;
   _count: {
     comments: number;
-    likes: number;
   };
+  likes: {
+    userId: string;
+    type: $Enums.LikeType;
+    postId: string;
+  }[];
   userPosts: {
     user: Pick<User, "id" | "name" | "image">;
   }[];

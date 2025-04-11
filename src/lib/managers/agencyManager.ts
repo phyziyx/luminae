@@ -242,10 +242,10 @@ class AgencyManager {
         order: "asc",
       },
       include: {
-        Tickets: {
+        tickets: {
           include: {
             assigneeUser: true,
-            Client: true,
+            client: true,
           },
         },
       },
