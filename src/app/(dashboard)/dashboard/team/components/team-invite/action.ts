@@ -6,14 +6,10 @@ import AgencyManager from "@/lib/managers/agencyManager";
 
 import { revalidatePath } from "next/cache";
 import UserManager from "@/lib/managers/userManager";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/auth";
 
 const onCreateInvite = async (values: z.infer<typeof formSchema>) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   let error = "An error occurred while sending an invite.";

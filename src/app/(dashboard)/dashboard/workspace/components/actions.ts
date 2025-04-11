@@ -1,17 +1,12 @@
 "use server";
 
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/auth";
 import AgencyManager from "@/lib/managers/agencyManager";
-
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 
 export const deleteWorkspace = async (workspaceId: string) => {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
-
+    const session = await getSession();
     const user = session?.user;
 
     if (!user) {

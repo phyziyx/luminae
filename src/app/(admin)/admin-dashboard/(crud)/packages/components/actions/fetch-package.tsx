@@ -1,14 +1,10 @@
 "use server";
 
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/auth";
 import PackageManager from "@/lib/managers/packageManager";
-import { headers } from "next/headers";
 
 const fetchPackageDetails = async (packageId: string) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

@@ -8,10 +8,9 @@ import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import PackageManager from "@/lib/managers/packageManager";
 import { getTranslations } from "next-intl/server";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/auth";
 
-const t = await getTranslations({ locale: "en" });
+const t = await getTranslations();
 
 interface PackageListProps {
   data: {
@@ -27,10 +26,7 @@ const PackagesList = ({ data }: PackageListProps) => {
 };
 
 const PackagesPage = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {
@@ -46,6 +42,7 @@ const PackagesPage = async () => {
           .map((feature) => ({ [feature.code]: feature.maxLimit }))
           .reduce((acc, cur) => ({ ...acc, ...cur }), {})
       : {};
+
     return {
       id: pkg.id,
       name: pkg.name,

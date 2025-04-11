@@ -1,16 +1,12 @@
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ workspaceId: string }> }
 ) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

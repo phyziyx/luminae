@@ -8,10 +8,9 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import UserManager from "@/lib/managers/userManager";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
-const t = await getTranslations({ locale: "en" });
+const t = await getTranslations();
 
 const UsersList = async () => {
   // Fetch user data for the DataTable
@@ -33,10 +32,7 @@ const UsersList = async () => {
 };
 
 const UserPage = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

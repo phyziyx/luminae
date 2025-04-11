@@ -27,8 +27,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import React, { JSX } from "react";
 import Link from "next/link";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
 const usages = [
   {
@@ -50,10 +49,7 @@ const usages = [
 ];
 
 const Billing = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   const t = await getTranslations();

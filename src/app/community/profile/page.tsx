@@ -1,12 +1,8 @@
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 import { redirect } from "next/navigation";
 
 export default async function ProfilePage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

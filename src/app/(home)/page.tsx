@@ -11,15 +11,12 @@ import Pricing from "./components/pricing";
 import Testimonials from "./components/testimonials";
 
 import PackageManager from "@/lib/managers/packageManager";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
 // This is a server-side component, which means it is rendered on the server and handled by Next.js internally.
 // We can perform server-side operations over here and then pass the information off to the clients as props...
 export default async function Page() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
   const t = await getTranslations();
 
   const packages = await PackageManager.getPackages();

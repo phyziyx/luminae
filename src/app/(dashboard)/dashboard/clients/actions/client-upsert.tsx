@@ -8,14 +8,10 @@ import ClientManager from "@/lib/managers/clientManager";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { isAgencyAdmin } from "@/lib/utils";
 import { v7 } from "uuid";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
 const onClientUpsert = async (values: z.infer<typeof formSchema>) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   let error = "An error occurred while updating or creating a client.";

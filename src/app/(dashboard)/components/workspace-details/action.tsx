@@ -3,15 +3,11 @@
 import { z } from "zod";
 import formSchema from "./schema";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 import { revalidatePath } from "next/cache";
 
 const onUpdateAgency = async (values: z.infer<typeof formSchema>) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   let error = "An error occurred while saving the workspace information";

@@ -4,17 +4,13 @@ import { z } from "zod";
 import { communityProfileSchema } from "@/lib/forms";
 import { revalidatePath } from "next/cache";
 import ProfileManager from "@/lib/managers/profileManager";
-import { auth } from "@/lib/auth/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
 const updateUserProfile = async (
   values: z.infer<typeof communityProfileSchema>,
   isAgency: boolean = false
 ) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

@@ -12,8 +12,7 @@ import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import { DataTable } from "./components/data-table";
 import { columns } from "./components/columns";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth/auth";
+import { getSession } from "@/lib/auth/auth";
 
 const t = await getTranslations({ locale: "en" });
 
@@ -38,10 +37,7 @@ const ClientsList = async ({ agencyId }: { agencyId: string }) => {
 };
 
 const Clients = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {
