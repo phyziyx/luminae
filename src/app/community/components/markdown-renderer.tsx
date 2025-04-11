@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 // import { tomorrow } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface MarkdownRendererProps {
-  content: string;
+  content?: string;
 }
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {

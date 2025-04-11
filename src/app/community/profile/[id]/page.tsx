@@ -1,7 +1,7 @@
 import ProfileHeader from "../components/profile-header";
 import ProfileInfo from "../components/profile-info";
-import StatsOverview from "../components/stats-overview";
-import BadgesSection from "../components/badges-section";
+// import StatsOverview from "../components/stats-overview";
+// import BadgesSection from "../components/badges-section";
 import BookmarkedPostsList from "../components/bookmarked-posts";
 import prisma from "@/lib/db";
 import PostManager from "@/lib/managers/postManager";
@@ -131,11 +131,9 @@ function CommunityProfile({
     name,
     title,
     tagline,
-    description,
     isAgency,
-    stats,
-    badges,
     bookmarkedPosts = [],
+    content,
   } = profileData;
 
   return (
@@ -145,9 +143,9 @@ function CommunityProfile({
         bannerImage={bannerImage}
         name={name}
         isAgency={isAgency}
-        content={description}
-        tagline={tagline}
-        title={title}
+        content={content ?? undefined}
+        tagline={tagline ?? undefined}
+        title={title ?? undefined}
       />
 
       <div className="mt-8 grid gap-8 md:grid-cols-3">
@@ -155,9 +153,9 @@ function CommunityProfile({
         <div className="md:col-span-2">
           <ProfileInfo
             name={name}
-            title={title}
-            tagline={tagline}
-            description={description}
+            title={title ?? undefined}
+            tagline={tagline ?? undefined}
+            description={content ?? undefined}
             isAgency={isAgency}
             verified={false}
           />
@@ -174,10 +172,10 @@ function CommunityProfile({
         </div>
 
         {/* RIGHT SIDEBAR */}
-        <div className="space-y-8">
+        {/* <div className="space-y-8">
           <StatsOverview stats={stats} />
           <BadgesSection badges={badges} />
-        </div>
+        </div> */}
       </div>
     </>
   );

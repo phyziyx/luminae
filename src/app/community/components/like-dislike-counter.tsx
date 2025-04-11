@@ -42,7 +42,7 @@ export default function LikeDislikeCounter({
                     isLiked,
                 }
               )}
-              disabled={isPending}
+              disabled={isPending || isLikePending}
               onClick={() => handleLike("LIKE")}
             >
               <ThumbsUp className="h-4 w-4" />
@@ -69,7 +69,7 @@ export default function LikeDislikeCounter({
                     isDisliked,
                 }
               )}
-              disabled={isPending}
+              disabled={isPending || isLikePending}
               onClick={() => handleLike("DISLIKE")}
             >
               <ThumbsDown className="h-4 w-4" />

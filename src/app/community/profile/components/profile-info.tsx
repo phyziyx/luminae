@@ -6,9 +6,9 @@ import { LucideCheckCircle2 } from "lucide-react";
 
 interface ProfileInfoProps {
   name: string;
-  title: string;
-  tagline: string;
-  description: string;
+  title?: string;
+  tagline?: string;
+  description?: string;
   isAgency: boolean;
   verified?: boolean;
 }

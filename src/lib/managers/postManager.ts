@@ -307,14 +307,7 @@ class PostManager {
         id: true,
         title: true,
         createdAt: true,
-        // Optional: content, or a snippet if you want to show partial text
         content: true,
-        _count: {
-          select: {
-            likes: true,
-            comments: true,
-          },
-        },
       },
     });
   }

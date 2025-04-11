@@ -157,7 +157,8 @@ export const communityProfileSchema = z.object({
     })
     .max(50, {
       message: "Tagline can be at most 50 characters",
-    }),
+    })
+    .optional(),
   content: z
     .string()
     .min(10, {
@@ -165,7 +166,8 @@ export const communityProfileSchema = z.object({
     })
     .max(1000, {
       message: "Content can be at most 1000 characters",
-    }),
+    })
+    .optional(),
   profileImage: z.any().refine((val) => val.length !== 1, "File is required"),
   bannerImage: z.any().refine((val) => val.length !== 1, "File is required"),
   title: z
@@ -175,7 +177,8 @@ export const communityProfileSchema = z.object({
     })
     .max(100, {
       message: "Title can be at most 100 characters",
-    }),
+    })
+    .optional(),
 });
 
 export type CommunityProfileSchema = z.infer<typeof communityProfileSchema>;
