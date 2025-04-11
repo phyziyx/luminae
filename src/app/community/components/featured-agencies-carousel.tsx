@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { MessageSquare, ThumbsUp } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -14,12 +13,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Agency } from "@prisma/client";
+import { TopRankedAgency } from "@/lib/types";
+import Avatar from "@/components/site/avatar";
 
 export default function FeaturedAgenciesCarousel({
   agencies,
 }: {
-  agencies: Agency[];
+  agencies: Array<TopRankedAgency>;
 }) {
   const [api, setApi] = useState<unknown>(null); // Replaced `any` with `unknown`
   const [current, setCurrent] = useState(0);
@@ -66,10 +66,15 @@ export default function FeaturedAgenciesCarousel({
       }}
     >
       <CarouselContent>
-        {agencies.map((agency) => (
+        {agencies.map((agency, index) => (
           <CarouselItem key={agency.id} className="md:basis-1/2 lg:basis-1/3">
             <div className="p-1">
-              <AgencyCard agency={agency} />
+              <AgencyCard
+                agency={{
+                  ...agency,
+                  rank: index + 1,
+                }}
+              />
             </div>
           </CarouselItem>
         ))}
@@ -87,7 +92,7 @@ export default function FeaturedAgenciesCarousel({
   );
 }
 
-function AgencyCard({ agency }: { agency: Agency }) {
+function AgencyCard({ agency }: { agency: TopRankedAgency }) {
   return (
     <Card className="relative overflow-hidden border-0 bg-transparent transition-all duration-300 hover:shadow-soft">
       <div
@@ -101,30 +106,27 @@ function AgencyCard({ agency }: { agency: Agency }) {
           #{agency.rank || "0"}
         </div>
         <div className="mt-4 flex flex-col items-center">
-          <div className="relative mb-3 h-20 w-20 overflow-hidden rounded-full border-4 border-primary dark:border-primary-light">
-            <Image
-              src={agency.agencyLogo || "/placeholder.svg"}
-              alt={agency.name}
-              fill
-              className="object-cover"
-            />
-          </div>
+          <Avatar
+            profileImage={agency.agencyLogo}
+            name={agency.name}
+            className="mb-3 h-20 w-20 border-4 border-primary dark:border-primary-light"
+          />
           <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
             {agency.name}
           </h3>
         </div>
         <div className="flex w-full justify-between text-sm text-gray-600 dark:text-gray-300">
           <div className="flex items-center gap-1">
-            <span className="font-medium">{agency._count.posts}</span> posts
+            <span className="font-medium">{agency.postCount}</span> posts
           </div>
           <div className="flex items-center gap-1">
             <MessageSquare className="h-4 w-4" />
-            <span className="font-medium">{agency._count.comments}</span>
+            <span className="font-medium">{agency.commentCount}</span>
           </div>
-          <div className="flex items-center gap-1">
+          {/* <div className="flex items-center gap-1">
             <ThumbsUp className="h-4 w-4" />
             <span className="font-medium">{agency._count.likes}</span>
-          </div>
+          </div> */}
         </div>
       </CardContent>
       <CardFooter className="bg-white/90 dark:bg-gray-800/90 p-4 backdrop-blur-sm shadow-soft">

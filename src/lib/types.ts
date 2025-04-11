@@ -9,6 +9,16 @@ import {
   Agency,
 } from "@prisma/client";
 
+export type TopRankedAgency = {
+  id: number;
+  name: string;
+  agencyLogo: string;
+  postCount: number;
+  commentCount: number;
+  score: number;
+  rank?: number;
+};
+
 export type CommunityProfile = {
   id: string;
   name: string;

@@ -11,6 +11,7 @@ import { v7 } from "uuid";
 import { isAgencyAdmin } from "../utils";
 import PackageManager from "./packageManager";
 import { sendEmail } from "@/lib/email";
+import { TopRankedAgency } from "../types";
 
 type CreateAgency = Omit<
   Agency,
@@ -617,6 +618,31 @@ class AgencyManager {
         agencyId,
       },
     });
+  }
+
+  public static async findTopRanked() {
+    return await prisma.$queryRaw<Array<TopRankedAgency>>`
+      SELECT 
+        a.id,
+        a.name,
+        a.agencyLogo,
+        COALESCE(p.postCount, 0) AS postCount,
+        COALESCE(c.commentCount, 0) AS commentCount,
+        (COALESCE(p.postCount, 0) * 2) + (COALESCE(c.commentCount, 0) * 1.5) AS score
+    FROM agency a
+    LEFT JOIN (
+        SELECT agencyId, COUNT(*) AS postCount
+        FROM agencypost
+        GROUP BY agencyId
+    ) p ON p.agencyId = a.id
+    LEFT JOIN (
+        SELECT agencyId, COUNT(*) AS commentCount
+        FROM agencycomment
+        GROUP BY agencyId
+    ) c ON c.agencyId = a.id
+    ORDER BY score DESC
+    LIMIT 10;
+    `;
   }
 
   public static async getRegistrationRate() {

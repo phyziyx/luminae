@@ -1,70 +1,14 @@
 import type React from "react";
 import FeaturedAgenciesCarousel from "./featured-agencies-carousel";
-import prisma from "@/lib/db";
-
-// const topAgencies: Agency[] = [
-//   {
-//     id: 1,
-//     rank: 1,
-//     name: "Stellar Digital",
-//     profilePic: "/placeholder.svg?height=80&width=80",
-//     posts: 342,
-//     comments: 1204,
-//     likes: 5678,
-//   },
-//   {
-//     id: 2,
-//     rank: 2,
-//     name: "Nexus Creative",
-//     profilePic: "/placeholder.svg?height=80&width=80",
-//     posts: 287,
-//     comments: 982,
-//     likes: 4321,
-//   },
-//   {
-//     id: 3,
-//     rank: 3,
-//     name: "Horizon Media",
-//     profilePic: "/placeholder.svg?height=80&width=80",
-//     posts: 256,
-//     comments: 876,
-//     likes: 3987,
-//   },
-//   {
-//     id: 4,
-//     rank: 4,
-//     name: "Pulse Interactive",
-//     profilePic: "/placeholder.svg?height=80&width=80",
-//     posts: 198,
-//     comments: 754,
-//     likes: 2876,
-//   },
-//   {
-//     id: 5,
-//     rank: 5,
-//     name: "Vertex Solutions",
-//     profilePic: "/placeholder.svg?height=80&width=80",
-//     posts: 176,
-//     comments: 623,
-//     likes: 2543,
-//   },
-// ];
+import AgencyManager from "@/lib/managers/agencyManager";
 
 export default async function FeaturedAgencies() {
-  const agencies = await prisma.agency.findMany({
-    take: 5,
-    select: {
-      id: true,
-      agencyLogo: true,
-      name: true,
-      _count: {
-        select: {
-          comments: true,
-          posts: true,
-        },
-      },
-    },
-  });
+  const agencies = (await AgencyManager.findTopRanked()).map((a) => ({
+    ...a,
+    postCount: Number(a.postCount),
+    commentCount: Number(a.commentCount),
+    score: Number(a.score),
+  }));
 
   return (
     <section className="mb-12">
