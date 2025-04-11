@@ -1,40 +1,41 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useMemo } from "react";
 import { MessageSquare, Share2, ThumbsDown, ThumbsUp } from "lucide-react";
-import { useMemo, useState } from "react";
-import { MessageSquare, Share2 } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import Avatar from "@/components/site/avatar";
+import LikeDislikeCounter from "./like-dislike-counter";
 import { MarkdownRenderer } from "./markdown-renderer";
+
 import { CategoryPost } from "@/lib/types";
 import { authClient } from "@/lib/auth/auth-client";
 import { LikeType, PostLikeSchema } from "@/lib/forms";
-import { useMutation } from "@tanstack/react-query";
-import Avatar from "@/components/site/avatar";
-import LikeDislikeCounter from "./like-dislike-counter";
-
-// The server action we just created:
 import { onToggleBookmark } from "./actions/bookmarkPost";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function PostContent({ post }: { post: CategoryPost }) {
   const { isPending } = authClient.useSession();
   const { toast } = useToast();
 
-  // Example: Track bookmark state locally
-  // If your API provides initial bookmark info, pass it in as a prop
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+  const [bookmarkPending, startBookmarkTransition] = useTransition();
+  const [likeState, setLikeState] = useState<"LIKE" | "DISLIKE" | null>(null);
 
   // SHARE: Copy post URL
   const handleShare = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
-      toast({
-        description: "Link copied to clipboard!",
-      });
+      toast({ description: "Link copied to clipboard!" });
     } catch (err) {
       console.error("Failed to copy link:", err);
       toast({
@@ -45,9 +46,6 @@ export default function PostContent({ post }: { post: CategoryPost }) {
   };
 
   // BOOKMARK: Toggle bookmark
-  // You can also use React’s useTransition or `useMutation` from React Query.
-  const [bookmarkPending, startBookmarkTransition] = useTransition();
-
   const handleBookmark = () => {
     startBookmarkTransition(async () => {
       try {
@@ -69,23 +67,16 @@ export default function PostContent({ post }: { post: CategoryPost }) {
     });
   };
 
-  // Like/Dislike placeholders:
-  const [likeState, setLikeState] = useState<"LIKE" | "DISLIKE" | null>(null);
-
-  // const userId = data?.user?.id;
-
-  const { mutate: handleLike } = useMutation({
+  // LIKE COUNT: Derived from post.likes
   const likes = useMemo(() => {
     return post.likes.reduce((acc, like) => {
-      if (like.type === "LIKE") {
-        return acc + 1;
-      } else if (like.type === "DISLIKE") {
-        return acc - 1;
-      }
+      if (like.type === "LIKE") return acc + 1;
+      else if (like.type === "DISLIKE") return acc - 1;
       return acc;
     }, 0);
   }, [post.likes]);
 
+  // LIKE HANDLER
   const { isPending: isLikePending, mutate: handleLike } = useMutation({
     mutationFn: async (type: LikeType) => {
       const payload: PostLikeSchema = {
@@ -168,6 +159,7 @@ export default function PostContent({ post }: { post: CategoryPost }) {
                   </Tooltip>
                 </TooltipProvider>
               </div>
+
               <LikeDislikeCounter
                 handleLike={handleLike}
                 isDisliked={likeState === "DISLIKE"}
@@ -237,7 +229,6 @@ export default function PostContent({ post }: { post: CategoryPost }) {
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
               <span>Report</span>
-              {/* Toggle bookmark */}
               <button
                 onClick={handleBookmark}
                 disabled={bookmarkPending}

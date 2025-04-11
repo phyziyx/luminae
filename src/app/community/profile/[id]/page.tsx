@@ -13,29 +13,7 @@ const getProfileData = async (id: string) => {
   const isAgency = id.startsWith("a-");
   const idWithoutPrefix = id.replace("a-", "");
 
-  const data: {
-    id: string;
-    name: string;
-    title: string;
-    profileImage: string;
-    bannerImage: string;
-    tagline: string;
-    description: string;
-    stats: {
-      posts: number;
-      likes: number;
-      comments: number;
-    };
-    exists: boolean;
-    isAgency: boolean;
-    badges: {
-      id: number;
-      name: string;
-      icon: string;
-      color: string;
-    }[];
-    bookmarkedPosts?: any[]; // We'll store fetched bookmarked posts here (if it's a user and we want to show them).
-  } = {
+  const data = {
     exists: false,
     id,
     name: "",
@@ -50,9 +28,6 @@ const getProfileData = async (id: string) => {
   };
 
   if (isAgency) {
-    // ---------------------
-    // AGENCY PROFILE FETCH
-    // ---------------------
     const foundAgency = await prisma.agency.findUnique({
       select: {
         agencyLogo: true,
@@ -76,29 +51,25 @@ const getProfileData = async (id: string) => {
 
     if (!foundAgency) return data;
 
-    data.bannerImage = "/placeholder.svg?height=300&width=1200";
-    data.description = foundAgency.profile?.profile?.content || "";
-    data.bannerImage =
-      // foundAgency?.profile?.profile?.bannerImage ||
-      "/assets/banner_placeholder.webp";
-    data.description = foundAgency?.profile?.profile?.content || "";
-    data.id = idWithoutPrefix;
-    data.name = foundAgency.name || "";
-    data.profileImage =
-      foundAgency.agencyLogo || "/placeholder.svg?height=150&width=150";
-      foundAgency?.agencyLogo || "/assets/profile_placeholder.webp";
-    data.stats = {
-      comments: foundAgency._count.comments ?? 0,
-      likes: 0, // or fetch/aggregate if needed
-      posts: foundAgency._count.posts ?? 0,
+    return {
+      ...data,
+      exists: true,
+      id: idWithoutPrefix,
+      name: foundAgency.name || "",
+      title: foundAgency.profile?.profile?.title || "",
+      tagline: foundAgency.profile?.profile?.tagline || "",
+      description: foundAgency.profile?.profile?.content || "",
+      profileImage:
+        foundAgency.agencyLogo || "/assets/profile_placeholder.webp",
+      bannerImage: "/assets/banner_placeholder.webp",
+      stats: {
+        comments: foundAgency._count.comments ?? 0,
+        likes: 0,
+        posts: foundAgency._count.posts ?? 0,
+      },
+      badges: [],
     };
-    data.tagline = foundAgency.profile?.profile?.tagline || "";
-    data.exists = true;
-    data.title = foundAgency.profile?.profile?.title || "";
   } else {
-    // ---------------------
-    // USER PROFILE FETCH
-    // ---------------------
     const foundUser = await prisma.user.findUnique({
       select: {
         image: true,
@@ -124,40 +95,35 @@ const getProfileData = async (id: string) => {
 
     if (!foundUser) return data;
 
-    data.bannerImage = "/placeholder.svg?height=300&width=1200";
-    data.description = foundUser.profile?.profile?.content || "";
-    data.id = idWithoutPrefix;
-    data.name = foundUser.name || "";
-    data.profileImage =
-      foundUser.image || "/placeholder.svg?height=150&width=150";
-    data.bannerImage =
-      // foundUser?.profile?.profile?.bannerImage ||
-      "/assets/banner_placeholder.webp";
-    data.description = foundUser?.profile?.profile?.content || "";
-    data.id = idWithoutPrefix;
-    data.name = foundUser?.name || "";
-    data.profileImage = foundUser?.image || "/assets/banner_placeholder.webp";
-    data.stats = {
-      comments: foundUser._count.comments ?? 0,
-      likes: (foundUser._count.likes ?? 0) + (foundUser._count.commentLikes ?? 0),
-      posts: foundUser._count.posts ?? 0,
+    return {
+      ...data,
+      exists: true,
+      id: idWithoutPrefix,
+      name: foundUser.name || "",
+      title: foundUser.profile?.profile?.title || "",
+      tagline: foundUser.profile?.profile?.tagline || "",
+      description: foundUser.profile?.profile?.content || "",
+      profileImage: foundUser.image || "/assets/profile_placeholder.webp",
+      bannerImage: "/assets/banner_placeholder.webp",
+      stats: {
+        comments: foundUser._count.comments ?? 0,
+        likes:
+          (foundUser._count.likes ?? 0) + (foundUser._count.commentLikes ?? 0),
+        posts: foundUser._count.posts ?? 0,
+      },
+      badges: [],
     };
-    data.tagline = foundUser.profile?.profile?.tagline || "";
-    data.exists = true;
-    data.title = foundUser.profile?.profile?.title || "";
   }
-
-  return data;
 };
 
 // --------------
-// PROFILE PAGE
+// PROFILE COMPONENT
 // --------------
 function CommunityProfile({
   profileData,
   isOwner,
 }: {
-  profileData: any;
+  profileData: ICommunityProfile & { bookmarkedPosts?: any[] };
   isOwner: boolean;
 }) {
   const {
@@ -168,7 +134,6 @@ function CommunityProfile({
     tagline,
     description,
     isAgency,
-    verified,
     stats,
     badges,
     bookmarkedPosts = [],
@@ -181,17 +146,9 @@ function CommunityProfile({
         bannerImage={bannerImage}
         name={name}
         isAgency={isAgency}
-function CommunityProfile({ profileData }: { profileData: ICommunityProfile }) {
-  return (
-    <>
-      <ProfileHeader
-        profileImage={profileData.profileImage}
-        bannerImage={profileData.bannerImage}
-        name={profileData.name}
-        isAgency={profileData.isAgency}
-        content={profileData.content || ""}
-        tagline={profileData.tagline || ""}
-        title={profileData.title || ""}
+        content={description}
+        tagline={tagline}
+        title={title}
       />
 
       <div className="mt-8 grid gap-8 md:grid-cols-3">
@@ -203,30 +160,21 @@ function CommunityProfile({ profileData }: { profileData: ICommunityProfile }) {
             tagline={tagline}
             description={description}
             isAgency={isAgency}
-            verified={verified}
-            name={profileData.name}
-            title={profileData.title || ""}
-            tagline={profileData.tagline || ""}
-            description={profileData.content || ""}
-            isAgency={profileData.isAgency}
             verified={false}
           />
 
-          {/* Show "Saved Posts" ONLY if the user is viewing their own personal (non-agency) profile */}
           {isOwner && !isAgency && (
             <div className="mt-8">
               <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
                 Saved Posts
-                <div className="mt-1 h-1 w-24 bg-[#5B9AFF] dark:bg-[#7BABFF]"></div>
               </h2>
-
-              {/* Render the user's bookmarked posts */}
+              <div className="mt-1 h-1 w-24 bg-[#5B9AFF] dark:bg-[#7BABFF]"></div>
               <BookmarkedPostsList posts={bookmarkedPosts} />
             </div>
           )}
         </div>
 
-        {/* RIGHT SIDEBAR (Stats, Badges, etc.) */}
+        {/* RIGHT SIDEBAR */}
         <div className="space-y-8">
           <StatsOverview stats={stats} />
           <BadgesSection badges={badges} />
@@ -236,36 +184,30 @@ function CommunityProfile({ profileData }: { profileData: ICommunityProfile }) {
   );
 }
 
-export default async function ProfilePage({ params }: { params: { id: string } }) {
-  // 1) Identify the currently logged-in user
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  const currentUserId = session?.user?.id ?? null;
-
-  // 2) Gather profile data
-  const profileData = await getProfileData(params.id);
+// --------------
+// PAGE WRAPPER
+// --------------
 export default async function ProfilePage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const profileData = await getProfileData((await params).id);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
-  // 3) If the profile belongs to a user (not an agency) and it matches the signed-in user, fetch bookmarked posts
-  let bookmarkedPosts = [];
+  const currentUserId = session?.user?.id ?? null;
+  const profileData = await getProfileData(params.id);
   const isAgency = profileData.isAgency;
-  const profileUserId = profileData.id; // This is the "idWithoutPrefix" if it's a user
+  const isOwner =
+    !isAgency && !!currentUserId && currentUserId === profileData.id;
 
-  const isOwner = !isAgency && !!currentUserId && currentUserId === profileUserId;
-  // ^ Means "this is the same user who is logged in" (and not an agency)
+  let bookmarkedPosts = [];
 
   if (isOwner) {
-    // Fetch bookmarked posts
-    bookmarkedPosts = await PostManager.getBookmarkedPosts(profileUserId);
+    bookmarkedPosts = await PostManager.getBookmarkedPosts(profileData.id);
   }
 
-  // 4) Inject bookmarkedPosts into profileData for the CommunityProfile
   const fullProfileData = {
     ...profileData,
     bookmarkedPosts,

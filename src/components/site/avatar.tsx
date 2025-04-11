@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 interface AvatarProps {
   profileImage: string;
-  name: string;
+  name?: string; // allow it to be optional
   className?: string;
 }
 
@@ -13,16 +13,13 @@ const Avatar = memo(function Avatar({
   name,
   className,
 }: AvatarProps) {
-  const initials = useMemo(
-    () =>
-      name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .substring(0, 2)
-        .toUpperCase(),
-    [name]
-  );
+  const initials = useMemo(() => {
+    if (!name || typeof name !== "string") return "U"; // fallback to "U" if no name
+    const parts = name.trim().split(" ");
+    return parts.length === 1
+      ? parts[0][0]?.toUpperCase() ?? "U"
+      : (parts[0][0] + parts[1][0]).toUpperCase();
+  }, [name]);
 
   return (
     <_Avatar
@@ -31,7 +28,7 @@ const Avatar = memo(function Avatar({
         className
       )}
     >
-      <AvatarImage src={profileImage} alt={name} />
+      <AvatarImage src={profileImage} alt={name ?? "User"} />
       <AvatarFallback className="bg-primary/10 dark:bg-primary-light/20 text-primary dark:text-primary-light">
         {initials}
       </AvatarFallback>
