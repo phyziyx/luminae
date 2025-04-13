@@ -23,38 +23,39 @@ export default function ProfileInfo({
 }: ProfileInfoProps) {
   return (
     <div className="rounded-xl bg-white dark:bg-gray-800 p-6 shadow-soft">
+      {/* Name + (Verified Icon) */}
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 sm:text-3xl flex items-center gap-2 align-middle content-center">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 sm:text-3xl flex items-center gap-2">
           {name}
           {isAgency && verified && (
             <LucideCheckCircle2 className="h-6 w-6 text-primary dark:text-primary-light" />
           )}
         </h1>
+
+        {/* Title + Tagline Together */}
         <p
-          className={cn("text-gray-600 dark:text-gray-300", {
-            italic: !title,
+          className={cn("text-gray-600 dark:text-gray-300 text-lg", {
+            italic: !title && !tagline,
           })}
         >
-          {title || "No title provided."}
+          {title || tagline
+            ? `${title ?? ""}${title && tagline ? " • " : ""}${tagline ?? ""}`
+            : "No title or tagline provided."}
         </p>
       </div>
 
-      <div className="mb-6">
-        <h2 className="mb-2 text-lg font-semibold text-gray-800 dark:text-gray-100">
-          {isAgency ? "About Our Agency" : "About Me"}
-        </h2>
-
-        <p
-          className={cn("text-gray-600 dark:text-gray-300", {
-            italic: !tagline,
-          })}
-        >
-          {tagline || "No tagline provided."}
-        </p>
-      </div>
-
+      {/* Description */}
       <div className="prose prose-blue dark:prose-invert max-w-none">
-        <MarkdownRenderer content={description} />
+        <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
+          {isAgency ? "About Us" : "About Me"}
+        </h2>
+        <div className="mt-1 h-1 w-24 bg-[#5B9AFF] dark:bg-[#7BABFF]"></div>
+        <MarkdownRenderer content={description ?? ""} />
+        <p className="text-gray-600 dark:text-gray-300 mt-4 italic">
+          {description
+            ? "This is your description."
+            : "No description provided."}
+        </p>
       </div>
     </div>
   );

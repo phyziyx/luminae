@@ -188,3 +188,12 @@ export const bookmarkPostFormSchema = z.object({
 });
 
 export type BookmarkPostFormSchema = z.infer<typeof bookmarkPostFormSchema>;
+
+export const categorySchema = z.object({
+  id: z.string(),
+  name: z.string(), // unique
+  title: z.string(),
+  description: z.string(),
+});
+
+export type CategorySchema = z.infer<typeof categorySchema>;
