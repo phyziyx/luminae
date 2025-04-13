@@ -9,6 +9,14 @@ export default function Author({
   id: string;
   isAgency: boolean;
 }) {
+  if (!id) {
+    return (
+      <span className="font-medium text-gray-800 dark:text-gray-200">
+        {name}
+      </span>
+    );
+  }
+
   return (
     <Link
       href={`/community/profile/${isAgency ? "a-" : ""}${id}`}
