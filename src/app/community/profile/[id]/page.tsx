@@ -2,9 +2,7 @@ import ProfileHeader from "../components/profile-header";
 import ProfileInfo from "../components/profile-info";
 // import StatsOverview from "../components/stats-overview";
 // import BadgesSection from "../components/badges-section";
-import BookmarkedPostsList from "../components/bookmarked-posts";
 import prisma from "@/lib/db";
-import PostManager from "@/lib/managers/postManager";
 import { getSession } from "@/lib/auth/auth";
 import { CommunityProfile as ICommunityProfile } from "@/lib/types";
 
@@ -20,7 +18,7 @@ const getProfileData = async (id: string) => {
     profileImage: "",
     bannerImage: "",
     tagline: "",
-    description: "",
+    content: "",
     stats: { posts: 0, likes: 0, comments: 0 },
     isAgency,
     badges: [],
@@ -57,7 +55,7 @@ const getProfileData = async (id: string) => {
       name: foundAgency.name || "",
       title: foundAgency.profile?.profile?.title || "",
       tagline: foundAgency.profile?.profile?.tagline || "",
-      description: foundAgency.profile?.profile?.content || "",
+      content: foundAgency.profile?.profile?.content || "",
       profileImage:
         foundAgency.agencyLogo || "/assets/profile_placeholder.webp",
       bannerImage: "/assets/banner_placeholder.webp",
@@ -101,7 +99,7 @@ const getProfileData = async (id: string) => {
       name: foundUser.name || "",
       title: foundUser.profile?.profile?.title || "",
       tagline: foundUser.profile?.profile?.tagline || "",
-      description: foundUser.profile?.profile?.content || "",
+      content: foundUser.profile?.profile?.content || "",
       profileImage: foundUser.image || "/assets/profile_placeholder.webp",
       bannerImage: "/assets/banner_placeholder.webp",
       stats: {
@@ -120,21 +118,12 @@ const getProfileData = async (id: string) => {
 // --------------
 function CommunityProfile({
   profileData,
-  isOwner,
 }: {
-  profileData: ICommunityProfile & { bookmarkedPosts?: any[] };
+  profileData: ICommunityProfile;
   isOwner: boolean;
 }) {
-  const {
-    profileImage,
-    bannerImage,
-    name,
-    title,
-    tagline,
-    isAgency,
-    bookmarkedPosts = [],
-    content,
-  } = profileData;
+  const { profileImage, bannerImage, name, title, tagline, isAgency, content } =
+    profileData;
 
   return (
     <>
@@ -159,16 +148,6 @@ function CommunityProfile({
             isAgency={isAgency}
             verified={false}
           />
-
-          {isOwner && !isAgency && (
-            <div className="mt-8">
-              <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
-                Saved Posts
-              </h2>
-              <div className="mt-1 h-1 w-24 bg-[#5B9AFF] dark:bg-[#7BABFF]"></div>
-              <BookmarkedPostsList posts={bookmarkedPosts} />
-            </div>
-          )}
         </div>
 
         {/* RIGHT SIDEBAR */}
@@ -197,15 +176,8 @@ export default async function ProfilePage({
   const isOwner =
     !isAgency && !!currentUserId && currentUserId === profileData.id;
 
-  let bookmarkedPosts = [];
-
-  if (isOwner) {
-    bookmarkedPosts = await PostManager.getBookmarkedPosts(profileData.id);
-  }
-
   const fullProfileData = {
     ...profileData,
-    bookmarkedPosts,
   };
 
   return (
