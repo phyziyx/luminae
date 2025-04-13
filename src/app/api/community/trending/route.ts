@@ -1,4 +1,5 @@
 import prisma from "@/lib/db";
+import PostManager from "@/lib/managers/postManager";
 import { CategoryPost, CategoryPostsResponse } from "@/lib/types";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -27,6 +28,7 @@ export async function GET(request: NextRequest) {
       title: true,
       content: true,
       createdAt: true,
+      updatedAt: true,
       _count: {
         select: {
           comments: {
@@ -59,9 +61,10 @@ export async function GET(request: NextRequest) {
         },
       },
       category: {
-        select: {
-          name: true,
-        },
+        ...PostManager.selectCategory,
+      },
+      tags: {
+        ...PostManager.selectTags,
       },
     },
     where: {

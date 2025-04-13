@@ -11,6 +11,7 @@ import { PostLikeSchema } from "@/lib/forms";
 import { LikeType } from "@/generated/prisma/client";
 import { useMutation } from "@tanstack/react-query";
 import { PostCategoryBadge } from "./post-category-badge";
+import Author from "./author";
 
 export default function PostCardLarge({ post }: { post: CategoryPost }) {
   const { isPending, data: session } = authClient.useSession();
@@ -76,9 +77,13 @@ export default function PostCardLarge({ post }: { post: CategoryPost }) {
         {/* Post Author */}
         <div className="text-sm text-gray-500 dark:text-gray-400">
           By{" "}
-          <span className="font-medium text-gray-700 dark:text-gray-200">
-            {post.userPosts[0]?.user.name || post.agencyPosts[0]?.agency.name}
-          </span>
+          <Author
+            name={
+              post.userPosts[0]?.user.name || post.agencyPosts[0]?.agency.name
+            }
+            id={post.userPosts[0]?.user.id || post.agencyPosts[0]?.agency.id}
+            isAgency={!!post.agencyPosts[0]?.agency.id}
+          />
         </div>
       </CardContent>
 

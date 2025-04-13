@@ -10,7 +10,7 @@ import { CommentLikeSchema, LikeType } from "@/lib/forms";
 import LikeDislikeCounter from "./like-dislike-counter";
 import Avatar from "@/components/site/avatar";
 import { Button } from "@/components/ui/button";
-import { LucidePencil } from "lucide-react";
+import { LucidePencil, LucideTrash } from "lucide-react";
 import CommentEditor from "./comment-editor";
 import DateFormatter from "./date-formatter";
 
@@ -140,6 +140,17 @@ export default function Comment({ comment }: { comment: PostComment }) {
               >
                 <LucidePencil className="mr-1 h-4 w-4" />
                 Edit
+              </Button>
+
+              <Button
+                variant="destructive"
+                size="sm"
+                className="h-8 text-gray-600 dark:text-gray-400"
+                onClick={() => alert("handleDelete(comment.id)")}
+              >
+                {/* hover:text-red-300 dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10 */}
+                <LucideTrash className="mr-1 h-4 w-4" />
+                Delete
               </Button>
             </div>
           </>

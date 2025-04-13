@@ -39,10 +39,7 @@ export type CommentOwner =
       userId: string;
     };
 
-export type CategoryPost = Omit<
-  Post,
-  "updatedAt" | "deletedAt" | "categoryId"
-> & {
+export type CategoryPost = Omit<Post, "deletedAt" | "categoryId"> & {
   category: Pick<Category, "name">;
   _count: {
     comments: number;

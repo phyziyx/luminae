@@ -10,13 +10,13 @@ import {
 } from "../types";
 
 class PostManager {
-  private static selectCategory = {
+  public static readonly selectCategory = {
     select: {
       name: true,
     },
   };
 
-  private static selectTags = {
+  public static readonly selectTags = {
     select: {
       tag: {
         select: {
@@ -58,6 +58,7 @@ class PostManager {
         title: true,
         content: true,
         createdAt: true,
+        updatedAt: true,
         likes: {
           select: {
             postId: true,
@@ -292,6 +293,7 @@ class PostManager {
         title: true,
         content: true,
         createdAt: true,
+        updatedAt: true,
         likes: {
           select: {
             postId: true,

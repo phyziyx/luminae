@@ -5,7 +5,7 @@ export default function DateFormatter({
   updatedAt,
 }: {
   createdAt: Date;
-  updatedAt: Date;
+  updatedAt: Date | null | undefined;
 }) {
   return (
     <div className="flex flex-row text-xs gap-2 text-gray-500 dark:text-gray-400 content-center place-items-center align-middle">
@@ -13,7 +13,7 @@ export default function DateFormatter({
         <LucideCalendar className="h-3 w-3 mr-1 align-baseline" />{" "}
         {new Date(createdAt).toLocaleString()}
       </div>
-      {createdAt !== updatedAt && (
+      {updatedAt && createdAt !== updatedAt && (
         <>
           •
           <div className="flex flex-row align-baseline">

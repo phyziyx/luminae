@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import BookmarkPost from "./bookmark-post";
 import { PostCategoryBadge } from "./post-category-badge";
 import { TagsPreview } from "./tag-preview";
+import Author from "./author";
 
 export default function PostContent({
   post,
@@ -108,10 +109,16 @@ export default function PostContent({
                   profileImage=""
                   className="h-8 w-8"
                 />
-                <span className="font-medium text-gray-800 dark:text-gray-200">
-                  {post.userPosts[0]?.user.name ||
-                    post.agencyPosts[0]?.agency.name}
-                </span>
+                <Author
+                  name={
+                    post.userPosts[0]?.user.name ||
+                    post.agencyPosts[0]?.agency.name
+                  }
+                  id={
+                    post.userPosts[0]?.user.id || post.agencyPosts[0]?.agency.id
+                  }
+                  isAgency={!!post.agencyPosts[0]?.agency.id}
+                />
               </div>
               <span>{new Date(post.createdAt).toLocaleString()}</span>
               <div className="flex items-center gap-1">

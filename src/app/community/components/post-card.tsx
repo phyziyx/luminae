@@ -10,6 +10,8 @@ import { LikeType } from "@/generated/prisma/client";
 import { PostLikeSchema } from "@/lib/forms";
 import { useMutation } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth/auth-client";
+import Author from "./author";
+import DateFormatter from "./date-formatter";
 
 export default function PostCard({ post }: { post: CategoryPost }) {
   const { isPending, data: session } = authClient.useSession();
@@ -62,11 +64,19 @@ export default function PostCard({ post }: { post: CategoryPost }) {
             <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
               {authorName.charAt(0)}
             </div>
-            <span className="text-sm text-gray-600 dark:text-gray-300">
-              <span className="font-medium text-gray-800 dark:text-gray-200">
-                {authorName}
-              </span>{" "}
-              • {new Date(post.createdAt).toLocaleString()}
+            <span className="text-sm text-gray-600 dark:text-gray-300 flex flex-row gap-2">
+              <Author
+                name={authorName}
+                id={
+                  post.userPosts[0]?.user.id || post.agencyPosts[0]?.agency.id
+                }
+                isAgency={!!post.agencyPosts[0]?.agency.id}
+              />
+              <span className="text-gray-400 dark:text-gray-500">•</span>
+              <DateFormatter
+                updatedAt={post.updatedAt}
+                createdAt={post.createdAt}
+              />
             </span>
           </div>
         </div>
