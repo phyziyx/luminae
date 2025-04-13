@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { MessageSquare, Share2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 
@@ -26,11 +26,15 @@ export default function PostContent({
 }: {
   post: CategoryPostWithBookmark;
 }) {
-  const { isPending } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
+  const userId = useMemo(() => session?.user?.id, [session]);
 
   const { toast } = useToast();
 
-  const [likeState, setLikeState] = useState<"LIKE" | "DISLIKE" | null>(null);
+  const likeState = useMemo<"LIKE" | "DISLIKE" | null>(
+    () => post?.likes.find((like) => like.userId === userId)?.type || null,
+    [post.likes, userId]
+  );
 
   // SHARE: Copy post URL
   const handleShare = async () => {
@@ -70,12 +74,7 @@ export default function PostContent({
         body: JSON.stringify(payload),
       });
     },
-    onSuccess() {
-      setLikeState(null);
-    },
   });
-
-  console.log("post", post);
 
   return (
     <div>
