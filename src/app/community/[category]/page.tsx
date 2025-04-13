@@ -17,7 +17,6 @@ export default async function CategoryPage({
   // searchParams: Promise<SearchParams>;
 }) {
   const { category } = await params;
-  console.log("fetching category", category, "!");
 
   const categoryData = await prisma.category.findUnique({
     where: {
@@ -81,11 +80,20 @@ export default async function CategoryPage({
           </Button>
 
           {/* Heading */}
-          <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-gray-100">
-            Trending in{" "}
-            <span className="text-[#5B9AFF] dark:text-[#3B82F6]">{title}</span>
-            <div className="mt-2 h-1 w-48 bg-[#5B9AFF] dark:bg-[#3B82F6]" />
-          </h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl dark:text-gray-100">
+              Trending in{" "}
+              <span className="text-[#5B9AFF] dark:text-[#3B82F6]">
+                {title}
+              </span>
+              <div className="mt-2 h-1 w-48 bg-[#5B9AFF] dark:bg-[#3B82F6]" />
+            </h1>
+
+            {/* Create Post Button */}
+            <Link href={`/community/${category}/create-post`}>
+              <Button variant="default">Create Post</Button>
+            </Link>
+          </div>
 
           {/* Category Description */}
           <p className="mt-4 max-w-3xl text-gray-600 dark:text-gray-400">

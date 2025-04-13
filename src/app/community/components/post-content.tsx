@@ -17,6 +17,8 @@ import { LikeType, PostLikeSchema } from "@/lib/forms";
 
 import { useToast } from "@/hooks/use-toast";
 import BookmarkPost from "./bookmark-post";
+import { PostCategoryBadge } from "./post-category-badge";
+import { TagsPreview } from "./tag-preview";
 
 export default function PostContent({
   post,
@@ -117,12 +119,17 @@ export default function PostContent({
                 <span>{post._count.comments} comments</span>
               </div>
               <div className="flex items-center gap-1">
-                <span className="rounded-full bg-primary/10 dark:bg-primary-light/20 px-3 py-1 text-xs font-medium text-primary dark:text-primary-light">
-                  {post.category.name}
-                </span>
+                <PostCategoryBadge name={post.category.name} />
               </div>
             </div>
           </div>
+
+          {/* Post Tags */}
+          {post.tags.length > 0 && (
+            <div className="flex flex-row flex-wrap gap-2 text-xs font-medium place-items-center">
+              Tags: <TagsPreview tags={post.tags.map((tag) => tag.tag.name)} />
+            </div>
+          )}
 
           <Separator className="my-6 bg-gray-200 dark:bg-gray-700" />
 

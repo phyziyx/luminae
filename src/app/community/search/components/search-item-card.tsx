@@ -3,6 +3,7 @@ import { CategoryPost } from "@/lib/types";
 import { MessageSquare, ThumbsUp } from "lucide-react";
 import Link from "next/link";
 import { memo, useMemo } from "react";
+import { PostCategoryBadge } from "../../components/post-category-badge";
 
 const SearchItemCard = memo(function SearchItemCard({
   result,
@@ -17,9 +18,7 @@ const SearchItemCard = memo(function SearchItemCard({
     <Card className="overflow-hidden transition-all duration-200 hover:shadow-soft bg-white dark:bg-gray-800">
       <CardContent className="p-6">
         <div className="mb-2 flex items-center justify-between">
-          <span className="rounded-full bg-primary/10 dark:bg-primary-light/20 px-3 py-1 text-xs font-medium text-primary dark:text-primary-light">
-            {result.category.name}
-          </span>
+          <PostCategoryBadge name={result.category.name} />
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {result.createdAt.toString()}
           </span>

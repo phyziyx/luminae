@@ -359,20 +359,40 @@ model Category {
   posts Post[]
 }
 
+model Tag {
+  id   String @id @default(uuid())
+  name String @unique
+
+  posts PostTag[]
+}
+
+model PostTag {
+  postId String
+  tagId  String
+
+  post Post @relation(fields: [postId], references: [id])
+  tag  Tag  @relation(fields: [tagId], references: [id])
+
+  @@id([postId, tagId])
+  @@index([postId, tagId])
+}
+
 model Post {
   id         String @id @default(uuid()) // UUIDv7 for post ID
   title      String
   content    String @db.Text
   categoryId String
 
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
   comments    Comment[]
   likes       Likes[]
   category    Category     @relation(fields: [categoryId], references: [id])
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  deletedAt   DateTime?
   userPosts   UserPost[]
   agencyPosts AgencyPost[]
+  tags        PostTag[]
 
   bookmarkedBy User[] @relation("UserBookmarkedPosts")
 

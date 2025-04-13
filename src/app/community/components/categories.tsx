@@ -120,7 +120,7 @@ function CategorySection({
                 <span className="font-medium text-gray-700 dark:text-gray-300">
                   {post.author}
                 </span>{" "}
-                • {post.date}
+                • {new Date(post.date).toLocaleString()}
               </div>
             </CardContent>
             <CardFooter className="flex items-center justify-between border-t border-gray-100 dark:border-gray-700 bg-blue-50/30 dark:bg-blue-900/10 p-3">

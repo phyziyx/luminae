@@ -1,4 +1,4 @@
-import { Client } from "@prisma/client";
+import { Client } from "@/generated/prisma/client";
 import prisma from "../db";
 
 type UpsertClient = Omit<Client, "createdAt" | "updatedAt" | "agencyId">;

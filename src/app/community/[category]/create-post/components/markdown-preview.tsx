@@ -1,6 +1,6 @@
 "use client";
 
-import { MarkdownRenderer } from "../../components/markdown-renderer";
+import { MarkdownRenderer } from "@/app/community/components/markdown-renderer";
 
 interface MarkdownPreviewProps {
   content: string;

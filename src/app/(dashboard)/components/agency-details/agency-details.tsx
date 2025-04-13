@@ -1,6 +1,6 @@
 "use client";
 
-import { Agency } from "@prisma/client";
+import { Agency } from "@/generated/prisma/client";
 import { useForm } from "react-hook-form";
 import React from "react";
 import { z } from "zod";

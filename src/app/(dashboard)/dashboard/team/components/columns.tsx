@@ -15,7 +15,7 @@ import {
 import { MoreVerticalIcon } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import CustomModal from "@/components/site/custom-modal";
-import { AgencyMember } from "@prisma/client";
+import { AgencyMember } from "@/generated/prisma/client";
 import { useTranslations } from "next-intl";
 import TeamMemberDetails from "./team-member-details";
 // import UserManager from "@/lib/managers/userManager";

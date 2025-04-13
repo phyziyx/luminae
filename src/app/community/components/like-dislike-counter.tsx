@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { LikeType } from "@prisma/client";
+import { LikeType } from "@/generated/prisma/client";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 
 export default function LikeDislikeCounter({

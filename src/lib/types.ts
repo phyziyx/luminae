@@ -7,7 +7,8 @@ import {
   User,
   $Enums,
   Agency,
-} from "@prisma/client";
+  Tag,
+} from "@/generated/prisma/client";
 
 export type TopRankedAgency = {
   id: number;
@@ -46,6 +47,9 @@ export type CategoryPost = Omit<
   _count: {
     comments: number;
   };
+  tags: {
+    tag: Pick<Tag, "name">;
+  }[];
   likes: {
     userId: string;
     type: $Enums.LikeType;
@@ -87,7 +91,6 @@ export type PostComment = {
     type: $Enums.LikeType;
     commentId: string;
   }[];
-  // children?: Exclude<PostComment, "children">[];
 };
 
 export type PostWithComments = CategoryPost & {

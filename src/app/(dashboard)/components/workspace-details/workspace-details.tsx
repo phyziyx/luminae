@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/hooks/use-toast";
-import { Workspace } from "@prisma/client";
+import { Workspace } from "@/generated/prisma/client";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
 
 import formSchema from "./schema";

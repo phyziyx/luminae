@@ -37,7 +37,7 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
-import { User } from "@prisma/client";
+import { User } from "@/generated/prisma/client";
 
 interface TeamMemberDetailsFormProps {
   data: {

@@ -16,7 +16,7 @@ import { toast } from "@/hooks/use-toast";
 import { CreateLaneSchema, createLaneSchema } from "@/lib/forms";
 import { useModal } from "@/providers/modal-provider";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Lane } from "@prisma/client";
+import { Lane } from "@/generated/prisma/client";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import ComboBox from "../site/combo-box";

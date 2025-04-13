@@ -31,7 +31,7 @@ import { startTransition, useActionState, useMemo } from "react";
 import { LoadingSpinner } from "../site/loading-spinner";
 import { Button } from "../ui/button";
 import fetchTicketDetails from "@/actions/fetch-ticket-details";
-import { User } from "@prisma/client";
+import { User } from "@/generated/prisma/client";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import clsx from "clsx";
 import deleteTicket from "@/actions/delete-ticket";

@@ -1,4 +1,4 @@
-import { Comment, Post } from "@prisma/client";
+import { Comment, Post } from "@/generated/prisma/client";
 import prisma from "../db";
 import { v7 } from "uuid";
 import {
@@ -13,6 +13,16 @@ class PostManager {
   private static selectCategory = {
     select: {
       name: true,
+    },
+  };
+
+  private static selectTags = {
+    select: {
+      tag: {
+        select: {
+          name: true,
+        },
+      },
     },
   };
 
@@ -55,6 +65,7 @@ class PostManager {
             userId: true,
           },
         },
+        tags: { ...PostManager.selectTags },
         _count: {
           select: {
             comments: {
@@ -99,15 +110,94 @@ class PostManager {
     return posts;
   }
 
-  public static async create(data: Exclude<Post, "id">) {
+  public static async create(
+    data: Pick<Post, "title" | "content" | "categoryId">,
+    creator:
+      | {
+          agencyId: string;
+        }
+      | {
+          userId: string;
+        },
+    tags?: string[]
+  ) {
+    const postId = v7();
+
+    // Let's handle tags!
+    const tagRecords = await Promise.all(
+      tags?.map(async (tagName) => {
+        return prisma.tag.upsert({
+          where: { name: tagName },
+          update: {},
+          create: { name: tagName, id: v7() },
+        });
+      }) || []
+    );
+
     const post = await prisma.post.create({
       data: {
         ...data,
-        id: v7(),
+        id: postId,
+        ...("agencyId" in creator
+          ? {
+              agencyPosts: {
+                connectOrCreate: {
+                  create: {
+                    agencyId: creator.agencyId,
+                  },
+                  where: {
+                    agencyId_postId: {
+                      agencyId: creator.agencyId,
+                      postId: postId,
+                    },
+                  },
+                },
+              },
+            }
+          : "userId" in creator
+          ? {
+              userPosts: {
+                connectOrCreate: {
+                  create: {
+                    userId: creator.userId,
+                  },
+                  where: {
+                    userId_postId: {
+                      userId: creator.userId,
+                      postId: postId,
+                    },
+                  },
+                },
+              },
+            }
+          : {}),
       },
     });
 
+    // Now let's connect the tags to the post
+    await Promise.all(
+      tagRecords.map(async (tag) => {
+        await prisma.postTag.create({
+          data: {
+            postId,
+            tagId: tag.id,
+          },
+        });
+      })
+    );
+
     return post;
+  }
+
+  public static async updateComment(comment: Pick<Comment, "content" | "id">) {
+    return await prisma.comment.update({
+      data: {
+        content: comment.content,
+      },
+      where: {
+        id: comment.id,
+      },
+    });
   }
 
   public static async createComment(
@@ -156,10 +246,24 @@ class PostManager {
     return createdComment;
   }
 
-  public static async doesCommentExist(id: string) {
+  public static async doesCommentExist(id: string, fetchOwner = false) {
     return await prisma.comment.findUnique({
       select: {
         id: true,
+        ...(fetchOwner
+          ? {
+              agencyComments: {
+                select: {
+                  agencyId: true,
+                },
+              },
+              userComments: {
+                select: {
+                  userId: true,
+                },
+              },
+            }
+          : {}),
       },
       where: {
         id,
@@ -217,6 +321,7 @@ class PostManager {
             },
           },
         },
+        tags: { ...PostManager.selectTags },
         category: { ...PostManager.selectCategory },
         userPosts: {
           select: {

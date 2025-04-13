@@ -8,8 +8,9 @@ import LikeDislikeCounter from "./like-dislike-counter";
 import { useMemo } from "react";
 import { authClient } from "@/lib/auth/auth-client";
 import { PostLikeSchema } from "@/lib/forms";
-import { LikeType } from "@prisma/client";
+import { LikeType } from "@/generated/prisma/client";
 import { useMutation } from "@tanstack/react-query";
+import { PostCategoryBadge } from "./post-category-badge";
 
 export default function PostCardLarge({ post }: { post: CategoryPost }) {
   const { isPending, data: session } = authClient.useSession();
@@ -50,9 +51,7 @@ export default function PostCardLarge({ post }: { post: CategoryPost }) {
     <Card className="flex flex-grow min-w-full flex-col relative h-full overflow-hidden transition-all duration-200 hover:shadow-soft bg-white dark:bg-gray-800">
       <CardContent className="p-4 top-0 flex flex-col flex-grow">
         <div className="relative mb-2 flex items-center justify-between">
-          <div className="rounded-full bg-primary/10 dark:bg-primary/20 px-3 py-1 text-xs font-medium text-primary dark:text-white">
-            {post.category.name}
-          </div>
+          <PostCategoryBadge name={post.category.name} />
           {/* Date */}
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {new Date(post.createdAt).toLocaleString()}

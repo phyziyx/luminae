@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import CustomModal from "@/components/site/custom-modal";
 import WorkspaceDetails from "@/app/(dashboard)/components/workspace-details/workspace-details";
 import { useModal } from "@/providers/modal-provider";
-import { Workspace } from "@prisma/client";
+import { Workspace } from "@/generated/prisma/client";
 
 export const WorkspaceButtons = ({
   workspace,

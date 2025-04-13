@@ -9,16 +9,11 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 interface ImageUploadProps {
-  value: File | null;
-  preview: string;
+  value: File | null | undefined;
   onChange: (file: File | null, preview: string) => void;
 }
 
-export default function ImageUpload({
-  //   value,
-  preview,
-  onChange,
-}: ImageUploadProps) {
+export default function ImageUpload({ value, onChange }: ImageUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -71,10 +66,10 @@ export default function ImageUpload({
         Featured Image (Optional)
       </Label>
 
-      {preview ? (
+      {value ? (
         <div className="relative overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
           <Image
-            src={preview || "/placeholder.svg"}
+            src={value ? URL.createObjectURL(value) : "/placeholder.svg"}
             alt="Preview"
             className="w-full object-cover max-h-64"
             width={1200}

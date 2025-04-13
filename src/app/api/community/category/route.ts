@@ -63,6 +63,15 @@ export async function GET(request: NextRequest) {
       title: true,
       content: true,
       createdAt: true,
+      tags: {
+        select: {
+          tag: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
       likes: {
         select: {
           postId: true,

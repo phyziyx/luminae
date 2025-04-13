@@ -1,15 +1,23 @@
+"use client";
+
 import { MarkdownRenderer } from "./markdown-renderer";
 import CommentReplies from "./comment-replies";
 import { PostComment } from "@/lib/types";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { authClient } from "@/lib/auth/auth-client";
 import { useMutation } from "@tanstack/react-query";
 import { CommentLikeSchema, LikeType } from "@/lib/forms";
 import LikeDislikeCounter from "./like-dislike-counter";
 import Avatar from "@/components/site/avatar";
+import { Button } from "@/components/ui/button";
+import { LucidePencil } from "lucide-react";
+import CommentEditor from "./comment-editor";
+import DateFormatter from "./date-formatter";
 
 export default function Comment({ comment }: { comment: PostComment }) {
   const { data, isPending } = authClient.useSession();
+
+  const [editing, setEditing] = useState<boolean>(false);
 
   const userId = useMemo(() => {
     return data?.user?.id;
@@ -78,39 +86,67 @@ export default function Comment({ comment }: { comment: PostComment }) {
               <div className="font-medium text-gray-800 dark:text-gray-200">
                 {commenterName}
               </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                {new Date(comment.createdAt).toLocaleString()}
-              </div>
+              <DateFormatter
+                createdAt={comment.createdAt}
+                updatedAt={comment.updatedAt}
+              />
             </div>
           </div>
-          <LikeDislikeCounter
-            handleLike={handleLike}
-            isDisliked={isDisliked}
-            isLikePending={isLikePending}
-            isLiked={isLiked}
-            isPending={isPending}
-            likes={likes}
-            type="comment"
-          />
+
+          {!editing && (
+            <LikeDislikeCounter
+              handleLike={handleLike}
+              isDisliked={isDisliked}
+              isLikePending={isLikePending}
+              isLiked={isLiked}
+              isPending={isPending}
+              likes={likes}
+              type="comment"
+            />
+          )}
         </div>
 
         <div className="mt-3 text-gray-700 dark:text-gray-300">
-          <MarkdownRenderer content={comment.content} />
+          {!editing ? (
+            <MarkdownRenderer content={comment.content} />
+          ) : (
+            <CommentEditor comment={comment} setEditing={setEditing} />
+          )}
         </div>
 
-        {/* <div className="mt-4 flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
-            onClick={() => alert("setReplyingTo(comment.id)")}
-          >
-            {replyingTo === comment.id ? "Cancel" : "Reply"}
-          </Button>
-        </div> */}
+        {!editing && (
+          <>
+            <div className="mt-4 flex items-center gap-4">
+              {/* <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
+                onClick={() => alert("setReplyingTo(comment.id)")}
+              >
+                {"123" === comment.id ? (
+                  "Cancel"
+                ) : (
+                  <>
+                    <LucideReply className="mr-1 h-4 w-4" /> Reply
+                  </>
+                )}
+              </Button> */}
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
+                onClick={() => setEditing(true)}
+              >
+                <LucidePencil className="mr-1 h-4 w-4" />
+                Edit
+              </Button>
+            </div>
+          </>
+        )}
 
         {/* Reply Input */}
-        {/* {replyingTo === comment.id && (
+        {/* {'123' === comment.id && (
           <div className="mt-4 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
             <Textarea
               placeholder="Write your reply..."

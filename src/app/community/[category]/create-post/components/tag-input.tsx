@@ -1,44 +1,60 @@
 "use client";
 
-import { useState, type KeyboardEvent } from "react";
+import {
+  useCallback,
+  useDeferredValue,
+  useState,
+  type KeyboardEvent,
+} from "react";
 import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 interface TagInputProps {
-  value: string[];
+  value?: string[];
   onChange: (tags: string[]) => void;
   maxTags?: number;
 }
 
 export default function TagInput({
-  value,
+  value = [],
   onChange,
   maxTags = 5,
 }: TagInputProps) {
   const [inputValue, setInputValue] = useState("");
+  const deferredInputValue = useDeferredValue(inputValue);
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" || e.key === ",") {
-      e.preventDefault();
-      addTag();
-    } else if (e.key === "Backspace" && inputValue === "" && value.length > 0) {
-      removeTag(value.length - 1);
-    }
-  };
-
-  const addTag = () => {
+  const addTag = useCallback(() => {
     const tag = inputValue.trim().toLowerCase();
     if (tag && !value.includes(tag) && value.length < maxTags) {
       onChange([...value, tag]);
       setInputValue("");
     }
-  };
+  }, [inputValue, value, onChange, maxTags]);
 
-  const removeTag = (index: number) => {
-    onChange(value.filter((_, i) => i !== index));
-  };
+  const removeTag = useCallback(
+    (index: number) => {
+      onChange(value.filter((_, i) => i !== index));
+    },
+    [value, onChange]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter" || e.key === ",") {
+        e.preventDefault();
+        addTag();
+      } else if (
+        e.key === "Backspace" &&
+        inputValue === "" &&
+        value.length > 0
+      ) {
+        removeTag(value.length - 1);
+      }
+    },
+    [inputValue, value, addTag, removeTag]
+  );
 
   return (
     <div className="space-y-2">
@@ -75,7 +91,7 @@ export default function TagInput({
               ? "Max tags reached"
               : "Add tags... (press Enter or comma to add)"
           }
-          value={inputValue}
+          value={deferredInputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={addTag}

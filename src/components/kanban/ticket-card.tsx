@@ -22,7 +22,7 @@ import {
   HoverCardTrigger,
   HoverCardContent,
 } from "../ui/hover-card";
-import { Client, User } from "@prisma/client";
+import { Client, User } from "@/generated/prisma/client";
 import { useKanban } from "@/providers/kanban-provider";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -221,7 +221,7 @@ export function TicketCard({ ticket }: { ticket: LaneTicket }) {
         {/* */}
         <TicketDescription description={ticket.description || ""} />
         {/* */}
-        <TicketClient client={ticket.Client} />
+        <TicketClient client={ticket.client} />
       </CardHeader>
 
       <CardFooter className="m-0 p-2 border-t-[1px] border-muted-foreground/20 flex items-center justify-between">

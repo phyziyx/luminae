@@ -40,7 +40,7 @@ import {
 import { cn, isAgencyAdmin } from "@/lib/utils";
 import { NotificationsProvider } from "@/providers/notifications-provider";
 
-import { Agency, Workspace, Role } from "@prisma/client";
+import { Agency, Workspace, Role } from "@/generated/prisma/client";
 import {
   Collapsible,
   CollapsibleTrigger,

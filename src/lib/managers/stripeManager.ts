@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import AgencyManager from "./agencyManager";
 import prisma from "../db";
-import { Subscription, SubscriptionStatus } from "@prisma/client";
+import { Subscription, SubscriptionStatus } from "@/generated/prisma/client";
 import PackageManager from "./packageManager";
 import { v7 } from "uuid";
 

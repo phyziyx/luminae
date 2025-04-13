@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { CategoryPost } from "@/lib/types";
 import { useMemo } from "react";
 import LikeDislikeCounter from "./like-dislike-counter";
-import { LikeType } from "@prisma/client";
+import { LikeType } from "@/generated/prisma/client";
 import { PostLikeSchema } from "@/lib/forms";
 import { useMutation } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth/auth-client";

@@ -3,7 +3,7 @@
 import type React from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { Notification } from "@prisma/client";
+import { Notification } from "@/generated/prisma/client";
 import { EyeIcon, Link2Icon } from "lucide-react";
 import Link from "next/link";
 import { getLinkByResourceType } from "@/lib/utils";

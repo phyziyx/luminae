@@ -54,6 +54,22 @@ export const commentFormSchema = z.object({
 
 export type CommentFormSchema = z.infer<typeof commentFormSchema>;
 
+// Update Comment Schema
+
+export const updateCommentSchema = z.object({
+  commentId: z.string(),
+  content: z
+    .string()
+    .min(4, {
+      message: "Comment content is required",
+    })
+    .max(2048, {
+      message: "Comment content is too long",
+    }),
+});
+
+export type UpdateCommentSchema = z.infer<typeof updateCommentSchema>;
+
 //
 
 export const changePasswordSchema = z
@@ -139,6 +155,55 @@ export const searchBarSchema = z.object({
 
 export type SearchBarSchema = z.infer<typeof searchBarSchema>;
 
+// Tag Schema
+
+export const tagSchema = z
+  .string()
+  .regex(/^[a-zA-Z0-9\-_]+$/, {
+    message: "Tag can only contain letters, numbers, dashes and underscores",
+  })
+  .toLowerCase()
+  .min(2, {
+    message: "Tag must be at least 2 characters long.",
+  })
+  .max(16, {
+    message: "Tag can not be more than 16 characters long.",
+  })
+  .trim();
+
+// Tags Schema
+
+export const tagsSchema = z
+  .array(tagSchema)
+  .max(5, {
+    message: "You can only add up to 5 tags",
+  })
+  .optional();
+
+export type TagsSchema = z.infer<typeof tagsSchema>;
+
+// Create Post Schema
+
+export const createPostSchema = z.object({
+  category: z.string().min(1, "Category is required"),
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(150, "Title is too long")
+    .trim(),
+  content: z
+    .string()
+    .min(1, "Content is required")
+    .max(2048, "Content is too long")
+    .trim(),
+  image: z.instanceof(File).nullable(),
+  imagePreview: z.string().optional(),
+  tags: tagsSchema.optional(),
+  asAgency: z.boolean().optional(),
+});
+
+export type CreatePostSchema = z.infer<typeof createPostSchema>;
+
 // Community Profile Schema
 
 export const communityProfileSchema = z.object({
@@ -149,15 +214,17 @@ export const communityProfileSchema = z.object({
     })
     .max(64, {
       message: "Name can not be more than 64 characters long.",
-    }),
+    })
+    .trim(),
   tagline: z
     .string()
     .min(4, {
       message: "Tagline must be at least 4 characters",
     })
-    .max(50, {
-      message: "Tagline can be at most 50 characters",
+    .max(150, {
+      message: "Tagline can be at most 150 characters",
     })
+    .trim()
     .optional(),
   content: z
     .string()
@@ -167,6 +234,7 @@ export const communityProfileSchema = z.object({
     .max(1000, {
       message: "Content can be at most 1000 characters",
     })
+    .trim()
     .optional(),
   profileImage: z.any().refine((val) => val.length !== 1, "File is required"),
   bannerImage: z.any().refine((val) => val.length !== 1, "File is required"),
@@ -178,6 +246,7 @@ export const communityProfileSchema = z.object({
     .max(100, {
       message: "Title can be at most 100 characters",
     })
+    .trim()
     .optional(),
 });
 
@@ -188,12 +257,3 @@ export const bookmarkPostFormSchema = z.object({
 });
 
 export type BookmarkPostFormSchema = z.infer<typeof bookmarkPostFormSchema>;
-
-export const categorySchema = z.object({
-  id: z.string(),
-  name: z.string(), // unique
-  title: z.string(),
-  description: z.string(),
-});
-
-export type CategorySchema = z.infer<typeof categorySchema>;
