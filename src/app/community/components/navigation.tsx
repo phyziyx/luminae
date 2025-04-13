@@ -13,8 +13,7 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   MenuIcon,
-  Plus,
-  User,
+  UserIcon,
   LogOut,
 } from "lucide-react";
 import {
@@ -154,7 +153,7 @@ export default function CommunityNavbar() {
                     href="/community/profile"
                     className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                   >
-                    <User className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                    <UserIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -162,14 +161,6 @@ export default function CommunityNavbar() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-
-            {/* Create Post */}
-            <Link href="/community/create-post">
-              <Button variant="default" className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                Create Post
-              </Button>
-            </Link>
           </div>
         </div>
 
@@ -226,18 +217,10 @@ export default function CommunityNavbar() {
 
                 <hr className="border-gray-300 dark:border-gray-700" />
 
-                {/* Create Post (with icon) */}
-                <Link href="/community/create-post">
-                  <Button className="w-full flex items-center gap-2 bg-primary text-white hover:bg-primary/90 shadow-md dark:bg-primary/80 dark:hover:bg-primary/70 transition-all">
-                    <Plus className="h-4 w-4" />
-                    Create Post
-                  </Button>
-                </Link>
-
                 {/* View Profile */}
                 <Link href="/community/profile">
                   <Button className="w-full flex items-center gap-2 bg-primary text-white hover:bg-primary/90 shadow-md dark:bg-primary/80 dark:hover:bg-primary/70 transition-all">
-                    <User className="h-4 w-4" />
+                    <UserIcon className="h-4 w-4" />
                     View Profile
                   </Button>
                 </Link>

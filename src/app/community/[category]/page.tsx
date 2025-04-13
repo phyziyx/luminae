@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeftIcon, PlusIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import CategoryPostsList from "../components/category-posts-list";
@@ -74,7 +74,7 @@ export default async function CategoryPage({
             asChild
           >
             <Link href="/community/">
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <ArrowLeftIcon className="mr-2 h-4 w-4" />
               Back to Home
             </Link>
           </Button>
@@ -91,7 +91,10 @@ export default async function CategoryPage({
 
             {/* Create Post Button */}
             <Link href={`/community/${category}/create-post`}>
-              <Button variant="default">Create Post</Button>
+              <Button variant="default">
+                <PlusIcon className="h-4 w-4" />
+                Create Post
+              </Button>
             </Link>
           </div>
 
