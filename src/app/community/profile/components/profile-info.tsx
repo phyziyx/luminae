@@ -46,10 +46,10 @@ export default function ProfileInfo({
 
       {/* Description */}
       <div className="prose prose-blue dark:prose-invert max-w-none">
-        <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
+        <h2 className="mb-0 text-xl font-bold text-gray-800 dark:text-gray-100">
           {isAgency ? "About Us" : "About Me"}
         </h2>
-        <div className="mt-1 h-1 w-24 bg-[#5B9AFF] dark:bg-[#7BABFF]"></div>
+        <div className="mb-2 h-1 w-24 bg-[#5B9AFF] dark:bg-[#7BABFF]" />
         <MarkdownRenderer content={description ?? ""} />
         <p className="text-gray-600 dark:text-gray-300 mt-4 italic">
           {description

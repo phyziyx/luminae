@@ -2,17 +2,29 @@ import Link from "next/link";
 import { Calendar, MessageSquare, ThumbsUp } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
-/**
- * The shape of each bookmarked post we're displaying.
- * Adjust fields (like `content`) as needed.
- */
+/*
+
+import BookmarkedPostsList from "../components/bookmarked-posts";
+import PostManager from "@/lib/managers/postManager";
+
+{isOwner && !isAgency && (
+  <div className="mt-8">
+    <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
+      Saved Posts
+    </h2>
+    <div className="mt-1 h-1 w-24 bg-[#5B9AFF] dark:bg-[#7BABFF]"></div>
+    <BookmarkedPostsList posts={bookmarkedPosts} />
+  </div>
+)}
+
+*/
+
 interface BookmarkedPost {
   id: string;
   title: string;
   createdAt: Date;
   content?: string;
   _count: {
-    likes: number;
     comments: number;
   };
 }
@@ -21,7 +33,9 @@ interface BookmarkedPostsListProps {
   posts: BookmarkedPost[];
 }
 
-export default function BookmarkedPostsList({ posts }: BookmarkedPostsListProps) {
+export default function BookmarkedPostsList({
+  posts,
+}: BookmarkedPostsListProps) {
   return (
     <div className="space-y-4">
       {posts.map((post) => (
@@ -51,9 +65,7 @@ export default function BookmarkedPostsList({ posts }: BookmarkedPostsListProps)
               {/* Created Date */}
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
-                <span>
-                  {new Date(post.createdAt).toLocaleDateString()}
-                </span>
+                <span>{new Date(post.createdAt).toLocaleDateString()}</span>
               </div>
 
               {/* Like Count */}
