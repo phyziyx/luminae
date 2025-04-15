@@ -1,4 +1,4 @@
-import { isServer, QueryClient } from "@tanstack/react-query";
+import { InfiniteData, isServer, QueryClient } from "@tanstack/react-query";
 
 // Query key factories
 export const queryKeys = {
@@ -27,6 +27,26 @@ export const queryKeys = {
     ],
   },
 };
+
+export const updateInfiniteQueryData = <T>(
+  old: InfiniteData<T>,
+  updater: (data: T) => T
+) => {
+  // If the data is not an array, we can't update it
+  if (!old) {
+    return old;
+  }
+
+  // We need to update the data in the cache manually
+  // because we are using `useInfiniteQuery` and the data is
+  // not a single object, but an array of pages.
+  return {
+    ...old,
+    pages: old.pages.map((page) => updater(page)),
+  };
+};
+
+//
 
 function makeQueryClient() {
   return new QueryClient({
