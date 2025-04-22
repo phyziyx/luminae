@@ -14,7 +14,13 @@ import { LucidePencil, LucideTrash } from "lucide-react";
 import CommentEditor from "./comment-editor";
 import DateFormatter from "./date-formatter";
 
-export default function Comment({ comment }: { comment: PostComment }) {
+export default function Comment({
+  comment,
+  deleteComment,
+}: {
+  comment: PostComment;
+  deleteComment: () => void;
+}) {
   const { data, isPending } = authClient.useSession();
 
   const [editing, setEditing] = useState<boolean>(false);
@@ -146,7 +152,7 @@ export default function Comment({ comment }: { comment: PostComment }) {
                 variant="destructive"
                 size="sm"
                 className="h-8 text-gray-600 dark:text-gray-400"
-                onClick={() => alert("handleDelete(comment.id)")}
+                onClick={() => deleteComment()}
               >
                 {/* hover:text-red-300 dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10 */}
                 <LucideTrash className="mr-1 h-4 w-4" />
