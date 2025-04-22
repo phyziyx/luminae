@@ -29,7 +29,7 @@ export const queryKeys = {
 };
 
 export const updateInfiniteQueryData = <T>(
-  old: InfiniteData<T>,
+  old: InfiniteData<T> | undefined,
   updater: (data: T) => T
 ) => {
   // If the data is not an array, we can't update it

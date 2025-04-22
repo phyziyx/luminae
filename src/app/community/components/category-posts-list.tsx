@@ -89,15 +89,17 @@ export default function CategoryPostsList({
         </div>
       </div>
 
-      {JSON.stringify(
-        {
-          data: data?.pages?.length,
-          hasNextPage,
-          isFetchingNextPage,
-        },
-        null,
-        2
-      )}
+      {/* <pre>
+        {JSON.stringify(
+          {
+            data: data?.pages?.length,
+            hasNextPage,
+            isFetchingNextPage,
+          },
+          null,
+          2
+        )}
+      </pre> */}
 
       <div className="space-y-6">
         {posts?.length === 0 ? (
