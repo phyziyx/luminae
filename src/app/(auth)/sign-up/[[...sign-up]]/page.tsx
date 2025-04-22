@@ -134,6 +134,11 @@ export default function SignUpPage() {
                   variant="outline"
                   type="button"
                   disabled={isPending}
+                  onClick={() => {
+                    authClient.signIn.social({
+                      provider: "google",
+                    });
+                  }}
                 >
                   {isPending ? (
                     <Icons.spinner className="size-4 animate-spin" />

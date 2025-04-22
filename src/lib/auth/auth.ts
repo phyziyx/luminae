@@ -70,19 +70,20 @@ export const auth = betterAuth({
       trustedProviders: ["email-password", "google"],
     },
   },
-  // socialProviders: {
-  //   google: {
-  //     enabled: true,
-  //     clientId: process.env.GOOGLE_CLIENT_ID,
-  //     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  //     mapProfileToUser: (profile) => {
-  //       return {
-  //         firstName: profile.given_name,
-  //         lastName: profile.family_name,
-  //       };
-  //     },
-  //   },
-  // },
+  socialProviders: {
+    google: {
+      enabled: true,
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      // redirectURI: `/api/auth/callback/google`,
+      mapProfileToUser: (profile) => {
+        return {
+          firstName: profile.given_name,
+          lastName: profile.family_name,
+        };
+      },
+    },
+  },
 } satisfies BetterAuthOptions);
 
 export type Session = typeof auth.$Infer.Session;
