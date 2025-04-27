@@ -118,6 +118,12 @@ const data: NavData = {
       roles: ["AGENCY_OWNER", "AGENCY_ADMIN"],
     },
     {
+      title: "Media Hub",
+      url: "/dashboard/media-hub",
+      icon: BookOpenIcon,
+      items: [],
+    },
+    {
       title: "Clients",
       url: "/dashboard/clients",
       icon: UserCircle2Icon,
