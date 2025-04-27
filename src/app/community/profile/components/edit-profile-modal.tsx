@@ -35,6 +35,8 @@ import { useRouter } from "next/navigation";
 
 interface EditProfile extends CommunityProfileSchema {
   isAgency: boolean;
+  profileImage?: string | null;
+  bannerImage?: string | null;
 }
 
 interface EditProfileModalProps {

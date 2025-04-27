@@ -127,13 +127,14 @@ function CommunityProfile({
   return (
     <>
       <ProfileHeader
+        id={profileData.id}
         profileImage={profileImage}
         bannerImage={bannerImage}
         name={name}
         isAgency={isAgency}
-        content={content ?? undefined}
-        tagline={tagline ?? undefined}
-        title={title ?? undefined}
+        content={content ?? ""}
+        tagline={tagline ?? ""}
+        title={title ?? ""}
         myself={isOwner}
       >
         <EditProfile profileData={profileData} />
