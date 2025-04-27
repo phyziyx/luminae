@@ -236,8 +236,8 @@ export const communityProfileSchema = z.object({
     })
     .trim()
     .optional(),
-  profileImage: z.any().refine((val) => val.length !== 1, "File is required"),
-  bannerImage: z.any().refine((val) => val.length !== 1, "File is required"),
+  // profileImage: z.any().refine((val) => val.length !== 1, "File is required"),
+  // bannerImage: z.any().refine((val) => val.length !== 1, "File is required"),
   title: z
     .string()
     .min(4, {

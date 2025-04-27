@@ -23,40 +23,44 @@ export async function DELETE(req: NextRequest) {
       return new NextResponse("No agency found", { status: 404 });
     }
 
-    const agency = await prisma.agency.findFirst({
+    const profile = await prisma.profile.findFirst({
       select: {
-        agencyLogo: true,
+        banner: true,
+        id: true,
       },
       where: {
-        id: agencyMember.id,
+        agencyProfile: {
+          agencyId: agencyMember.agencyId,
+        },
       },
     });
 
-    if (!agency || !agency.agencyLogo) {
+    if (!profile || !profile.banner) {
       return new NextResponse("No image found", { status: 404 });
     }
 
-    entityId = agencyMember.agencyId;
-    fileToDelete = agency.agencyLogo;
+    entityId = agencyMember.agencyId ?? null;
+    fileToDelete = profile?.banner ?? null;
   } else {
-    const foundUser = await prisma.user.findFirst({
+    const profile = await prisma.profile.findFirst({
       select: {
-        image: true,
+        banner: true,
+        id: true,
       },
       where: {
-        id: user.id,
+        userProfile: {
+          user: {
+            id: user.id,
+          },
+        },
       },
     });
 
-    if (!foundUser || !foundUser.image) {
-      return new NextResponse("No image found", { status: 404 });
-    }
-
-    fileToDelete = foundUser.image;
-    entityId = user.id;
+    entityId = profile?.id ?? null;
+    fileToDelete = profile?.banner ?? null;
   }
 
-  if (!fileToDelete) {
+  if (!entityId || !fileToDelete) {
     return new NextResponse("No image found", { status: 404 });
   }
 
@@ -68,24 +72,22 @@ export async function DELETE(req: NextRequest) {
     return new NextResponse("Failed to delete image", { status: 500 });
   }
 
-  console.log("Image deleted successfully");
-
   if (isAgency) {
-    await prisma.agency.update({
+    await prisma.profile.update({
       data: {
-        agencyLogo: "",
+        banner: null,
       },
       where: {
         id: entityId,
       },
     });
   } else {
-    await prisma.user.update({
+    await prisma.profile.update({
       data: {
-        image: null,
+        banner: null,
       },
       where: {
-        id: user.id,
+        id: entityId,
       },
     });
   }
@@ -112,22 +114,43 @@ export async function POST(req: NextRequest) {
       return new NextResponse("No agency found", { status: 404 });
     }
 
-    entityId = agencyMember.agencyId;
-  } else {
-    const foundUser = await prisma.user.findFirst({
+    const profile = await prisma.profile.findFirst({
       select: {
+        banner: true,
         id: true,
       },
       where: {
-        id: user.id,
+        agencyProfile: {
+          agencyId: agencyMember.agencyId,
+        },
       },
     });
 
-    if (!foundUser) {
-      return new NextResponse("No user found", { status: 404 });
+    if (!profile) {
+      return new NextResponse("No image found", { status: 404 });
     }
 
-    entityId = foundUser.id;
+    entityId = profile.id;
+  } else {
+    const profile = await prisma.profile.findFirst({
+      select: {
+        banner: true,
+        id: true,
+      },
+      where: {
+        userProfile: {
+          user: {
+            id: user.id,
+          },
+        },
+      },
+    });
+
+    if (!profile) {
+      return new NextResponse("No image found", { status: 404 });
+    }
+
+    entityId = profile.id;
   }
 
   const formData = await req.formData();
@@ -155,7 +178,7 @@ export async function POST(req: NextRequest) {
     },
     options: {
       manualFileName: undefined,
-      replaceTargetUrl: `${isAgency ? "agency" : "user"}-${entityId}`,
+      replaceTargetUrl: `${isAgency ? "agency" : "user"}-${entityId}-banner`,
       temporary: false,
     },
     ctx: {
@@ -165,21 +188,29 @@ export async function POST(req: NextRequest) {
   });
 
   if (isAgency) {
-    await prisma.agency.update({
+    await prisma.agencyProfile.update({
       data: {
-        agencyLogo: response.url,
+        profile: {
+          update: {
+            banner: response.url,
+          },
+        },
       },
       where: {
-        id: entityId,
+        profileId: entityId,
       },
     });
   } else {
-    await prisma.user.update({
+    await prisma.userProfile.update({
       data: {
-        image: response.url,
+        profile: {
+          update: {
+            banner: response.url,
+          },
+        },
       },
       where: {
-        id: user.id,
+        userId: user.id,
       },
     });
   }

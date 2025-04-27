@@ -503,6 +503,7 @@ model Profile {
   tagline String? @db.Text
   content String? @db.Text
   title   String? @db.Text
+  banner  String? @db.Text
 
   userProfile   UserProfile?
   agencyProfile AgencyProfile?

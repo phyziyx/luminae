@@ -50,15 +50,6 @@ export default function ProfileHeader({
                 {initials}
               </AvatarFallback>
             </Avatar>
-            {/* {myself && (
-              <Button
-                className="absolute bottom-1 right-1 rounded-full bg-primary dark:bg-primary-light p-2 text-white dark:text-gray-900 shadow-md hover:bg-primary/90 dark:hover:bg-primary-light/90 transition-colors"
-                onClick={() => setIsModalOpen(true)}
-                aria-label="Change profile picture"
-              >
-                <Camera className="h-4 w-4" />
-              </Button>
-            )} */}
           </div>
         </div>
 

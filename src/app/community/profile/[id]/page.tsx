@@ -6,6 +6,7 @@ import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth/auth";
 import { CommunityProfile as ICommunityProfile } from "@/lib/types";
 import EditProfile from "../components/edit-profile";
+import AgencyManager from "@/lib/managers/agencyManager";
 
 const getProfileData = async (id: string) => {
   const isAgency = id.startsWith("a-");
@@ -13,7 +14,7 @@ const getProfileData = async (id: string) => {
 
   const data = {
     exists: false,
-    id,
+    id: idWithoutPrefix,
     name: "",
     title: "",
     profileImage: "",
@@ -58,7 +59,7 @@ const getProfileData = async (id: string) => {
       tagline: foundAgency.profile?.profile?.tagline || "",
       content: foundAgency.profile?.profile?.content || "",
       profileImage: foundAgency.agencyLogo || "",
-      bannerImage: "/assets/banner_placeholder.webp",
+      bannerImage: foundAgency.profile?.profile?.banner || "",
       stats: {
         comments: foundAgency._count.comments ?? 0,
         likes: 0,
@@ -101,7 +102,7 @@ const getProfileData = async (id: string) => {
       tagline: foundUser.profile?.profile?.tagline || "",
       content: foundUser.profile?.profile?.content || "",
       profileImage: foundUser.image || "",
-      bannerImage: "/assets/banner_placeholder.webp",
+      bannerImage: foundUser.profile?.profile?.banner || "",
       stats: {
         comments: foundUser._count.comments ?? 0,
         likes:
@@ -172,8 +173,16 @@ export default async function ProfilePage({
   const currentUserId = session?.user?.id ?? null;
   const profileData = await getProfileData(id);
   const isAgency = profileData.isAgency;
-  const isOwner =
+
+  let isOwner =
     !isAgency && !!currentUserId && currentUserId === profileData.id;
+
+  if (isAgency && session) {
+    const agencyMember = await AgencyManager.findUserAgency(session.user.email);
+    if (agencyMember) {
+      isOwner = agencyMember.agencyId === profileData.id;
+    }
+  }
 
   const fullProfileData = {
     ...profileData,

@@ -52,9 +52,7 @@ export default function ProfileInfo({
         <div className="mb-2 h-1 w-24 bg-[#5B9AFF] dark:bg-[#7BABFF]" />
         <MarkdownRenderer content={description ?? ""} />
         <p className="text-gray-600 dark:text-gray-300 mt-4 italic">
-          {description
-            ? "This is your description."
-            : "No description provided."}
+          {!description && "No description provided."}
         </p>
       </div>
     </div>
