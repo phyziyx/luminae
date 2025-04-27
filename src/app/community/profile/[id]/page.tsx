@@ -5,6 +5,7 @@ import ProfileInfo from "../components/profile-info";
 import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth/auth";
 import { CommunityProfile as ICommunityProfile } from "@/lib/types";
+import EditProfile from "../components/edit-profile";
 
 const getProfileData = async (id: string) => {
   const isAgency = id.startsWith("a-");
@@ -56,8 +57,7 @@ const getProfileData = async (id: string) => {
       title: foundAgency.profile?.profile?.title || "",
       tagline: foundAgency.profile?.profile?.tagline || "",
       content: foundAgency.profile?.profile?.content || "",
-      profileImage:
-        foundAgency.agencyLogo || "/assets/profile_placeholder.webp",
+      profileImage: foundAgency.agencyLogo || "",
       bannerImage: "/assets/banner_placeholder.webp",
       stats: {
         comments: foundAgency._count.comments ?? 0,
@@ -100,7 +100,7 @@ const getProfileData = async (id: string) => {
       title: foundUser.profile?.profile?.title || "",
       tagline: foundUser.profile?.profile?.tagline || "",
       content: foundUser.profile?.profile?.content || "",
-      profileImage: foundUser.image || "/assets/profile_placeholder.webp",
+      profileImage: foundUser.image || "",
       bannerImage: "/assets/banner_placeholder.webp",
       stats: {
         comments: foundUser._count.comments ?? 0,
@@ -113,11 +113,9 @@ const getProfileData = async (id: string) => {
   }
 };
 
-// --------------
-// PROFILE COMPONENT
-// --------------
 function CommunityProfile({
   profileData,
+  isOwner,
 }: {
   profileData: ICommunityProfile;
   isOwner: boolean;
@@ -135,7 +133,10 @@ function CommunityProfile({
         content={content ?? undefined}
         tagline={tagline ?? undefined}
         title={title ?? undefined}
-      />
+        myself={isOwner}
+      >
+        <EditProfile profileData={profileData} />
+      </ProfileHeader>
 
       <div className="mt-8 grid gap-8 md:grid-cols-3">
         {/* LEFT SECTION (Main Info) */}
@@ -160,18 +161,16 @@ function CommunityProfile({
   );
 }
 
-// --------------
-// PAGE WRAPPER
-// --------------
 export default async function ProfilePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const session = await getSession();
 
   const currentUserId = session?.user?.id ?? null;
-  const profileData = await getProfileData(params.id);
+  const profileData = await getProfileData(id);
   const isAgency = profileData.isAgency;
   const isOwner =
     !isAgency && !!currentUserId && currentUserId === profileData.id;

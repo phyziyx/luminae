@@ -1,27 +1,24 @@
-"use client";
-
-import { useMemo, useState } from "react";
+// import { useMemo } from "react";
 import Image from "next/image";
-import { Camera, Pencil } from "lucide-react";
+// import { Camera, Pencil } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import EditProfileModal from "./edit-profile-modal";
+// import { Button } from "@/components/ui/button";
 import { CommunityProfileSchema } from "@/lib/forms";
 
 interface ProfileHeaderProps extends CommunityProfileSchema {
   name: string;
   isAgency: boolean;
+  myself?: boolean;
+  children: React.ReactNode;
 }
 
 export default function ProfileHeader({
   profileImage,
   bannerImage,
   name,
-  isAgency,
+  myself,
+  children,
 }: ProfileHeaderProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const myself = useMemo(() => true, []);
-
   const initials = name
     .split(" ")
     .map((n) => n[0])
@@ -53,7 +50,7 @@ export default function ProfileHeader({
                 {initials}
               </AvatarFallback>
             </Avatar>
-            {myself && (
+            {/* {myself && (
               <Button
                 className="absolute bottom-1 right-1 rounded-full bg-primary dark:bg-primary-light p-2 text-white dark:text-gray-900 shadow-md hover:bg-primary/90 dark:hover:bg-primary-light/90 transition-colors"
                 onClick={() => setIsModalOpen(true)}
@@ -61,37 +58,13 @@ export default function ProfileHeader({
               >
                 <Camera className="h-4 w-4" />
               </Button>
-            )}
+            )} */}
           </div>
         </div>
 
         {/* Edit Profile Button */}
-        {myself && (
-          <div className="absolute bottom-4 right-4">
-            <Button
-              onClick={() => setIsModalOpen(true)}
-              className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90"
-            >
-              <Pencil className="mr-2 h-4 w-4" />
-              Edit Profile
-            </Button>
-          </div>
-        )}
+        {myself && <div className="absolute bottom-4 right-4">{children}</div>}
       </div>
-
-      <EditProfileModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        profileData={{
-          profileImage,
-          bannerImage,
-          name,
-          isAgency,
-          content: "This is a sample content",
-          tagline: "This is a sample tagline",
-          title: "This is a sample title",
-        }}
-      />
     </>
   );
 }

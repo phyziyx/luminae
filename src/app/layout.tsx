@@ -1,11 +1,14 @@
+import { Suspense } from "react";
+
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+
+// import { EdgeStoreProvider } from "@/lib/edgestore/edgestore-client";
 import { ThemeProvider } from "@/providers/theme-provider";
-import { Suspense } from "react";
 import { ModalProvider } from "@/providers/modal-provider";
 import { Toaster } from "@/components/ui/toaster";
 import FallbackSpinner from "@/components/site/fallback-spinner";
@@ -53,6 +56,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider messages={messages}>
+            {/* <EdgeStoreProvider> */}
             <ReactQueryProvider>
               <Suspense fallback={<FallbackSpinner />}>
                 <ModalProvider>
@@ -61,6 +65,7 @@ export default async function RootLayout({
                 </ModalProvider>
               </Suspense>
             </ReactQueryProvider>
+            {/* </EdgeStoreProvider> */}
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>
