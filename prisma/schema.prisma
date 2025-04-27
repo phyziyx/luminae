@@ -378,10 +378,11 @@ model PostTag {
 }
 
 model Post {
-  id         String @id @default(uuid()) // UUIDv7 for post ID
+  id         String  @id @default(uuid()) // UUIDv7 for post ID
   title      String
-  content    String @db.Text
+  content    String  @db.Text
   categoryId String
+  image      String? @db.Text
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

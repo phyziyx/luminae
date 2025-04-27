@@ -20,6 +20,7 @@ import BookmarkPost from "./bookmark-post";
 import { PostCategoryBadge } from "./post-category-badge";
 import { TagsPreview } from "./tag-preview";
 import Author from "./author";
+import Image from "next/image";
 
 export default function PostContent({
   post,
@@ -139,6 +140,19 @@ export default function PostContent({
 
           <Separator className="my-6 bg-gray-200 dark:bg-gray-700" />
 
+          {/* Post Image */}
+          {post.image && (
+            <div className="mb-6 flex w-full items-center justify-center overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
+              <Image
+                src={post.image}
+                alt="Post Image"
+                className="h-auto max-h-[400px] w-full object-cover"
+                width={1200}
+                height={400}
+              />
+            </div>
+          )}
+
           {/* Post Content */}
           <div className="prose prose-blue dark:prose-invert max-w-none">
             <MarkdownRenderer content={post.content} />
@@ -147,14 +161,14 @@ export default function PostContent({
           {/* Post Footer */}
           <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <Button
+              {/* <Button
                 variant="outline"
                 className="border-primary text-primary dark:border-primary-light dark:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
                 size="sm"
               >
                 <MessageSquare className="mr-2 h-4 w-4" />
                 Add Comment
-              </Button>
+              </Button> */}
               <Button
                 variant="outline"
                 size="sm"

@@ -59,6 +59,7 @@ class PostManager {
         content: true,
         createdAt: true,
         updatedAt: true,
+        image: true,
         likes: {
           select: {
             postId: true,
@@ -112,7 +113,7 @@ class PostManager {
   }
 
   public static async create(
-    data: Pick<Post, "title" | "content" | "categoryId">,
+    data: Pick<Post, "title" | "content" | "categoryId" | "image">,
     creator:
       | {
           agencyId: string;
@@ -294,6 +295,7 @@ class PostManager {
         content: true,
         createdAt: true,
         updatedAt: true,
+        image: true,
         likes: {
           select: {
             postId: true,

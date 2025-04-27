@@ -197,7 +197,7 @@ export const createPostSchema = z.object({
     .max(2048, "Content is too long")
     .trim(),
   image: z.instanceof(File).nullable(),
-  imagePreview: z.string().optional(),
+  // imagePreview: z.string().optional(),
   tags: tagsSchema.optional(),
   asAgency: z.boolean().optional(),
 });

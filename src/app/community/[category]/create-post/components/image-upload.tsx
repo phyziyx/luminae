@@ -110,7 +110,7 @@ export default function ImageUpload({ value, onChange }: ImageUploadProps) {
                 </label>
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
-                Supports JPG, PNG, GIF up to 5MB
+                Supports JPG, PNG, GIF up to 1MB
               </p>
             </div>
           </div>
