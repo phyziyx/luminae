@@ -1,0 +1,188 @@
+@startuml erd-v1
+
+entity Agency {
+  *id : varchar(191) [PK]
+  --
+  name : varchar(191)
+  agencyLogo : text
+  companyEmail : text
+  companyPhone : text
+  address : varchar(191)
+  zipCode : varchar(191)
+  state : varchar(191)
+  country : varchar(191)
+  createdAt : datetime(3)
+  updatedAt : datetime(3)
+  stripeCustomerId : varchar(191)
+}
+
+entity AgencyMember {
+  *id : varchar(191) [PK]
+  --
+  email : varchar(191) [Unique]
+  agencyId : varchar(191) [FK -> Agency.id]
+  role : enum
+  createdAt : datetime(3)
+  updatedAt : datetime(3)
+}
+
+entity Client {
+  *id : varchar(191) [PK]
+  --
+  agencyId : varchar(191) [FK -> Agency.id]
+  name : varchar(191)
+  email : varchar(191)
+  phone : varchar(191)
+  city : varchar(191)
+  state : varchar(191)
+  country : varchar(191)
+  createdAt : datetime(3)
+  updatedAt : datetime(3)
+  status : enum
+}
+
+entity User {
+  *id : varchar(191) [PK]
+  --
+  firstName : varchar(255)
+  lastName : varchar(255)
+  avatarUrl : text
+  email : varchar(191) [Unique]
+  stripeConnectAccountId : varchar(191)
+  stripeCustomerId : varchar(191)
+  createdAt : datetime(3)
+  updatedAt : datetime(3)
+  isAdmin : tinyint
+  isLocked : tinyint
+}
+
+entity Invitation {
+  *id : varchar(191) [PK]
+  --
+  email : varchar(191)
+  agencyId : varchar(191) [FK -> Agency.id]
+  role : enum
+  status : enum
+  createdAt : datetime(3)
+  updatedAt : datetime(3)
+}
+
+entity Subscription {
+  *id : varchar(191) [PK]
+  --
+  packageId : varchar(191) [FK -> Package.id]
+  price : varchar(191)
+  agencyId : varchar(191) [FK -> Agency.id]
+  priceId : varchar(191)
+  stripeSubscriptionId : varchar(191) [Unique]
+  stripeCustomerId : varchar(191)
+  currentPeriodEnd : datetime(3)
+  active : tinyint
+  status : enum
+  createdAt : datetime(3)
+  updatedAt : datetime(3)
+}
+
+entity Package {
+  *id : varchar(191) [PK]
+  --
+  name : varchar(191)
+  monthlyPrice : decimal(65,30)
+  retired : tinyint
+  stripePriceIdAnnually : varchar(191)
+  stripePriceIdMonthly : varchar(191)
+  stripeLinkAnnually : varchar(191)
+  stripeLinkMonthly : varchar(191)
+}
+
+entity Feature {
+  *id : varchar(191) [PK]
+  --
+  code : enum
+  name : varchar(191)
+  maxLimit : int
+  hasAccess : tinyint
+  packageId : varchar(191) [FK -> Package.id]
+}
+
+entity Workspace {
+  *id : varchar(191) [PK]
+  --
+  agencyId : varchar(191) [FK -> Agency.id]
+  name : varchar(191)
+  description : text
+  createdAt : datetime(3)
+  updatedAt : datetime(3)
+}
+
+entity Lane {
+  *id : varchar(191) [PK]
+  --
+  name : varchar(191)
+  order : int
+  colour : varchar(6)
+  workspaceId : varchar(191) [FK -> Workspace.id]
+}
+
+entity Ticket {
+  *id : varchar(191) [PK]
+  --
+  title : varchar(191)
+  description : text
+  value : int
+  open : tinyint
+  tag : enum
+  createdAt : datetime(3)
+  updatedAt : datetime(3)
+  clientId : varchar(191) [FK -> Client.id]
+  assigneeUserId : varchar(191) [FK -> User.id]
+  laneId : varchar(191) [FK -> Lane.id]
+  order : int
+}
+
+entity Notification {
+  *id : varchar(191) [PK]
+  --
+  message : varchar(191)
+  userId : varchar(191) [FK -> User.id]
+  createdAt : datetime(3)
+  updatedAt : datetime(3)
+  read : tinyint
+  resourceType : varchar(191)
+  resourceId : varchar(191)
+  metadata : varchar(191)
+}
+
+entity Permission {
+  *id : varchar(191) [PK]
+  --
+  agencyMemberId : varchar(191) [FK -> AgencyMember.id]
+  workspaceId : varchar(191) [FK -> Workspace.id]
+  access : tinyint
+  manager : tinyint
+  createdAt : datetime(3)
+  updatedAt : datetime(3)
+}
+
+Agency ||--o{ Client
+Agency ||--o{ AgencyMember
+Agency ||--o{ Invitation
+Agency ||--o{ Subscription
+Agency ||--o{ Workspace
+
+AgencyMember ||--o{ Permission
+AgencyMember ||--o{ User
+
+Package ||--o{ Feature
+Package ||--o{ Subscription
+
+Workspace ||--o{ Lane
+
+Lane ||--o{ Ticket
+
+Client ||--o{ Ticket
+
+User ||--o{ Ticket : assignee
+User ||--o{ Notification
+
+@enduml

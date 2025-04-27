@@ -151,10 +151,9 @@ export default function Comment({
               <Button
                 variant="destructive"
                 size="sm"
-                className="h-8 text-gray-600 dark:text-gray-400"
+                className="bg-red-300 hover:bg-red-400 dark:bg-destructive dark:hover:bg-destructive/90 h-8 text-gray-600 dark:text-gray-400"
                 onClick={() => deleteComment()}
               >
-                {/* hover:text-red-300 dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10 */}
                 <LucideTrash className="mr-1 h-4 w-4" />
                 Delete
               </Button>
