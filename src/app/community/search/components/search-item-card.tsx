@@ -1,6 +1,6 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { CategoryPost } from "@/lib/types";
-import { MessageSquare, ThumbsUp } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import Link from "next/link";
 import { memo, useMemo } from "react";
 import { PostCategoryBadge } from "../../components/post-category-badge";
@@ -51,10 +51,10 @@ const SearchItemCard = memo(function SearchItemCard({
             <MessageSquare className="h-4 w-4 text-gray-600 dark:text-gray-400" />
             <span className="text-sm">{result._count.comments}</span>
           </div>
-          <div className="flex items-center gap-1">
+          {/* <div className="flex items-center gap-1">
             <ThumbsUp className="h-4 w-4 text-gray-600 dark:text-gray-400" />
             <span className="text-sm">{result._count.likes}</span>
-          </div>
+          </div> */}
         </div>
 
         <Link

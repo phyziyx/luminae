@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
       id: true,
       title: true,
       content: true,
+      image: true,
       createdAt: true,
       updatedAt: true,
       _count: {

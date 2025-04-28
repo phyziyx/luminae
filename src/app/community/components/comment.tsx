@@ -1,7 +1,7 @@
 "use client";
 
 import { MarkdownRenderer } from "./markdown-renderer";
-import CommentReplies from "./comment-replies";
+// import CommentReplies from "./comment-replies";
 import { PostComment } from "@/lib/types";
 import { useMemo, useState } from "react";
 import { authClient } from "@/lib/auth/auth-client";
@@ -182,7 +182,7 @@ export default function Comment({
         )} */}
 
         {/* Replies */}
-        <CommentReplies replies={null} />
+        {/* <CommentReplies deleteComment={deleteComment} replies={null} /> */}
       </div>
     </div>
   );
