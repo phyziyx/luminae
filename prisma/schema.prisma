@@ -36,7 +36,7 @@ model Session {
 
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("Session")
+  @@map("session")
 }
 
 model Account {
@@ -57,7 +57,7 @@ model Account {
 
   User User @relation(fields: [userId], references: [id])
 
-  @@map("Account")
+  @@map("account")
 }
 
 model User {
@@ -86,7 +86,7 @@ model User {
   profile         UserProfile?
   bookmarkedPosts Post[]         @relation("UserBookmarkedPosts")
 
-  @@map("User")
+  @@map("user")
 }
 
 model Verification {
@@ -97,7 +97,7 @@ model Verification {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  @@map("Verification")
+  @@map("verification")
 }
 
 model AgencyMember {
@@ -115,7 +115,7 @@ model AgencyMember {
 
   @@index([email])
   @@index([agencyId])
-  @@map("AgencyMember")
+  @@map("agencymember")
 }
 
 model Permission {
@@ -133,7 +133,7 @@ model Permission {
 
   @@index([agencyMemberId])
   @@index([workspaceId])
-  @@map("Permission")
+  @@map("permission")
 }
 
 model Agency {
@@ -164,7 +164,7 @@ model Agency {
   updatedAt DateTime @updatedAt
 
   @@index([id])
-  @@map("Agency")
+  @@map("agency")
 }
 
 model Workspace {
@@ -181,7 +181,7 @@ model Workspace {
   updatedAt DateTime @updatedAt
 
   @@index([agencyId])
-  @@map("Workspace")
+  @@map("workspace")
 }
 
 enum ClientStatus {
@@ -211,7 +211,7 @@ model Client {
   tickets Ticket[]
 
   @@index([agencyId])
-  @@map("Client")
+  @@map("client")
 }
 
 enum TicketTag {
@@ -232,7 +232,7 @@ model Lane {
 
   @@index([id])
   @@index([workspaceId])
-  @@map("Lane")
+  @@map("lane")
 }
 
 model Ticket {
@@ -256,7 +256,7 @@ model Ticket {
 
   @@index([clientId])
   @@index([assigneeUserId])
-  @@map("Ticket")
+  @@map("ticket")
 }
 
 enum InvitationStatus {
@@ -279,7 +279,7 @@ model Invitation {
 
   @@index([email])
   @@index([agencyId])
-  @@map("Invitation")
+  @@map("invitation")
 }
 
 model Notification {
@@ -296,7 +296,7 @@ model Notification {
   updatedAt DateTime @updatedAt // Last update date of the notification
 
   @@index([userId])
-  @@map("Notification")
+  @@map("notification")
 }
 
 enum FeatureCode {
@@ -320,7 +320,7 @@ model Package {
   subscriptions Subscription[] // Subscriptions for the package
 
   @@index([id])
-  @@map("Package")
+  @@map("package")
 }
 
 model Feature {
@@ -333,7 +333,7 @@ model Feature {
 
   package Package @relation(fields: [packageId], references: [id])
 
-  @@map("Feature")
+  @@map("feature")
 }
 
 enum SubscriptionStatus {
@@ -368,7 +368,7 @@ model Subscription {
   @@index([agencyId])
   @@index([stripeCustomerId])
   @@index([stripeSubscriptionId])
-  @@map("Subscription")
+  @@map("subscription")
 }
 
 model Category {
@@ -379,7 +379,7 @@ model Category {
 
   posts Post[]
 
-  @@map("Category")
+  @@map("category")
 }
 
 model Tag {
@@ -388,7 +388,7 @@ model Tag {
 
   posts PostTag[]
 
-  @@map("Tag")
+  @@map("tag")
 }
 
 model PostTag {
@@ -400,7 +400,7 @@ model PostTag {
 
   @@id([postId, tagId])
   @@index([postId, tagId])
-  @@map("PostTag")
+  @@map("posttag")
 }
 
 model Post {
@@ -424,7 +424,7 @@ model Post {
   bookmarkedBy User[] @relation("UserBookmarkedPosts")
 
   @@index([id])
-  @@map("Post")
+  @@map("post")
 }
 
 model Comment {
@@ -444,7 +444,7 @@ model Comment {
   deletedAt DateTime?
 
   @@index([id])
-  @@map("Comment")
+  @@map("comment")
 }
 
 model UserComment {
@@ -457,7 +457,7 @@ model UserComment {
   @@id([userId, commentId])
   @@index([userId])
   @@index([commentId])
-  @@map("UserComment")
+  @@map("usercomment")
 }
 
 model AgencyComment {
@@ -470,7 +470,7 @@ model AgencyComment {
   @@id([agencyId, commentId])
   @@index([agencyId])
   @@index([commentId])
-  @@map("AgencyComment")
+  @@map("agencycomment")
 }
 
 enum LikeType {
@@ -491,7 +491,7 @@ model Likes {
 
   @@id([userId, postId])
   @@index([userId, postId])
-  @@map("Likes")
+  @@map("likes")
 }
 
 model CommentLikes {
@@ -504,7 +504,7 @@ model CommentLikes {
 
   @@id([userId, commentId])
   @@index([userId, commentId])
-  @@map("CommentLikes")
+  @@map("commentlikes")
 }
 
 model UserPost {
@@ -517,7 +517,7 @@ model UserPost {
   @@id([userId, postId])
   @@index([userId])
   @@index([postId])
-  @@map("UserPost")
+  @@map("userpost")
 }
 
 model AgencyPost {
@@ -530,7 +530,7 @@ model AgencyPost {
   @@id([agencyId, postId])
   @@index([agencyId])
   @@index([postId])
-  @@map("AgencyPost")
+  @@map("agencypost")
 }
 
 model Profile {
@@ -547,7 +547,7 @@ model Profile {
   updatedAt DateTime @updatedAt
 
   @@index([id])
-  @@map("Profile")
+  @@map("profile")
 }
 
 model UserProfile {
@@ -559,7 +559,7 @@ model UserProfile {
 
   @@id([userId, profileId])
   @@index([userId, profileId])
-  @@map("UserProfile")
+  @@map("userprofile")
 }
 
 model AgencyProfile {
@@ -571,5 +571,5 @@ model AgencyProfile {
 
   @@id([agencyId, profileId])
   @@index([agencyId, profileId])
-  @@map("AgencyProfile")
+  @@map("agencyprofile")
 }

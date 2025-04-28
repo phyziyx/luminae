@@ -629,15 +629,15 @@ class AgencyManager {
         COALESCE(p.postCount, 0) AS postCount,
         COALESCE(c.commentCount, 0) AS commentCount,
         (COALESCE(p.postCount, 0) * 2) + (COALESCE(c.commentCount, 0) * 1.5) AS score
-    FROM Agency a
+    FROM agency a
     LEFT JOIN (
         SELECT agencyId, COUNT(*) AS postCount
-        FROM AgencyPost
+        FROM agencypost
         GROUP BY agencyId
     ) p ON p.agencyId = a.id
     LEFT JOIN (
         SELECT agencyId, COUNT(*) AS commentCount
-        FROM AgencyComment
+        FROM agencycomment
         GROUP BY agencyId
     ) c ON c.agencyId = a.id
     ORDER BY score DESC
