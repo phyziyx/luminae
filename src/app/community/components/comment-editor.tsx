@@ -7,12 +7,15 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdateCommentSchema, updateCommentSchema } from "@/lib/forms";
 import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
+import { InfiniteData } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
 import { useTranslations } from "next-intl";
 import { useCallback } from "react";
-import getQueryClient from "@/lib/react-query";
+import getQueryClient, {
+  queryKeys,
+  updateInfiniteQueryData,
+} from "@/lib/react-query";
 import onUpdateComment from "@/actions/update-comment";
 
 export default function CommentEditor({
@@ -62,14 +65,19 @@ export default function CommentEditor({
 
         setEditing(false);
 
-        // queryClient.setQueryData(
-        //   queryKeys.community.postComments(postId),
-        //   () => {
-        //     queryClient.invalidateQueries({
-        //       queryKey: queryKeys.community.postComments(postId),
-        //     });
-        //   }
-        // );
+        queryClient.setQueryData<InfiniteData<PostComment>>(
+          queryKeys.community.postComments(comment.postId),
+          (oldData) => {
+            if (!oldData) return oldData;
+
+            return updateInfiniteQueryData<PostComment>(oldData, (c) => {
+              return {
+                ...c,
+                content: c.id === comment.id ? values.content : c.content,
+              };
+            });
+          }
+        );
       } catch (err) {
         toast({
           title: "Failed to update comment",
@@ -80,7 +88,7 @@ export default function CommentEditor({
         console.log(err);
       }
     },
-    [form, toast, setEditing]
+    [form, toast, setEditing, queryClient, comment]
   );
 
   return (
