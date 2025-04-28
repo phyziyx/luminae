@@ -39,8 +39,8 @@ class PostManager {
       COUNT(CASE WHEN l.type = 'LIKE' THEN 1 END) AS "likeCount",
       COUNT(CASE WHEN l.type = 'DISLIKE' THEN 1 END) AS "dislikeCount",
       (COUNT(CASE WHEN l.type = 'LIKE' THEN 1 END) - COUNT(CASE WHEN l.type = 'DISLIKE' THEN 1 END)) AS score
-      FROM Post p
-      LEFT JOIN Likes l ON l.postId = p.id
+      FROM post p
+      LEFT JOIN likes l ON l.postId = p.id
       WHERE p.deletedAt IS NULL
       GROUP BY p.id
       ORDER BY score DESC
