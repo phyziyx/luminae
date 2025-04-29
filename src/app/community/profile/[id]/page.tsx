@@ -1,10 +1,10 @@
 import ProfileHeader from "../components/profile-header";
 import ProfileInfo from "../components/profile-info";
-// import StatsOverview from "../components/stats-overview";
-// import BadgesSection from "../components/badges-section";
+import StatsOverview from "../components/stats-overview";
+import BadgesSection from "../components/badges-section";
 import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth/auth";
-import { CommunityProfile as ICommunityProfile } from "@/lib/types";
+import { CommunityProfileWithStats } from "@/lib/types";
 import EditProfile from "../components/edit-profile";
 import AgencyManager from "@/lib/managers/agencyManager";
 
@@ -118,11 +118,19 @@ function CommunityProfile({
   profileData,
   isOwner,
 }: {
-  profileData: ICommunityProfile;
+  profileData: CommunityProfileWithStats;
   isOwner: boolean;
 }) {
-  const { profileImage, bannerImage, name, title, tagline, isAgency, content } =
-    profileData;
+  const {
+    profileImage,
+    bannerImage,
+    name,
+    title,
+    tagline,
+    isAgency,
+    content,
+    stats,
+  } = profileData;
 
   return (
     <>
@@ -154,10 +162,37 @@ function CommunityProfile({
         </div>
 
         {/* RIGHT SIDEBAR */}
-        {/* <div className="space-y-8">
+        <div className="space-y-8">
           <StatsOverview stats={stats} />
-          <BadgesSection badges={badges} />
-        </div> */}
+          <BadgesSection
+            badges={[
+              {
+                id: 1,
+                name: isAgency ? "Top Agency" : "Top Contributor",
+                icon: "Award",
+                color: "blue",
+              },
+              {
+                id: 2,
+                name: isAgency ? "Content Expert" : "Helpful Member",
+                icon: "ThumbsUp",
+                color: "green",
+              },
+              {
+                id: 3,
+                name: isAgency ? "Community Partner" : "Rising Star",
+                icon: "Star",
+                color: "amber",
+              },
+              {
+                id: 4,
+                name: isAgency ? "Verified Business" : "Problem Solver",
+                icon: "CheckCircle",
+                color: "indigo",
+              },
+            ]}
+          />
+        </div>
       </div>
     </>
   );

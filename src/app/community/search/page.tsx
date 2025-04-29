@@ -75,6 +75,7 @@ export default function SearchPage() {
     isError,
     hasNextPage,
     fetchNextPage,
+    isLoading,
     isFetching,
     isFetchingNextPage,
     refetch: refetchSearch,
@@ -137,6 +138,7 @@ export default function SearchPage() {
           fetchNextPage={fetchNextPage}
           isPending={isPending}
           isError={isError}
+          isLoading={isLoading}
           isFetching={isFetching}
           isFetchingNextPage={isFetchingNextPage}
         />

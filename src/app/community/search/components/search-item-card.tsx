@@ -25,7 +25,7 @@ const SearchItemCard = memo(function SearchItemCard({
         </div>
 
         <Link
-          href={`community/${result.category.name}/post/${result.id}`}
+          href={`/community/${result.category.name}/${result.id}`}
           className="group"
         >
           <h3 className="mb-2 text-xl font-bold text-gray-800 dark:text-gray-100 group-hover:text-primary dark:group-hover:text-primary-light transition-colors">
@@ -58,7 +58,7 @@ const SearchItemCard = memo(function SearchItemCard({
         </div>
 
         <Link
-          href={`/post/${result.id}`}
+          href={`/community/${result.category.name}/${result.id}`}
           className="text-sm font-medium text-primary dark:text-primary-light hover:underline"
         >
           Read More

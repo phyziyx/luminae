@@ -11,13 +11,13 @@ export default function CommunityUser() {
         {t("COMMUNITY_FORUM.WELCOME")}
       </h2>
       <p className="text-lg mb-6 text-blue-700 dark:text-slate-100">
-        {t("COMMUNITY_FORUM.COMING_SOON")}
+        {t("COMMUNITY_FORUM.JOINING_MESSAGE")}
       </p>
       <p className="text-blue-600 dark:text-slate-100">
-        {t("COMMUNITY_FORUM.WORKING_HARD")}
+        {t("COMMUNITY_FORUM.DIVE_IN")}
       </p>
-      <Link href="/">
-        <Button className="mt-2">{t("BUTTONS.BACK_TO_HOME")}</Button>
+      <Link href="/community">
+        <Button className="mt-2">{t("BUTTONS.EXPLORE_COMMUNITY")}</Button>
       </Link>
     </div>
   );

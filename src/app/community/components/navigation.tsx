@@ -138,25 +138,6 @@ export default function CommunityNavbar() {
               </NavigationMenuList>
             </NavigationMenu>
           </nav>
-
-          {/* Right side icons: View Profile, Create Post, etc. */}
-          <div className="flex items-center gap-4">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    href="/community/profile"
-                    className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                  >
-                    <UserIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>View Profile</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
         </div>
 
         {/* Mobile Menu (Sheet) */}
@@ -236,6 +217,25 @@ export default function CommunityNavbar() {
 
         {/* Mode Toggle (always visible on the far right) */}
         <div className="flex items-center md:ml-4">
+          {/* Right side icons: View Profile, Create Post, etc. */}
+          <div className="flex items-center gap-4">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href="/community/profile"
+                    className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  >
+                    <UserIcon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>View Profile</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
