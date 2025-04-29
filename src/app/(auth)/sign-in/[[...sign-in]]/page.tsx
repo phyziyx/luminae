@@ -28,7 +28,7 @@ import { useForm } from "react-hook-form";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { useRouter } from "next/navigation";
 
 const getEmailSchema = () =>
@@ -106,6 +106,11 @@ export default function SignInPage() {
                   variant="outline"
                   type="button"
                   disabled={isPending}
+                  onClick={() => {
+                    authClient.signIn.social({
+                      provider: "google",
+                    });
+                  }}
                 >
                   {isPending ? (
                     <Icons.spinner className="size-4 animate-spin" />

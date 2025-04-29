@@ -5,14 +5,10 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getTranslations } from "next-intl/server";
 import AgencyDetails from "../../components/agency-details/agency-details";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
 const Settings = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   const t = await getTranslations();

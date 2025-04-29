@@ -9,8 +9,7 @@ import CreateWorkspaceCard from "./components/create-workspace-card";
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import { isAgencyAdmin } from "@/lib/utils";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
 const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
   const agencyMember = await AgencyManager.findUserAgency(userEmail);
@@ -63,10 +62,7 @@ const WorkspacesList = async ({ userEmail }: { userEmail: string }) => {
 };
 
 const Workspaces = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   const t = await getTranslations();

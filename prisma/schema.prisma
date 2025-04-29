@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  // output   = "../src/generated/prisma/client"
 }
 
 datasource db {
@@ -34,6 +35,8 @@ model Session {
   updatedAt DateTime @updatedAt
 
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
 }
 
 model Account {
@@ -48,10 +51,13 @@ model Account {
   scope                 String?
   idToken               String?
   password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   User User @relation(fields: [userId], references: [id])
+
+  @@map("account")
 }
 
 model User {
@@ -68,11 +74,19 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Notification  Notification[]
-  AgencyMembers AgencyMember?
-  Ticket        Ticket[]
-  Session       Session[]
-  Account       Account[]
+  notifications   Notification[]
+  agencyMember    AgencyMember?
+  tickets         Ticket[]
+  session         Session[]
+  account         Account[]
+  comments        UserComment[]
+  likes           Likes[]
+  commentLikes    CommentLikes[]
+  posts           UserPost[]
+  profile         UserProfile?
+  bookmarkedPosts Post[]         @relation("UserBookmarkedPosts")
+
+  @@map("user")
 }
 
 model Verification {
@@ -82,6 +96,8 @@ model Verification {
   expiresAt  DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  @@map("verification")
 }
 
 model AgencyMember {
@@ -99,6 +115,7 @@ model AgencyMember {
 
   @@index([email])
   @@index([agencyId])
+  @@map("agencymember")
 }
 
 model Permission {
@@ -116,6 +133,7 @@ model Permission {
 
   @@index([agencyMemberId])
   @@index([workspaceId])
+  @@map("permission")
 }
 
 model Agency {
@@ -133,16 +151,20 @@ model Agency {
   state   String
   country String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   agencyMembers AgencyMember[]
   workspaces    Workspace[]
   invitations   Invitation[]
   clients       Client[]
   subscription  Subscription?
+  posts         AgencyPost[]
+  comments      AgencyComment[]
+  profile       AgencyProfile?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([id])
+  @@map("agency")
 }
 
 model Workspace {
@@ -151,14 +173,15 @@ model Workspace {
   name        String // Name of the workspace
   description String @db.Text // Description of the workspace
 
+  agency      Agency       @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  permissions Permission[]
+  lane        Lane[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  agency      Agency       @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  permissions Permission[]
-  Lane        Lane[]
-
   @@index([agencyId])
+  @@map("workspace")
 }
 
 enum ClientStatus {
@@ -188,6 +211,7 @@ model Client {
   tickets Ticket[]
 
   @@index([agencyId])
+  @@map("client")
 }
 
 enum TicketTag {
@@ -197,42 +221,42 @@ enum TicketTag {
 }
 
 model Lane {
-  id     String @id
-  name   String
-  order  Int
-  colour String @db.VarChar(6)
-
+  id          String @id
+  name        String
+  order       Int
+  colour      String @db.VarChar(6)
   workspaceId String
-  Workspace   Workspace @relation(fields: [workspaceId], references: [id])
 
-  Tickets Ticket[]
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  tickets   Ticket[]
 
   @@index([id])
   @@index([workspaceId])
+  @@map("lane")
 }
 
 model Ticket {
-  id          String    @id @default(uuid()) // UUIDv7 for ticket ID
-  title       String // Title of the ticket
-  description String    @db.Text // Description of the ticket
-  value       Int // Value of the ticket (in currency)
-  open        Boolean // Indicates if the ticket is open or closed
-  tag         TicketTag // Tag for the ticket
-  order       Int // Order of the ticket in the lane
+  id             String    @id @default(uuid()) // UUIDv7 for ticket ID
+  title          String // Title of the ticket
+  description    String    @db.Text // Description of the ticket
+  value          Int // Value of the ticket (in currency)
+  open           Boolean // Indicates if the ticket is open or closed
+  tag            TicketTag // Tag for the ticket
+  order          Int // Order of the ticket in the lane
+  clientId       String? // Client ID
+  laneId         String
+  assigneeUserId String? // User ID
+
+  client       Client? @relation(fields: [clientId], references: [id])
+  assigneeUser User?   @relation(fields: [assigneeUserId], references: [id])
+  lane         Lane    @relation(fields: [laneId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  clientId String? // Client ID
-  Client   Client? @relation(fields: [clientId], references: [id])
-
-  assigneeUserId String? // User ID
-  assigneeUser   User?   @relation(fields: [assigneeUserId], references: [id])
-  Lane           Lane    @relation(fields: [laneId], references: [id])
-  laneId         String
-
   @@index([clientId])
   @@index([assigneeUserId])
+  @@map("ticket")
 }
 
 enum InvitationStatus {
@@ -248,13 +272,14 @@ model Invitation {
   role     Role // Role of the user
   status   InvitationStatus @default(PENDING) // Status of the invitation
 
+  agency Agency @relation(fields: [agencyId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  agency Agency @relation(fields: [agencyId], references: [id])
-
   @@index([email])
   @@index([agencyId])
+  @@map("invitation")
 }
 
 model Notification {
@@ -264,15 +289,14 @@ model Notification {
   metadata     String? // metadata for the notification
   resourceId   String? // Resource ID
   resourceType String? // Resource type
-
-  userId String // User ID
+  userId       String // User ID
+  user         User    @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now()) // Creation date of the notification
   updatedAt DateTime @updatedAt // Last update date of the notification
 
-  user User @relation(fields: [userId], references: [id])
-
   @@index([userId])
+  @@map("notification")
 }
 
 enum FeatureCode {
@@ -283,30 +307,33 @@ enum FeatureCode {
 }
 
 model Package {
-  id           String  @id @default(cuid()) // UUIDv7 for package ID
-  name         String // Unique name for the package
-  monthlyPrice Decimal // Monthly price for the package
-
-  stripePriceIdMonthly  String @default("")
-  stripeLinkMonthly     String @default("")
-  stripePriceIdAnnually String @default("")
-  stripeLinkAnnually    String @default("")
+  id                    String  @id @default(uuid()) // UUIDv7 for package ID
+  name                  String // Unique name for the package
+  monthlyPrice          Decimal // Monthly price for the package
+  retired               Boolean @default(false) // Indicates if the package is retired
+  stripePriceIdMonthly  String  @default("")
+  stripeLinkMonthly     String  @default("")
+  stripePriceIdAnnually String  @default("")
+  stripeLinkAnnually    String  @default("")
 
   features      Feature[] // Features included in the package
   subscriptions Subscription[] // Subscriptions for the package
-  retired       Boolean        @default(false) // Indicates if the package is retired
 
   @@index([id])
+  @@map("package")
 }
 
 model Feature {
-  id        String      @id @default(cuid()) // UUIDv7 for feature ID
+  id        String      @id @default(uuid()) // UUIDv7 for feature ID
   code      FeatureCode // Enum type for feature code
   name      String // Descriptive name for the feature
   maxLimit  Int? // Optional max limit, e.g., 3 team members
   hasAccess Boolean? // Optional, represents access (true/false)
   packageId String // Package ID that the feature belongs to
-  package   Package     @relation(fields: [packageId], references: [id])
+
+  package Package @relation(fields: [packageId], references: [id])
+
+  @@map("feature")
 }
 
 enum SubscriptionStatus {
@@ -320,27 +347,229 @@ enum SubscriptionStatus {
 }
 
 model Subscription {
-  id        String  @id @default(cuid()) // UUIDv7 for subscription ID
-  packageId String // Package ID
-  price     String? // Price of the package
-  agencyId  String  @unique() // Agency ID
-
+  id                   String             @id @default(uuid()) // UUIDv7 for subscription ID
+  packageId            String // Package ID
+  price                String? // Price of the package
+  agencyId             String             @unique() // Agency ID
   priceId              String // Price ID of the package
-  stripeSubscriptionId String   @unique // Stripe subscription ID
+  stripeSubscriptionId String             @unique // Stripe subscription ID
   stripeCustomerId     String // Stripe customer ID for tracking user on Stripe
   currentPeriodEnd     DateTime // End of the current billing period
-
-  active Boolean            @default(false) // Active status of the package
-  status SubscriptionStatus // Enum field to track subscription status
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  active               Boolean            @default(false) // Active status of the package
+  status               SubscriptionStatus // Enum field to track subscription status
 
   package Package @relation(fields: [packageId], references: [id])
   agency  Agency  @relation(fields: [agencyId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([id])
   @@index([agencyId])
   @@index([stripeCustomerId])
   @@index([stripeSubscriptionId])
+  @@map("subscription")
+}
+
+model Category {
+  id          String @id @default(uuid())
+  name        String @unique
+  title       String
+  description String
+
+  posts Post[]
+
+  @@map("category")
+}
+
+model Tag {
+  id   String @id @default(uuid())
+  name String @unique
+
+  posts PostTag[]
+
+  @@map("tag")
+}
+
+model PostTag {
+  postId String
+  tagId  String
+
+  post Post @relation(fields: [postId], references: [id])
+  tag  Tag  @relation(fields: [tagId], references: [id])
+
+  @@id([postId, tagId])
+  @@index([postId, tagId])
+  @@map("posttag")
+}
+
+model Post {
+  id         String  @id @default(uuid()) // UUIDv7 for post ID
+  title      String
+  content    String  @db.Text
+  categoryId String
+  image      String? @db.Text
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  comments    Comment[]
+  likes       Likes[]
+  category    Category     @relation(fields: [categoryId], references: [id])
+  userPosts   UserPost[]
+  agencyPosts AgencyPost[]
+  tags        PostTag[]
+
+  bookmarkedBy User[] @relation("UserBookmarkedPosts")
+
+  @@index([id])
+  @@map("post")
+}
+
+model Comment {
+  id             String          @id @default(uuid()) // UUIDv7 for comment ID
+  content        String          @db.Text
+  postId         String
+  post           Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parentId       String?
+  parent         Comment?        @relation("ParentChild", fields: [parentId], references: [id], onDelete: Cascade)
+  children       Comment[]       @relation("ParentChild")
+  likes          CommentLikes[]
+  userComments   UserComment[]
+  agencyComments AgencyComment[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([id])
+  @@map("comment")
+}
+
+model UserComment {
+  userId    String
+  commentId String
+
+  user    User    @relation(fields: [userId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
+
+  @@id([userId, commentId])
+  @@index([userId])
+  @@index([commentId])
+  @@map("usercomment")
+}
+
+model AgencyComment {
+  agencyId  String
+  commentId String
+
+  agency  Agency  @relation(fields: [agencyId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
+
+  @@id([agencyId, commentId])
+  @@index([agencyId])
+  @@index([commentId])
+  @@map("agencycomment")
+}
+
+enum LikeType {
+  LIKE
+  DISLIKE
+}
+
+model Likes {
+  userId String
+  postId String
+  type   LikeType
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([userId, postId])
+  @@index([userId, postId])
+  @@map("likes")
+}
+
+model CommentLikes {
+  userId    String
+  commentId String
+  type      LikeType
+
+  user    User    @relation(fields: [userId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@id([userId, commentId])
+  @@index([userId, commentId])
+  @@map("commentlikes")
+}
+
+model UserPost {
+  userId String
+  postId String
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  @@id([userId, postId])
+  @@index([userId])
+  @@index([postId])
+  @@map("userpost")
+}
+
+model AgencyPost {
+  agencyId String
+  postId   String
+
+  agency Agency @relation(fields: [agencyId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
+
+  @@id([agencyId, postId])
+  @@index([agencyId])
+  @@index([postId])
+  @@map("agencypost")
+}
+
+model Profile {
+  id      String  @id @default(uuid())
+  tagline String? @db.Text
+  content String? @db.Text
+  title   String? @db.Text
+  banner  String? @db.Text
+
+  userProfile   UserProfile?
+  agencyProfile AgencyProfile?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
+  @@map("profile")
+}
+
+model UserProfile {
+  userId    String @unique
+  profileId String @unique
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@id([userId, profileId])
+  @@index([userId, profileId])
+  @@map("userprofile")
+}
+
+model AgencyProfile {
+  agencyId  String @unique
+  profileId String @unique
+
+  agency  Agency  @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@id([agencyId, profileId])
+  @@index([agencyId, profileId])
+  @@map("agencyprofile")
 }

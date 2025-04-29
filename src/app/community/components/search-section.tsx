@@ -1,0 +1,88 @@
+"use client";
+
+import { Search } from "lucide-react";
+import { useDeferredValue, useState } from "react";
+import NextForm from "next/form";
+
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+
+const categories = [
+  "All Categories",
+  "Design",
+  "Development",
+  "Marketing",
+  "Business",
+  "Technology",
+  "Lifestyle",
+];
+
+export default function SearchSection() {
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const deferredSearchTerm = useDeferredValue(searchTerm);
+
+  return (
+    <section className="mb-12 rounded-xl bg-gradient-to-r from-blue-50 to-white dark:from-gray-800 dark:to-gray-900 p-6 md:p-8 shadow-soft">
+      <div className="mb-4 text-center">
+        <h2 className="mb-2 text-2xl font-bold text-gray-800 dark:text-gray-100 sm:text-3xl">
+          {"Find What You're Looking For"}
+        </h2>
+        <p className="text-gray-600 dark:text-gray-300">
+          Search through{" "}
+          <span className="text-primary dark:text-primary-light font-medium">
+            thousands of posts
+          </span>{" "}
+          from our community members
+        </p>
+      </div>
+      <NextForm action="/community/search">
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500 dark:text-gray-400" />
+            <Input
+              name="query"
+              value={deferredSearchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search posts, topics, or keywords..."
+              className="pl-10 border-gray-200 dark:border-gray-700 focus-visible:ring-primary dark:focus-visible:ring-primary-light bg-white dark:bg-gray-800 dark:text-gray-100"
+            />
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto border-primary text-primary dark:border-primary-light dark:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10"
+              >
+                Filter by Category
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>Categories</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                {categories.map((category) => (
+                  <DropdownMenuItem key={category}>{category}</DropdownMenuItem>
+                ))}
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button
+            type="submit"
+            className="w-full sm:w-auto bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-white dark:hover:bg-primary-light/90 shadow-md hover:shadow-lg transition-all"
+          >
+            Search
+          </Button>
+        </div>
+      </NextForm>
+    </section>
+  );
+}

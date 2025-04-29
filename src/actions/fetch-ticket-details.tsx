@@ -3,10 +3,7 @@
 import prisma from "@/lib/db";
 
 export default async function fetchTicketDetails(ticketId: string) {
-  // const session = await auth.api.getSession({
-  //   headers: await headers(),
-  // });
-
+  // const session = await getSession();
   // const user = session?.user;
 
   // let error = "An error occurred while saving the workspace information";

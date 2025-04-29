@@ -9,10 +9,9 @@ import { getTranslations } from "next-intl/server";
 
 import { Suspense } from "react";
 import FallbackSpinner from "@/components/site/fallback-spinner";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth/auth";
 
-const t = await getTranslations({ locale: "en" });
+const t = await getTranslations();
 
 const TeamList = async ({ agencyId }: { agencyId: string }) => {
   const members = await AgencyManager.findAgencyMembers(agencyId);
@@ -28,10 +27,7 @@ const TeamList = async ({ agencyId }: { agencyId: string }) => {
 };
 
 const Team = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

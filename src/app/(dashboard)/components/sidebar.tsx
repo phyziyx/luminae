@@ -154,6 +154,11 @@ const data: NavData = {
       url: "/feedback",
       icon: SendIcon,
     },
+    {
+      title: "Community",
+      url: "/community",
+      icon: CompassIcon,
+    },
   ],
 };
 

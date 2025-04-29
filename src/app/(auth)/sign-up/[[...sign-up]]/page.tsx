@@ -29,7 +29,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { useToast } from "@/hooks/use-toast";
 import { redirect } from "next/navigation";
 
@@ -134,6 +134,11 @@ export default function SignUpPage() {
                   variant="outline"
                   type="button"
                   disabled={isPending}
+                  onClick={() => {
+                    authClient.signIn.social({
+                      provider: "google",
+                    });
+                  }}
                 >
                   {isPending ? (
                     <Icons.spinner className="size-4 animate-spin" />

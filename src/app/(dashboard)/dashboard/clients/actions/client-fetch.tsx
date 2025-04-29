@@ -1,15 +1,11 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth/auth";
 import ClientManager from "@/lib/managers/clientManager";
-import { headers } from "next/headers";
 
 const fetchClientDetails = async (clientId: string) => {
   // Ensure the user is authenticated
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

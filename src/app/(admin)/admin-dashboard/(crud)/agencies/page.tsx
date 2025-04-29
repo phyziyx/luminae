@@ -6,8 +6,7 @@ import { DataTable } from "./components/data-table";
 import { AgencyData, columns } from "./components/columns";
 import prisma from "@/lib/db";
 import { getTranslations } from "next-intl/server";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth/auth";
 
 const t = await getTranslations({ locale: "en" });
 
@@ -30,10 +29,7 @@ const fetchAgencies = async (): Promise<AgencyData[]> => {
 };
 
 const AgencyPage = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

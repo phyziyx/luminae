@@ -21,8 +21,8 @@ class KpiManager {
     const openTicketsCount = await prisma.ticket.count({
       where: {
         open: true,
-        Lane: {
-          Workspace: {
+        lane: {
+          workspace: {
             agencyId,
           },
         },

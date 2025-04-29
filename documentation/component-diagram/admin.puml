@@ -1,4 +1,4 @@
-@startuml
+@startuml admin
 component "Platform Admin Dashboard" as PlatformAdmin
 
 package "Platform Admin Dashboard" {
@@ -12,7 +12,6 @@ package "Platform Admin Dashboard" {
 database "Database" as DB
 
 package "External Services" {
-  component "Clerk" as Clerk
   component "Stripe" as Stripe
 }
 
@@ -23,7 +22,6 @@ PlatformAdmin ..(0-- NotificationManagement : Manages
 PlatformAdmin ..(0-- UserManagement : Manages
 
 Authentication --(0-- DB : Fetch/Store Data
-Authentication --(0-- Clerk : Fetch/Store Data
 AgencyManagement --(0-- DB : Fetch/Store Data
 SubscriptionManagement --(0-- DB : Fetch/Store Data
 SubscriptionManagement --(0-- Stripe : Fetch Package Details
