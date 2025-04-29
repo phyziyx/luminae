@@ -22,7 +22,7 @@ export default function ProfileHeader({
         {/* Banner Image */}
         <div className="relative h-48 w-full sm:h-64 md:h-80 z-0">
           <Image
-            src={bannerImage || "/banner_placeholder.webp"}
+            src={bannerImage || "/assets/banner_placeholder.webp"}
             alt="Profile banner"
             fill
             className="object-cover"
@@ -36,7 +36,7 @@ export default function ProfileHeader({
           <Avatar
             profileImage={profileImage ?? ""}
             name={name}
-            className="h-32 w-32 border-4 border-white dark:border-gray-900 shadow-lg sm:h-36 sm:w-36"
+            className="h-32 w-32 border-4 bg-white/90 text-6xl border-white dark:border-gray-900 shadow-lg sm:h-36 sm:w-36"
           />
         </div>
 

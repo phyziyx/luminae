@@ -10,7 +10,6 @@ export default function SearchResultsList({
   isFetching,
   hasNextPage,
   fetchNextPage,
-  isPending,
   isError,
   isFetchingNextPage,
   searchQuery,
@@ -28,7 +27,7 @@ export default function SearchResultsList({
     return null;
   }
 
-  if (isPending) {
+  if (isFetching) {
     // Fetching for the first time...
     return <LoadingSpinner className="text-primary" />;
   }

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 interface AvatarProps {
   profileImage: string;
-  name?: string; // allow it to be optional
+  name?: string;
   className?: string;
 }
 

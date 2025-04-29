@@ -82,16 +82,12 @@ export default function CommunityNavbar() {
     startTransition(async () => {
       try {
         const dbCategories = await fetchCategoriesAction();
-        // Optionally sort or transform them here
         setCategories(dbCategories);
       } catch (err) {
         console.error("Failed to fetch categories:", err);
       }
     });
   }, []);
-
-  // Alternatively, we could do a normal async function in useEffect:
-  // (async () => { setCategories(await fetchCategoriesAction()) })();
 
   return (
     <header className="w-full border-b bg-muted dark:bg-muted/60 dark:border-gray-800 dark:bg-gray-950">
@@ -122,7 +118,7 @@ export default function CommunityNavbar() {
                   <NavigationMenuTrigger className="text-gray-700 dark:text-gray-300 hover:text-blue-500 flex items-center gap-1 bg-inherit">
                     Categories
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="w-[400px] lg:w-[500px] shadow-md rounded-md bg-white dark:bg-gray-950 mt-2 p-4">
+                  <NavigationMenuContent className="w-[400px] lg:w-[500px] shadow-md rounded-md bg-white dark:bg-gray-950 p-4">
                     <ul className="grid gap-3 md:grid-cols-2 lg:grid-cols-2">
                       {categories.map((category) => (
                         <li key={category.id}>
@@ -131,7 +127,6 @@ export default function CommunityNavbar() {
                             className="text-gray-700 dark:text-gray-300 hover:text-blue-500 transition-colors block px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
                           >
                             <Link href={`/community/${category.name}`}>
-                              {/* Display `title` or `name` */}
                               {category.title}
                             </Link>
                           </NavigationMenuLink>
