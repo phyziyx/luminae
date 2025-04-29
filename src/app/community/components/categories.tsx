@@ -63,11 +63,11 @@ const topContributors = [
 
 // Sample data for helpful pages
 const helpfulPages = [
-  { title: "Community Guidelines", url: "/guidelines" },
-  { title: "How to Format Your Posts", url: "/formatting" },
-  { title: "Frequently Asked Questions", url: "/faq" },
-  { title: "Contact Support", url: "/support" },
-  { title: "About Our Community", url: "/about" },
+  { title: "Community Guidelines", url: "/community/about#guidelines" },
+  { title: "How to Format Your Posts", url: "/community/about#faq" },
+  { title: "Frequently Asked Questions", url: "/community/about#faq" },
+  { title: "Contact Support", url: "/contact" },
+  { title: "About Our Community", url: "/community/about" },
 ];
 
 function CategorySection({

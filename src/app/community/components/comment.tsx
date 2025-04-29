@@ -128,7 +128,7 @@ export default function Comment({
           )}
         </div>
 
-        {!editing && (
+        {!editing && userId === comment?.userComments?.[0].userId && (
           <>
             <div className="mt-4 flex items-center gap-4">
               {/* <Button
