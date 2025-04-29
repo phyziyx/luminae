@@ -1,4 +1,4 @@
-import { Comment, Post } from "@/generated/prisma/client";
+import { Comment, Post } from "@prisma/client";
 import prisma from "../db";
 import { v7 } from "uuid";
 import {

@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Workspace } from "@/generated/prisma/client";
+import { Workspace } from "@prisma/client";
 import { WorkspaceButtons } from "./workspace-buttons";
 
 interface WorkspaceCardProps {

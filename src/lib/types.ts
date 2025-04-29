@@ -8,7 +8,7 @@ import {
   $Enums,
   Agency,
   Tag,
-} from "@/generated/prisma/client";
+} from "@prisma/client";
 
 export type TopRankedAgency = {
   id: number;

@@ -6,7 +6,7 @@ import {
   markAsReadAction,
 } from "@/actions/notifications";
 import { toast } from "@/hooks/use-toast";
-import { Notification } from "@/generated/prisma/client";
+import { Notification } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import type React from "react";
 import { createContext, useContext, useEffect, useMemo, useRef } from "react";

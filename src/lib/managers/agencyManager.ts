@@ -5,7 +5,7 @@ import {
   Permission,
   Role,
   Workspace,
-} from "@/generated/prisma/client";
+} from "@prisma/client";
 import prisma from "../db";
 import { v7 } from "uuid";
 import { isAgencyAdmin } from "../utils";

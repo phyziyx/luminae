@@ -1,4 +1,4 @@
-import { User } from "@/generated/prisma/client";
+import { User } from "@prisma/client";
 import prisma from "../db";
 import NotificationManager from "./notificationManager";
 import { auth } from "../auth/auth";
