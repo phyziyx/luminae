@@ -31,6 +31,14 @@ export type CommunityProfile = {
   title: string | null;
 };
 
+export type CommunityProfileWithStats = CommunityProfile & {
+  stats: {
+    posts: number;
+    comments: number;
+    likes: number;
+  };
+};
+
 export type CommentOwner =
   | {
       agencyId: string;

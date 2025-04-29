@@ -11,7 +11,6 @@ import { InfiniteData } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
 import { useTranslations } from "next-intl";
-import { useCallback } from "react";
 import getQueryClient, {
   queryKeys,
   updateInfiniteQueryData,
@@ -38,58 +37,55 @@ export default function CommentEditor({
     },
   });
 
-  const onSubmit = useCallback(
-    async (values: UpdateCommentSchema) => {
-      try {
-        const response = await onUpdateComment(values);
+  const onSubmit = async (values: UpdateCommentSchema) => {
+    try {
+      const response = await onUpdateComment(values);
 
-        if (response.error) {
-          toast({
-            title: "Failed to update comment",
-            description: response.error,
-            variant: "destructive",
-          });
-
-          return;
-        }
-
-        form.reset({
-          content: "",
-        });
-
-        toast({
-          title: "Comment update",
-          description: "Comment successfully updated.",
-          variant: "default",
-        });
-
-        setEditing(false);
-
-        queryClient.setQueryData<InfiniteData<PostComment>>(
-          queryKeys.community.postComments(comment.postId),
-          (oldData) => {
-            if (!oldData) return oldData;
-
-            return updateInfiniteQueryData<PostComment>(oldData, (c) => {
-              return {
-                ...c,
-                content: c.id === comment.id ? values.content : c.content,
-              };
-            });
-          }
-        );
-      } catch (err) {
+      if (response.error) {
         toast({
           title: "Failed to update comment",
-          description: "Please try again later.",
+          description: response.error,
           variant: "destructive",
         });
 
-        console.log(err);
+        return;
       }
-    },
-    [form, toast, setEditing, queryClient, comment]
-  );
+
+      form.reset({
+        content: "",
+      });
+
+      toast({
+        title: "Comment update",
+        description: "Comment successfully updated.",
+        variant: "default",
+      });
+
+      setEditing(false);
+
+      queryClient.setQueryData<InfiniteData<PostComment>>(
+        queryKeys.community.postComments(comment.postId),
+        (oldData) => {
+          if (!oldData) return oldData;
+
+          return updateInfiniteQueryData<PostComment>(oldData, (c) => {
+            return {
+              ...c,
+              content: c.id === comment.id ? values.content : c.content,
+            };
+          });
+        }
+      );
+    } catch (err) {
+      toast({
+        title: "Failed to update comment",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+
+      console.log(err);
+    }
+  };
 
   return (
     <Form {...form}>
