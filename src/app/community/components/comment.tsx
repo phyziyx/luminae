@@ -77,6 +77,14 @@ export default function Comment({
     );
   }, [comment.agencyComments, comment.userComments]);
 
+  const profileImage = useMemo(() => {
+    return (
+      comment.agencyComments[0]?.agency.agencyLogo ||
+      comment.userComments[0]?.user.image ||
+      ""
+    );
+  }, [comment.agencyComments, comment.userComments]);
+
   return (
     <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-soft">
       {/* Comment */}
@@ -85,7 +93,7 @@ export default function Comment({
           <div className="flex items-center gap-2">
             <Avatar
               name={commenterName}
-              profileImage={""}
+              profileImage={profileImage}
               className="h-8 w-8 text-xs"
             />
             <div>

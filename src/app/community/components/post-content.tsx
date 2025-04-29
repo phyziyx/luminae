@@ -106,7 +106,10 @@ export default function PostContent({
                     post.userPosts[0]?.user.name ||
                     post.agencyPosts[0]?.agency.name
                   }
-                  profileImage=""
+                  profileImage={
+                    post.userPosts[0]?.user.image ||
+                    post.agencyPosts[0]?.agency.agencyLogo
+                  }
                   className="h-8 w-8"
                 />
                 <Author
