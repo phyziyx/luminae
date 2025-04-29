@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +13,7 @@ import { ThumbsUp, ThumbsDown } from "lucide-react";
 
 export default function LikeDislikeCounter({
   isPending,
-  likes,
+  likes: initialLikes,
   isLikePending,
   handleLike,
   isLiked,
@@ -27,6 +28,34 @@ export default function LikeDislikeCounter({
   isDisliked: boolean;
   type: "comment" | "post";
 }) {
+  const [likes, setLikes] = useState(initialLikes);
+  const [liked, setLiked] = useState(isLiked);
+  const [disliked, setDisliked] = useState(isDisliked);
+
+  const handleLiveLike = () => {
+    if (liked) {
+      setLikes(likes - 1);
+      setLiked(false);
+    } else {
+      setLikes(disliked ? likes + 2 : likes + 1);
+      setLiked(true);
+      setDisliked(false);
+    }
+    handleLike("LIKE");
+  };
+
+  const handleLiveDislike = () => {
+    if (disliked) {
+      setLikes(likes + 1);
+      setDisliked(false);
+    } else {
+      setLikes(liked ? likes - 2 : likes - 1);
+      setDisliked(true);
+      setLiked(false);
+    }
+    handleLike("DISLIKE");
+  };
+
   return (
     <div className="flex items-center gap-2">
       <TooltipProvider>
@@ -39,23 +68,25 @@ export default function LikeDislikeCounter({
                 "h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10",
                 {
                   "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light":
-                    isLiked,
+                    liked,
                 }
               )}
               disabled={isPending || isLikePending}
-              onClick={() => handleLike("LIKE")}
+              onClick={handleLiveLike}
             >
               <ThumbsUp className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{isLiked ? `Unlike this ${type}` : `Like this ${type}`}</p>
+            <p>{liked ? `Unlike this ${type}` : `Like this ${type}`}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
+
       <span className="text-sm font-medium min-w-4 items-center text-center place-items-center place-content-center text-gray-700 dark:text-gray-300">
         {isLikePending ? <LoadingSpinner className="h-4 w-4" /> : likes}
       </span>
+
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -66,17 +97,17 @@ export default function LikeDislikeCounter({
                 "h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light hover:bg-primary/5 dark:hover:bg-primary-light/10",
                 {
                   "bg-primary/10 text-primary dark:bg-primary-light/20 dark:text-primary-light":
-                    isDisliked,
+                    disliked,
                 }
               )}
               disabled={isPending || isLikePending}
-              onClick={() => handleLike("DISLIKE")}
+              onClick={handleLiveDislike}
             >
               <ThumbsDown className="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>{isDisliked ? "Remove dislike" : "Dislike this comment"}</p>
+            <p>{disliked ? "Remove dislike" : "Dislike this comment"}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

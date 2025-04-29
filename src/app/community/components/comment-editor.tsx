@@ -13,7 +13,7 @@ import { LoadingSpinner } from "@/components/site/loading-spinner";
 import { useTranslations } from "next-intl";
 import getQueryClient, {
   queryKeys,
-  updateInfiniteQueryData,
+  // updateInfiniteQueryData,
 } from "@/lib/react-query";
 import onUpdateComment from "@/actions/update-comment";
 
@@ -63,17 +63,26 @@ export default function CommentEditor({
 
       setEditing(false);
 
-      queryClient.setQueryData<InfiniteData<PostComment>>(
+      queryClient.setQueryData<InfiniteData<{ items: PostComment[] }>>(
         queryKeys.community.postComments(comment.postId),
         (oldData) => {
           if (!oldData) return oldData;
 
-          return updateInfiniteQueryData<PostComment>(oldData, (c) => {
-            return {
-              ...c,
-              content: c.id === comment.id ? values.content : c.content,
-            };
-          });
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              items: page.items.map((c) =>
+                c.id === comment.id
+                  ? {
+                      ...c,
+                      content: values.content,
+                      updatedAt: new Date(), // optional: mark it as updated
+                    }
+                  : c
+              ),
+            })),
+          };
         }
       );
     } catch (err) {
