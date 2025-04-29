@@ -2,6 +2,7 @@
 
 import Logo from "@/components/logo";
 import { NotificationsPopover } from "@/components/notifications/notifications";
+import LoadingIndicator from "@/components/site/link-status";
 import ModeToggle from "@/components/site/mode-toggle";
 import { NavUser } from "@/components/site/nav-user";
 import { Button } from "@/components/ui/button";
@@ -375,9 +376,10 @@ const DashboardSidebar = ({
                             !isActive,
                         })}
                       >
-                        <Link href={item.url}>
+                        <Link href={item.url} className="">
                           <item.icon />
                           <span>{item.title}</span>
+                          <LoadingIndicator />
                         </Link>
                       </SidebarMenuButton>
                       {item.items?.length ? (
@@ -395,6 +397,7 @@ const DashboardSidebar = ({
                                   <SidebarMenuSubButton asChild>
                                     <Link href={subItem.url}>
                                       {subItem.title}
+                                      <LoadingIndicator />
                                     </Link>
                                   </SidebarMenuSubButton>
                                 </SidebarMenuSubItem>
@@ -420,6 +423,7 @@ const DashboardSidebar = ({
                       <Link href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
+                        <LoadingIndicator />
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

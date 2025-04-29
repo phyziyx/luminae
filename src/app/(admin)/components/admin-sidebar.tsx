@@ -1,6 +1,7 @@
 "use client";
 
 import Logo from "@/components/logo";
+import LoadingIndicator from "@/components/site/link-status";
 import ModeToggle from "@/components/site/mode-toggle";
 import {
   useSidebar,
@@ -164,6 +165,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
                         <Link href={item.url}>
                           <item.icon />
                           <span>{item.title}</span>
+                          <LoadingIndicator />
                         </Link>
                       </SidebarMenuButton>
                       {item.items?.length ? (
@@ -181,6 +183,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
                                   <SidebarMenuSubButton asChild>
                                     <Link href={subItem.url}>
                                       {subItem.title}
+                                      <LoadingIndicator />
                                     </Link>
                                   </SidebarMenuSubButton>
                                 </SidebarMenuSubItem>
@@ -206,6 +209,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
                       <Link href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
+                        <LoadingIndicator />
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
