@@ -89,20 +89,24 @@ export default function CommentsList({ postId }: { postId: string }) {
     [data]
   );
 
-  const groupedComments = useMemo(() => {
-    return Object.groupBy(comments, (comment) => comment.parentId || "null");
+  const filteredComments = useMemo(() => {
+    return comments?.filter((comment) => !comment.parentId) || [];
   }, [comments]);
 
-  const filteredComments = useMemo(() => {
-    return (
-      groupedComments["null"]?.map((comment) => {
-        return {
-          ...comment,
-          replies: groupedComments[comment.id] || [],
-        };
-      }) || []
-    );
-  }, [groupedComments]);
+  // const groupedComments = useMemo(() => {
+  //   return Object.groupBy(comments, (comment) => comment.parentId || "null");
+  // }, [comments]);
+
+  // const filteredComments = useMemo(() => {
+  //   return (
+  //     groupedComments["null"]?.map((comment) => {
+  //       return {
+  //         ...comment,
+  //         replies: groupedComments[comment.id] || [],
+  //       };
+  //     }) || []
+  //   );
+  // }, [groupedComments]);
 
   if (isPending) {
     return (

@@ -1,5 +1,5 @@
 import type React from "react";
-import { MessageSquare, ThumbsUp, FileText } from "lucide-react";
+import { MessageSquare, FileText } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface StatsOverviewProps {
@@ -26,13 +26,14 @@ export default function StatsOverview({ stats }: StatsOverviewProps) {
           value={stats.posts}
         />
 
-        <StatCard
+        {/* TODO */}
+        {/* <StatCard
           icon={
             <ThumbsUp className="h-5 w-5 text-primary dark:text-primary-light" />
           }
           label="Likes"
           value={stats.likes}
-        />
+        /> */}
 
         <StatCard
           icon={

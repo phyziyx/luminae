@@ -8,7 +8,7 @@ import {
   $Enums,
   Agency,
   Tag,
-} from "@/generated/prisma/client";
+} from "@prisma/client";
 
 export type TopRankedAgency = {
   id: number;
@@ -29,6 +29,14 @@ export type CommunityProfile = {
   tagline: string | null;
   content: string | null;
   title: string | null;
+};
+
+export type CommunityProfileWithStats = CommunityProfile & {
+  stats: {
+    posts: number;
+    comments: number;
+    likes: number;
+  };
 };
 
 export type CommentOwner =

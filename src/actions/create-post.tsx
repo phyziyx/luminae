@@ -2,6 +2,7 @@
 
 import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
+import { backendClient } from "@/lib/edgestore/edgestore";
 import { createPostSchema, CreatePostSchema } from "@/lib/forms";
 import PostManager from "@/lib/managers/postManager";
 
@@ -54,12 +55,53 @@ export default async function onCreatePost(values: CreatePostSchema) {
       )?.agencyId;
     }
 
+    const file = values.image as File | FileList | null;
+    let fileUrl: string | null = null;
+    if (file) {
+      const fileToStore =
+        file instanceof File ? file : file instanceof FileList ? file[0] : null;
+
+      if (fileToStore) {
+        const bytes = await fileToStore.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        const fileBlob = new Blob([buffer], { type: fileToStore.type });
+
+        try {
+          const response = await backendClient.publicFiles.upload({
+            content: {
+              blob: fileBlob,
+              extension: fileToStore.type,
+            },
+            options: {
+              manualFileName: undefined,
+              replaceTargetUrl: `post-${agencyId ? "agency" : "user"}`,
+              temporary: false,
+            },
+            ctx: {
+              userId: (agencyId ? agencyId : user.id) as string,
+              userRole: "visitor",
+            },
+            input: {
+              type: "post",
+            },
+          });
+
+          fileUrl = response.url;
+        } catch (uploadError) {
+          console.error("File upload failed:", uploadError);
+          error = "An error occurred while uploading the file.";
+          return { error };
+        }
+      }
+    }
+
     // We can now create the post!
     const post = await PostManager.create(
       {
         categoryId: category.id,
         content: values.content,
         title: values.title,
+        image: fileUrl,
       },
       {
         ...(agencyId ? { agencyId } : { userId: user.id }),

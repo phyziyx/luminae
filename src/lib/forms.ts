@@ -197,7 +197,7 @@ export const createPostSchema = z.object({
     .max(2048, "Content is too long")
     .trim(),
   image: z.instanceof(File).nullable(),
-  imagePreview: z.string().optional(),
+  // imagePreview: z.string().optional(),
   tags: tagsSchema.optional(),
   asAgency: z.boolean().optional(),
 });
@@ -236,8 +236,8 @@ export const communityProfileSchema = z.object({
     })
     .trim()
     .optional(),
-  profileImage: z.any().refine((val) => val.length !== 1, "File is required"),
-  bannerImage: z.any().refine((val) => val.length !== 1, "File is required"),
+  // profileImage: z.any().refine((val) => val.length !== 1, "File is required"),
+  // bannerImage: z.any().refine((val) => val.length !== 1, "File is required"),
   title: z
     .string()
     .min(4, {

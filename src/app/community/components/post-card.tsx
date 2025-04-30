@@ -6,12 +6,13 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { CategoryPost } from "@/lib/types";
 import { useMemo } from "react";
 import LikeDislikeCounter from "./like-dislike-counter";
-import { LikeType } from "@/generated/prisma/client";
+import { LikeType } from "@prisma/client";
 import { PostLikeSchema } from "@/lib/forms";
 import { useMutation } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth/auth-client";
 import Author from "./author";
 import DateFormatter from "./date-formatter";
+import Avatar from "@/components/site/avatar";
 
 export default function PostCard({ post }: { post: CategoryPost }) {
   const { isPending, data: session } = authClient.useSession();
@@ -61,9 +62,17 @@ export default function PostCard({ post }: { post: CategoryPost }) {
       <CardContent className="p-6">
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
+            {/* <div className="h-8 w-8 rounded-full bg-primary/10 dark:bg-primary-light/20 flex items-center justify-center text-primary dark:text-primary-light font-medium">
               {authorName.charAt(0)}
-            </div>
+            </div> */}
+            <Avatar
+              profileImage={
+                post.userPosts[0]?.user.image ||
+                post.agencyPosts[0]?.agency.agencyLogo
+              }
+              name={authorName}
+              className="h-8 w-8"
+            />
             <span className="text-sm text-gray-600 dark:text-gray-300 flex flex-row gap-2">
               <Author
                 name={authorName}

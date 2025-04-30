@@ -1,10 +1,12 @@
 import ProfileHeader from "../components/profile-header";
 import ProfileInfo from "../components/profile-info";
-// import StatsOverview from "../components/stats-overview";
-// import BadgesSection from "../components/badges-section";
+import StatsOverview from "../components/stats-overview";
+import BadgesSection from "../components/badges-section";
 import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth/auth";
-import { CommunityProfile as ICommunityProfile } from "@/lib/types";
+import { CommunityProfileWithStats } from "@/lib/types";
+import EditProfile from "../components/edit-profile";
+import AgencyManager from "@/lib/managers/agencyManager";
 
 const getProfileData = async (id: string) => {
   const isAgency = id.startsWith("a-");
@@ -12,7 +14,7 @@ const getProfileData = async (id: string) => {
 
   const data = {
     exists: false,
-    id,
+    id: idWithoutPrefix,
     name: "",
     title: "",
     profileImage: "",
@@ -56,9 +58,8 @@ const getProfileData = async (id: string) => {
       title: foundAgency.profile?.profile?.title || "",
       tagline: foundAgency.profile?.profile?.tagline || "",
       content: foundAgency.profile?.profile?.content || "",
-      profileImage:
-        foundAgency.agencyLogo || "/assets/profile_placeholder.webp",
-      bannerImage: "/assets/banner_placeholder.webp",
+      profileImage: foundAgency.agencyLogo || "",
+      bannerImage: foundAgency.profile?.profile?.banner || "",
       stats: {
         comments: foundAgency._count.comments ?? 0,
         likes: 0,
@@ -100,8 +101,8 @@ const getProfileData = async (id: string) => {
       title: foundUser.profile?.profile?.title || "",
       tagline: foundUser.profile?.profile?.tagline || "",
       content: foundUser.profile?.profile?.content || "",
-      profileImage: foundUser.image || "/assets/profile_placeholder.webp",
-      bannerImage: "/assets/banner_placeholder.webp",
+      profileImage: foundUser.image || "",
+      bannerImage: foundUser.profile?.profile?.banner || "",
       stats: {
         comments: foundUser._count.comments ?? 0,
         likes:
@@ -113,29 +114,39 @@ const getProfileData = async (id: string) => {
   }
 };
 
-// --------------
-// PROFILE COMPONENT
-// --------------
 function CommunityProfile({
   profileData,
+  isOwner,
 }: {
-  profileData: ICommunityProfile;
+  profileData: CommunityProfileWithStats;
   isOwner: boolean;
 }) {
-  const { profileImage, bannerImage, name, title, tagline, isAgency, content } =
-    profileData;
+  const {
+    profileImage,
+    bannerImage,
+    name,
+    title,
+    tagline,
+    isAgency,
+    content,
+    stats,
+  } = profileData;
 
   return (
     <>
       <ProfileHeader
+        id={profileData.id}
         profileImage={profileImage}
         bannerImage={bannerImage}
         name={name}
         isAgency={isAgency}
-        content={content ?? undefined}
-        tagline={tagline ?? undefined}
-        title={title ?? undefined}
-      />
+        content={content ?? ""}
+        tagline={tagline ?? ""}
+        title={title ?? ""}
+        myself={isOwner}
+      >
+        <EditProfile profileData={profileData} />
+      </ProfileHeader>
 
       <div className="mt-8 grid gap-8 md:grid-cols-3">
         {/* LEFT SECTION (Main Info) */}
@@ -151,30 +162,63 @@ function CommunityProfile({
         </div>
 
         {/* RIGHT SIDEBAR */}
-        {/* <div className="space-y-8">
+        <div className="space-y-8">
           <StatsOverview stats={stats} />
-          <BadgesSection badges={badges} />
-        </div> */}
+          <BadgesSection
+            badges={[
+              {
+                id: 1,
+                name: isAgency ? "Top Agency" : "Top Contributor",
+                icon: "Award",
+                color: "blue",
+              },
+              {
+                id: 2,
+                name: isAgency ? "Content Expert" : "Helpful Member",
+                icon: "ThumbsUp",
+                color: "green",
+              },
+              {
+                id: 3,
+                name: isAgency ? "Community Partner" : "Rising Star",
+                icon: "Star",
+                color: "amber",
+              },
+              {
+                id: 4,
+                name: isAgency ? "Verified Business" : "Problem Solver",
+                icon: "CheckCircle",
+                color: "indigo",
+              },
+            ]}
+          />
+        </div>
       </div>
     </>
   );
 }
 
-// --------------
-// PAGE WRAPPER
-// --------------
 export default async function ProfilePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const session = await getSession();
 
   const currentUserId = session?.user?.id ?? null;
-  const profileData = await getProfileData(params.id);
+  const profileData = await getProfileData(id);
   const isAgency = profileData.isAgency;
-  const isOwner =
+
+  let isOwner =
     !isAgency && !!currentUserId && currentUserId === profileData.id;
+
+  if (isAgency && session) {
+    const agencyMember = await AgencyManager.findUserAgency(session.user.email);
+    if (agencyMember) {
+      isOwner = agencyMember.agencyId === profileData.id;
+    }
+  }
 
   const fullProfileData = {
     ...profileData,

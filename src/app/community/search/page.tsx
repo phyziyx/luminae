@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ function useSearchQuery({
     queryFn: async ({ pageParam }) => {
       const response = await fetch(
         `/api/community/search?query=${query}&sort=${sort}` +
-          (pageParam ? `&cursor=${pageParam}` : "")
+        (pageParam ? `&cursor=${pageParam}` : "")
       );
       return response.json();
     },
@@ -75,6 +75,7 @@ export default function SearchPage() {
     isError,
     hasNextPage,
     fetchNextPage,
+    isLoading,
     isFetching,
     isFetchingNextPage,
     refetch: refetchSearch,
@@ -82,6 +83,12 @@ export default function SearchPage() {
     query: form.getValues().search,
     sort: sortOption,
   });
+
+  useEffect(() => {
+    if (searchQuery) {
+      refetchSearch();
+    }
+  }, [searchQuery, refetchSearch]);
 
   const handleSearch = useCallback(
     (data: SearchBarSchema) => {
@@ -105,7 +112,7 @@ export default function SearchPage() {
           className="mb-6 -ml-2 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary-light"
           asChild
         >
-          <Link href="/">
+          <Link href="/community">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Home
           </Link>
@@ -131,6 +138,7 @@ export default function SearchPage() {
           fetchNextPage={fetchNextPage}
           isPending={isPending}
           isError={isError}
+          isLoading={isLoading}
           isFetching={isFetching}
           isFetchingNextPage={isFetchingNextPage}
         />

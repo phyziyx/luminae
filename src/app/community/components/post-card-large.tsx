@@ -8,7 +8,7 @@ import LikeDislikeCounter from "./like-dislike-counter";
 import { useMemo } from "react";
 import { authClient } from "@/lib/auth/auth-client";
 import { PostLikeSchema } from "@/lib/forms";
-import { LikeType } from "@/generated/prisma/client";
+import { LikeType } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
 import { PostCategoryBadge } from "./post-category-badge";
 import Author from "./author";

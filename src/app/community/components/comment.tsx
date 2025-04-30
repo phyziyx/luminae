@@ -1,7 +1,7 @@
 "use client";
 
 import { MarkdownRenderer } from "./markdown-renderer";
-import CommentReplies from "./comment-replies";
+// import CommentReplies from "./comment-replies";
 import { PostComment } from "@/lib/types";
 import { useMemo, useState } from "react";
 import { authClient } from "@/lib/auth/auth-client";
@@ -77,6 +77,14 @@ export default function Comment({
     );
   }, [comment.agencyComments, comment.userComments]);
 
+  const profileImage = useMemo(() => {
+    return (
+      comment.agencyComments[0]?.agency.agencyLogo ||
+      comment.userComments[0]?.user.image ||
+      ""
+    );
+  }, [comment.agencyComments, comment.userComments]);
+
   return (
     <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-soft">
       {/* Comment */}
@@ -85,7 +93,7 @@ export default function Comment({
           <div className="flex items-center gap-2">
             <Avatar
               name={commenterName}
-              profileImage={""}
+              profileImage={profileImage}
               className="h-8 w-8 text-xs"
             />
             <div>
@@ -120,7 +128,7 @@ export default function Comment({
           )}
         </div>
 
-        {!editing && (
+        {!editing && userId === comment?.userComments?.[0].userId && (
           <>
             <div className="mt-4 flex items-center gap-4">
               {/* <Button
@@ -182,7 +190,7 @@ export default function Comment({
         )} */}
 
         {/* Replies */}
-        <CommentReplies replies={null} />
+        {/* <CommentReplies deleteComment={deleteComment} replies={null} /> */}
       </div>
     </div>
   );

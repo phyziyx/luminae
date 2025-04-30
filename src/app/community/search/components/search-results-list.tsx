@@ -8,9 +8,9 @@ import { WifiOff } from "lucide-react";
 export default function SearchResultsList({
   searchResults,
   isFetching,
+  isLoading,
   hasNextPage,
   fetchNextPage,
-  isPending,
   isError,
   isFetchingNextPage,
   searchQuery,
@@ -22,13 +22,14 @@ export default function SearchResultsList({
   isPending: boolean;
   isError: boolean;
   isFetchingNextPage: boolean;
+  isLoading: boolean;
   searchQuery: string;
 }) {
   if (!searchQuery) {
     return null;
   }
 
-  if (isPending) {
+  if (isLoading) {
     // Fetching for the first time...
     return <LoadingSpinner className="text-primary" />;
   }
@@ -40,6 +41,7 @@ export default function SearchResultsList({
 
   return (
     <InfiniteScrollContainer
+      className="flex flex-col gap-4"
       onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
     >
       {searchResults.map((result) => (

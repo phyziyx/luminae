@@ -51,7 +51,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 export default function CreatePostForm({ category }: { category: string }) {
   const router = useRouter();
+
   const [activeTab, setActiveTab] = useState("edit");
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const form = useForm<CreatePostSchema>({
     resolver: zodResolver(createPostSchema),
@@ -60,7 +62,6 @@ export default function CreatePostForm({ category }: { category: string }) {
       title: "",
       content: "",
       image: null,
-      imagePreview: "",
       tags: [],
       asAgency: false,
     },
@@ -145,10 +146,10 @@ export default function CreatePostForm({ category }: { category: string }) {
                 </p>
               )}
 
-              {form.getValues("imagePreview") && (
+              {imagePreview && (
                 <div className="mb-6 overflow-hidden rounded-md">
                   <Image
-                    src={form.getValues("imagePreview") || "/placeholder.svg"}
+                    src={imagePreview || "/placeholder.svg"}
                     alt="Post image"
                     className="w-full object-cover max-h-96"
                     width={1200}
@@ -230,10 +231,7 @@ export default function CreatePostForm({ category }: { category: string }) {
                                 field.onChange(file);
 
                                 if (file) {
-                                  form.setValue(
-                                    "imagePreview",
-                                    URL.createObjectURL(file)
-                                  );
+                                  setImagePreview(URL.createObjectURL(file));
                                 }
                               }}
                             />

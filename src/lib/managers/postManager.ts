@@ -1,4 +1,4 @@
-import { Comment, Post } from "@/generated/prisma/client";
+import { Comment, Post } from "@prisma/client";
 import prisma from "../db";
 import { v7 } from "uuid";
 import {
@@ -39,8 +39,8 @@ class PostManager {
       COUNT(CASE WHEN l.type = 'LIKE' THEN 1 END) AS "likeCount",
       COUNT(CASE WHEN l.type = 'DISLIKE' THEN 1 END) AS "dislikeCount",
       (COUNT(CASE WHEN l.type = 'LIKE' THEN 1 END) - COUNT(CASE WHEN l.type = 'DISLIKE' THEN 1 END)) AS score
-      FROM Post p
-      LEFT JOIN Likes l ON l.postId = p.id
+      FROM post p
+      LEFT JOIN likes l ON l.postId = p.id
       WHERE p.deletedAt IS NULL
       GROUP BY p.id
       ORDER BY score DESC
@@ -59,6 +59,7 @@ class PostManager {
         content: true,
         createdAt: true,
         updatedAt: true,
+        image: true,
         likes: {
           select: {
             postId: true,
@@ -112,7 +113,7 @@ class PostManager {
   }
 
   public static async create(
-    data: Pick<Post, "title" | "content" | "categoryId">,
+    data: Pick<Post, "title" | "content" | "categoryId" | "image">,
     creator:
       | {
           agencyId: string;
@@ -294,6 +295,7 @@ class PostManager {
         content: true,
         createdAt: true,
         updatedAt: true,
+        image: true,
         likes: {
           select: {
             postId: true,

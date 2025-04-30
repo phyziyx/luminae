@@ -64,6 +64,7 @@ export async function GET(request: NextRequest) {
       content: true,
       createdAt: true,
       updatedAt: true,
+      image: true,
       tags: {
         select: {
           tag: {
