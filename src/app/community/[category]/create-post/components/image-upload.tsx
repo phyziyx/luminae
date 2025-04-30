@@ -88,11 +88,10 @@ export default function ImageUpload({ value, onChange }: ImageUploadProps) {
         </div>
       ) : (
         <div
-          className={`flex flex-col items-center justify-center rounded-md border-2 border-dashed p-6 transition-colors ${
-            isDragging
+          className={`flex flex-col items-center justify-center rounded-md border-2 border-dashed p-6 transition-colors ${isDragging
               ? "border-primary dark:border-primary-light bg-primary/5 dark:bg-primary-light/10"
               : "border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary-light"
-          }`}
+            }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}

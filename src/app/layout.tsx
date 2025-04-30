@@ -7,12 +7,12 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-// import { EdgeStoreProvider } from "@/lib/edgestore/edgestore-client";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { ModalProvider } from "@/providers/modal-provider";
 import { Toaster } from "@/components/ui/toaster";
 import FallbackSpinner from "@/components/site/fallback-spinner";
 import ReactQueryProvider from "@/providers/react-query-provider";
+import { EdgeStoreProvider } from "@/lib/edgestore/edgestore-client";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -56,16 +56,16 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <NextIntlClientProvider messages={messages}>
-            {/* <EdgeStoreProvider> */}
-            <ReactQueryProvider>
-              <Suspense fallback={<FallbackSpinner />}>
-                <ModalProvider>
-                  {children}
-                  <Toaster />
-                </ModalProvider>
-              </Suspense>
-            </ReactQueryProvider>
-            {/* </EdgeStoreProvider> */}
+            <EdgeStoreProvider>
+              <ReactQueryProvider>
+                <Suspense fallback={<FallbackSpinner />}>
+                  <ModalProvider>
+                    {children}
+                    <Toaster />
+                  </ModalProvider>
+                </Suspense>
+              </ReactQueryProvider>
+            </EdgeStoreProvider>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

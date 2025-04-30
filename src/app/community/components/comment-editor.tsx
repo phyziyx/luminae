@@ -75,10 +75,10 @@ export default function CommentEditor({
               items: page.items.map((c) =>
                 c.id === comment.id
                   ? {
-                      ...c,
-                      content: values.content,
-                      updatedAt: new Date(), // optional: mark it as updated
-                    }
+                    ...c,
+                    content: values.content,
+                    updatedAt: new Date(), // optional: mark it as updated
+                  }
                   : c
               ),
             })),

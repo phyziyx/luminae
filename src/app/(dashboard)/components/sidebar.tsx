@@ -119,6 +119,12 @@ const data: NavData = {
       roles: ["AGENCY_OWNER", "AGENCY_ADMIN"],
     },
     {
+      title: "Media Hub",
+      url: "/dashboard/media-hub",
+      icon: BookOpenIcon,
+      items: [],
+    },
+    {
       title: "Clients",
       url: "/dashboard/clients",
       icon: UserCircle2Icon,
@@ -254,15 +260,15 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
               <CommandGroup heading={t("WORKSPACES")}>
                 {workspaces && workspaces.length > 0
                   ? workspaces.map((e) => (
-                      <PickerItem
-                        key={e.id}
-                        id={e.id}
-                        name={e.name}
-                        isWorkspace={true}
-                        address=""
-                        logoUrl=""
-                      />
-                    ))
+                    <PickerItem
+                      key={e.id}
+                      id={e.id}
+                      name={e.name}
+                      isWorkspace={true}
+                      address=""
+                      logoUrl=""
+                    />
+                  ))
                   : t("NO_WORKSPACES_FOUND")}
               </CommandGroup>
             </CommandList>

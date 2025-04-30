@@ -30,7 +30,7 @@ function useSearchQuery({
     queryFn: async ({ pageParam }) => {
       const response = await fetch(
         `/api/community/search?query=${query}&sort=${sort}` +
-          (pageParam ? `&cursor=${pageParam}` : "")
+        (pageParam ? `&cursor=${pageParam}` : "")
       );
       return response.json();
     },
