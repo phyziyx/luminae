@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/table";
 import stripeManager from "@/lib/managers/stripeManager";
 import { getSession } from "@/lib/auth/auth";
+import PostManager from "@/lib/managers/postManager";
 
 const Dashboard = async () => {
   const session = await getSession();
@@ -42,7 +43,7 @@ const Dashboard = async () => {
 
   const agencyCount = await AgencyManager.getAllAgenciesCount();
   const userCount = await UserManager.getAllUsersCount();
-  const communityPosts = 1007;
+  const communityPosts = await PostManager.getCount();
 
   const goalProgress = 100;
   const currentGoal = 1000;

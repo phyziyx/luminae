@@ -26,6 +26,10 @@ class PostManager {
     },
   };
 
+  public static async getCount() {
+    return await prisma.post.count();
+  }
+
   public static async findTrending() {
     const postIds = await prisma.$queryRaw<
       Array<{
