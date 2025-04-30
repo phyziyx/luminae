@@ -97,11 +97,11 @@ function AgencyCard({ agency }: { agency: TopRankedAgency }) {
     <Card className="relative overflow-hidden border-0 bg-transparent transition-all duration-300 hover:shadow-soft">
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 hover:opacity-100"
-        // style={{
-        //   background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(91, 154, 255, 0.15), transparent 40%)`,
-        // }}
+      // style={{
+      //   background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(91, 154, 255, 0.15), transparent 40%)`,
+      // }}
       />
-      <CardContent className="relative z-10 flex flex-col items-center gap-4 rounded-lg bg-white/90 dark:bg-gray-800/90 p-6 backdrop-blur-sm shadow-soft">
+      <CardContent className="relative z-10 flex flex-col items-center gap-4 rounded-t-lg bg-white/90 dark:bg-gray-800/90 p-6 backdrop-blur-sm shadow-soft">
         <div className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary dark:bg-primary-light text-sm font-bold text-primary-foreground dark:text-gray-900">
           #{agency.rank || "0"}
         </div>

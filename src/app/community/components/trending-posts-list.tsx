@@ -15,6 +15,7 @@ import { fetchTrendingPosts } from "@/lib/managers/postManager";
 import { CategoryPostsResponse } from "@/lib/types";
 import PostCard from "./post-card";
 import { queryKeys } from "@/lib/react-query";
+// import InfiniteScrollContainer from "@/components/site/infinite-scroll-container";
 
 function useTrendingPosts({
   sortBy = "latest",
@@ -90,9 +91,14 @@ export default function TrendingPostsList() {
           <div className="text-center text-gray-500">No posts found...</div>
         ) : (
           <div className="flex flex-col items-center justify-center space-y-6">
+            {/* <InfiniteScrollContainer
+              onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
+              className=""
+            > */}
             {posts?.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}
+            {/* </InfiniteScrollContainer> */}
             <div className="mt-6 flex items-center justify-center">
               {hasNextPage ? (
                 <Button
