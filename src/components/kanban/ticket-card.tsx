@@ -22,7 +22,7 @@ import {
   HoverCardTrigger,
   HoverCardContent,
 } from "../ui/hover-card";
-import { Client, User } from "@/generated/prisma/client";
+import { Client, User } from "@prisma/client";
 import { useKanban } from "@/providers/kanban-provider";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";

@@ -41,7 +41,7 @@ import {
 import { cn, isAgencyAdmin } from "@/lib/utils";
 import { NotificationsProvider } from "@/providers/notifications-provider";
 
-import { Agency, Workspace, Role } from "@/generated/prisma/client";
+import { Agency, Workspace, Role } from "@prisma/client";
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -260,15 +260,15 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
               <CommandGroup heading={t("WORKSPACES")}>
                 {workspaces && workspaces.length > 0
                   ? workspaces.map((e) => (
-                      <PickerItem
-                        key={e.id}
-                        id={e.id}
-                        name={e.name}
-                        isWorkspace={true}
-                        address=""
-                        logoUrl=""
-                      />
-                    ))
+                    <PickerItem
+                      key={e.id}
+                      id={e.id}
+                      name={e.name}
+                      isWorkspace={true}
+                      address=""
+                      logoUrl=""
+                    />
+                  ))
                   : t("NO_WORKSPACES_FOUND")}
               </CommandGroup>
             </CommandList>

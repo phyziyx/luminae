@@ -5,7 +5,7 @@ import prisma from "@/lib/db";
 import { laneTicketFormSchema, LaneTicketFormSchema } from "@/lib/forms";
 import AgencyManager from "@/lib/managers/agencyManager";
 import NotificationManager from "@/lib/managers/notificationManager";
-import { TicketTag } from "@/generated/prisma/client";
+import { TicketTag } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 export default async function onUpdateTicket(values: LaneTicketFormSchema) {

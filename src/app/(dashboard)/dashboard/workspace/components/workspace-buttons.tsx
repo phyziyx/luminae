@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import CustomModal from "@/components/site/custom-modal";
 import WorkspaceDetails from "@/app/(dashboard)/components/workspace-details/workspace-details";
 import { useModal } from "@/providers/modal-provider";
-import { Workspace } from "@/generated/prisma/client";
+import { Workspace } from "@prisma/client";
 
 export const WorkspaceButtons = ({
   workspace,
@@ -85,7 +85,7 @@ export const WorkspaceButtons = ({
               disabled={isDeleting}
               aria-disabled={isDeleting}
               variant={"destructive"}
-              // onClick={deleteAction}
+            // onClick={deleteAction}
             >
               {isDeleting
                 ? t("WORKSPACE_DETAILS.DELETING")
