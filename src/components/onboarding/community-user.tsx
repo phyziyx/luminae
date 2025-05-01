@@ -16,6 +16,7 @@ export default function CommunityUser() {
       <p className="text-blue-600 dark:text-slate-100">
         {t("COMMUNITY_FORUM.DIVE_IN")}
       </p>
+
       <Link href="/community">
         <Button className="mt-2">{t("BUTTONS.EXPLORE_COMMUNITY")}</Button>
       </Link>
