@@ -1,4 +1,4 @@
-@startuml
+@startuml agency-owner
 component "Agency Owner Dashboard" as AgencyOwner
 
 package "Agency Owner Dashboard" {
@@ -14,7 +14,6 @@ package "Agency Owner Dashboard" {
 database "Database" as DB
 
 package "External Services" {
-  component "Clerk" as Clerk
   component "Stripe" as Stripe
 }
 
@@ -27,7 +26,6 @@ AgencyOwner ..(0-- TeamManagement : Manages
 AgencyOwner ..(0-- WorkspaceManagement : Manages
 
 Authentication --(0-- DB: Fetch/Store Data
-Authentication --(0-- Clerk: Fetch/Store Data
 KPIs --(0-- DB : Fetch Data
 Notifications --(0-- DB : Fetch/Store Data
 SubscriptionManager --(0-- Stripe : Process Payment

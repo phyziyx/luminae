@@ -24,7 +24,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { useRouter, useSearchParams } from "next/navigation";
 import { PasswordInput } from "@/components/ui/password-input";
 import FallbackSpinner from "@/components/site/fallback-spinner";

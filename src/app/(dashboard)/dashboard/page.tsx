@@ -15,14 +15,10 @@ import { isAgencyAdmin } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import KpiManager from "@/lib/managers/kpiManager";
 import { Component } from "../components/chart/bar-chart";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
 const Dashboard = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   const t = await getTranslations();

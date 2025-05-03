@@ -18,7 +18,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { LoadingSpinner } from "./loading-spinner";
 import { useTranslations } from "next-intl";
 import Link from "next/link";

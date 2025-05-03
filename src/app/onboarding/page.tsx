@@ -1,15 +1,11 @@
 import Logo from "@/components/logo";
 import ChooseYourPath from "@/components/onboarding/choose-your-path";
+import { getSession } from "@/lib/auth/auth";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export default async function Onboarding() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

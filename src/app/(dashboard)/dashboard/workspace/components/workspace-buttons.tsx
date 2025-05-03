@@ -85,7 +85,7 @@ export const WorkspaceButtons = ({
               disabled={isDeleting}
               aria-disabled={isDeleting}
               variant={"destructive"}
-              // onClick={deleteAction}
+            // onClick={deleteAction}
             >
               {isDeleting
                 ? t("WORKSPACE_DETAILS.DELETING")

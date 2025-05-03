@@ -1,14 +1,11 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { auth, getSession } from "@/lib/auth/auth";
 import { changePasswordSchema, ChangePasswordSchema } from "@/lib/forms";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 
 export default async function onPasswordUpdate(values: ChangePasswordSchema) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   const user = session?.user;
 

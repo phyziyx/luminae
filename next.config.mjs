@@ -10,6 +10,11 @@ const nextConfig = {
 				protocol: 'https',
 				hostname: 'files.stripes.com',
 			},
+			{
+				protocol: 'https',
+				hostname: 'files.edgestore.dev',
+				pathname: '/xjzwgej6oom8emji/**'
+			}
 		]
 	},
 	reactStrictMode: true

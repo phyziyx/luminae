@@ -1,7 +1,9 @@
 "use client";
 
 import Logo from "@/components/logo";
+import LoadingIndicator from "@/components/site/link-status";
 import ModeToggle from "@/components/site/mode-toggle";
+import { NavUser } from "@/components/site/nav-user";
 import {
   useSidebar,
   Sidebar,
@@ -164,6 +166,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
                         <Link href={item.url}>
                           <item.icon />
                           <span>{item.title}</span>
+                          <LoadingIndicator />
                         </Link>
                       </SidebarMenuButton>
                       {item.items?.length ? (
@@ -181,6 +184,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
                                   <SidebarMenuSubButton asChild>
                                     <Link href={subItem.url}>
                                       {subItem.title}
+                                      <LoadingIndicator />
                                     </Link>
                                   </SidebarMenuSubButton>
                                 </SidebarMenuSubItem>
@@ -206,6 +210,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
                       <Link href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
+                        <LoadingIndicator />
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -219,18 +224,7 @@ const DashboardSidebar = ({ children }: DashboardSidebarProps) => {
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem className="flex items-center place-content-between gap-2">
-              {/* <UserButton
-                showName
-                appearance={{
-                  elements: {
-                    avatarBox: "rounded-lg",
-                    rootBox: "flex overflow-hidden",
-                    userButtonBox: "flex-row-reverse",
-                    userButtonOuterIdentifier: "truncate pl-0 dark:text-white",
-                  },
-                }}
-              /> */}
-              {/* TODO */}
+              <NavUser />
               <ModeToggle />
             </SidebarMenuItem>
           </SidebarMenu>

@@ -2,14 +2,10 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import DashboardSidebar from "../components/admin-sidebar";
 import UserManager from "@/lib/managers/userManager";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
 const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

@@ -1,0 +1,360 @@
+@startuml erd-v2
+
+together {
+	class Session {
+		id: varchar(191)
+		userId: varchar(191)
+		--
+		token: varchar(191)
+		expiresAt: datetime(3)
+		ipAddress: varchar(191)
+		userAgent: varchar(191)
+		createdAt: datetime(3)
+		updatedAt: datetime(3)
+		impersonatedBy: varchar(191)
+	}
+
+	class Account {
+		id: varchar(191)
+		userId: varchar(191)
+		accountId: varchar(191)
+		providerId: varchar(191)
+		--
+		accessToken: text
+		refreshToken: text
+		accessTokenExpiresAt: datetime(3)
+		refreshTokenExpiresAt: datetime(3)
+		scope: varchar(191)
+		idToken: varchar(191)
+		password: varchar(191)
+		createdAt: datetime(3)
+		updatedAt: datetime(3)
+	}
+
+	class User {
+		id: varchar(191)
+		email: varchar(191)
+		--
+		image: text
+		createdAt: datetime(3)
+		updatedAt: datetime(3)
+		emailVerified: tinyint(1)
+		banExpires: int(11)
+		banReason: varchar(191)
+		banned: tinyint(1)
+		role: varchar(191)
+		name: varchar(191)
+	}
+
+	class Verification {
+		id: varchar(191)
+		--
+		identifier: varchar(191)
+		value: varchar(191)
+		expiresAt: datetime(3)
+		createdAt: datetime(3)
+		updatedAt: datetime(3)
+	}
+}
+
+together {
+	class UserProfile {
+		userId: varchar(191)
+		profileId: varchar(191)
+	}
+
+	class Profile {
+		id: varchar(191)
+		--
+		tagline: text
+		content: text
+		createdAt: datetime(3)
+		updatedAt: datetime(3)
+		title: text
+	}
+
+	class AgencyProfile {
+		agencyId: varchar(191)
+		profileId: varchar(191)
+	}
+}
+
+together {
+	class Agency {
+		*id: varchar(191)
+		--
+		name: varchar(191)
+		agencyLogo: text
+		companyEmail: text
+		companyPhone: text
+		address: varchar(191)
+		city: varchar(191)
+		zipCode: varchar(191)
+		state: varchar(191)
+		country: varchar(191)
+		createdAt: datetime(3)
+		updatedAt: datetime(3)
+		stripeCustomerId: varchar(191)
+	}
+
+	class AgencyComment {
+		agencyId: varchar(191)
+		commentId: varchar(191)
+	}
+
+	class AgencyMember {
+		id: varchar(191)
+		*email: varchar(191)
+		agencyId: varchar(191)
+		--
+		role: enum('AGENCY_OWNER','AGENCY_ADMIN','AGENCY_USER')
+		createdAt: datetime(3)
+		updatedAt: datetime(3)
+	}
+
+	class AgencyPost {
+		agencyId: varchar(191)
+		postId: varchar(191)
+	}
+}
+
+class Category {
+ id: varchar(191)
+ --
+ name: varchar(191)
+ title: varchar(191)
+ description: varchar(191)
+}
+
+class Client {
+ id: varchar(191)
+ agencyId: varchar(191)
+ --
+ name: varchar(191)
+ email: varchar(191)
+ phone: varchar(191)
+ city: varchar(191)
+ state: varchar(191)
+ country: varchar(191)
+ createdAt: datetime(3)
+ updatedAt: datetime(3)
+ status: enum('LEAD','ONBOARDING','ACTIVE','INACTIVE','LOST')
+}
+
+together {
+	class Comment {
+		id: varchar(191)
+		postId: varchar(191)
+		parentId: varchar(191)
+		--
+		content: text
+		createdAt: datetime(3)
+		updatedAt: datetime(3)
+		deletedAt: datetime(3)
+	}
+
+	class CommentLikes {
+		userId: varchar(191)
+		commentId: varchar(191)
+		type: enum('LIKE','DISLIKE')
+	}
+}
+
+class Feature {
+ id: varchar(191)
+ --
+ code: enum('TEAM_MEMBERS','WORKSPACE','FILE_STORAGE','CUSTOM_URL')
+ name: varchar(191)
+ maxLimit: int(11)
+ hasAccess: tinyint(1)
+ packageId: varchar(191)
+}
+
+class Invitation {
+ id: varchar(191)
+ email: varchar(191)
+ agencyId: varchar(191)
+ --
+ role: enum('AGENCY_OWNER','AGENCY_ADMIN','AGENCY_USER')
+ status: enum('PENDING','ACCEPTED','REJECTED')
+ createdAt: datetime(3)
+ updatedAt: datetime(3)
+}
+
+class Lane {
+ id: varchar(191)
+ --
+ name: varchar(191)
+ order: int(11)
+ colour: varchar(6)
+ workspaceId: varchar(191)
+}
+
+class Notification {
+ id: varchar(191)
+ userId: varchar(191)
+ --
+ message: varchar(191)
+ createdAt: datetime(3)
+ updatedAt: datetime(3)
+ read: tinyint(1)
+ resourceType: varchar(191)
+ resourceId: varchar(191)
+ metadata: varchar(191)
+}
+
+class Package {
+ id: varchar(191)
+ --
+ name: varchar(191)
+ monthlyPrice: decimal(65,30)
+ retired: tinyint(1)
+ stripePriceIdAnnually: varchar(191)
+ stripePriceIdMonthly: varchar(191)
+ stripeLinkAnnually: varchar(191)
+ stripeLinkMonthly: varchar(191)
+}
+
+class Permission {
+ id: varchar(191)
+ agencyMemberId: varchar(191)
+ workspaceId: varchar(191)
+ --
+ access: tinyint(1)
+ manager: tinyint(1)
+ createdAt: datetime(3)
+ updatedAt: datetime(3)
+}
+
+class Subscription {
+ id: varchar(191)
+ packageId: varchar(191)
+ agencyId: varchar(191)
+ --
+ price: varchar(191)
+ priceId: varchar(191)
+ stripeSubscriptionId: varchar(191)
+ stripeCustomerId: varchar(191)
+ currentPeriodEnd: datetime(3)
+ active: tinyint(1)
+ status: enum('ACTIVE','INCOMPLETE','INCOMPLETE_EXPIRED','TRIALING','CANCELED','PAST_DUE','UNPAID')
+ createdAt: datetime(3)
+ updatedAt: datetime(3)
+}
+
+class Ticket {
+ id: varchar(191)
+ --
+ title: varchar(191)
+ description: text
+ value: int(11)
+ open: tinyint(1)
+ tag: enum('High','Medium','Low')
+ createdAt: datetime(3)
+ updatedAt: datetime(3)
+ clientId: varchar(191)
+ assigneeUserId: varchar(191)
+ laneId: varchar(191)
+ order: int(11)
+}
+
+class Workspace {
+ id: varchar(191)
+ agencyId: varchar(191)
+ --
+ name: varchar(191)
+ description: text
+ createdAt: datetime(3)
+ updatedAt: datetime(3)
+}
+
+together {
+	class PostTag {
+	postId: varchar(191)
+	tagId: varchar(191)
+	}
+
+	class Tag {
+	id: varchar(191)
+	name: varchar(191)
+	}
+}
+
+together {
+	class UserComment {
+		userId: varchar(191)
+		commentId: varchar(191)
+	}
+
+	class UserPost {
+		userId: varchar(191)
+		postId: varchar(191)
+	}
+
+	class Likes {
+		postId: varchar(191)
+		userId: varchar(191)
+		--
+		createdAt: datetime(3)
+		updatedAt: datetime(3)
+		type: enum('LIKE','DISLIKE')
+	}
+
+	class Post {
+		id: varchar(191)
+		--
+		title: varchar(191)
+		content: text
+		categoryId: varchar(191)
+		createdAt: datetime(3)
+		updatedAt: datetime(3)
+		deletedAt: datetime(3)
+	}
+}
+
+User ||--|{ Account : has
+User ||--|{ Notification : has
+User ||--|{ Session : has
+User ||--|{ CommentLikes : has
+User ||--|{ Likes : has
+User ||--|{ UserComment : has
+User ||--|{ UserPost : has
+User ||--|{ UserProfile : has
+
+Ticket ||--|{ Client : has
+Ticket ||--|{ User : assignee
+Ticket ||--|{ Lane : belongs to
+
+PostTag ||--|| Tag
+
+Comment ||--|{ UserComment : is
+Comment ||--|{ AgencyComment : is
+Comment ||--|{ CommentLikes : has
+
+Post ||--|{ Comment : has
+Post }|--|| Category : belongs to
+
+Post ||--|{ PostTag : has
+Post ||--|{ Likes : has
+Post ||--|{ AgencyPost : is
+Post }|--|{ UserPost : is
+
+Subscription }|--|| Package : of
+Feature }|--|| Package : has
+
+Workspace ||--|{ Lane : belongs to
+Workspace ||--|{ Permission
+
+Profile ||--|| AgencyProfile : is
+Profile ||--|| UserProfile : is
+
+Agency ||--|{ Client : has
+Agency ||--|{ Workspace : has
+Agency ||--|{ AgencyComment : has
+Agency ||--|{ AgencyPost : has
+Agency ||--|{ AgencyProfile : has
+Agency ||--|{ Subscription : has
+Agency ||--|{ Invitation : has
+Agency ||--|{ AgencyMember : has
+
+@enduml

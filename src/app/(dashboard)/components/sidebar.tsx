@@ -2,6 +2,7 @@
 
 import Logo from "@/components/logo";
 import { NotificationsPopover } from "@/components/notifications/notifications";
+import LoadingIndicator from "@/components/site/link-status";
 import ModeToggle from "@/components/site/mode-toggle";
 import { NavUser } from "@/components/site/nav-user";
 import { Button } from "@/components/ui/button";
@@ -118,6 +119,12 @@ const data: NavData = {
       roles: ["AGENCY_OWNER", "AGENCY_ADMIN"],
     },
     {
+      title: "Media Hub",
+      url: "/dashboard/media-hub",
+      icon: BookOpenIcon,
+      items: [],
+    },
+    {
       title: "Clients",
       url: "/dashboard/clients",
       icon: UserCircle2Icon,
@@ -153,6 +160,11 @@ const data: NavData = {
       title: "Feedback",
       url: "/feedback",
       icon: SendIcon,
+    },
+    {
+      title: "Community",
+      url: "/community",
+      icon: CompassIcon,
     },
   ],
 };
@@ -248,15 +260,15 @@ const AgencyPicker = ({ role, agency, workspaces }: AgencyPickerProps) => {
               <CommandGroup heading={t("WORKSPACES")}>
                 {workspaces && workspaces.length > 0
                   ? workspaces.map((e) => (
-                      <PickerItem
-                        key={e.id}
-                        id={e.id}
-                        name={e.name}
-                        isWorkspace={true}
-                        address=""
-                        logoUrl=""
-                      />
-                    ))
+                    <PickerItem
+                      key={e.id}
+                      id={e.id}
+                      name={e.name}
+                      isWorkspace={true}
+                      address=""
+                      logoUrl=""
+                    />
+                  ))
                   : t("NO_WORKSPACES_FOUND")}
               </CommandGroup>
             </CommandList>
@@ -370,9 +382,10 @@ const DashboardSidebar = ({
                             !isActive,
                         })}
                       >
-                        <Link href={item.url}>
+                        <Link href={item.url} className="">
                           <item.icon />
                           <span>{item.title}</span>
+                          <LoadingIndicator />
                         </Link>
                       </SidebarMenuButton>
                       {item.items?.length ? (
@@ -390,6 +403,7 @@ const DashboardSidebar = ({
                                   <SidebarMenuSubButton asChild>
                                     <Link href={subItem.url}>
                                       {subItem.title}
+                                      <LoadingIndicator />
                                     </Link>
                                   </SidebarMenuSubButton>
                                 </SidebarMenuSubItem>
@@ -415,6 +429,7 @@ const DashboardSidebar = ({
                       <Link href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
+                        <LoadingIndicator />
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

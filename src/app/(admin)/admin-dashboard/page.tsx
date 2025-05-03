@@ -28,14 +28,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import stripeManager from "@/lib/managers/stripeManager";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth/auth";
+import PostManager from "@/lib/managers/postManager";
 
 const Dashboard = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   const t = await getTranslations();
@@ -46,7 +43,7 @@ const Dashboard = async () => {
 
   const agencyCount = await AgencyManager.getAllAgenciesCount();
   const userCount = await UserManager.getAllUsersCount();
-  const communityPosts = 1007;
+  const communityPosts = await PostManager.getCount();
 
   const goalProgress = 100;
   const currentGoal = 1000;

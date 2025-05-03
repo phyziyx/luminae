@@ -5,6 +5,14 @@ import prisma from "@/lib/db";
 // import { sendEmail } from "@/lib/email";
 import { admin, openAPI } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
+import { cache } from "react";
+import { headers } from "next/headers";
+
+export const getSession = cache(async () => {
+  return await auth.api.getSession({
+    headers: await headers(),
+  });
+});
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
@@ -17,7 +25,7 @@ export const auth = betterAuth({
     modelName: "Session",
     cookieCache: {
       enabled: true,
-      maxAge: 5 * 60, // Cache duration in seconds
+      maxAge: 10, // Cache duration in seconds
     },
   },
   verification: {
@@ -62,19 +70,20 @@ export const auth = betterAuth({
       trustedProviders: ["email-password", "google"],
     },
   },
-  // socialProviders: {
-  //   google: {
-  //     enabled: true,
-  //     clientId: process.env.GOOGLE_CLIENT_ID,
-  //     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  //     mapProfileToUser: (profile) => {
-  //       return {
-  //         firstName: profile.given_name,
-  //         lastName: profile.family_name,
-  //       };
-  //     },
-  //   },
-  // },
+  socialProviders: {
+    google: {
+      enabled: true,
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      // redirectURI: `/api/auth/callback/google`,
+      mapProfileToUser: (profile) => {
+        return {
+          firstName: profile.given_name,
+          lastName: profile.family_name,
+        };
+      },
+    },
+  },
 } satisfies BetterAuthOptions);
 
 export type Session = typeof auth.$Infer.Session;

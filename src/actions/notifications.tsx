@@ -1,15 +1,12 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth/auth";
 import NotificationManager from "@/lib/managers/notificationManager";
-import { headers } from "next/headers";
 
 export const fetchNotificationsAction = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
+
   if (!user) {
     return [];
   }
@@ -18,10 +15,7 @@ export const fetchNotificationsAction = async () => {
 };
 
 export const markAsReadAction = async (id: string) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {
@@ -32,10 +26,7 @@ export const markAsReadAction = async (id: string) => {
 };
 
 export const markAllAsReadAction = async () => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {

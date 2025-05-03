@@ -3,17 +3,13 @@
 import AgencyManager from "@/lib/managers/agencyManager";
 import prisma from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/auth/auth";
 
 export default async function deleteLane(values: {
   workspaceId: string;
   laneId: string;
 }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   let error = "An error occurred while saving the workspace information";
@@ -58,7 +54,7 @@ export default async function deleteLane(values: {
       select: {
         _count: {
           select: {
-            Tickets: {
+            tickets: {
               where: {
                 laneId: {
                   equals: values.laneId,
@@ -76,7 +72,7 @@ export default async function deleteLane(values: {
       return { error };
     }
 
-    if (lane._count.Tickets > 0) {
+    if (lane._count.tickets > 0) {
       error = "Lane has tickets. Cannot delete a lane with tickets.";
 
       return { error };

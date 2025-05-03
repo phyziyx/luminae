@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { LoaderIcon } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 
 const spinnerVariants = "w-16 h-16 rounded-full animate-spin";
 
@@ -12,7 +12,7 @@ const LoadingSpinner = React.forwardRef<SVGSVGElement, LoadingSpinnerProps>(
   (props, ref) => {
     const { className, ...rest } = props;
     return (
-      <LoaderIcon
+      <Loader2Icon
         ref={ref}
         className={cn(spinnerVariants, className)}
         {...rest}

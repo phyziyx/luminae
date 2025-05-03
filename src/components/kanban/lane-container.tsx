@@ -221,8 +221,8 @@ function LaneContainerHeader({
   const { openModal } = useModal();
 
   const laneValue = React.useMemo(
-    () => lane.Tickets.reduce((acc, ticket) => acc + ticket.value, 0),
-    [lane.Tickets]
+    () => lane.tickets.reduce((acc, ticket) => acc + ticket.value, 0),
+    [lane.tickets]
   );
 
   const { manager, getCollapseState } = useKanban();

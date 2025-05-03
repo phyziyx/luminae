@@ -4,8 +4,7 @@ import { z } from "zod";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { revalidatePath } from "next/cache";
 import UserManager from "@/lib/managers/userManager";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth/auth";
 
 // Zod schema for agency deletion, expecting only the agency ID
 const deleteAgencySchema = z.object({
@@ -13,10 +12,7 @@ const deleteAgencySchema = z.object({
 });
 
 const deleteAgency = async (values: z.infer<typeof deleteAgencySchema>) => {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   let error = "An error occurred while deleting the agency.";

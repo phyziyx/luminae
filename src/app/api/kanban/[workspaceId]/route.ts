@@ -1,16 +1,12 @@
-import { auth } from "@/lib/auth";
+import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
-import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ workspaceId: string }> }
 ) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await getSession();
   const user = session?.user;
 
   if (!user) {
@@ -31,13 +27,13 @@ export async function GET(
       order: "asc",
     },
     include: {
-      Tickets: {
+      tickets: {
         // orderBy: {
         //   order: "asc",
         // },
         include: {
           assigneeUser: true,
-          Client: true,
+          client: true,
         },
       },
     },
