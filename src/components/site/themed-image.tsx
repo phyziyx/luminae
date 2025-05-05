@@ -1,12 +1,10 @@
 import Image, { ImageProps } from "next/image";
 
-export type ThemeImageProps = Omit<
-  ImageProps,
-  // Lazy loading is required, otherwise, both images will be loaded
-  "src" | "priority" | "loading"
-> & {
+export type ThemeImageProps = Omit<ImageProps, "src"> & {
   srcLight: ImageProps["src"];
   srcDark: ImageProps["src"];
+  priority?: boolean;
+  loading?: "lazy" | "eager";
 };
 
 export const ThemedImage = ({
@@ -14,21 +12,32 @@ export const ThemedImage = ({
   srcDark,
   alt,
   className,
+  priority = false,
+  loading,
   ...rest
 }: ThemeImageProps) => {
+  // Only set `loading` if `priority` is false
+  const commonProps = {
+    className,
+    alt,
+    priority,
+    ...(priority ? {} : { loading: loading ?? "lazy" }),
+    ...rest,
+  };
+
   return (
     <>
       <Image
         src={srcLight}
-        alt={`${alt} (light)`}
+        {...commonProps}
         className={`dark:hidden ${className}`}
-        {...rest}
+        alt="Light Mode Dashboard Preview"
       />
       <Image
         src={srcDark}
-        alt={`${alt} (dark)`}
+        {...commonProps}
         className={`hidden dark:block ${className}`}
-        {...rest}
+        alt="Dark Mode Dashboard Preview"
       />
     </>
   );
