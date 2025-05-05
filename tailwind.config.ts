@@ -166,12 +166,17 @@ const config: Config = {
           "0%": { transform: "translateY(-30px) scale(0.2)" },
           "100%": { transform: "transform: translateY(0px) scale(1)" },
         },
+        carousel: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "automation-zoom-in": "automation-zoom-in 0.5s",
         highlight: "highlight 10s linear infinite",
+        carousel: "carousel 30s linear infinite",
       },
     },
   },

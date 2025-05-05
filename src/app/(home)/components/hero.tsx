@@ -21,7 +21,7 @@ export default function Hero() {
         <div className="mb-8 flex items-center gap-2 rounded-full border border-white/40 bg-white/20 px-4 py-1.5 backdrop-blur-md shadow-sm relative overflow-hidden transition-all duration-300 hover:bg-white/30 hover:shadow-2xl hover:cursor-pointer dark:bg-neutral-800/40 dark:border-white/10">
           {/* Subtle inner glow effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent pointer-events-none"></div>
-          <span className="rounded-full bg-indigo-600 px-2 py-0.5 text-xs font-medium text-white relative z-10 dark:bg-indigo-500">
+          <span className="rounded-full bg-[#3b82f6] px-2 py-0.5 text-xs font-medium text-white relative z-10 dark:bg-[#3b82f6]">
             New
           </span>
           <span className="text-sm font-medium text-gray-700 relative z-10 dark:text-neutral-200">
@@ -32,7 +32,7 @@ export default function Hero() {
         {/* Headline with dark mode support */}
         <h1 className="mb-4 max-w-4xl text-4xl font-bold tracking-tight text-navy-900 sm:text-5xl md:text-6xl dark:text-white">
           Boost Your{" "}
-          <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-purple-500">
+          <span className="bg-gradient-to-r from-[#3b82f6] to-indigo-500 bg-clip-text text-transparent dark:from-blue-400 dark:to-purple-400">
             Productivity,
           </span>
           <br />
@@ -48,27 +48,32 @@ export default function Hero() {
 
         {/* CTA Buttons with enhanced hover effects */}
         <div className="mb-16 flex flex-wrap justify-center gap-4">
+          {/* Get Started Button */}
           <Button
             size="lg"
-            className="rounded-full bg-indigo-600 px-8 text-white transition-all duration-300 ease-in-out hover:scale-105 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-purple-600 hover:shadow-lg dark:bg-purple-600 dark:hover:bg-purple-700 dark:hover:from-purple-600 dark:hover:to-indigo-600"
+            className="rounded-full bg-[#3b82f6] px-8 text-white font-medium transition-all duration-300 ease-in-out
+               hover:scale-105 hover:bg-gradient-to-r hover:from-[#3b82f6] hover:to-indigo-600
+               hover:shadow-lg dark:bg-[#3b82f6] dark:hover:from-blue-500 dark:hover:to-purple-600"
           >
             Get Started
           </Button>
+
+          {/* Preview Platform Button */}
           <Button
             size="lg"
             variant="outline"
-            className="rounded-full border border-transparent bg-transparent px-8 transition-all duration-300 ease-in-out hover:shadow-lg relative group dark:hover:border-purple-400/30"
+            className="rounded-full border border-transparent bg-transparent px-8 font-medium relative group overflow-hidden transition-all duration-300 ease-in-out"
             style={{
               backgroundImage:
-                "linear-gradient(white, white), linear-gradient(to right, #6366f1, #8b5cf6)",
+                "linear-gradient(white, white), linear-gradient(to right, #3b82f6, #6366f1)",
               backgroundOrigin: "border-box",
               backgroundClip: "padding-box, border-box",
             }}
           >
-            <span className="bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent transition-all duration-300 dark:from-purple-500 dark:to-indigo-400">
+            <span className="bg-gradient-to-r from-[#3b82f6] to-indigo-500 bg-clip-text text-transparent transition-all duration-300 dark:from-blue-400 dark:to-purple-400">
               Preview Platform
             </span>
-            <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-indigo-500 to-purple-600 -z-10"></div>
+            <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-[#3b82f6] to-indigo-500 -z-10"></div>
           </Button>
         </div>
 

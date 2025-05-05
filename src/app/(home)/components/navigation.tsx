@@ -44,6 +44,10 @@ const navbarLinks = [
     name: "Community",
     href: "/community",
   },
+  {
+    name: "Contact",
+    href: "/contact",
+  },
 ] as const;
 
 const SignOutButton = () => {
@@ -206,6 +210,7 @@ const Navigation = ({ user }: Props) => {
 
           {/* Auth Buttons */}
           <div className="flex items-center gap-2">
+            <ModeToggle />
             {user ? (
               <>
                 <Link href="/dashboard">
