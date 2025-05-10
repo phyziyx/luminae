@@ -19,7 +19,7 @@ export default async function onAcceptInvite(
     return { error };
   }
 
-  const { name, password, invitationId } = values;
+  const { name, password, invitationId } = validatedFields.data;
 
   try {
     const invitation = await prisma.invitation.findUnique({
