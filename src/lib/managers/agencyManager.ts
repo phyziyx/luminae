@@ -287,7 +287,10 @@ class AgencyManager {
     workspaceId: string,
     agencyId: string,
     userId: string
-  ) {
+  ): Promise<{
+    access: boolean;
+    manager: boolean;
+  }> {
     const member = await prisma.agencyMember.findFirst({
       where: {
         user: {
@@ -304,12 +307,19 @@ class AgencyManager {
       },
     });
 
-    const access =
-      !!member && (member.permissions.length > 0 || isAgencyAdmin(member.role));
+    if (!member) {
+      return {
+        access: false,
+        manager: false,
+      };
+    }
+
+    const isAdmin = isAgencyAdmin(member.role);
+    const access = member.permissions.length > 0 || isAdmin;
 
     return {
       access,
-      manager: access && member.permissions[0]?.manager,
+      manager: access && (member.permissions[0]?.manager || isAdmin),
     };
   }
 

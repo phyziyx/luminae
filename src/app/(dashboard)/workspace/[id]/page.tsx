@@ -53,7 +53,7 @@ export default async function WorkspacePage({
           <Separator orientation="vertical" className="mr-2 h-4" />
           <h1 className="text-3xl font-semibold">{`${t("WORKSPACE")}: ${
             workspace.name
-          } (isManager: ${manager})`}</h1>
+          }`}</h1>
         </div>
       </header>
 
