@@ -156,6 +156,7 @@ function LaneCreateForm({ data, onSubmit }: LaneFormProps) {
               <FormLabel>{t("KANBAN.BOARD_COLOUR")}</FormLabel>
               <FormControl>
                 <ComboBox<Colour>
+                  modal={true}
                   className="bg-transparent"
                   value={field.value}
                   setValue={field.onChange}
