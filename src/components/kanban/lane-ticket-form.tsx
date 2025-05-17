@@ -99,7 +99,7 @@ export default function LaneTicketModal({
         description: ticketData?.description || "",
         id: ticketData?.id || "",
         name: ticketData?.title || "",
-        tag: ticketData?.tag || "",
+        tag: ticketData?.tag || "Low",
         userId: ticketData?.assigneeUserId || "",
         value: `${ticketData?.value ?? 0}`,
         open: ticketData?.open || false,
@@ -167,8 +167,9 @@ function LaneTicketForm({ onSubmit, data, workspaceId }: LaneTicketFormProps) {
             <FormItem>
               <FormLabel>{t("FORMS.NAME")}</FormLabel>
               <FormControl>
-                <Input {...field} required />
+                <Input {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -180,8 +181,9 @@ function LaneTicketForm({ onSubmit, data, workspaceId }: LaneTicketFormProps) {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input {...field} required />
+                <Input {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -193,8 +195,9 @@ function LaneTicketForm({ onSubmit, data, workspaceId }: LaneTicketFormProps) {
             <FormItem>
               <FormLabel>Value</FormLabel>
               <FormControl>
-                <Input {...field} required />
+                <Input {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -212,6 +215,7 @@ function LaneTicketForm({ onSubmit, data, workspaceId }: LaneTicketFormProps) {
                     onCheckedChange={(checked) => field.onChange(checked)}
                   />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
