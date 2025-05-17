@@ -5,17 +5,23 @@ import {
 } from "@edgestore/server/adapters/next/app";
 import { initEdgeStoreClient } from "@edgestore/server/core";
 import { z } from "zod";
+import { auth, getSession } from "../auth/auth";
+import { headers } from "next/headers";
+import { authClient } from "../auth/auth-client";
+import AgencyManager from "../managers/agencyManager";
 
 type Context = {
   userId: string;
-  userRole: "admin" | "visitor";
+  userRole: "admin" | "guest" | "user";
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function createContext(_opts: CreateContextOptions): Context {
+async function createContext(_opts: CreateContextOptions): Promise<Context> {
+  const { data: session } = await authClient.getSession();
+
   return {
-    userId: "123",
-    userRole: "visitor",
+    userId: session?.user.id || "0",
+    userRole: session?.user.id ? "user" : "guest",
   };
 }
 
@@ -48,6 +54,42 @@ const edgeStoreRouter = es.router({
     maxSize: 1 * 1024 * 1024, // 1MB
     accept: ["image/jpeg", "image/png", "image/webp"],
   }),
+  privateFiles: es
+    .fileBucket({
+      maxSize: 25 * 1024 * 1024, // 25 MB
+    })
+    // required for every file upload
+    .input(
+      z.object({
+        fileType: z.string(),
+        agencyId: z.string(),
+      })
+    )
+    // file path: /privateFiles/{agencyId}
+    .path(({ ctx, input }) => [
+      {
+        agencyId: input.agencyId,
+      },
+    ])
+    .beforeUpload(({ ctx, input, fileInfo }) => {
+      return new Promise(async (resolve) => {
+        let retVal = false;
+
+        // get user agency here...
+        // check file access...
+
+        resolve(retVal);
+      });
+    })
+    .beforeDelete(({ ctx, fileInfo }) => {
+      console.log("beforeDelete", ctx, fileInfo);
+      return true;
+    })
+    // file metadata
+    .metadata(({ ctx, input }) => ({
+      agencyId: input.agencyId,
+      fileType: input.fileType,
+    })),
 });
 
 export const handler = createEdgeStoreNextHandler({

@@ -3,10 +3,11 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "@/lib/db";
 // import { v7 } from "uuid";
 // import { sendEmail } from "@/lib/email";
-import { admin, openAPI } from "better-auth/plugins";
+import { admin, customSession, openAPI } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { cache } from "react";
 import { headers } from "next/headers";
+import AgencyManager from "../managers/agencyManager";
 
 export const getSession = cache(async () => {
   return await auth.api.getSession({
@@ -31,7 +32,22 @@ export const auth = betterAuth({
   verification: {
     modelName: "Verification",
   },
-  plugins: [nextCookies(), admin(), openAPI()],
+  plugins: [
+    nextCookies(),
+    admin(),
+    openAPI(),
+    customSession(async ({ user, session }) => {
+      const agencyMember = await AgencyManager.findUserAgency(user.email);
+      return {
+        agency: agencyMember?.agency,
+        user: {
+          ...user,
+          agencyId: agencyMember?.agencyId,
+        },
+        session,
+      };
+    }),
+  ],
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
