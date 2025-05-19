@@ -1,171 +1,94 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 
 // Components
-import { HeaderBar } from "./components/header-bar";
-import { TabsMenu } from "./components/tabs-menu";
-import { FilterBar } from "./components/filter-bar";
+// import { HeaderBar } from "./components/header-bar";
+// import { TabsMenu } from "./components/tabs-menu";
+// import { FilterBar } from "./components/filter-bar";
 import { FileCard } from "./components/file-card";
-import { SkeletonCard } from "./components/skeleton-card";
+// import { SkeletonCard } from "./components/skeleton-card";
 import { FloatingUploadButton } from "./components/floating-upload-button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-
-// Sample data
-const files = [
-  {
-    id: 1,
-    name: "Project Proposal",
-    type: "doc",
-    date: "2023-04-15",
-    isFavorite: true,
-  },
-  {
-    id: 2,
-    name: "Marketing Campaign",
-    type: "image",
-    date: "2023-04-10",
-    isFavorite: false,
-    imageUrl: "/placeholder.svg?height=300&width=400",
-  },
-  {
-    id: 3,
-    name: "Financial Report",
-    type: "sheet",
-    date: "2023-04-05",
-    isFavorite: true,
-  },
-  {
-    id: 4,
-    name: "Brand Guidelines",
-    type: "pdf",
-    date: "2023-03-28",
-    isFavorite: false,
-  },
-  {
-    id: 5,
-    name: "Meeting Notes",
-    type: "text",
-    date: "2023-03-25",
-    isFavorite: false,
-  },
-  {
-    id: 6,
-    name: "Product Mockup",
-    type: "image",
-    date: "2023-03-20",
-    isFavorite: true,
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 7,
-    name: "Client Presentation",
-    type: "pdf",
-    date: "2023-03-15",
-    isFavorite: false,
-  },
-  {
-    id: 8,
-    name: "Team Photo",
-    type: "image",
-    date: "2023-03-10",
-    isFavorite: true,
-    imageUrl: "/placeholder.svg?height=300&width=500",
-  },
-  {
-    id: 9,
-    name: "Project Timeline",
-    type: "sheet",
-    date: "2023-03-05",
-    isFavorite: false,
-  },
-  {
-    id: 10,
-    name: "User Research",
-    type: "doc",
-    date: "2023-02-28",
-    isFavorite: true,
-  },
-  {
-    id: 11,
-    name: "Logo Design",
-    type: "image",
-    date: "2023-02-25",
-    isFavorite: false,
-    imageUrl: "/placeholder.svg?height=400&width=400",
-  },
-  {
-    id: 12,
-    name: "Contract Template",
-    type: "doc",
-    date: "2023-02-20",
-    isFavorite: true,
-  },
-];
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { fetchAgencyFiles } from "@/lib/managers/agencyManager";
+import { AgencyFilesResponse } from "@/lib/types";
+import { queryKeys } from "@/lib/react-query";
+import { LoadingSpinner } from "@/components/site/loading-spinner";
 
 // Menu tabs
-const menuTabs = [
-  { id: "recent", label: "Recent" },
-  { id: "images", label: "Images" },
-  { id: "pdfs", label: "PDFs" },
-  { id: "documents", label: "Documents" },
-  { id: "sheets", label: "Sheets" },
-  { id: "text", label: "Text Files" },
-  { id: "all", label: "All Files" },
-  { id: "favorites", label: "Favorites" },
-];
+// const menuTabs = [
+//   { id: "recent", label: "Recent" },
+//   { id: "images", label: "Images" },
+//   { id: "pdfs", label: "PDFs" },
+//   { id: "documents", label: "Documents" },
+//   { id: "sheets", label: "Sheets" },
+//   { id: "text", label: "Text Files" },
+//   { id: "all", label: "All Files" },
+//   { id: "favorites", label: "Favorites" },
+// ];
 
 export default function MediaHub() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("recent");
-  const [isLoading, setIsLoading] = useState(true);
-  const [view, setView] = useState<"grid" | "list">("grid");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("date");
+  // const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // const [activeTab, setActiveTab] = useState("recent");
+  const [view] = useState<"grid" | "list">("list");
+  // const [searchQuery, setSearchQuery] = useState("");
+  // const [sortBy, setSortBy] = useState<"date">("date");
 
-  // Simulate loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+  const {
+    data,
+    isFetching,
+    // hasNextPage,
+    // fetchNextPage,
+    // isFetchingNextPage,
+    // isError,
+  } = useInfiniteQuery<AgencyFilesResponse>({
+    queryKey: queryKeys.agency.files,
+    queryFn: ({ pageParam }: { pageParam: unknown }) => {
+      return fetchAgencyFiles({
+        pageParam: pageParam as string | undefined,
+      });
+    },
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage: { nextCursor?: string | null }) =>
+      lastPage.nextCursor,
+  });
+
+  const files = data?.pages.flatMap((page) => page.items) || [];
 
   // Filter files based on active tab and search
-  const filteredFiles = files.filter((file) => {
-    // Filter by tab
-    if (activeTab === "recent") return true;
-    if (activeTab === "images") return file.type === "image";
-    if (activeTab === "pdfs") return file.type === "pdf";
-    if (activeTab === "documents") return file.type === "doc";
-    if (activeTab === "sheets") return file.type === "sheet";
-    if (activeTab === "text") return file.type === "text";
-    if (activeTab === "favorites") return file.isFavorite;
-
-    // Search filter
-    if (searchQuery) {
-      return file.name.toLowerCase().includes(searchQuery.toLowerCase());
-    }
-
-    return true;
-  });
+  // const filteredFiles = files.filter((file) => {
+  //   // Filter by tab
+  //   if (activeTab === "recent") return true;
+  //   if (activeTab === "images") return file.type === "image";
+  //   if (activeTab === "pdfs") return file.type === "pdf";
+  //   if (activeTab === "documents") return file.type === "doc";
+  //   if (activeTab === "sheets") return file.type === "sheet";
+  //   if (activeTab === "text") return file.type === "text";
+  //   if (activeTab === "favorites") return file.isFavorite;
+  //   // Search filter
+  //   if (searchQuery) {
+  //     return file.name.toLowerCase().includes(searchQuery.toLowerCase());
+  //   }
+  //   return true;
+  // });
 
   // Sort files
-  const sortedFiles = [...filteredFiles].sort((a, b) => {
-    if (sortBy === "name") return a.name.localeCompare(b.name);
-    if (sortBy === "date")
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    if (sortBy === "type") return a.type.localeCompare(b.type);
-    return 0;
-  });
+  // const sortedFiles = [...filteredFiles].sort((a, b) => {
+  //   if (sortBy === "name") return a.name.localeCompare(b.name);
+  //   if (sortBy === "date")
+  //     return new Date(b.date).getTime() - new Date(a.date).getTime();
+  //   if (sortBy === "type") return a.type.localeCompare(b.type);
+  //   return 0;
+  // });
 
   // Handle search
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
+  // const handleSearch = (query: string) => {
+  //   setSearchQuery(query);
+  // };
 
   return (
     <>
@@ -181,22 +104,22 @@ export default function MediaHub() {
           {/* Main content */}
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Header */}
-            <HeaderBar
+            {/* <HeaderBar
               onSearch={handleSearch}
               toggleMenu={() => setIsMenuOpen(!isMenuOpen)}
-            />
+            /> */}
 
             {/* Horizontal tabs */}
-            <TabsMenu
+            {/* <TabsMenu
               tabs={menuTabs}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-            />
+            /> */}
 
             {/* Content area */}
             <div className="flex-1 overflow-y-auto p-4 bg-[#f8fbff] dark:bg-slate-900">
               {/* Filter and sort bar */}
-              <FilterBar
+              {/* <FilterBar
                 title={
                   menuTabs.find((tab) => tab.id === activeTab)?.label || "Files"
                 }
@@ -204,7 +127,7 @@ export default function MediaHub() {
                 setView={setView}
                 sortBy={sortBy}
                 setSortBy={setSortBy}
-              />
+              /> */}
 
               {/* Files grid/list */}
               <div
@@ -215,15 +138,11 @@ export default function MediaHub() {
                     : "grid-cols-1"
                 )}
               >
-                {isLoading ? (
-                  // Skeleton loading
-                  [...Array(8)].map((_, i) => (
-                    <SkeletonCard key={i} view={view} />
-                  ))
-                ) : sortedFiles.length > 0 ? (
-                  // Files
-                  sortedFiles.map((file) => (
-                    <FileCard key={file.id} file={file} view={view} />
+                {isFetching ? (
+                  <LoadingSpinner />
+                ) : files.length > 0 ? (
+                  files.map((file) => (
+                    <FileCard key={file.key} file={file} view={view} />
                   ))
                 ) : (
                   // No files found
@@ -234,10 +153,10 @@ export default function MediaHub() {
                     <h3 className="text-xl font-medium mb-2 text-slate-800 dark:text-white">
                       No files found
                     </h3>
-                    <p className="text-slate-500 dark:text-slate-400 max-w-md">
+                    {/* <p className="text-slate-500 dark:text-slate-400 max-w-md">
                       We couldn&apos;t find any files matching your search
                       criteria. Try adjusting your filters or search terms.
-                    </p>
+                    </p> */}
                   </div>
                 )}
               </div>

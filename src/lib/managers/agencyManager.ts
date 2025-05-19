@@ -11,7 +11,7 @@ import { v7 } from "uuid";
 import { isAgencyAdmin } from "../utils";
 import PackageManager from "./packageManager";
 import { sendEmail } from "@/lib/email";
-import { TopRankedAgency } from "../types";
+import { AgencyFilesResponse, TopRankedAgency } from "../types";
 
 type CreateAgency = Omit<
   Agency,
@@ -690,6 +690,19 @@ class AgencyManager {
         ((thisMonthCount - lastMonthCount) / (lastMonthCount || 1)) * 100,
     };
   }
+}
+
+export async function fetchAgencyFiles({ pageParam }: { pageParam?: string }) {
+  const response = await fetch(
+    `/api/agency/upload` + (pageParam ? `?cursor=${pageParam}` : "")
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch posts");
+  }
+
+  const data: AgencyFilesResponse = await response.json();
+  return data;
 }
 
 export default AgencyManager;

@@ -8,6 +8,10 @@ import { FileUploadModal } from "./file-upload-modal";
 export function FloatingUploadButton() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
       <motion.button
@@ -25,10 +29,7 @@ export function FloatingUploadButton() {
         <Plus className="h-6 w-6 text-white" />
       </motion.button>
 
-      <FileUploadModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      <FileUploadModal isOpen={isModalOpen} onClose={closeModal} />
     </>
   );
 }

@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/button";
 import { FileTypeSelector } from "./file-type-selector";
 import { FileDropzone } from "./file-dropzone";
 import { motion, AnimatePresence } from "framer-motion";
+import { upload } from "@vercel/blob/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface FileUploadModalProps {
   isOpen: boolean;
@@ -21,6 +23,9 @@ interface FileUploadModalProps {
 export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
   const [selectedFileType, setSelectedFileType] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  // const [uploadProgress, setUploadProgress] = useState(0);
+
+  const { toast } = useToast();
 
   const handleFileTypeSelect = (fileType: string) => {
     setSelectedFileType(fileType);
@@ -31,10 +36,29 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
     setSelectedFile(file);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
+    if (!selectedFile) return;
+
     // Here you would implement the actual file upload logic
     console.log("Uploading file:", selectedFile);
     console.log("File type:", selectedFileType);
+
+    try {
+      await upload(selectedFile.name, selectedFile, {
+        access: "public",
+        handleUploadUrl: "/api/agency/upload",
+        multipart: true,
+      });
+
+      toast({
+        title: "File uploaded successfully",
+      });
+    } catch (error) {
+      toast({
+        title: error instanceof Error ? error.message : "Error uploading file",
+        variant: "destructive",
+      });
+    }
 
     // Reset and close modal
     setSelectedFileType("");
@@ -75,6 +99,8 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
             )}
           </AnimatePresence>
         </div>
+
+        {/* <div>{uploadProgress}%</div> */}
 
         <DialogFooter className="flex justify-between sm:justify-between">
           <Button variant="outline" onClick={handleCancel}>

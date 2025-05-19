@@ -12,20 +12,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FileIcon } from "./file-icon";
 import Image from "next/image";
+import { AgencyFile } from "@prisma/client";
 
 interface FileCardProps {
-  file: {
-    id: number;
-    name: string;
-    type: string;
-    date: string;
-    isFavorite: boolean;
-    imageUrl?: string;
-  };
+  file: AgencyFile;
   view: "grid" | "list";
 }
 
-export function FileCard({ file, view }: FileCardProps) {
+export function FileCard({ file, view = "list" }: FileCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -47,7 +41,7 @@ export function FileCard({ file, view }: FileCardProps) {
       onHoverEnd={() => setIsHovered(false)}
     >
       <div className={view === "grid" ? "w-full" : "w-1/4 h-20"}>
-        {file.type === "image" ? (
+        {/* {file.key === "image" ? (
           <div className="relative w-full h-full">
             <Image
               src={file.imageUrl || "/placeholder.svg"}
@@ -64,7 +58,7 @@ export function FileCard({ file, view }: FileCardProps) {
           <div className={view === "grid" ? "h-32" : "h-20"}>
             <FileIcon type={file.type} />
           </div>
-        )}
+        )} */}
       </div>
       <div
         className={cn(
@@ -79,7 +73,7 @@ export function FileCard({ file, view }: FileCardProps) {
             {file.name}
           </h3>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            {new Date(file.date).toLocaleDateString()}
+            {new Date(file.createdAt).toLocaleDateString()}
           </p>
         </div>
 

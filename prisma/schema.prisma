@@ -74,17 +74,16 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  notifications   Notification[]
-  agencyMember    AgencyMember?
-  tickets         Ticket[]
-  session         Session[]
-  account         Account[]
-  comments        UserComment[]
-  likes           Likes[]
-  commentLikes    CommentLikes[]
-  posts           UserPost[]
-  profile         UserProfile?
-  bookmarkedPosts Post[]         @relation("UserBookmarkedPosts")
+  notifications Notification[]
+  agencyMember  AgencyMember?
+  tickets       Ticket[]
+  session       Session[]
+  account       Account[]
+  comments      UserComment[]
+  likes         Likes[]
+  commentLikes  CommentLikes[]
+  posts         UserPost[]
+  profile       UserProfile?
 
   @@map("user")
 }
@@ -159,6 +158,7 @@ model Agency {
   posts         AgencyPost[]
   comments      AgencyComment[]
   profile       AgencyProfile?
+  agencyFiles   AgencyFile[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -421,8 +421,6 @@ model Post {
   agencyPosts AgencyPost[]
   tags        PostTag[]
 
-  bookmarkedBy User[] @relation("UserBookmarkedPosts")
-
   @@index([id])
   @@map("post")
 }
@@ -572,4 +570,19 @@ model AgencyProfile {
   @@id([agencyId, profileId])
   @@index([agencyId, profileId])
   @@map("agencyprofile")
+}
+
+model AgencyFile {
+  agencyId String
+
+  key       String   @unique
+  size      Int
+  name      String
+  createdAt DateTime
+
+  agency Agency @relation(fields: [agencyId], references: [id])
+
+  @@id([key])
+  @@index([agencyId, key])
+  @@map("agencyfiles")
 }
