@@ -26,6 +26,9 @@ export const queryKeys = {
       { query, sort },
     ],
   },
+  agency: {
+    files: ["files"],
+  },
 };
 
 export const updateInfiniteQueryData = <T>(

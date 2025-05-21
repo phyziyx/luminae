@@ -370,59 +370,60 @@ class PostManager {
     }
 
     // Check if the user already bookmarked the post
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        bookmarkedPosts: { select: { id: true } },
-      },
-    });
-    if (!user) {
-      throw new Error("User not found or not authenticated.");
-    }
+    // const user = await prisma.user.findUnique({
+    //   where: { id: userId },
+    //   select: {
+    //     bookmarkedPosts: { select: { id: true } },
+    //   },
+    // });
+    // if (!user) {
+    //   throw new Error("User not found or not authenticated.");
+    // }
 
-    const alreadyBookmarked = user.bookmarkedPosts.some((p) => p.id === postId);
+    // const alreadyBookmarked = user.bookmarkedPosts.some((p) => p.id === postId);
 
-    if (alreadyBookmarked) {
-      // If bookmarked, disconnect
-      return prisma.user.update({
-        where: { id: userId },
-        data: {
-          bookmarkedPosts: {
-            disconnect: { id: postId },
-          },
-        },
-      });
-    } else {
-      // If not bookmarked, connect
-      return prisma.user.update({
-        where: { id: userId },
-        data: {
-          bookmarkedPosts: {
-            connect: { id: postId },
-          },
-        },
-      });
-    }
+    // if (alreadyBookmarked) {
+    //   // If bookmarked, disconnect
+    //   return prisma.user.update({
+    //     where: { id: userId },
+    //     data: {
+    //       bookmarkedPosts: {
+    //         disconnect: { id: postId },
+    //       },
+    //     },
+    //   });
+    // } else {
+    //   // If not bookmarked, connect
+    //   return prisma.user.update({
+    //     where: { id: userId },
+    //     data: {
+    //       bookmarkedPosts: {
+    //         connect: { id: postId },
+    //       },
+    //     },
+    //   });
+    // }
   }
 
-  public static async getBookmarkedPosts(userId: string) {
+  public static async getBookmarkedPosts() {
+    // userId: string
     // This finds all posts that have a relation
     // to the user in the `bookmarkedBy` many-to-many field
-    return prisma.post.findMany({
-      where: {
-        bookmarkedBy: {
-          some: {
-            id: userId,
-          },
-        },
-      },
-      select: {
-        id: true,
-        title: true,
-        createdAt: true,
-        content: true,
-      },
-    });
+    // return prisma.post.findMany({
+    //   where: {
+    //     bookmarkedBy: {
+    //       some: {
+    //         id: userId,
+    //       },
+    //     },
+    //   },
+    //   select: {
+    //     id: true,
+    //     title: true,
+    //     createdAt: true,
+    //     content: true,
+    //   },
+    // });
   }
 }
 

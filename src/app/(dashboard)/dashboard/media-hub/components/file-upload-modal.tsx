@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/button";
 import { FileTypeSelector } from "./file-type-selector";
 import { FileDropzone } from "./file-dropzone";
 import { motion, AnimatePresence } from "framer-motion";
+import { upload } from "@vercel/blob/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface FileUploadModalProps {
   isOpen: boolean;
@@ -19,31 +21,43 @@ interface FileUploadModalProps {
 }
 
 export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
-  const [selectedFileType, setSelectedFileType] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const { toast } = useToast();
+
   const handleFileTypeSelect = (fileType: string) => {
-    setSelectedFileType(fileType);
     setSelectedFile(null);
   };
 
-  const handleFileSelect = (file: File) => {
-    setSelectedFile(file);
-  };
+  const handleUpload = async () => {
+    if (!selectedFile) return;
 
-  const handleUpload = () => {
     // Here you would implement the actual file upload logic
     console.log("Uploading file:", selectedFile);
-    console.log("File type:", selectedFileType);
+
+    try {
+      await upload(selectedFile.name, selectedFile, {
+        access: "public",
+        handleUploadUrl: "/api/agency/upload",
+        multipart: true,
+      });
+
+      toast({
+        title: "File uploaded successfully",
+      });
+    } catch (error) {
+      toast({
+        title: error instanceof Error ? error.message : "Error uploading file",
+        variant: "destructive",
+      });
+    }
 
     // Reset and close modal
-    setSelectedFileType("");
     setSelectedFile(null);
     onClose();
   };
 
   const handleCancel = () => {
-    setSelectedFileType("");
     setSelectedFile(null);
     onClose();
   };
@@ -59,7 +73,7 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
           <FileTypeSelector onFileTypeSelect={handleFileTypeSelect} />
 
           <AnimatePresence>
-            {selectedFileType && (
+            {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -67,14 +81,15 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
                 transition={{ duration: 0.2 }}
               >
                 <FileDropzone
-                  fileType={selectedFileType}
-                  onFileSelect={handleFileSelect}
+                  onFileSelect={setSelectedFile}
                   selectedFile={selectedFile}
                 />
               </motion.div>
-            )}
+            }
           </AnimatePresence>
         </div>
+
+        {/* <div>{uploadProgress}%</div> */}
 
         <DialogFooter className="flex justify-between sm:justify-between">
           <Button variant="outline" onClick={handleCancel}>

@@ -1,28 +1,28 @@
-import { ChevronDown, Grid3X3, List } from "lucide-react";
+import { Grid3X3, List } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
 
 interface FilterBarProps {
   title: string;
   view: "grid" | "list";
   setView: (view: "grid" | "list") => void;
-  sortBy: string;
-  setSortBy: (sort: string) => void;
+  // sortBy: "date";
+  // setSortBy: (sort: "date") => void;
 }
 
 export function FilterBar({
   title,
   view,
   setView,
-  sortBy,
-  setSortBy,
-}: FilterBarProps) {
+}: // sortBy,
+// setSortBy,
+FilterBarProps) {
   return (
     <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
       <h2 className="text-xl font-bold text-slate-800 dark:text-white">
@@ -61,7 +61,7 @@ export function FilterBar({
         </div>
 
         {/* Sort dropdown */}
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
@@ -106,7 +106,7 @@ export function FilterBar({
               Type
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
     </div>
   );
