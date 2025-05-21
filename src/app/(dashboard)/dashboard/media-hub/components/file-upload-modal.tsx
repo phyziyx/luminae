@@ -21,19 +21,12 @@ interface FileUploadModalProps {
 }
 
 export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
-  const [selectedFileType, setSelectedFileType] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  // const [uploadProgress, setUploadProgress] = useState(0);
 
   const { toast } = useToast();
 
   const handleFileTypeSelect = (fileType: string) => {
-    setSelectedFileType(fileType);
     setSelectedFile(null);
-  };
-
-  const handleFileSelect = (file: File) => {
-    setSelectedFile(file);
   };
 
   const handleUpload = async () => {
@@ -41,7 +34,6 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
 
     // Here you would implement the actual file upload logic
     console.log("Uploading file:", selectedFile);
-    console.log("File type:", selectedFileType);
 
     try {
       await upload(selectedFile.name, selectedFile, {
@@ -61,13 +53,11 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
     }
 
     // Reset and close modal
-    setSelectedFileType("");
     setSelectedFile(null);
     onClose();
   };
 
   const handleCancel = () => {
-    setSelectedFileType("");
     setSelectedFile(null);
     onClose();
   };
@@ -83,7 +73,7 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
           <FileTypeSelector onFileTypeSelect={handleFileTypeSelect} />
 
           <AnimatePresence>
-            {selectedFileType && (
+            {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -91,12 +81,11 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
                 transition={{ duration: 0.2 }}
               >
                 <FileDropzone
-                  fileType={selectedFileType}
-                  onFileSelect={handleFileSelect}
+                  onFileSelect={setSelectedFile}
                   selectedFile={selectedFile}
                 />
               </motion.div>
-            )}
+            }
           </AnimatePresence>
         </div>
 
