@@ -9,11 +9,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FileTypeSelector } from "./file-type-selector";
 import { FileDropzone } from "./file-dropzone";
 import { motion, AnimatePresence } from "framer-motion";
-import { upload } from "@vercel/blob/client";
 import { useToast } from "@/hooks/use-toast";
+import getQueryClient, { queryKeys } from "@/lib/react-query";
 
 interface FileUploadModalProps {
   isOpen: boolean;
@@ -24,10 +23,7 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const { toast } = useToast();
-
-  const handleFileTypeSelect = (fileType: string) => {
-    setSelectedFile(null);
-  };
+  const queryClient = getQueryClient();
 
   const handleUpload = async () => {
     if (!selectedFile) return;
@@ -36,14 +32,31 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
     console.log("Uploading file:", selectedFile);
 
     try {
-      await upload(selectedFile.name, selectedFile, {
-        access: "public",
-        handleUploadUrl: "/api/agency/upload",
-        multipart: true,
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const response = await fetch("/api/agency/upload", {
+        method: "POST",
+        body: formData,
       });
 
+      if (!response.ok) {
+        throw new Error("Failed to upload file");
+      }
+
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      // Handle success
       toast({
         title: "File uploaded successfully",
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.agency.files,
       });
     } catch (error) {
       toast({
@@ -69,25 +82,21 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
           <DialogTitle className="text-xl">Upload New File</DialogTitle>
         </DialogHeader>
 
-        <div className="py-4">
-          <FileTypeSelector onFileTypeSelect={handleFileTypeSelect} />
-
-          <AnimatePresence>
-            {
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
-              >
-                <FileDropzone
-                  onFileSelect={setSelectedFile}
-                  selectedFile={selectedFile}
-                />
-              </motion.div>
-            }
-          </AnimatePresence>
-        </div>
+        <AnimatePresence>
+          {
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              <FileDropzone
+                onFileSelect={setSelectedFile}
+                selectedFile={selectedFile}
+              />
+            </motion.div>
+          }
+        </AnimatePresence>
 
         {/* <div>{uploadProgress}%</div> */}
 

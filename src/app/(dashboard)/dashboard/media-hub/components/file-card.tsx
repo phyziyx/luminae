@@ -23,22 +23,13 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <motion.div
+    <div
       className={cn(
         "bg-white dark:bg-slate-800 rounded-xl overflow-hidden",
-        "border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md dark:shadow-slate-900/30",
         view === "grid" ? "w-full" : "w-full flex items-center"
       )}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      whileHover={{
-        y: -2,
-        boxShadow: "0 10px 30px -10px rgba(0, 0, 0, 0.1)",
-        borderColor: "rgba(59, 130, 246, 0.3)",
-      }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <div className={view === "grid" ? "w-full" : "w-1/4 h-20"}>
         {/* {file.key === "image" ? (
@@ -80,10 +71,7 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
         <AnimatePresence>
           {(isHovered || view === "list") && (
             <motion.div
-              className={cn(
-                "flex items-center gap-2 justify-end",
-                view === "grid" ? "" : ""
-              )}
+              className={cn("flex items-center gap-2 justify-end")}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -141,6 +129,6 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
           )}
         </AnimatePresence>
       </div>
-    </motion.div>
+    </div>
   );
 }

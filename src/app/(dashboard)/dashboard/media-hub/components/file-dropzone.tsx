@@ -60,7 +60,7 @@ export function FileDropzone({
   };
 
   return (
-    <div className="mt-4">
+    <div className="">
       <input
         type="file"
         ref={fileInputRef}

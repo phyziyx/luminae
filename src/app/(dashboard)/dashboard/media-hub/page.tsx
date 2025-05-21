@@ -2,14 +2,9 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Search } from "lucide-react";
 
 // Components
-// import { HeaderBar } from "./components/header-bar";
-// import { TabsMenu } from "./components/tabs-menu";
-// import { FilterBar } from "./components/filter-bar";
 import { FileCard } from "./components/file-card";
-// import { SkeletonCard } from "./components/skeleton-card";
 import { FloatingUploadButton } from "./components/floating-upload-button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
@@ -18,32 +13,41 @@ import { fetchAgencyFiles } from "@/lib/managers/agencyManager";
 import { AgencyFilesResponse } from "@/lib/types";
 import { queryKeys } from "@/lib/react-query";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
+import InfiniteScrollContainer from "@/components/site/infinite-scroll-container";
+
+import NoFilesFound from "./components/no-files-found";
+import { HeaderBar } from "./components/header-bar";
+import { useDebounce } from "@uidotdev/usehooks";
+import { FilterBar } from "./components/filter-bar";
+import { TabsMenu } from "./components/tabs-menu";
 
 // Menu tabs
-// const menuTabs = [
-//   { id: "recent", label: "Recent" },
-//   { id: "images", label: "Images" },
-//   { id: "pdfs", label: "PDFs" },
-//   { id: "documents", label: "Documents" },
-//   { id: "sheets", label: "Sheets" },
-//   { id: "text", label: "Text Files" },
-//   { id: "all", label: "All Files" },
-//   { id: "favorites", label: "Favorites" },
-// ];
+const menuTabs = [
+  { id: "all", label: "All Files" },
+  { id: "images", label: "Images" },
+  { id: "pdfs", label: "PDFs" },
+  { id: "documents", label: "Documents" },
+  { id: "sheets", label: "Sheets" },
+  { id: "text", label: "Text Files" },
+  { id: "favorites", label: "Favorites" },
+];
 
 export default function MediaHub() {
-  // const [isMenuOpen, setIsMenuOpen] = useState(false);
-  // const [activeTab, setActiveTab] = useState("recent");
-  const [view] = useState<"grid" | "list">("list");
-  // const [searchQuery, setSearchQuery] = useState("");
-  // const [sortBy, setSortBy] = useState<"date">("date");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
+
+  const [sortBy, setSortBy] = useState<"date">("date");
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 1000);
+
+  const [view, setView] = useState<"grid" | "list">("list");
 
   const {
     data,
     isFetching,
-    // hasNextPage,
-    // fetchNextPage,
-    // isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
     // isError,
   } = useInfiniteQuery<AgencyFilesResponse>({
     queryKey: queryKeys.agency.files,
@@ -76,19 +80,10 @@ export default function MediaHub() {
   //   return true;
   // });
 
-  // Sort files
-  // const sortedFiles = [...filteredFiles].sort((a, b) => {
-  //   if (sortBy === "name") return a.name.localeCompare(b.name);
-  //   if (sortBy === "date")
-  //     return new Date(b.date).getTime() - new Date(a.date).getTime();
-  //   if (sortBy === "type") return a.type.localeCompare(b.type);
-  //   return 0;
-  // });
-
   // Handle search
-  // const handleSearch = (query: string) => {
-  //   setSearchQuery(query);
-  // };
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
 
   return (
     <>
@@ -99,68 +94,65 @@ export default function MediaHub() {
           <h1 className="text-3xl font-semibold">Media Hub</h1>
         </div>
       </header>
-      <div className="min-h-screen bg-gradient-to-b from-[#f8fbff] to-[#e9f0fb] dark:from-slate-900 dark:to-slate-800 text-slate-800 dark:text-slate-200">
-        <div className="flex h-screen overflow-hidden">
-          {/* Main content */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Header */}
-            {/* <HeaderBar
+      <div className="text-slate-800 dark:text-slate-200">
+        <div className="flex">
+          <div className="flex-1 flex flex-col overflow-hidden px-2">
+            <HeaderBar
               onSearch={handleSearch}
               toggleMenu={() => setIsMenuOpen(!isMenuOpen)}
-            /> */}
+            />
 
-            {/* Horizontal tabs */}
-            {/* <TabsMenu
+            <TabsMenu
               tabs={menuTabs}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-            /> */}
+            />
 
-            {/* Content area */}
-            <div className="flex-1 overflow-y-auto p-4 bg-[#f8fbff] dark:bg-slate-900">
-              {/* Filter and sort bar */}
-              {/* <FilterBar
-                title={
-                  menuTabs.find((tab) => tab.id === activeTab)?.label || "Files"
-                }
-                view={view}
-                setView={setView}
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-              /> */}
+            <FilterBar
+              title={
+                menuTabs.find((tab) => tab.id === activeTab)?.label || "Files"
+              }
+              view={view}
+              setView={setView}
+            />
 
-              {/* Files grid/list */}
-              <div
-                className={cn(
-                  "grid gap-4",
-                  view === "grid"
-                    ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                    : "grid-cols-1"
-                )}
-              >
-                {isFetching ? (
+            <InfiniteScrollContainer
+              className="flex-1 overflow-y-auto p-4"
+              onBottomReached={() =>
+                hasNextPage &&
+                !isFetching &&
+                !isFetchingNextPage &&
+                fetchNextPage()
+              }
+            >
+              {isFetching ? (
+                <div className="flex text-blue-500 items-center justify-center">
                   <LoadingSpinner />
-                ) : files.length > 0 ? (
-                  files.map((file) => (
+                </div>
+              ) : files.length > 0 ? (
+                <div
+                  className={cn(
+                    "grid gap-4",
+                    view === "grid"
+                      ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                      : "grid-cols-1"
+                  )}
+                >
+                  {files.map((file) => (
                     <FileCard key={file.key} file={file} view={view} />
-                  ))
-                ) : (
-                  // No files found
-                  <div className="col-span-full flex flex-col items-center justify-center py-12 text-center">
-                    <div className="bg-white dark:bg-slate-800 rounded-full p-4 mb-4">
-                      <Search className="h-8 w-8 text-slate-400 dark:text-slate-500" />
-                    </div>
-                    <h3 className="text-xl font-medium mb-2 text-slate-800 dark:text-white">
-                      No files found
-                    </h3>
-                    {/* <p className="text-slate-500 dark:text-slate-400 max-w-md">
-                      We couldn&apos;t find any files matching your search
-                      criteria. Try adjusting your filters or search terms.
-                    </p> */}
-                  </div>
-                )}
-              </div>
-            </div>
+                  ))}
+                </div>
+              ) : (
+                <NoFilesFound
+                  filtersApplied={!!debouncedSearchQuery || activeTab !== "all"}
+                />
+              )}
+              {isFetchingNextPage && (
+                <div className="flex text-blue-500 items-center justify-center">
+                  <LoadingSpinner />
+                </div>
+              )}
+            </InfiniteScrollContainer>
           </div>
         </div>
 

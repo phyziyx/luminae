@@ -12,17 +12,9 @@ interface FilterBarProps {
   title: string;
   view: "grid" | "list";
   setView: (view: "grid" | "list") => void;
-  // sortBy: "date";
-  // setSortBy: (sort: "date") => void;
 }
 
-export function FilterBar({
-  title,
-  view,
-  setView,
-}: // sortBy,
-// setSortBy,
-FilterBarProps) {
+export function FilterBar({ title, view, setView }: FilterBarProps) {
   return (
     <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
       <h2 className="text-xl font-bold text-slate-800 dark:text-white">

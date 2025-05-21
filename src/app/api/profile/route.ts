@@ -2,7 +2,6 @@ import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
 import { backendClient } from "@/lib/edgestore/edgestore";
 import AgencyManager from "@/lib/managers/agencyManager";
-import { unstable_noStore } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(req: NextRequest) {
@@ -94,8 +93,6 @@ export async function DELETE(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  unstable_noStore();
-
   const session = await getSession();
   const user = session?.user;
 
