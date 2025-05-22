@@ -10,9 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FileIcon } from "./file-icon";
-import Image from "next/image";
 import { AgencyFile } from "@prisma/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface FileCardProps {
   file: AgencyFile;
@@ -21,6 +20,93 @@ interface FileCardProps {
 
 export function FileCard({ file, view = "list" }: FileCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [isActionPending, setActionPending] = useState(false);
+
+  const { toast } = useToast();
+
+  const shareFile = async (key: string) => {
+    setActionPending(true);
+
+    try {
+      const response = await fetch(`/api/agency/download?key=${key}`);
+
+      if (!response.ok) {
+        throw new Error("Failed to share file");
+      }
+
+      const data = await response.json();
+      toast({
+        title: data.success ? "Success" : "Error",
+        description: data.success
+          ? "File shared successfully"
+          : "Failed to share file",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to share file",
+      });
+    }
+
+    setActionPending(false);
+  };
+
+  const downloadFile = async (key: string) => {
+    setActionPending(true);
+
+    try {
+      const response = await fetch("/api/agency/download", {
+        method: "POST",
+        body: JSON.stringify({ key }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to download file");
+      }
+
+      const data = await response.json();
+
+      // Open the URL in a new tab
+      const downloadUrl = data.url;
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Failed to download file",
+      });
+    }
+
+    setActionPending(false);
+  };
+
+  const deleteFile = async (key: string) => {
+    setActionPending(true);
+
+    try {
+      const response = await fetch("/api/agency/upload", {
+        method: "DELETE",
+        body: JSON.stringify({ key }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete file");
+      }
+
+      const data = await response.json();
+      toast({
+        title: data.success ? "Success" : "Error",
+        description: data.success
+          ? "File deleted successfully"
+          : "Failed to delete file",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete file",
+      });
+    }
+
+    setActionPending(false);
+  };
 
   return (
     <div
@@ -117,10 +203,26 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
                   align="end"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <DropdownMenuItem>Download</DropdownMenuItem>
-                  <DropdownMenuItem>Share</DropdownMenuItem>
-                  <DropdownMenuItem>Rename</DropdownMenuItem>
-                  <DropdownMenuItem className="text-red-500 dark:text-red-400">
+                  <DropdownMenuItem
+                    onClick={() => downloadFile(file.key)}
+                    disabled={isActionPending}
+                  >
+                    Download
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => shareFile(file.key)}
+                    disabled={isActionPending}
+                  >
+                    Share
+                  </DropdownMenuItem>
+                  <DropdownMenuItem disabled={isActionPending}>
+                    Rename
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    disabled={isActionPending}
+                    onClick={() => deleteFile(file.key)}
+                    className="text-red-500 dark:text-red-400"
+                  >
                     Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>

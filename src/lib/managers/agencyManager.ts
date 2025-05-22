@@ -692,13 +692,33 @@ class AgencyManager {
   }
 }
 
-export async function fetchAgencyFiles({ pageParam }: { pageParam?: string }) {
-  const response = await fetch(
-    `/api/agency/upload` + (pageParam ? `?cursor=${pageParam}` : "")
-  );
+export async function fetchAgencyFiles({
+  pageParam,
+  searchTerm,
+}: {
+  pageParam?: string;
+  searchTerm?: string;
+}) {
+  const queries = [
+    {
+      key: "cursor",
+      value: pageParam,
+    },
+    {
+      key: "search",
+      value: searchTerm,
+    },
+  ];
+
+  const queryString = queries
+    .filter((query) => query.value)
+    .map((query) => `${query.key}=${query.value}`)
+    .join("&");
+
+  const response = await fetch(`/api/agency/upload?${queryString}`);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch posts");
+    throw new Error("Failed to fetch agency files");
   }
 
   const data: AgencyFilesResponse = await response.json();

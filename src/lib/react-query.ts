@@ -26,8 +26,13 @@ export const queryKeys = {
       { query, sort },
     ],
   },
-  agency: {
-    files: ["files"],
+  agencyFiles: {
+    all: ["files"],
+    search: ({ query }: { query: string }) => [
+      ...queryKeys.agencyFiles.all,
+      "search",
+      { query },
+    ],
   },
 };
 

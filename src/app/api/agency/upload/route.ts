@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     throw new Error("Not part of any agency");
   }
 
-  // const fileName = request.nextUrl.searchParams.get("fileName");
+  const searchName = request.nextUrl.searchParams.get("search");
   const cursorParam = request.nextUrl.searchParams.get("cursor");
   const cursor = cursorParam ? cursorParam : undefined;
   const takeLimit = 10;
@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
       : undefined,
     where: {
       agencyId: agencyMember.agencyId,
+      ...(searchName ? { name: { contains: searchName } } : {}),
     },
     orderBy: {
       createdAt: "desc",
@@ -70,6 +71,7 @@ export async function DELETE(request: NextRequest) {
   await prisma.agencyFile.delete({
     where: {
       key,
+      agencyId: agencyMember.agencyId,
     },
   });
 

@@ -50,10 +50,13 @@ export default function MediaHub() {
     isFetchingNextPage,
     // isError,
   } = useInfiniteQuery<AgencyFilesResponse>({
-    queryKey: queryKeys.agency.files,
+    queryKey: queryKeys.agencyFiles.search({
+      query: debouncedSearchQuery,
+    }),
     queryFn: ({ pageParam }: { pageParam: unknown }) => {
       return fetchAgencyFiles({
         pageParam: pageParam as string | undefined,
+        searchTerm: debouncedSearchQuery,
       });
     },
     initialPageParam: undefined as string | undefined,
@@ -62,28 +65,6 @@ export default function MediaHub() {
   });
 
   const files = data?.pages.flatMap((page) => page.items) || [];
-
-  // Filter files based on active tab and search
-  // const filteredFiles = files.filter((file) => {
-  //   // Filter by tab
-  //   if (activeTab === "recent") return true;
-  //   if (activeTab === "images") return file.type === "image";
-  //   if (activeTab === "pdfs") return file.type === "pdf";
-  //   if (activeTab === "documents") return file.type === "doc";
-  //   if (activeTab === "sheets") return file.type === "sheet";
-  //   if (activeTab === "text") return file.type === "text";
-  //   if (activeTab === "favorites") return file.isFavorite;
-  //   // Search filter
-  //   if (searchQuery) {
-  //     return file.name.toLowerCase().includes(searchQuery.toLowerCase());
-  //   }
-  //   return true;
-  // });
-
-  // Handle search
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
 
   return (
     <>
@@ -98,7 +79,7 @@ export default function MediaHub() {
         <div className="flex">
           <div className="flex-1 flex flex-col overflow-hidden px-2">
             <HeaderBar
-              onSearch={handleSearch}
+              onSearch={setSearchQuery}
               toggleMenu={() => setIsMenuOpen(!isMenuOpen)}
             />
 
@@ -156,7 +137,6 @@ export default function MediaHub() {
           </div>
         </div>
 
-        {/* Floating action button */}
         <FloatingUploadButton />
       </div>
     </>
