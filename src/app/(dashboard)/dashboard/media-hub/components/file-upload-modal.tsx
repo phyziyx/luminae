@@ -56,7 +56,7 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
       });
 
       queryClient.invalidateQueries({
-        queryKey: queryKeys.agency.files,
+        queryKey: queryKeys.agencyFiles.all,
       });
     } catch (error) {
       toast({
