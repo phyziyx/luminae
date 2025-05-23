@@ -4,7 +4,13 @@ import AgencyManager from "@/lib/managers/agencyManager";
 import SubscriptionManager from "@/lib/managers/subscriptionManager";
 import { type NextRequest, NextResponse } from "next/server";
 import { type AgencyFilesResponse } from "@/lib/types";
-import { deleteFile, getFileMetadata, uploadFile } from "@/lib/r2";
+import {
+  deleteFile,
+  FileType,
+  fileTypes,
+  getFileMetadata,
+  uploadFile,
+} from "@/lib/r2";
 
 export async function GET(request: NextRequest) {
   const session = await getSession();
@@ -21,6 +27,13 @@ export async function GET(request: NextRequest) {
 
   const searchName = request.nextUrl.searchParams.get("search");
   const cursorParam = request.nextUrl.searchParams.get("cursor");
+  let fileType = request.nextUrl.searchParams.get("fileType");
+
+  if (fileType && !fileTypes.includes(fileType as FileType)) {
+    // If the fileType is not valid, default to "all"
+    fileType = "all";
+  }
+
   const cursor = cursorParam ? cursorParam : undefined;
   const takeLimit = 10;
 
@@ -35,6 +48,11 @@ export async function GET(request: NextRequest) {
     where: {
       agencyId: agencyMember.agencyId,
       ...(searchName ? { name: { contains: searchName } } : {}),
+      ...(fileType && fileType !== "favorites" && fileType !== "all"
+        ? {
+            type: fileType,
+          }
+        : {}),
     },
     orderBy: {
       createdAt: "desc",
@@ -132,6 +150,29 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   // Get file metadata
   const headRes = await getFileMetadata(key);
 
+  let fileType: FileType = "all";
+  if (file.type.startsWith("image/")) {
+    fileType = "images";
+  } else if (file.type.startsWith("application/pdf")) {
+    fileType = "pdfs";
+  } else if (
+    file.type.startsWith(
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+  ) {
+    fileType = "sheets";
+  } else if (
+    file.type.startsWith(
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
+  ) {
+    fileType = "documents";
+  } else if (file.type.startsWith("text/")) {
+    fileType = "text";
+  } else {
+    fileType = "others";
+  }
+
   // Save to DB
   await prisma.agencyFile.create({
     data: {
@@ -139,6 +180,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       key: key,
       name: file.name,
       size: headRes.ContentLength ?? file.size,
+      type: fileType,
       agencyId: agencyMember.agencyId,
     },
   });

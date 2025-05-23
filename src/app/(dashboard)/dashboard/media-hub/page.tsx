@@ -18,11 +18,10 @@ import InfiniteScrollContainer from "@/components/site/infinite-scroll-container
 import NoFilesFound from "./components/no-files-found";
 import { HeaderBar } from "./components/header-bar";
 import { useDebounce } from "@uidotdev/usehooks";
-import { FilterBar } from "./components/filter-bar";
 import { TabsMenu } from "./components/tabs-menu";
+import { FileType } from "@/lib/r2";
 
-// Menu tabs
-const menuTabs = [
+const menuTabs: { id: FileType; label: string }[] = [
   { id: "all", label: "All Files" },
   { id: "images", label: "Images" },
   { id: "pdfs", label: "PDFs" },
@@ -33,8 +32,7 @@ const menuTabs = [
 ];
 
 export default function MediaHub() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState<FileType>("all");
 
   const [sortBy, setSortBy] = useState<"date">("date");
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,15 +46,17 @@ export default function MediaHub() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-    // isError,
+    isError,
   } = useInfiniteQuery<AgencyFilesResponse>({
     queryKey: queryKeys.agencyFiles.search({
       query: debouncedSearchQuery,
+      fileType: activeTab,
     }),
     queryFn: ({ pageParam }: { pageParam: unknown }) => {
       return fetchAgencyFiles({
         pageParam: pageParam as string | undefined,
         searchTerm: debouncedSearchQuery,
+        fileType: activeTab,
       });
     },
     initialPageParam: undefined as string | undefined,
@@ -80,21 +80,14 @@ export default function MediaHub() {
           <div className="flex-1 flex flex-col overflow-hidden px-2">
             <HeaderBar
               onSearch={setSearchQuery}
-              toggleMenu={() => setIsMenuOpen(!isMenuOpen)}
+              view={view}
+              setView={setView}
             />
 
             <TabsMenu
               tabs={menuTabs}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
-            />
-
-            <FilterBar
-              title={
-                menuTabs.find((tab) => tab.id === activeTab)?.label || "Files"
-              }
-              view={view}
-              setView={setView}
             />
 
             <InfiniteScrollContainer
@@ -131,6 +124,12 @@ export default function MediaHub() {
               {isFetchingNextPage && (
                 <div className="flex text-blue-500 items-center justify-center">
                   <LoadingSpinner />
+                </div>
+              )}
+
+              {isError && (
+                <div className="flex text-red-500 items-center justify-center">
+                  <p>Error fetching files. Please try again later.</p>
                 </div>
               )}
             </InfiniteScrollContainer>

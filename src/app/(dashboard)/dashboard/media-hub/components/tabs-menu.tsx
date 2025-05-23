@@ -3,6 +3,7 @@
 import { motion, LayoutGroup } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { FileType } from "@/lib/r2";
 
 interface Tab {
   id: string;
@@ -11,15 +12,15 @@ interface Tab {
 
 interface TabsMenuProps {
   tabs: Tab[];
-  activeTab: string;
-  setActiveTab: (id: string) => void;
+  activeTab: FileType;
+  setActiveTab: (id: FileType) => void;
 }
 
 export function TabsMenu({ tabs, activeTab, setActiveTab }: TabsMenuProps) {
   return (
     <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-4 py-2 sticky top-16 z-20">
       <LayoutGroup>
-        <div className="flex overflow-x-auto hide-scrollbar gap-2 pb-1">
+        <div className="flex flex-col sm:flex-row overflow-x-auto hide-scrollbar gap-2 pb-1">
           {tabs.map((tab) => (
             <Button
               key={tab.id}
@@ -30,7 +31,7 @@ export function TabsMenu({ tabs, activeTab, setActiveTab }: TabsMenuProps) {
                   ? "text-blue-600 dark:text-blue-400"
                   : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
               )}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => setActiveTab(tab.id as FileType)}
             >
               {activeTab === tab.id && (
                 <motion.div

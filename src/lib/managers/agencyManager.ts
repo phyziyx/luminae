@@ -695,9 +695,11 @@ class AgencyManager {
 export async function fetchAgencyFiles({
   pageParam,
   searchTerm,
+  fileType,
 }: {
   pageParam?: string;
   searchTerm?: string;
+  fileType?: string;
 }) {
   const queries = [
     {
@@ -707,6 +709,10 @@ export async function fetchAgencyFiles({
     {
       key: "search",
       value: searchTerm,
+    },
+    {
+      key: "fileType",
+      value: fileType,
     },
   ];
 

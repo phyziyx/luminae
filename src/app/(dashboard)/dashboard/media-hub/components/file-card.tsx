@@ -29,9 +29,8 @@ interface FileCardProps {
 export function FileCard({ file, view = "list" }: FileCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isActionPending, setActionPending] = useState(false);
-  const [isRenaming, setIsRenaming] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [isRenameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState<string | null>(null);
 
   const { toast } = useToast();
 
@@ -105,53 +104,17 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
     setActionPending(false);
   };
 
-  const renameFile = async (key: string, newName: string) => {
-    setActionPending(true);
-
-    try {
-      const response = await fetch("/api/agency/rename", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ key, newName }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to rename file");
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        toast({
-          title: "Success",
-          description: "File renamed successfully",
-        });
-      } else {
-        throw new Error(data.error || "Failed to rename file");
-      }
-    } catch (err) {
-      toast({
-        title: "Error",
-        description:
-          err instanceof Error ? err.message : "Failed to rename file",
-      });
-    }
-
-    setActionPending(false);
+  const handleDeleteClick = (key: string) => {
+    setFileToDelete(key);
+    setDeleteDialogOpen(true);
   };
 
-  const handleRenameClick = () => {
-    setRenameDialogOpen(true);
-    setNewName(file.name);
-  };
-
-  const handleRenameSubmit = async () => {
-    if (newName.trim() && newName !== file.name) {
-      await renameFile(file.key, newName.trim());
+  const handleDeleteConfirm = async () => {
+    if (fileToDelete) {
+      await deleteFile(fileToDelete);
     }
-    setRenameDialogOpen(false);
+    setDeleteDialogOpen(false);
+    setFileToDelete(null);
   };
 
   return (
@@ -200,135 +163,95 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
           </p>
         </div>
 
-        <AnimatePresence>
-          {(isHovered || view === "list") && (
-            <motion.div
-              className={cn("flex items-center gap-2 justify-end")}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700"
+        <Dialog open={isDeleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AnimatePresence>
+            {(isHovered || view === "list") && (
+              <motion.div
+                className={cn("flex items-center gap-2 justify-end")}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant={"secondary"}
+                      className="absolute h-8 w-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700"
+                    >
+                      <svg
+                        width="15"
+                        height="3"
+                        viewBox="0 0 15 3"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <circle
+                          cx="1.5"
+                          cy="1.5"
+                          r="1.5"
+                          className="fill-slate-600 dark:fill-slate-400"
+                        />
+                        <circle
+                          cx="7.5"
+                          cy="1.5"
+                          r="1.5"
+                          className="fill-slate-600 dark:fill-slate-400"
+                        />
+                        <circle
+                          cx="13.5"
+                          cy="1.5"
+                          r="1.5"
+                          className="fill-slate-600 dark:fill-slate-400"
+                        />
+                      </svg>
+                      {/* <span className="sr-only">Open menu</span> */}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="end"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <svg
-                      width="15"
-                      height="3"
-                      viewBox="0 0 15 3"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                    <DropdownMenuItem
+                      onClick={() => downloadFile(file.key)}
+                      disabled={isActionPending}
                     >
-                      <circle
-                        cx="1.5"
-                        cy="1.5"
-                        r="1.5"
-                        className="fill-slate-600 dark:fill-slate-400"
-                      />
-                      <circle
-                        cx="7.5"
-                        cy="1.5"
-                        r="1.5"
-                        className="fill-slate-600 dark:fill-slate-400"
-                      />
-                      <circle
-                        cx="13.5"
-                        cy="1.5"
-                        r="1.5"
-                        className="fill-slate-600 dark:fill-slate-400"
-                      />
-                    </svg>
-                    <span className="sr-only">Open menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <DropdownMenuItem
-                    onClick={() => downloadFile(file.key)}
-                    disabled={isActionPending}
-                  >
-                    Download
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={handleRenameClick}
-                    disabled={isActionPending}
-                  >
-                    Rename
-                  </DropdownMenuItem>
+                      Download
+                    </DropdownMenuItem>
 
-                  <DropdownMenuItem
-                    disabled={isActionPending}
-                    onClick={() => deleteFile(file.key)}
-                    className="text-red-500 dark:text-red-400"
-                  >
-                    Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      <Dialog open={isRenameDialogOpen} onOpenChange={setRenameDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Rename File</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col gap-4">
-            <input
-              type="text"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              className="p-2 text-sm border rounded-md focus:ring-1 focus:ring-blue-500 focus:outline-none"
-              placeholder="Enter new file name"
-            />
-          </div>
-          <DialogFooter>
-            <Button
-              variant="secondary"
-              onClick={() => setRenameDialogOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              style={{
-                display: "grid",
-                gridTemplateAreas: "stack",
-              }}
-              onClick={handleRenameSubmit}
-              disabled={isActionPending}
-            >
-              <p
-                style={{
-                  gridArea: "stack",
-                }}
-                className={cn({
-                  hidden: isActionPending,
-                  visible: !isActionPending,
-                })}
+                    <DropdownMenuItem
+                      disabled={isActionPending}
+                      onClick={() => handleDeleteClick(file.key)}
+                      className="text-red-500 dark:text-red-400"
+                    >
+                      Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirm Deletion</DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Are you sure you want to delete this file? This action cannot be
+              undone.
+            </p>
+            <DialogFooter>
+              <Button
+                variant="secondary"
+                onClick={() => setDeleteDialogOpen(false)}
               >
-                Save
-              </p>
-              <LoadingSpinner
-                style={{
-                  gridArea: "stack",
-                }}
-                className={cn({
-                  hidden: !isActionPending,
-                  visible: isActionPending,
-                })}
-              />
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+                Cancel
+              </Button>
+              <Button onClick={handleDeleteConfirm} disabled={isActionPending}>
+                {isActionPending ? <LoadingSpinner /> : "Delete"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
