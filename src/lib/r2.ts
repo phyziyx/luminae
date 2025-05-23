@@ -3,6 +3,7 @@ import {
   PutObjectCommand,
   HeadObjectCommand,
   DeleteObjectCommand,
+  CopyObjectCommand,
 } from "@aws-sdk/client-s3";
 
 const R2_BUCKET = process.env.R2_BUCKET!;
@@ -51,4 +52,18 @@ export async function getFileMetadata(key: string) {
       Key: key,
     })
   );
+}
+
+export async function renameFile(oldKey: string, newKey: string) {
+  // Copy the file to the new key
+  await s3.send(
+    new CopyObjectCommand({
+      Bucket: R2_BUCKET,
+      CopySource: `${R2_BUCKET}/${oldKey}`,
+      Key: newKey,
+    })
+  );
+
+  // Delete the old file
+  await deleteFile(oldKey);
 }

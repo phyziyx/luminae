@@ -12,6 +12,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AgencyFile } from "@prisma/client";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { LoadingSpinner } from "@/components/site/loading-spinner";
 
 interface FileCardProps {
   file: AgencyFile;
@@ -21,6 +29,9 @@ interface FileCardProps {
 export function FileCard({ file, view = "list" }: FileCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isActionPending, setActionPending] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [isRenameDialogOpen, setRenameDialogOpen] = useState(false);
 
   const { toast } = useToast();
 
@@ -92,6 +103,55 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
     }
 
     setActionPending(false);
+  };
+
+  const renameFile = async (key: string, newName: string) => {
+    setActionPending(true);
+
+    try {
+      const response = await fetch("/api/agency/rename", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ key, newName }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to rename file");
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "File renamed successfully",
+        });
+      } else {
+        throw new Error(data.error || "Failed to rename file");
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        description:
+          err instanceof Error ? err.message : "Failed to rename file",
+      });
+    }
+
+    setActionPending(false);
+  };
+
+  const handleRenameClick = () => {
+    setRenameDialogOpen(true);
+    setNewName(file.name);
+  };
+
+  const handleRenameSubmit = async () => {
+    if (newName.trim() && newName !== file.name) {
+      await renameFile(file.key, newName.trim());
+    }
+    setRenameDialogOpen(false);
   };
 
   return (
@@ -195,9 +255,13 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
                   >
                     Download
                   </DropdownMenuItem>
-                  <DropdownMenuItem disabled={isActionPending}>
+                  <DropdownMenuItem
+                    onClick={handleRenameClick}
+                    disabled={isActionPending}
+                  >
                     Rename
                   </DropdownMenuItem>
+
                   <DropdownMenuItem
                     disabled={isActionPending}
                     onClick={() => deleteFile(file.key)}
@@ -211,6 +275,60 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
           )}
         </AnimatePresence>
       </div>
+
+      <Dialog open={isRenameDialogOpen} onOpenChange={setRenameDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rename File</DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <input
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              className="p-2 text-sm border rounded-md focus:ring-1 focus:ring-blue-500 focus:outline-none"
+              placeholder="Enter new file name"
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="secondary"
+              onClick={() => setRenameDialogOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              style={{
+                display: "grid",
+                gridTemplateAreas: "stack",
+              }}
+              onClick={handleRenameSubmit}
+              disabled={isActionPending}
+            >
+              <p
+                style={{
+                  gridArea: "stack",
+                }}
+                className={cn({
+                  hidden: isActionPending,
+                  visible: !isActionPending,
+                })}
+              >
+                Save
+              </p>
+              <LoadingSpinner
+                style={{
+                  gridArea: "stack",
+                }}
+                className={cn({
+                  hidden: !isActionPending,
+                  visible: isActionPending,
+                })}
+              />
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
