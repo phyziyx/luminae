@@ -29,6 +29,7 @@ const menuTabs: { id: FileType; label: string }[] = [
   { id: "sheets", label: "Sheets" },
   { id: "text", label: "Text Files" },
   { id: "favorites", label: "Favorites" },
+  { id: "others", label: "Others" },
 ];
 
 export default function MediaHub() {

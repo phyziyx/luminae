@@ -20,11 +20,20 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { LoadingSpinner } from "@/components/site/loading-spinner";
+import { FileIcon } from "./file-icon";
+import { ImageIcon } from "lucide-react";
 
 interface FileCardProps {
   file: AgencyFile;
   view: "grid" | "list";
 }
+
+const getFileSize = (size: number) => {
+  const i = Math.floor(Math.log(size) / Math.log(1024));
+  return `${(size / Math.pow(1024, i)).toFixed(2)} ${
+    ["B", "KB", "MB", "GB"][i]
+  }`;
+};
 
 export function FileCard({ file, view = "list" }: FileCardProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -127,11 +136,9 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className={view === "grid" ? "w-full" : "w-1/4 h-20"}>
-        {/* {file.key === "image" ? (
+        {file.key === "image" ? (
           <div className="relative w-full h-full">
-            <Image
-              src={file.imageUrl || "/placeholder.svg"}
-              alt={file.name}
+            <ImageIcon
               className={cn(
                 "object-cover",
                 view === "grid" ? "w-full h-32" : "w-full h-20"
@@ -144,7 +151,7 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
           <div className={view === "grid" ? "h-32" : "h-20"}>
             <FileIcon type={file.type} />
           </div>
-        )} */}
+        )}
       </div>
       <div
         className={cn(
@@ -158,8 +165,12 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
           <h3 className="font-medium text-slate-800 dark:text-slate-200 truncate">
             {file.name}
           </h3>
+
           <p className="text-xs text-slate-500 dark:text-slate-400">
             {new Date(file.createdAt).toLocaleDateString()}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            {getFileSize(file.size)}
           </p>
         </div>
 
