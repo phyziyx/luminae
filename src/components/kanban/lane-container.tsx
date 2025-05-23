@@ -271,7 +271,7 @@ function LaneContainerHeader({
 
   return (
     <AlertDialog>
-      <DropdownMenu>
+      <DropdownMenu modal={false}>
         <div
           {...attributes}
           {...listeners}
