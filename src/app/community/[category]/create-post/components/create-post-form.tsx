@@ -26,6 +26,7 @@ import { createPostSchema, CreatePostSchema } from "@/lib/forms";
 import onCreatePost from "@/actions/create-post";
 import { TagsPreview } from "@/app/community/components/tag-preview";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useQuery } from "@tanstack/react-query";
 
 // function SaveAsDraft({
 //   handleSubmit,
@@ -54,6 +55,17 @@ export default function CreatePostForm({ category }: { category: string }) {
 
   const [activeTab, setActiveTab] = useState("edit");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const { data } = useQuery({
+    queryKey: ["canPostAsAgency"],
+    queryFn: async () => {
+      const response = await fetch("/api/community/agency-status");
+      if (!response.ok) {
+        throw new Error("Failed to fetch agency status");
+      }
+      return (await response.json()) as { canPostAsAgency: boolean };
+    },
+  });
 
   const form = useForm<CreatePostSchema>({
     resolver: zodResolver(createPostSchema),
@@ -268,7 +280,7 @@ export default function CreatePostForm({ category }: { category: string }) {
         </Tabs>
 
         <div className="mt-8 flex flex-col-reverse sm:flex-row items-center justify-end gap-4">
-          {
+          {data?.canPostAsAgency && (
             <Form {...form}>
               <FormField
                 control={form.control}
@@ -289,7 +301,7 @@ export default function CreatePostForm({ category }: { category: string }) {
                 )}
               />
             </Form>
-          }
+          )}
 
           <Button
             variant="outline"

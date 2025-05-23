@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { commentFormSchema, CommentFormSchema } from "@/lib/forms";
 import { queryKeys } from "@/lib/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useCallback } from "react";
 import { useForm } from "react-hook-form";
@@ -27,6 +27,17 @@ export default function CommentForm({ postId }: { postId: string }) {
   const t = useTranslations();
 
   const queryClient = useQueryClient();
+
+  const { data } = useQuery({
+    queryKey: ["canPostAsAgency"],
+    queryFn: async () => {
+      const response = await fetch("/api/community/agency-status");
+      if (!response.ok) {
+        throw new Error("Failed to fetch agency status");
+      }
+      return (await response.json()) as { canPostAsAgency: boolean };
+    },
+  });
 
   const form = useForm<CommentFormSchema>({
     resolver: zodResolver(commentFormSchema),
@@ -111,7 +122,7 @@ export default function CommentForm({ postId }: { postId: string }) {
               Supports markdown formatting
             </div>
             <div className="flex flex-row space-x-4 align-baseline">
-              {
+              {data?.canPostAsAgency && (
                 <FormField
                   control={form.control}
                   name="asAgency"
@@ -130,7 +141,7 @@ export default function CommentForm({ postId }: { postId: string }) {
                     </FormItem>
                   )}
                 />
-              }
+              )}
               <Button
                 disabled={isLoading}
                 className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:hover:bg-primary-light/90 shadow-md hover:shadow-lg transition-all"
