@@ -43,7 +43,7 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
 
   const { toast } = useToast();
 
-  const downloadFile = async (key: string) => {
+  const downloadFile = useCallback(async (key: string) => {
     setActionPending(true);
 
     try {
