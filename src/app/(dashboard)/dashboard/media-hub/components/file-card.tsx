@@ -24,39 +24,15 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
 
   const { toast } = useToast();
 
-  const shareFile = async (key: string) => {
-    setActionPending(true);
-
-    try {
-      const response = await fetch(`/api/agency/download?key=${key}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to share file");
-      }
-
-      const data = await response.json();
-      toast({
-        title: data.success ? "Success" : "Error",
-        description: data.success
-          ? "File shared successfully"
-          : "Failed to share file",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to share file",
-      });
-    }
-
-    setActionPending(false);
-  };
-
   const downloadFile = async (key: string) => {
     setActionPending(true);
 
     try {
       const response = await fetch("/api/agency/download", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ key }),
       });
 
@@ -66,12 +42,22 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
 
       const data = await response.json();
 
-      // Open the URL in a new tab
-      const downloadUrl = data.url;
+      if (data.success && data.url) {
+        // Open the URL in a new tab
+        window.open(data.url, "_blank");
+
+        toast({
+          title: "Success",
+          description: "File download started",
+        });
+      } else {
+        throw new Error(data.error || "Failed to generate download URL");
+      }
     } catch (err) {
       toast({
         title: "Error",
-        description: "Failed to download file",
+        description:
+          err instanceof Error ? err.message : "Failed to download file",
       });
     }
 
@@ -208,12 +194,6 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
                     disabled={isActionPending}
                   >
                     Download
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => shareFile(file.key)}
-                    disabled={isActionPending}
-                  >
-                    Share
                   </DropdownMenuItem>
                   <DropdownMenuItem disabled={isActionPending}>
                     Rename

@@ -17,6 +17,7 @@
     "react-is": "^19.0.0"
   },
   "dependencies": {
+    "@aws-sdk/s3-request-presigner": "^3.816.0",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@edgestore/react": "^0.3.3",
