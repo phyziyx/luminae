@@ -45,10 +45,21 @@ export default function Page() {
     defaultValues: {
       name: "",
       password: "",
+      invitationId: token || "",
     },
   });
 
   const isLoading = form.formState.isSubmitting;
+
+  React.useEffect(() => {
+    if (!token) {
+      router.push("/sign-in");
+    } else {
+      form.reset({
+        invitationId: token || "",
+      });
+    }
+  }, []);
 
   if (!token) {
     return <p>No invitation token found.</p>;
@@ -61,7 +72,7 @@ export default function Page() {
       const response = await onAcceptInvite(values);
 
       toast({
-        title: response?.error || "Team member invitation sent successfully",
+        title: response?.error || "Invitation accepted!",
         variant: response?.error ? "destructive" : "default",
       });
 
