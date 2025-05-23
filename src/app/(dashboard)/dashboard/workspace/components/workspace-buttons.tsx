@@ -10,6 +10,7 @@ import CustomModal from "@/components/site/custom-modal";
 import WorkspaceDetails from "@/app/(dashboard)/components/workspace-details/workspace-details";
 import { useModal } from "@/providers/modal-provider";
 import { Workspace } from "@prisma/client";
+import Link from "next/link";
 
 export const WorkspaceButtons = ({
   workspace,
@@ -43,16 +44,10 @@ export const WorkspaceButtons = ({
 
   return (
     <>
-      <Button
-        onClick={() => {
-          redirect(`/workspace/${workspace.id!}`);
-        }}
-        variant={"default"}
-        className="w-full"
-        disabled={isDeleting}
-        aria-disabled={isDeleting}
-      >
-        {t("WORKSPACE_DETAILS.VIEW")}
+      <Button asChild variant={"default"} className="w-full">
+        <Link href={`/workspace/${workspace.id!}`} className="w-full">
+          {t("WORKSPACE_DETAILS.VIEW")}
+        </Link>
       </Button>
       {isAdmin && (
         <>
@@ -85,7 +80,7 @@ export const WorkspaceButtons = ({
               disabled={isDeleting}
               aria-disabled={isDeleting}
               variant={"destructive"}
-            // onClick={deleteAction}
+              // onClick={deleteAction}
             >
               {isDeleting
                 ? t("WORKSPACE_DETAILS.DELETING")

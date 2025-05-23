@@ -229,21 +229,15 @@ export const communityProfileSchema = z.object({
     .trim(),
   tagline: z
     .string()
-    .min(4, {
-      message: "Tagline must be at least 4 characters",
-    })
-    .max(150, {
-      message: "Tagline can be at most 150 characters",
+    .max(200, {
+      message: "Tagline can be at most 200 characters",
     })
     .trim()
     .optional(),
   content: z
     .string()
-    .min(10, {
-      message: "Content must be at least 10 characters",
-    })
-    .max(1000, {
-      message: "Content can be at most 1000 characters",
+    .max(1500, {
+      message: "Content can be at most 1500 characters",
     })
     .trim()
     .optional(),

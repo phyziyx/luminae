@@ -404,6 +404,7 @@ export default function EditProfileModal({
               {/* Basic Info */}
               <div className="grid gap-4 sm:grid-cols-2">
                 <FormField
+                  disabled
                   name="name"
                   control={form.control}
                   render={({ field }) => (
