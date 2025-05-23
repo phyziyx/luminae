@@ -8,6 +8,7 @@ import {
   $Enums,
   Agency,
   Tag,
+  AgencyFile,
 } from "@prisma/client";
 
 export type TopRankedAgency = {
@@ -159,3 +160,5 @@ export type CategoryPostWithBookmark = CategoryPost & {
     id: string;
   }[];
 };
+
+export type AgencyFilesResponse = InfiniteQueryResponse<AgencyFile>;

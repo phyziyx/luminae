@@ -1,171 +1,70 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Search } from "lucide-react";
 
 // Components
-import { HeaderBar } from "./components/header-bar";
-import { TabsMenu } from "./components/tabs-menu";
-import { FilterBar } from "./components/filter-bar";
 import { FileCard } from "./components/file-card";
-import { SkeletonCard } from "./components/skeleton-card";
 import { FloatingUploadButton } from "./components/floating-upload-button";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { fetchAgencyFiles } from "@/lib/managers/agencyManager";
+import { AgencyFilesResponse } from "@/lib/types";
+import { queryKeys } from "@/lib/react-query";
+import { LoadingSpinner } from "@/components/site/loading-spinner";
+import InfiniteScrollContainer from "@/components/site/infinite-scroll-container";
 
-// Sample data
-const files = [
-  {
-    id: 1,
-    name: "Project Proposal",
-    type: "doc",
-    date: "2023-04-15",
-    isFavorite: true,
-  },
-  {
-    id: 2,
-    name: "Marketing Campaign",
-    type: "image",
-    date: "2023-04-10",
-    isFavorite: false,
-    imageUrl: "/placeholder.svg?height=300&width=400",
-  },
-  {
-    id: 3,
-    name: "Financial Report",
-    type: "sheet",
-    date: "2023-04-05",
-    isFavorite: true,
-  },
-  {
-    id: 4,
-    name: "Brand Guidelines",
-    type: "pdf",
-    date: "2023-03-28",
-    isFavorite: false,
-  },
-  {
-    id: 5,
-    name: "Meeting Notes",
-    type: "text",
-    date: "2023-03-25",
-    isFavorite: false,
-  },
-  {
-    id: 6,
-    name: "Product Mockup",
-    type: "image",
-    date: "2023-03-20",
-    isFavorite: true,
-    imageUrl: "/placeholder.svg?height=400&width=300",
-  },
-  {
-    id: 7,
-    name: "Client Presentation",
-    type: "pdf",
-    date: "2023-03-15",
-    isFavorite: false,
-  },
-  {
-    id: 8,
-    name: "Team Photo",
-    type: "image",
-    date: "2023-03-10",
-    isFavorite: true,
-    imageUrl: "/placeholder.svg?height=300&width=500",
-  },
-  {
-    id: 9,
-    name: "Project Timeline",
-    type: "sheet",
-    date: "2023-03-05",
-    isFavorite: false,
-  },
-  {
-    id: 10,
-    name: "User Research",
-    type: "doc",
-    date: "2023-02-28",
-    isFavorite: true,
-  },
-  {
-    id: 11,
-    name: "Logo Design",
-    type: "image",
-    date: "2023-02-25",
-    isFavorite: false,
-    imageUrl: "/placeholder.svg?height=400&width=400",
-  },
-  {
-    id: 12,
-    name: "Contract Template",
-    type: "doc",
-    date: "2023-02-20",
-    isFavorite: true,
-  },
-];
+import NoFilesFound from "./components/no-files-found";
+import { HeaderBar } from "./components/header-bar";
+import { useDebounce } from "@uidotdev/usehooks";
+import { TabsMenu } from "./components/tabs-menu";
+import { FileType } from "@/lib/r2";
 
-// Menu tabs
-const menuTabs = [
-  { id: "recent", label: "Recent" },
+const menuTabs: { id: FileType; label: string }[] = [
+  { id: "all", label: "All Files" },
   { id: "images", label: "Images" },
   { id: "pdfs", label: "PDFs" },
   { id: "documents", label: "Documents" },
   { id: "sheets", label: "Sheets" },
   { id: "text", label: "Text Files" },
-  { id: "all", label: "All Files" },
-  { id: "favorites", label: "Favorites" },
+  { id: "others", label: "Others" },
 ];
 
 export default function MediaHub() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("recent");
-  const [isLoading, setIsLoading] = useState(true);
-  const [view, setView] = useState<"grid" | "list">("grid");
+  const [activeTab, setActiveTab] = useState<FileType>("all");
+
+  const [sortBy, setSortBy] = useState<"date">("date");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("date");
+  const debouncedSearchQuery = useDebounce(searchQuery, 1000);
 
-  // Simulate loading
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+  const [view, setView] = useState<"grid" | "list">("list");
 
-  // Filter files based on active tab and search
-  const filteredFiles = files.filter((file) => {
-    // Filter by tab
-    if (activeTab === "recent") return true;
-    if (activeTab === "images") return file.type === "image";
-    if (activeTab === "pdfs") return file.type === "pdf";
-    if (activeTab === "documents") return file.type === "doc";
-    if (activeTab === "sheets") return file.type === "sheet";
-    if (activeTab === "text") return file.type === "text";
-    if (activeTab === "favorites") return file.isFavorite;
-
-    // Search filter
-    if (searchQuery) {
-      return file.name.toLowerCase().includes(searchQuery.toLowerCase());
-    }
-
-    return true;
+  const {
+    data,
+    isFetching,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    isError,
+  } = useInfiniteQuery<AgencyFilesResponse>({
+    queryKey: queryKeys.agencyFiles.search({
+      query: debouncedSearchQuery,
+      fileType: activeTab,
+    }),
+    queryFn: ({ pageParam }: { pageParam: unknown }) => {
+      return fetchAgencyFiles({
+        pageParam: pageParam as string | undefined,
+        searchTerm: debouncedSearchQuery,
+        fileType: activeTab,
+      });
+    },
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage: { nextCursor?: string | null }) =>
+      lastPage.nextCursor,
   });
 
-  // Sort files
-  const sortedFiles = [...filteredFiles].sort((a, b) => {
-    if (sortBy === "name") return a.name.localeCompare(b.name);
-    if (sortBy === "date")
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    if (sortBy === "type") return a.type.localeCompare(b.type);
-    return 0;
-  });
-
-  // Handle search
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-  };
+  const files = data?.pages.flatMap((page) => page.items) || [];
 
   return (
     <>
@@ -176,76 +75,67 @@ export default function MediaHub() {
           <h1 className="text-3xl font-semibold">Media Hub</h1>
         </div>
       </header>
-      <div className="min-h-screen bg-gradient-to-b from-[#f8fbff] to-[#e9f0fb] dark:from-slate-900 dark:to-slate-800 text-slate-800 dark:text-slate-200">
-        <div className="flex h-screen overflow-hidden">
-          {/* Main content */}
-          <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Header */}
+      <div className="text-slate-800 dark:text-slate-200">
+        <div className="flex">
+          <div className="flex-1 flex flex-col overflow-hidden px-2">
             <HeaderBar
-              onSearch={handleSearch}
-              toggleMenu={() => setIsMenuOpen(!isMenuOpen)}
+              onSearch={setSearchQuery}
+              view={view}
+              setView={setView}
             />
 
-            {/* Horizontal tabs */}
             <TabsMenu
               tabs={menuTabs}
               activeTab={activeTab}
               setActiveTab={setActiveTab}
             />
 
-            {/* Content area */}
-            <div className="flex-1 overflow-y-auto p-4 bg-[#f8fbff] dark:bg-slate-900">
-              {/* Filter and sort bar */}
-              <FilterBar
-                title={
-                  menuTabs.find((tab) => tab.id === activeTab)?.label || "Files"
-                }
-                view={view}
-                setView={setView}
-                sortBy={sortBy}
-                setSortBy={setSortBy}
-              />
+            <InfiniteScrollContainer
+              className="flex-1 overflow-y-auto p-4"
+              onBottomReached={() =>
+                hasNextPage &&
+                !isFetching &&
+                !isFetchingNextPage &&
+                fetchNextPage()
+              }
+            >
+              {isFetching ? (
+                <div className="flex text-blue-500 items-center justify-center">
+                  <LoadingSpinner />
+                </div>
+              ) : files.length > 0 ? (
+                <div
+                  className={cn(
+                    "grid gap-4",
+                    view === "grid"
+                      ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+                      : "grid-cols-1"
+                  )}
+                >
+                  {files.map((file) => (
+                    <FileCard key={file.key} file={file} view={view} />
+                  ))}
+                </div>
+              ) : (
+                <NoFilesFound
+                  filtersApplied={!!debouncedSearchQuery || activeTab !== "all"}
+                />
+              )}
+              {isFetchingNextPage && (
+                <div className="flex text-blue-500 items-center justify-center">
+                  <LoadingSpinner />
+                </div>
+              )}
 
-              {/* Files grid/list */}
-              <div
-                className={cn(
-                  "grid gap-4",
-                  view === "grid"
-                    ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-                    : "grid-cols-1"
-                )}
-              >
-                {isLoading ? (
-                  // Skeleton loading
-                  [...Array(8)].map((_, i) => (
-                    <SkeletonCard key={i} view={view} />
-                  ))
-                ) : sortedFiles.length > 0 ? (
-                  // Files
-                  sortedFiles.map((file) => (
-                    <FileCard key={file.id} file={file} view={view} />
-                  ))
-                ) : (
-                  // No files found
-                  <div className="col-span-full flex flex-col items-center justify-center py-12 text-center">
-                    <div className="bg-white dark:bg-slate-800 rounded-full p-4 mb-4">
-                      <Search className="h-8 w-8 text-slate-400 dark:text-slate-500" />
-                    </div>
-                    <h3 className="text-xl font-medium mb-2 text-slate-800 dark:text-white">
-                      No files found
-                    </h3>
-                    <p className="text-slate-500 dark:text-slate-400 max-w-md">
-                      We couldn&apos;t find any files matching your search
-                      criteria. Try adjusting your filters or search terms.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
+              {isError && (
+                <div className="flex text-red-500 items-center justify-center">
+                  <p>Error fetching files. Please try again later.</p>
+                </div>
+              )}
+            </InfiniteScrollContainer>
           </div>
         </div>
 
-        {/* Floating action button */}
         <FloatingUploadButton />
       </div>
     </>

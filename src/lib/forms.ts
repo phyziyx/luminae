@@ -1,3 +1,4 @@
+import { TicketTag } from "@prisma/client";
 import { z } from "zod";
 
 // Like Schema
@@ -122,6 +123,16 @@ export const createLaneSchema = z.object({
 
 export type CreateLaneSchema = z.infer<typeof createLaneSchema>;
 
+// Ticket Tag
+
+export const ticketTag = z.enum(
+  [TicketTag.Low, TicketTag.Medium, TicketTag.High],
+  {
+    message: "Invalid tag provided.",
+    required_error: "You must provide a ticket tag.",
+  }
+);
+
 // Kanban Board: Update Lane
 
 export const laneTicketFormSchema = z.object({
@@ -133,7 +144,7 @@ export const laneTicketFormSchema = z.object({
     .min(2, { message: "Description must be atleast 2 chars." }),
   open: z.boolean().optional(),
   value: z.string(),
-  tag: z.string(),
+  tag: ticketTag,
   clientId: z.string(),
   userId: z.string(),
 });

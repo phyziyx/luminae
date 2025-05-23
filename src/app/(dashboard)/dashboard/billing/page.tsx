@@ -95,7 +95,8 @@ const Billing = async () => {
       }).format(subscription?.currentPeriodEnd) || "N/A",
     TEAM_MEMBERS: await AgencyManager.findMembersCount(agencyId),
     WORKSPACE: await AgencyManager.findWorkspacesCount(agencyId),
-    FILE_STORAGE: 0,
+    FILE_STORAGE: (await SubscriptionManager.checkFileStorageLimit(agencyId))
+      .used,
     CUSTOM_URL: 0,
   };
 

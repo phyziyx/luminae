@@ -37,19 +37,28 @@ interface ComboBoxProps<T> {
     label: string
   ) => React.ReactNode;
   className?: string;
+  modal?: boolean;
 }
 
+/**
+ * When using other components like Popover, DropdownMenu, or Select
+ * inside a modal/dialog, you need to set modal={true} to prevent the
+ * portal from creating a new stacking context that can cause z-index
+ * and focus trapping issues.
+ * @author phyziyx
+ */
 export default function ComboBox<T>({
   value,
   setValue,
   data,
   renderFn,
   className,
+  modal
 }: ComboBoxProps<T>) {
   const [open, setOpen] = useState(false);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover modal={modal} open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
