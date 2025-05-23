@@ -93,7 +93,7 @@ class SubscriptionManager {
     const free = Math.ceil((max - used) / MEGA_BYTE);
 
     return {
-      hasAccess: free > 1,
+      hasAccess: free >= 1,
       maxLimit: limit.maxLimit,
       used,
       free,
