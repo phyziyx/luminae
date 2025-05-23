@@ -215,7 +215,8 @@
     "ACCESS": "Access {FEATURE_CODE}",
     "QUANTITY": "Upto {QUANTITY} {FEATURE_CODE}",
     "WORKSPACE": "Workspace",
-    "TEAM_MEMBERS": "Team Members"
+    "TEAM_MEMBERS": "Team Members",
+    "FILE_STORAGE": "MB File Storage"
   },
 
   "ROLES": {

@@ -1,4 +1,5 @@
 import { InfiniteData, isServer, QueryClient } from "@tanstack/react-query";
+import { FileType } from "./r2";
 
 // Query key factories
 export const queryKeys = {
@@ -26,8 +27,13 @@ export const queryKeys = {
       { query, sort },
     ],
   },
-  agency: {
-    files: ["files"],
+  agencyFiles: {
+    all: ["files"],
+    search: ({ query, fileType }: { query: string; fileType: FileType }) => [
+      ...queryKeys.agencyFiles.all,
+      "search",
+      { query, fileType },
+    ],
   },
 };
 

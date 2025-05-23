@@ -577,6 +577,7 @@ model AgencyFile {
 
   key       String   @unique
   size      Int
+  type      String   @default("others")
   name      String
   createdAt DateTime
 

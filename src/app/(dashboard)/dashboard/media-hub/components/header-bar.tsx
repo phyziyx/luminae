@@ -1,25 +1,17 @@
-import { Menu } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { SearchBar } from "./search-bar";
+import { FilterBar } from "./filter-bar";
 
 interface HeaderBarProps {
   onSearch: (query: string) => void;
-  toggleMenu: () => void;
+  view: "grid" | "list";
+  setView: (view: "grid" | "list") => void;
 }
 
-export function HeaderBar({ onSearch, toggleMenu }: HeaderBarProps) {
+export function HeaderBar({ onSearch, view, setView }: HeaderBarProps) {
   return (
-    <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center px-4 sticky top-0 z-30">
-      <Button
-        variant="ghost"
-        size="icon"
-        className="md:hidden rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 mr-2"
-        onClick={toggleMenu}
-      >
-        <Menu className="h-5 w-5 text-slate-600 dark:text-slate-400" />
-      </Button>
-
+    <div className="w-full flex flex-col sm:flex-row min-h-16 justify-between bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sm:items-center px-4">
       <SearchBar onSearch={onSearch} />
-    </header>
+      <FilterBar view={view} setView={setView} />
+    </div>
   );
 }
