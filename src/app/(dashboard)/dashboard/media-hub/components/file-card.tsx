@@ -155,13 +155,13 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
       </div>
       <div
         className={cn(
-          "p-3",
+          "p-3 justify-between",
           view === "grid"
             ? "flex justify-between flex-col h-[5.5rem]"
             : "flex-1 flex justify-between items-center"
         )}
       >
-        <div>
+        <div className="flex flex-col">
           <h3 className="font-medium text-slate-800 dark:text-slate-200 truncate">
             {file.name}
           </h3>
@@ -187,7 +187,7 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant={"secondary"}
-                      className="absolute h-8 w-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700"
+                      className="h-8 w-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700"
                     >
                       <svg
                         width="15"

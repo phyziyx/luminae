@@ -28,7 +28,6 @@ const menuTabs: { id: FileType; label: string }[] = [
   { id: "documents", label: "Documents" },
   { id: "sheets", label: "Sheets" },
   { id: "text", label: "Text Files" },
-  { id: "favorites", label: "Favorites" },
   { id: "others", label: "Others" },
 ];
 

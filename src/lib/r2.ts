@@ -18,7 +18,6 @@ export const fileTypes = [
   "sheets",
   "text",
   "others",
-  "favorites",
 ] as const;
 export type FileType = (typeof fileTypes)[number];
 

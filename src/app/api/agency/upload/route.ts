@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     where: {
       agencyId: agencyMember.agencyId,
       ...(searchName ? { name: { contains: searchName } } : {}),
-      ...(fileType && fileType !== "favorites" && fileType !== "all"
+      ...(fileType && fileType !== "all"
         ? {
             type: fileType,
           }
