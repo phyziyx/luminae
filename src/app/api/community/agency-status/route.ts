@@ -2,7 +2,7 @@ import { getSession } from "@/lib/auth/auth";
 import AgencyManager from "@/lib/managers/agencyManager";
 import { NextRequest, NextResponse } from "next/server";
 
-export default async function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
   const session = await getSession();
   const user = session?.user;
 
