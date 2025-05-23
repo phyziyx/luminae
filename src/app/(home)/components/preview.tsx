@@ -6,12 +6,13 @@ const PreviewImage = async () => {
 
   return (
     <ThemedImage
-      className="rounded-lg md:mt-[-110px] sm:mt-[-75px] mt-[-65px] border-2 border-blue-500 drop-shadow-xl shadow-blue-500"
+      className="w-full h-auto rounded-xl object-cover"
       srcDark={`/assets/preview.png`}
       srcLight={`/assets/preview_light.png`}
       alt={t("PREVIEW")}
       width={1080}
       height={1080}
+      priority
     />
   );
 };
