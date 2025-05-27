@@ -307,19 +307,19 @@ class PostManager {
             userId: true,
           },
         },
-        ...(userId
-          ? {
-              bookmarkedBy: {
-                select: {
-                  id: true,
-                },
-                where: {
-                  id: userId,
-                },
-                take: 1,
-              },
-            }
-          : {}),
+        // ...(userId
+        //   ? {
+        //       bookmarkedBy: {
+        //         select: {
+        //           id: true,
+        //         },
+        //         where: {
+        //           id: userId,
+        //         },
+        //         take: 1,
+        //       },
+        //     }
+        //   : {}),
         _count: {
           select: {
             comments: {
