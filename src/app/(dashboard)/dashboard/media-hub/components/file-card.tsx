@@ -148,7 +148,7 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
           </div>
         ) : (
           <div className={view === "grid" ? "h-32" : "h-20"}>
-            <FileIcon type={file.fileType} />
+            <FileIcon type={file.type} />
           </div>
         )}
       </div>
