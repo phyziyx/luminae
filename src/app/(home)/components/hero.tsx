@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import PreviewImage from "./preview";
+import Link from "next/link";
 
 export default function Hero() {
   return (
@@ -54,8 +55,9 @@ export default function Hero() {
             className="rounded-full bg-[#3b82f6] px-8 text-white font-medium transition-all duration-300 ease-in-out
                hover:scale-105 hover:bg-gradient-to-r hover:from-[#3b82f6] hover:to-indigo-600
                hover:shadow-lg dark:bg-[#3b82f6] dark:hover:from-blue-500 dark:hover:to-purple-600"
+            asChild
           >
-            Get Started
+            <Link href={'/sign-in'}>Get Started</Link>
           </Button>
 
           {/* Preview Platform Button */}
@@ -69,11 +71,14 @@ export default function Hero() {
               backgroundOrigin: "border-box",
               backgroundClip: "padding-box, border-box",
             }}
+            asChild
           >
-            <span className="bg-gradient-to-r from-[#3b82f6] to-indigo-500 bg-clip-text text-transparent transition-all duration-300 dark:from-blue-400 dark:to-purple-400">
-              Preview Platform
-            </span>
-            <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-[#3b82f6] to-indigo-500 -z-10"></div>
+            <Link href="/community">
+              <span className="bg-gradient-to-r from-[#3b82f6] to-indigo-500 bg-clip-text text-transparent transition-all duration-300 dark:from-blue-400 dark:to-purple-400">
+                Preview Platform
+              </span>
+              <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-[#3b82f6] to-indigo-500 -z-10" />
+            </Link>
           </Button>
         </div>
 
@@ -84,6 +89,6 @@ export default function Hero() {
           </div>
         </div>
       </div>
-    </section>
+    </section >
   );
 }
