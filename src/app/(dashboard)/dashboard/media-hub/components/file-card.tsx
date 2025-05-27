@@ -30,9 +30,8 @@ interface FileCardProps {
 
 const getFileSize = (size: number) => {
   const i = Math.floor(Math.log(size) / Math.log(1024));
-  return `${(size / Math.pow(1024, i)).toFixed(2)} ${
-    ["B", "KB", "MB", "GB"][i]
-  }`;
+  return `${(size / Math.pow(1024, i)).toFixed(2)} ${["B", "KB", "MB", "GB"][i]
+    }`;
 };
 
 export function FileCard({ file, view = "list" }: FileCardProps) {
@@ -55,9 +54,9 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
         body: JSON.stringify({ key }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to download file");
-      }
+      // if (!response.ok) {
+      //   throw new Error("Failed to download file");
+      // }
 
       const data = await response.json();
 
@@ -92,9 +91,9 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
         body: JSON.stringify({ key }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to delete file");
-      }
+      // if (!response.ok) {
+      //   throw new Error("Failed to delete file");
+      // }
 
       const data = await response.json();
       toast({
@@ -149,7 +148,7 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
           </div>
         ) : (
           <div className={view === "grid" ? "h-32" : "h-20"}>
-            <FileIcon type={file.type} />
+            <FileIcon type={file.fileType} />
           </div>
         )}
       </div>

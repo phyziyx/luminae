@@ -86,8 +86,9 @@ export const columns: ColumnDef<PackageData>[] = [
       const { openModal, closeModal } = useModal();
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const t = useTranslations();
+
       return (
-        <DropdownMenu>
+        <DropdownMenu modal={true}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">{t("MENU.OPEN_MENU")}</span>

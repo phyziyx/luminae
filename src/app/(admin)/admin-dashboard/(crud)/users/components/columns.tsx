@@ -111,7 +111,7 @@ export const columns: ColumnDef<UserData>[] = [
       const t = useTranslations();
 
       return (
-        <DropdownMenu>
+        <DropdownMenu modal={true}>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
