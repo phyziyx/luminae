@@ -17,6 +17,7 @@ import { currencyFormat } from "@/lib/utils";
 import CustomModal from "@/components/site/custom-modal";
 import UpsertClientModal from "../modals/upsert-client-modal";
 import { useModal } from "@/providers/modal-provider";
+import { Dialog } from "@/components/ui/dialog";
 // import { toast } from "@/hooks/use-toast";
 
 // Define user data type
@@ -101,43 +102,45 @@ export const columns: ColumnDef<ClientData>[] = [
       const t = useTranslations();
 
       return (
-        <DropdownMenu modal={true}>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
-              <MoreVerticalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                openModal(
-                  <CustomModal
-                    title="Edit Client Details"
-                    caption="Edit the client's details"
-                  >
-                    {
-                      <UpsertClientModal
-                        clientId={client.id}
-                        onClose={closeModal}
-                        create={false}
-                      />
-                    }
-                  </CustomModal>
-                )
-              }
-            >
-              {t("ACTIONS.EDIT_DETAILS")}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(client.email)}
-            >
-              {t("ACTIONS.COPY_EMAIL")}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Dialog>
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
+                <MoreVerticalIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() =>
+                  openModal(
+                    <CustomModal
+                      title="Edit Client Details"
+                      caption="Edit the client's details"
+                    >
+                      {
+                        <UpsertClientModal
+                          clientId={client.id}
+                          onClose={closeModal}
+                          create={false}
+                        />
+                      }
+                    </CustomModal>
+                  )
+                }
+              >
+                {t("ACTIONS.EDIT_DETAILS")}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(client.email)}
+              >
+                {t("ACTIONS.COPY_EMAIL")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Dialog>
       );
     },
   },

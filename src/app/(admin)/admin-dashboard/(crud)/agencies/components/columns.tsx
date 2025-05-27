@@ -12,13 +12,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVerticalIcon } from "lucide-react";
-import { useModal } from "@/providers/modal-provider";
-import CustomModal from "@/components/site/custom-modal";
 
 import UpdateAgencyModal from "./modals/update-agency-modal"; // Import the UpdateAgencyModal component
 import { toast } from "@/hooks/use-toast";
 import deleteAgency from "./actions/agency-delete";
 import { useTranslations } from "next-intl";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from "react";
 
 // Define agency data type
 export type AgencyData = {
@@ -67,9 +67,13 @@ export const columns: ColumnDef<AgencyData>[] = [
     header: "Actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+      const onEditDetails = () => {
+        setEditDialogOpen(p => !p);
+      };
+
       const agency = row.original;
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      const { openModal } = useModal();
       const handleDeleteClick = async () => {
         try {
           const result = await deleteAgency({ id: agency.id });
@@ -99,41 +103,49 @@ export const columns: ColumnDef<AgencyData>[] = [
       const t = useTranslations();
 
       return (
-        <DropdownMenu modal={true}>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
-              <MoreVerticalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                openModal(
-                  <CustomModal
-                    title={t("AGENCY_DETAILS.EDIT_AGENCY_INFORMATION")}
-                    caption={t("AGENCY_DETAILS.AGENCY_INFORMATION_DESCRIPTION")}
-                  >
-                    <UpdateAgencyModal agencyId={agency.id} />
-                  </CustomModal>
-                )
-              }
-            >
-              {t("ACTIONS.EDIT_DETAILS")}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(agency.email)}
-            >
-              {t("ACTIONS.COPY_EMAIL")}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleDeleteClick}>
-              {t("ACTIONS.DELETE")}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Dialog open={isEditDialogOpen} onOpenChange={setEditDialogOpen}>
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
+                <MoreVerticalIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
+              <DialogTrigger asChild>
+                <DropdownMenuItem
+                  onClick={onEditDetails}
+                >
+                  {t("ACTIONS.EDIT_DETAILS")}
+                </DropdownMenuItem>
+              </DialogTrigger>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(agency.email)}
+              >
+                {t("ACTIONS.COPY_EMAIL")}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleDeleteClick}>
+                {t("ACTIONS.DELETE")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+
+            {/* Modal */}
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{t("AGENCY_DETAILS.EDIT_AGENCY_INFORMATION")}</DialogTitle>
+                <DialogDescription>
+                  {t("AGENCY_DETAILS.AGENCY_INFORMATION_DESCRIPTION")}
+                </DialogDescription>
+              </DialogHeader>
+              <UpdateAgencyModal agencyId={agency.id} />
+            </DialogContent>
+            {/* Modal */}
+
+          </DropdownMenu>
+        </Dialog>
       );
     },
   },

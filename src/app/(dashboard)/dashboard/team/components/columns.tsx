@@ -18,6 +18,7 @@ import CustomModal from "@/components/site/custom-modal";
 import { AgencyMember } from "@prisma/client";
 import { useTranslations } from "next-intl";
 import TeamMemberDetails from "./team-member-details";
+import { Dialog } from "@/components/ui/dialog";
 // import UserManager from "@/lib/managers/userManager";
 // import { toast } from "@/hooks/use-toast";
 
@@ -104,50 +105,52 @@ export const columns: ColumnDef<TeamMember>[] = [
       // }
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
-              <MoreVerticalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                openModal(
-                  <CustomModal
-                    title="Edit Details"
-                    caption="Manage workspaces and roles for this team member."
-                  >
-                    <TeamMemberDetails memberId={member.email} />
-                  </CustomModal>
-                )
-              }
-            >
-              {t("ACTIONS.VIEW_DETAILS")}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(member.email)}
-            >
-              {t("ACTIONS.COPY_EMAIL")}
-            </DropdownMenuItem>
-            {/* <DropdownMenuSeparator />
+        <Dialog>
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
+                <MoreVerticalIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() =>
+                  openModal(
+                    <CustomModal
+                      title="Edit Details"
+                      caption="Manage workspaces and roles for this team member."
+                    >
+                      <TeamMemberDetails memberId={member.email} />
+                    </CustomModal>
+                  )
+                }
+              >
+                {t("ACTIONS.VIEW_DETAILS")}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(member.email)}
+              >
+                {t("ACTIONS.COPY_EMAIL")}
+              </DropdownMenuItem>
+              {/* <DropdownMenuSeparator />
             <DropdownMenuItem>{t("ACTIONS.SET_AS_ON_BREAK")}</DropdownMenuItem>
             <DropdownMenuItem>{t("ACTIONS.SET_AS_REMOVED")}</DropdownMenuItem> */}
-            {member.role !== "AGENCY_OWNER" && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                // onClick={handleTeamMemberDelete()}
-                >
-                  {t("ACTIONS.DELETE_FROM_TABLE")}
-                </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+              {member.role !== "AGENCY_OWNER" && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                  // onClick={handleTeamMemberDelete()}
+                  >
+                    {t("ACTIONS.DELETE_FROM_TABLE")}
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Dialog>
       );
     },
   },

@@ -222,7 +222,8 @@
   "ROLES": {
     "AGENCY_OWNER": "Agency Owner",
     "AGENCY_ADMIN": "Agency Admin",
-    "AGENCY_USER": "Team Member"
+    "AGENCY_USER": "Team Member",
+    "N/A": "N/A"
   },
 
   "INVITATION": {
