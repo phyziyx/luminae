@@ -22,12 +22,36 @@ import { authClient } from "@/lib/auth/auth-client";
 import { LoadingSpinner } from "./loading-spinner";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function NavUser() {
   const t = useTranslations();
   const { data, isPending } = authClient.useSession();
   const { isMobile } = useSidebar();
   const name = data?.user.name || "Loading...";
+
+
+  const [isLoggingOut, setLoggingOut] = useState<boolean>(false);
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      setLoggingOut(true);
+
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            router.push("/");
+          },
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoggingOut(false);
+    }
+  };
 
   return (
     <SidebarMenu>
@@ -110,7 +134,7 @@ export function NavUser() {
               </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-500 bg-red-50 hover:bg-red-100">
+            <DropdownMenuItem className="text-red-500 bg-red-50 hover:bg-red-100" onClick={handleSignOut} disabled={isLoggingOut}>
               <LogOut />
               {t("SIGN_OUT")}
             </DropdownMenuItem>

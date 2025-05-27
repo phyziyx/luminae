@@ -3,7 +3,7 @@ import type { Session } from "@/lib/auth/auth";
 import { betterFetch } from "@better-fetch/fetch";
 import { cache } from "react";
 
-const publicRoutes = ["/"];
+const publicRoutes = ["/", "/community"];
 const authRoutes = ["/sign-in", "/sign-up", "/accept-invitation"];
 const passwordRoutes = ["/forgot-password", "/reset-password"];
 const adminRoutes = ["/admin-dashboard"];

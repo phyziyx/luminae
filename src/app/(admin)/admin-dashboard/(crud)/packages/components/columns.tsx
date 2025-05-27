@@ -16,6 +16,7 @@ import CustomModal from "@/components/site/custom-modal";
 import UpdatePackageModal from "./modals/package-update-modal";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
+import { Dialog } from "@/components/ui/dialog";
 
 // Define package data type
 export type PackageData = {
@@ -88,35 +89,37 @@ export const columns: ColumnDef<PackageData>[] = [
       const t = useTranslations();
 
       return (
-        <DropdownMenu modal={true}>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
-              <MoreVerticalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                openModal(
-                  <CustomModal
-                    title={t("PACKAGE_FORM.EDIT_PACKAGE")}
-                    caption={t("PACKAGE_FORM.EDIT_PACKAGE_CAPTION")}
-                  >
-                    <UpdatePackageModal
-                      packageId={packageData.id}
-                      onClose={closeModal}
-                    />
-                  </CustomModal>
-                )
-              }
-            >
-              {t("ACTIONS.EDIT_DETAILS")}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Dialog>
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
+                <MoreVerticalIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() =>
+                  openModal(
+                    <CustomModal
+                      title={t("PACKAGE_FORM.EDIT_PACKAGE")}
+                      caption={t("PACKAGE_FORM.EDIT_PACKAGE_CAPTION")}
+                    >
+                      <UpdatePackageModal
+                        packageId={packageData.id}
+                        onClose={closeModal}
+                      />
+                    </CustomModal>
+                  )
+                }
+              >
+                {t("ACTIONS.EDIT_DETAILS")}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Dialog>
       );
     },
   },

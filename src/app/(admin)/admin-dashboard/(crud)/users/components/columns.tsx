@@ -18,6 +18,7 @@ import { useTranslations } from "next-intl";
 import UpdateUserModal from "./modals/update-user-modal";
 import { toast } from "@/hooks/use-toast";
 import deleteUser from "./actions/delete-user";
+import { Dialog } from "@/components/ui/dialog";
 
 // Define user data type
 export type UserData = {
@@ -111,41 +112,43 @@ export const columns: ColumnDef<UserData>[] = [
       const t = useTranslations();
 
       return (
-        <DropdownMenu modal={true}>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
-              <MoreVerticalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() =>
-                openModal(
-                  <CustomModal
-                    title={t("USER_FORM.EDIT_USER")}
-                    caption={t("USER_FORM.EDIT_USER_CAPTION")}
-                  >
-                    <UpdateUserModal userId={user.email} onClose={closeModal} />
-                  </CustomModal>
-                )
-              }
-            >
-              {t("ACTIONS.EDIT_DETAILS")}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.email)}
-            >
-              {t("ACTIONS.COPY_EMAIL")}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleDeleteClick}>
-              {user.isLocked ? t("ACTIONS.UNBAN_USER") : t("ACTIONS.BAN_USER")}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <Dialog>
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">{t("MENU.OPEN_MENU")}</span>
+                <MoreVerticalIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>{t("ACTIONS.HEADER")}</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() =>
+                  openModal(
+                    <CustomModal
+                      title={t("USER_FORM.EDIT_USER")}
+                      caption={t("USER_FORM.EDIT_USER_CAPTION")}
+                    >
+                      <UpdateUserModal userId={user.email} onClose={closeModal} />
+                    </CustomModal>
+                  )
+                }
+              >
+                {t("ACTIONS.EDIT_DETAILS")}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(user.email)}
+              >
+                {t("ACTIONS.COPY_EMAIL")}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleDeleteClick}>
+                {user.isLocked ? t("ACTIONS.UNBAN_USER") : t("ACTIONS.BAN_USER")}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </Dialog>
       );
     },
   },
