@@ -389,5 +389,9 @@
   "PROFILE": {
     "HEADER": "Profile",
     "DESCRIPTION": "Manage your profile information and security settings."
+  },
+
+  "AGENCY_VERIFICATIONS": {
+    "HEADER": "Agency Verifications"
   }
 }

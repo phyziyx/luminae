@@ -11,7 +11,11 @@ import { v7 } from "uuid";
 import { isAgencyAdmin } from "../utils";
 import PackageManager from "./packageManager";
 import { sendEmail } from "@/lib/email";
-import { AgencyFilesResponse, TopRankedAgency } from "../types";
+import {
+  AgencyFilesResponse,
+  AgencyVerificationResponse,
+  TopRankedAgency,
+} from "../types";
 
 type CreateAgency = Omit<
   Agency,
@@ -742,7 +746,7 @@ export async function fetchAgencyVerificationApps({
     throw new Error("Failed to fetch agency verification apps");
   }
 
-  const data = await response.json();
+  const data: AgencyVerificationResponse = await response.json();
   return data;
 }
 
