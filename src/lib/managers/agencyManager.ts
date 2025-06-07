@@ -731,4 +731,19 @@ export async function fetchAgencyFiles({
   return data;
 }
 
+export async function fetchAgencyVerificationApps({
+  appId,
+}: {
+  appId?: string;
+}) {
+  const response = await fetch(`/api/agency/verification?appId=${appId || ""}`);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch agency verification apps");
+  }
+
+  const data = await response.json();
+  return data;
+}
+
 export default AgencyManager;

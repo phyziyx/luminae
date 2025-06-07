@@ -17,7 +17,7 @@ export default function EditProfile({
     <>
       <Button
         onClick={() => setIsModalOpen(true)}
-        className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90"
+        className="bg-primary hover:bg-primary/90 dark:bg-primary-foreground dark:text-gray-900 dark:hover:bg-primary-foreground/90"
       >
         <PencilIcon className="mr-2 h-4 w-4" />
         Edit Profile

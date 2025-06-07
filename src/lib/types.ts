@@ -9,6 +9,7 @@ import {
   Agency,
   Tag,
   AgencyFile,
+  AgencyVerification,
 } from "@prisma/client";
 
 export type TopRankedAgency = {
@@ -162,3 +163,9 @@ export type CategoryPostWithBookmark = CategoryPost & {
 };
 
 export type AgencyFilesResponse = InfiniteQueryResponse<AgencyFile>;
+
+export type AgencyVerificationResponse = {
+  items: AgencyVerification[];
+  nextCursor?: string | null;
+  prevCursor?: string | null;
+};

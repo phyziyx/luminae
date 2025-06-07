@@ -3,6 +3,18 @@ import { FileType } from "./r2";
 
 // Query key factories
 export const queryKeys = {
+  admin: {
+    verification: {
+      all: ["verification"],
+      search: ({
+        query = "",
+        appId = "",
+      }: {
+        query: string;
+        appId: string;
+      }) => [...queryKeys.admin.verification.all, { appId, query }],
+    },
+  },
   community: {
     all: ["community"],
     categoryPosts: (category: string) => [

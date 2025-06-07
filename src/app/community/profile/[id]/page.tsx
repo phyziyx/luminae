@@ -7,6 +7,8 @@ import { getSession } from "@/lib/auth/auth";
 import { CommunityProfileWithStats } from "@/lib/types";
 import EditProfile from "../components/edit-profile";
 import AgencyManager from "@/lib/managers/agencyManager";
+import { Button } from "@/components/ui/button";
+import { BadgeCheckIcon } from "lucide-react";
 
 const getProfileData = async (id: string) => {
   const isAgency = id.startsWith("a-");
@@ -114,6 +116,23 @@ const getProfileData = async (id: string) => {
   }
 };
 
+function VerifyNow() {
+  return (
+    <div className="mb-2 bg-green-800 dark:bg-green-900 w-full rounded-xl p-3 flex flex-row items-center justify-between align-items-center">
+      <div>
+        <p className="text-lg text-white font-bold">You aren't verified yet!</p>
+        <p className="text-sm text-white">
+          Get verified like this agency to unlock exclusive features.
+        </p>
+      </div>
+      <Button className="bg-white text-green-800 dark:text-green-900 font-bold hover:bg-gray-100">
+        <BadgeCheckIcon className="h-6 w-6 text-green-800 fill-green-400 dark:text-primary-light" />
+        Get Verified
+      </Button>
+    </div>
+  );
+}
+
 function CommunityProfile({
   profileData,
   isOwner,
@@ -151,6 +170,7 @@ function CommunityProfile({
       <div className="mt-8 grid gap-8 md:grid-cols-3">
         {/* LEFT SECTION (Main Info) */}
         <div className="md:col-span-2">
+          {!isOwner && isAgency && <VerifyNow />}
           <ProfileInfo
             name={name}
             title={title ?? undefined}
@@ -158,6 +178,7 @@ function CommunityProfile({
             description={content ?? undefined}
             isAgency={isAgency}
             verified={false}
+            myself={isOwner}
           />
         </div>
 
