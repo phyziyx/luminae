@@ -1,43 +1,49 @@
 import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
-import { AgencyVerificationResponse } from "@/lib/types";
+import { AgencyVerificationResponse, InfiniteQueryResponse } from "@/lib/types";
 import { NextResponse, type NextRequest } from "next/server";
-
 export async function GET(request: NextRequest) {
   const session = await getSession();
   const user = session?.user;
 
   if (!user) {
-    throw new Error("Unauthorized");
+    return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const appId = request.nextUrl.searchParams.get("appId");
+  const limit = 10;
 
-  const cursor = appId ? appId : undefined;
-  const takeLimit = 10;
+  const searchParams = request.nextUrl.searchParams;
+  const query = searchParams.get("query") || "";
+  const page = parseInt(searchParams.get("page") || "1", 10);
 
-  const [apps, totalApps] = await Promise.all([
+  const offset = (page - 1) * limit;
+
+  const [items, total] = await Promise.all([
     prisma.agencyVerification.findMany({
-      take: takeLimit,
-      skip: cursor ? 1 : undefined,
-      cursor: cursor
-        ? {
-            id: cursor,
-          }
-        : undefined,
-      orderBy: {
-        createdAt: "desc",
+      skip: offset,
+      take: limit,
+      orderBy: { id: "desc" },
+      where: {
+        ...(query
+          ? {
+              notes: { contains: query },
+            }
+          : {}),
       },
     }),
     prisma.agencyVerification.count(),
   ]);
 
-  const nextCursor = totalApps > takeLimit ? apps.at(-1)?.id : undefined;
-  const prevCursor = cursor ? apps.at(0)?.id : undefined;
+  const totalPages = Math.ceil(total / limit);
 
   return NextResponse.json({
-    items: apps,
-    nextCursor,
-    prevCursor,
+    items,
+    meta: {
+      total,
+      totalPages,
+      currentPage: page,
+      hasNextPage: page < totalPages,
+      hasPrevPage: page > 1,
+    },
   } satisfies AgencyVerificationResponse);
 }

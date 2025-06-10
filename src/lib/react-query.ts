@@ -6,13 +6,10 @@ export const queryKeys = {
   admin: {
     verification: {
       all: ["verification"],
-      search: ({
-        query = "",
-        appId = "",
-      }: {
-        query: string;
-        appId: string;
-      }) => [...queryKeys.admin.verification.all, { appId, query }],
+      search: ({ query = "", page = 1 }: { query: string; page: number }) => [
+        ...queryKeys.admin.verification.all,
+        { query, page },
+      ],
     },
   },
   community: {

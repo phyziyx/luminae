@@ -736,11 +736,16 @@ export async function fetchAgencyFiles({
 }
 
 export async function fetchAgencyVerificationApps({
-  appId,
+  query = "",
+  page = 1,
 }: {
-  appId?: string;
+  query: string;
+  page: number;
 }) {
-  const response = await fetch(`/api/agency/verification?appId=${appId || ""}`);
+  const response = await fetch(
+    `/api/agency/verification?page=${page}` +
+      (query ? `&query=${encodeURIComponent(query)}` : "")
+  );
 
   if (!response.ok) {
     throw new Error("Failed to fetch agency verification apps");

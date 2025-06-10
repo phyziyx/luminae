@@ -2,14 +2,22 @@ import { fetchAgencyVerificationApps } from "@/lib/managers/agencyManager";
 import { queryKeys } from "@/lib/react-query";
 import { queryOptions } from "@tanstack/react-query";
 
-const agencyVerificationOptions = ({ appId = "", query = "" }) => {
+interface AgencyVerificationOptionsProps {
+  query: string;
+  page: number;
+}
+
+const agencyVerificationOptions = ({
+  query = "",
+  page = 1,
+}: AgencyVerificationOptionsProps) => {
   return queryOptions({
     queryKey: queryKeys.admin.verification.search({
-      appId,
       query,
+      page,
     }),
     queryFn: () => {
-      return fetchAgencyVerificationApps({ appId });
+      return fetchAgencyVerificationApps({ query, page });
     },
   });
 };

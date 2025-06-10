@@ -164,8 +164,18 @@ export type CategoryPostWithBookmark = CategoryPost & {
 
 export type AgencyFilesResponse = InfiniteQueryResponse<AgencyFile>;
 
-export type AgencyVerificationResponse = {
-  items: AgencyVerification[];
-  nextCursor?: string | null;
-  prevCursor?: string | null;
+export type PaginationMeta = {
+  total: number;
+  totalPages: number;
+  currentPage: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
 };
+
+export type PaginatedQueryResponse<T> = {
+  items: T[];
+  meta: PaginationMeta;
+};
+
+export type AgencyVerificationResponse =
+  PaginatedQueryResponse<AgencyVerification>;
