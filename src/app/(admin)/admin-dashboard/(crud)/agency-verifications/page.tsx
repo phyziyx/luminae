@@ -5,8 +5,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import VerificationFilters from "./components/verification-filters";
-import VerificationRequestList from "./components/verification-request-list";
+import VerificationFilters from "./_components/verification-filters";
+import VerificationRequestList from "./_components/verification-request-list";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 
