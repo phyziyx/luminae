@@ -1,15 +1,28 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,9 +31,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { Loader2 } from "lucide-react"
-import Image from "next/image"
+} from "@/components/ui/alert-dialog";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import { submitVerification } from "../actions/submitVerification";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -28,14 +44,18 @@ const formSchema = z.object({
   subject: z.string().min(1, "Subject is required"),
   message: z.string().min(1, "Message is required"),
   file: z.any().optional(),
-})
+});
+
+type ContactFormValues = z.infer<typeof formSchema>;
 
 export default function ContactForm() {
-  const [filePreview, setFilePreview] = useState<string>("")
-  const [showSuccess, setShowSuccess] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [filePreview, setFilePreview] = useState<string>("");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const { toast } = useToast();
 
-  const form = useForm({
+  const form = useForm<ContactFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
@@ -44,45 +64,76 @@ export default function ContactForm() {
       message: "",
       file: undefined,
     },
-  })
+  });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
-    const selectedFile = e.target.files?.[0] || null
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    field: any
+  ) => {
+    const selectedFile = e.target.files?.[0] || null;
     if (selectedFile && selectedFile.size <= 5 * 1024 * 1024) {
-      field.onChange(selectedFile)
+      field.onChange(selectedFile);
 
       if (selectedFile.type.startsWith("image/")) {
-        const reader = new FileReader()
-        reader.onload = () => setFilePreview(reader.result as string)
-        reader.readAsDataURL(selectedFile)
+        const reader = new FileReader();
+        reader.onload = () => setFilePreview(reader.result as string);
+        reader.readAsDataURL(selectedFile);
       } else {
-        setFilePreview("")
+        setFilePreview("");
       }
     }
-  }
+  };
 
-  type FormData = z.infer<typeof formSchema>;
-
-  const onSubmit = async (data: FormData) => {
-    setIsSubmitting(true)
-
+  const onSubmit = async (data: ContactFormValues) => {
+    setIsSubmitting(true);
     try {
-      console.log("Form data submitted: ", data)
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      setShowSuccess(true)
-      form.reset()
-      setFilePreview("")
-    } catch (error) {
-      console.error("Error submitting form:", error)
+      if (data.subject === "agency_verification") {
+        await submitVerification({
+          name: data.name,
+          email: data.email,
+          message: data.message,
+        });
+
+        setShowSuccess(true);
+        form.reset();
+        setFilePreview("");
+      } else {
+        toast({
+          title: "Your message was received. No further action needed.",
+          variant: "default",
+        });
+        form.reset();
+        setFilePreview("");
+      }
+    } catch (error: any) {
+      const message = error?.message;
+
+      if (message === "Unauthorized") {
+        toast({
+          title: "Please sign in to submit an agency verification request.",
+          variant: "destructive",
+        });
+        router.push("/sign-in");
+      } else if (message === "No agency found for user.") {
+        toast({
+          title:
+            "You must first create or join an agency before submitting a request.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: message || "Something went wrong.",
+          variant: "destructive",
+        });
+      }
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <>
-      <Card className="overflow-hidden bg-white shadow-soft">
+      <Card className="overflow-hidden bg-white dark:bg-muted-foreground/10 transition-colors duration-300 shadow-soft">
         <CardContent className="p-6 sm:p-8">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -91,9 +142,15 @@ export default function ContactForm() {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel className="text-gray-800 dark:text-gray-100">
+                      Name
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter your full name" />
+                      <Input
+                        {...field}
+                        placeholder="Enter your full name"
+                        className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-zinc-700 transition-colors"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -105,9 +162,16 @@ export default function ContactForm() {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-gray-800 dark:text-gray-100">
+                      Email
+                    </FormLabel>
                     <FormControl>
-                      <Input type="email" {...field} placeholder="Enter your email" />
+                      <Input
+                        type="email"
+                        {...field}
+                        placeholder="Enter your email"
+                        className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-zinc-700 transition-colors"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -119,18 +183,25 @@ export default function ContactForm() {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Subject</FormLabel>
+                    <FormLabel className="text-gray-800 dark:text-gray-100">
+                      Subject
+                    </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-zinc-700 transition-colors">
                           <SelectValue placeholder="Select a subject" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100">
                         <SelectItem value="general">General Inquiry</SelectItem>
-                        <SelectItem value="support">Technical Support</SelectItem>
+                        <SelectItem value="support">
+                          Technical Support
+                        </SelectItem>
                         <SelectItem value="feedback">Feedback</SelectItem>
                         <SelectItem value="report">Report an Issue</SelectItem>
+                        <SelectItem value="agency_verification">
+                          Agency Verification
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -143,9 +214,16 @@ export default function ContactForm() {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Message</FormLabel>
+                    <FormLabel className="text-gray-800 dark:text-gray-100">
+                      Message
+                    </FormLabel>
                     <FormControl>
-                      <Textarea rows={6} {...field} placeholder="Enter your message" />
+                      <Textarea
+                        rows={6}
+                        {...field}
+                        placeholder="Enter your message"
+                        className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-zinc-700 transition-colors"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -157,13 +235,16 @@ export default function ContactForm() {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Attachment (Optional)</FormLabel>
+                    <FormLabel className="text-gray-800 dark:text-gray-100">
+                      Attachment (Optional)
+                    </FormLabel>
                     <FormControl>
                       <div className="flex items-center space-x-4">
                         <Input
                           type="file"
                           accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                           onChange={(e) => handleFileChange(e, field)}
+                          className="text-gray-800 dark:text-gray-100"
                         />
                         {filePreview && (
                           <Image
@@ -201,11 +282,12 @@ export default function ContactForm() {
       </Card>
 
       <AlertDialog open={showSuccess} onOpenChange={setShowSuccess}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100">
           <AlertDialogHeader>
             <AlertDialogTitle>Message Sent Successfully</AlertDialogTitle>
             <AlertDialogDescription>
-              Thank you for contacting us! We&apos;ve received your message and will get back to you as soon as possible.
+              Thank you for contacting us! We've received your message and will
+              get back to you as soon as possible.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -214,5 +296,5 @@ export default function ContactForm() {
         </AlertDialogContent>
       </AlertDialog>
     </>
-  )
+  );
 }

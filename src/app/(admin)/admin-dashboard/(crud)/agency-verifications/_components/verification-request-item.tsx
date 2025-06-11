@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Download, FileText, Calendar, Mail, User } from "lucide-react";
+import {
+  Download,
+  FileText,
+  Calendar,
+  Mail,
+  User,
+  BriefcaseBusiness,
+} from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -95,7 +102,7 @@ export default function VerificationRequestItem({
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold text-gray-800 dark:text-gray-100">
-                    {request.agency.name}
+                    {request.agencyName}
                   </h3>
                   {getStatusBadge(request.status)}
                 </div>
@@ -126,7 +133,7 @@ export default function VerificationRequestItem({
                       Full Name
                     </div>
                     <p className="text-gray-800 dark:text-gray-200">
-                      {request.agency.name}
+                      {request.name}
                     </p>
                   </div>
 
@@ -136,7 +143,17 @@ export default function VerificationRequestItem({
                       Email Address
                     </div>
                     <p className="text-gray-800 dark:text-gray-200">
-                      {request.agency.id}
+                      {request.email}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <BriefcaseBusiness className="h-4 w-4" />
+                      Agency ID
+                    </div>
+                    <p className="text-gray-800 dark:text-gray-200">
+                      {request.agencyId}
                     </p>
                   </div>
 
@@ -194,7 +211,7 @@ export default function VerificationRequestItem({
                 </div>
                 <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
                   <p className="text-gray-800 dark:text-gray-200 leading-relaxed">
-                    {request.notes || "No additional notes provided."}
+                    {request.message || "No Additional Details Provided"}
                   </p>
                 </div>
               </div>
@@ -205,7 +222,7 @@ export default function VerificationRequestItem({
                   <Separator className="bg-gray-200 dark:bg-gray-700" />
                   <VerificationActions
                     requestId={request.id}
-                    requestName={request.agency.name}
+                    requestName={request.name}
                     onStatusChange={onStatusChange}
                   />
                 </>

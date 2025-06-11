@@ -179,11 +179,19 @@ export type PaginatedQueryResponse<T> = {
 
 export type AgencyVerificationRequest = {
   id: string;
-  notes: string | null;
+  name: string;
+  email: string;
+  message: string;
+  agencyId: string;
+  agencyName: string;
   status: $Enums.VerificationStatus;
   createdAt: Date;
   updatedAt: Date;
-  agency: Pick<Agency, "id" | "name" | "agencyLogo">;
+  attachment?: {
+    name: string;
+    url: string;
+    size: number;
+  };
 };
 
 export type AgencyVerificationResponse =
