@@ -21,6 +21,7 @@ async function AgencyVerificationPage() {
     agencyVerificationOptions({
       page: 1,
       query: "",
+      filter: "ALL",
     })
   );
 

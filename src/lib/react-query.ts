@@ -6,10 +6,15 @@ export const queryKeys = {
   admin: {
     verification: {
       all: ["verification"],
-      search: ({ query = "", page = 1 }: { query: string; page: number }) => [
-        ...queryKeys.admin.verification.all,
-        { query, page },
-      ],
+      search: ({
+        query = "",
+        page = 1,
+        filter = "ALL",
+      }: {
+        query: string;
+        page: number;
+        filter: "ALL" | "PENDING" | "APPROVED" | "REJECTED";
+      }) => [...queryKeys.admin.verification.all, { query, page, filter }],
     },
   },
   community: {

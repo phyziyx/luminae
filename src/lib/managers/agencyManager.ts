@@ -738,13 +738,16 @@ export async function fetchAgencyFiles({
 export async function fetchAgencyVerificationApps({
   query = "",
   page = 1,
+  filter = "ALL",
 }: {
   query: string;
   page: number;
+  filter: "ALL" | "PENDING" | "APPROVED" | "REJECTED";
 }) {
   const response = await fetch(
     `/api/agency/verification?page=${page}` +
-      (query ? `&query=${encodeURIComponent(query)}` : "")
+      (query ? `&query=${encodeURIComponent(query)}` : "") +
+      `&filter=${filter}`
   );
 
   if (!response.ok) {

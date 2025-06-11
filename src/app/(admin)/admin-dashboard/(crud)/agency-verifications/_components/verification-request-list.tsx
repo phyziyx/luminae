@@ -13,7 +13,7 @@ export default function VerificationRequestList({
   requests,
   onStatusChange,
 }: VerificationRequestListProps) {
-  if (requests.length === 0) {
+  if (!requests || requests.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-xl bg-white dark:bg-gray-800 p-12 text-center shadow-soft">
         <div className="mb-4 text-4xl">📋</div>

@@ -1,6 +1,7 @@
 import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
 import { AgencyVerificationResponse, InfiniteQueryResponse } from "@/lib/types";
+import { VerificationStatus } from "@prisma/client";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -45,6 +46,11 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const query = searchParams.get("query") || "";
   const page = parseInt(searchParams.get("page") || "1", 10);
+  const rawFilter = searchParams.get("filter") || "ALL";
+
+  const filter = ["ALL", "PENDING", "APPROVED", "REJECTED"].includes(rawFilter)
+    ? rawFilter
+    : "ALL";
 
   const offset = (page - 1) * limit;
 
@@ -52,13 +58,14 @@ export async function GET(request: NextRequest) {
     prisma.agencyVerification.findMany({
       skip: offset,
       take: limit,
-      orderBy: { id: "desc" },
+      orderBy: { createdAt: "desc" },
       where: {
         ...(query
           ? {
               notes: { contains: query },
             }
           : {}),
+        ...(filter !== "ALL" ? { status: filter as VerificationStatus } : {}),
       },
       omit: {
         agencyId: true,
@@ -73,7 +80,16 @@ export async function GET(request: NextRequest) {
         },
       },
     }),
-    prisma.agencyVerification.count(),
+    prisma.agencyVerification.count({
+      where: {
+        ...(query
+          ? {
+              notes: { contains: query },
+            }
+          : {}),
+        ...(filter !== "ALL" ? { status: filter as VerificationStatus } : {}),
+      },
+    }),
   ]);
 
   const totalPages = Math.ceil(total / limit);
