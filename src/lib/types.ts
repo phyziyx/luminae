@@ -177,5 +177,14 @@ export type PaginatedQueryResponse<T> = {
   meta: PaginationMeta;
 };
 
+export type AgencyVerificationRequest = {
+  id: string;
+  notes: string | null;
+  status: $Enums.VerificationStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  agency: Pick<Agency, "id" | "name" | "agencyLogo">;
+};
+
 export type AgencyVerificationResponse =
-  PaginatedQueryResponse<AgencyVerification>;
+  PaginatedQueryResponse<AgencyVerificationRequest>;

@@ -15,11 +15,11 @@ import {
 } from "@/components/ui/alert-dialog";
 
 interface VerificationActionsProps {
-  requestId: number;
+  requestId: string;
   requestName: string;
   onStatusChange: (
-    requestId: number,
-    newStatus: "verified" | "rejected"
+    requestId: string,
+    newStatus: "APPROVED" | "REJECTED"
   ) => void;
 }
 
@@ -32,12 +32,12 @@ export default function VerificationActions({
   const [showRejectDialog, setShowRejectDialog] = useState(false);
 
   const handleVerify = () => {
-    onStatusChange(requestId, "verified");
+    onStatusChange(requestId, "APPROVED");
     setShowVerifyDialog(false);
   };
 
   const handleReject = () => {
-    onStatusChange(requestId, "rejected");
+    onStatusChange(requestId, "REJECTED");
     setShowRejectDialog(false);
   };
 

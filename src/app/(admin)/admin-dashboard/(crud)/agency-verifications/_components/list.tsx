@@ -2,34 +2,10 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import agencyVerificationOptions from "./query-option";
-import {
-  createColumnHelper,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import { AgencyVerification } from "@prisma/client";
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import { useDebounce } from "@uidotdev/usehooks";
-
-const columnHelper = createColumnHelper<AgencyVerification>();
-const columns = [
-  columnHelper.accessor("id", {
-    header: "ID",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("agencyId", {
-    header: "Agency ID",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("status", {
-    header: "Status",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("createdAt", {
-    header: "Created At",
-    cell: (info) => info.getValue().toISOString(),
-  }),
-];
+import VerificationRequestList from "./verification-request-list";
+import { useUpdateVerificationStatus } from "./mutations";
 
 function AgencyVerificationList() {
   const [page, setPage] = useState(1);
@@ -43,11 +19,7 @@ function AgencyVerificationList() {
     })
   );
 
-  const table = useReactTable({
-    data: data.items,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
+  const { mutateAsync } = useUpdateVerificationStatus();
 
   return (
     <pre>
@@ -61,12 +33,26 @@ function AgencyVerificationList() {
         />
       </div>
 
-      <div>{JSON.stringify(data.items, null, 2)}</div>
+      <div
+        style={{
+          opacity: isFetching ? 0.5 : 1,
+        }}
+      >
+        <VerificationRequestList
+          requests={data.items}
+          onStatusChange={(requestId, newStatus) => {
+            mutateAsync({
+              requestId,
+              newStatus,
+            });
+          }}
+        />
+      </div>
 
       <div className="flex items-center justify-between mt-4">
         <button
           onClick={() => {
-            setPage((prev) => Math.max(prev - 1, 1));
+            startTransition(() => setPage((prev) => Math.max(prev - 1, 1)));
           }}
           disabled={page === 1 || isFetching}
           className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
@@ -91,7 +77,9 @@ function AgencyVerificationList() {
 
         <button
           onClick={() => {
-            setPage((prev) => Math.min(prev + 1, data.meta.totalPages));
+            startTransition(() =>
+              setPage((prev) => Math.min(prev + 1, data.meta.totalPages))
+            );
           }}
           disabled={page === data.meta.totalPages || isFetching}
           className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"

@@ -12,26 +12,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import VerificationActions from "./verification-actions";
-
-interface VerificationRequest {
-  id: number;
-  name: string;
-  email: string;
-  message: string;
-  dateSubmitted: string;
-  status: "pending" | "verified" | "rejected";
-  attachment?: {
-    name: string;
-    size: number;
-    url: string;
-  } | null;
-}
+import { AgencyVerificationRequest } from "@/lib/types";
+import { VerificationStatus } from "@prisma/client";
 
 interface VerificationRequestItemProps {
-  request: VerificationRequest;
+  request: AgencyVerificationRequest;
   onStatusChange: (
-    requestId: number,
-    newStatus: "verified" | "rejected"
+    requestId: string,
+    newStatus: "APPROVED" | "REJECTED"
   ) => void;
 }
 
@@ -41,23 +29,32 @@ export default function VerificationRequestItem({
 }: VerificationRequestItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: VerificationStatus) => {
     switch (status) {
-      case "pending":
+      case "PENDING":
         return (
-          <Badge className="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800">
+          <Badge
+            variant={"outline"}
+            className="bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800"
+          >
             Pending
           </Badge>
         );
-      case "verified":
+      case "APPROVED":
         return (
-          <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-800">
+          <Badge
+            variant={"outline"}
+            className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 border-green-200 dark:border-green-800"
+          >
             ✅ Verified
           </Badge>
         );
-      case "rejected":
+      case "REJECTED":
         return (
-          <Badge className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border-red-200 dark:border-red-800">
+          <Badge
+            variant={"outline"}
+            className="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 border-red-200 dark:border-red-800"
+          >
             ❌ Rejected
           </Badge>
         );
@@ -98,18 +95,18 @@ export default function VerificationRequestItem({
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold text-gray-800 dark:text-gray-100">
-                    {request.name}
+                    {request.agency.name}
                   </h3>
                   {getStatusBadge(request.status)}
                 </div>
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
                   <span className="flex items-center gap-1">
                     <Mail className="h-3.5 w-3.5" />
-                    {request.email}
+                    {request.id}
                   </span>
                   <span className="flex items-center gap-1">
                     <Calendar className="h-3.5 w-3.5" />
-                    {formatDate(request.dateSubmitted)}
+                    {formatDate(new Date(request.createdAt).toLocaleString())}
                   </span>
                 </div>
               </div>
@@ -129,7 +126,7 @@ export default function VerificationRequestItem({
                       Full Name
                     </div>
                     <p className="text-gray-800 dark:text-gray-200">
-                      {request.name}
+                      {request.agency.name}
                     </p>
                   </div>
 
@@ -139,7 +136,7 @@ export default function VerificationRequestItem({
                       Email Address
                     </div>
                     <p className="text-gray-800 dark:text-gray-200">
-                      {request.email}
+                      {request.agency.id}
                     </p>
                   </div>
 
@@ -149,7 +146,7 @@ export default function VerificationRequestItem({
                       Date Submitted
                     </div>
                     <p className="text-gray-800 dark:text-gray-200">
-                      {formatDate(request.dateSubmitted)}
+                      {formatDate(new Date(request.createdAt).toLocaleString())}
                     </p>
                   </div>
                 </div>
@@ -197,18 +194,18 @@ export default function VerificationRequestItem({
                 </div>
                 <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
                   <p className="text-gray-800 dark:text-gray-200 leading-relaxed">
-                    {request.message}
+                    {request.notes || "No additional notes provided."}
                   </p>
                 </div>
               </div>
 
               {/* Actions */}
-              {request.status === "pending" && (
+              {request.status === "PENDING" && (
                 <>
                   <Separator className="bg-gray-200 dark:bg-gray-700" />
                   <VerificationActions
                     requestId={request.id}
-                    requestName={request.name}
+                    requestName={request.agency.name}
                     onStatusChange={onStatusChange}
                   />
                 </>

@@ -1,24 +1,11 @@
+import { AgencyVerificationRequest } from "@/lib/types";
 import VerificationRequestItem from "./verification-request-item";
 
-interface VerificationRequest {
-  id: number;
-  name: string;
-  email: string;
-  message: string;
-  dateSubmitted: string;
-  status: "pending" | "verified" | "rejected";
-  attachment?: {
-    name: string;
-    size: number;
-    url: string;
-  } | null;
-}
-
 interface VerificationRequestListProps {
-  requests: VerificationRequest[];
+  requests: AgencyVerificationRequest[];
   onStatusChange: (
-    requestId: number,
-    newStatus: "verified" | "rejected"
+    requestId: string,
+    newStatus: "APPROVED" | "REJECTED"
   ) => void;
 }
 
