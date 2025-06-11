@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { BadgeKey, SimpleBadge } from "@/lib/types";
 
 interface BadgeItem {
   id: number;
@@ -17,7 +18,43 @@ interface BadgeItem {
 }
 
 interface BadgesSectionProps {
-  badges: BadgeItem[];
+  badges: SimpleBadge[];
+}
+
+const badgeDetails: Record<BadgeKey, BadgeItem> = {
+  "1_post": {
+    id: 1,
+    name: "First Post",
+    icon: "Award",
+    color: "blue",
+  },
+  "5_post": {
+    id: 2,
+    name: "Five Posts",
+    icon: "ThumbsUp",
+    color: "green",
+  },
+  "50_posts": {
+    id: 3,
+    name: "Fifty Posts",
+    icon: "Star",
+    color: "amber",
+  },
+};
+
+function BadgeChip({ badge }: { badge: SimpleBadge }) {
+  return (
+    <div
+      className={`flex items-center gap-2 px-3 py-1 rounded-full ${
+        badgeDetails[badge.key].color
+      }`}
+    >
+      <div className="h-6 w-6">{badgeDetails[badge.key].icon}</div>
+      <span className="text-sm font-medium">
+        {badgeDetails[badge.key].name}
+      </span>
+    </div>
+  );
 }
 
 export default function BadgesSection({ badges }: BadgesSectionProps) {
@@ -64,21 +101,12 @@ export default function BadgesSection({ badges }: BadgesSectionProps) {
           </div>
         )}
         {badges.map((badge) => (
-          <TooltipProvider key={badge.id}>
+          <TooltipProvider key={badge.key}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Card className="overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
                   <CardContent className="p-4 flex flex-col items-center text-center">
-                    <div
-                      className={`p-3 rounded-full mb-2 ${getBadgeColor(
-                        badge.color
-                      )}`}
-                    >
-                      {getIconComponent(badge.icon)}
-                    </div>
-                    <span className="font-medium text-gray-800 dark:text-gray-200">
-                      {badge.name}
-                    </span>
+                    <BadgeChip badge={badge} />
                   </CardContent>
                 </Card>
               </TooltipTrigger>

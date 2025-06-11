@@ -38,6 +38,7 @@ export type CommunityProfileWithStats = CommunityProfile & {
     comments: number;
     likes: number;
   };
+  badges: SimpleBadge[];
 };
 
 export type CommentOwner =
@@ -162,3 +163,11 @@ export type CategoryPostWithBookmark = CategoryPost & {
 };
 
 export type AgencyFilesResponse = InfiniteQueryResponse<AgencyFile>;
+
+export type BadgeKey = "1_post" | "5_post" | "50_posts";
+
+export type SimpleBadge = {
+  icon: string;
+  key: BadgeKey;
+  createdAt: number;
+};
