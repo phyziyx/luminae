@@ -120,6 +120,26 @@ export default function ContactForm() {
             "You must first create or join an agency before submitting a request.",
           variant: "destructive",
         });
+      } else if (
+        message ===
+        "A verification request is already pending or approved for this agency."
+      ) {
+        toast({
+          title: "You already have an active verification request.",
+          description:
+            "You cannot submit another request until the current one is resolved.",
+          variant: "destructive",
+        });
+      } else if (
+        message ===
+        "This agency has been rejected too many times and cannot submit again."
+      ) {
+        toast({
+          title: "Submission Blocked",
+          description:
+            "This agency has been rejected 3 times and cannot submit another request.",
+          variant: "destructive",
+        });
       } else {
         toast({
           title: message || "Something went wrong.",

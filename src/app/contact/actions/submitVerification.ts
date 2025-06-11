@@ -16,7 +16,7 @@ export async function submitVerification(data: VerificationFormInput) {
   const session = await getSession();
 
   if (!session?.user?.id) {
-    throw new Error("User not authenticated.");
+    throw new Error("Unauthorized");
   }
 
   const agencyId = await VerificationManager.getAgencyIdByUserId(
@@ -25,6 +25,24 @@ export async function submitVerification(data: VerificationFormInput) {
 
   if (!agencyId) {
     throw new Error("No agency found for user.");
+  }
+
+  const alreadyExists = await VerificationManager.hasActiveVerificationRequest(
+    agencyId
+  );
+  if (alreadyExists) {
+    throw new Error(
+      "A verification request is already pending or approved for this agency."
+    );
+  }
+
+  const isBlocked = await VerificationManager.isAgencyBlockedFromVerification(
+    agencyId
+  );
+  if (isBlocked) {
+    throw new Error(
+      "This agency has been rejected too many times and cannot submit again."
+    );
   }
 
   await VerificationManager.createVerification({

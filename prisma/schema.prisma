@@ -590,14 +590,15 @@ model AgencyFile {
 }
 
 model AgencyVerification {
-  id         String             @id @default(uuid())
-  agencyId   String
-  agencyName String
-  name       String
-  email      String
-  message    String
-  status     VerificationStatus @default(PENDING)
-  notes      String?            @db.Text
+  id            String             @id @default(uuid())
+  agencyId      String
+  agencyName    String
+  name          String
+  email         String
+  message       String
+  status        VerificationStatus @default(PENDING)
+  notes         String?            @db.Text
+  timesRejected Int                @default(0)
 
   agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
 
