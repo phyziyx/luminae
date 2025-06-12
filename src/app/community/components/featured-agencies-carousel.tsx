@@ -57,38 +57,74 @@ export default function FeaturedAgenciesCarousel({
   }, [api]);
 
   return (
-    <Carousel
-      setApi={setApi}
-      className="w-full"
-      opts={{
-        align: "start",
-        loop: true,
-      }}
-    >
-      <CarouselContent>
-        {agencies.map((agency, index) => (
-          <CarouselItem key={agency.id} className="md:basis-1/2 lg:basis-1/3">
-            <div className="p-1">
-              <AgencyCard
-                agency={{
-                  ...agency,
-                  rank: index + 1,
-                }}
-              />
-            </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <div className="mt-4 flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">
-          {current} of {count}
-        </span>
-        <div className="flex gap-2">
-          <CarouselPrevious className="bg-white dark:bg-muted/30 static translate-y-0" />
-          <CarouselNext className="bg-white dark:bg-muted/30 static translate-y-0" />
+    <>
+      {/* {agencies.length >= 5 && (
+        <Card className="mb-6 border-0 bg-white/90 dark:bg-gray-800/90 shadow-lg backdrop-blur-md">
+          <CardContent className="p-6 text-center flex flex-col items-center gap-4">
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+              This podium has empty seats 🪑
+            </h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Your agency could be basking in digital glory right here. 🌟
+            </p>
+            <p className="text-sm text-muted-foreground">
+              All it takes is a few killer posts and some community love. Go get
+              it! 🚀
+            </p>
+          </CardContent>
+          <CardFooter className="flex justify-center pb-6">
+            <Button
+              className="bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90 shadow"
+              asChild
+            >
+              <Link href="/community">Make Your Move</Link>
+            </Button>
+          </CardFooter>
+        </Card>
+      )} */}
+
+      <Carousel
+        setApi={setApi}
+        className="w-full"
+        opts={{
+          align: "start",
+          loop: true,
+        }}
+      >
+        <CarouselContent>
+          {Array.from({ length: 5 }).map((_, i) => {
+            const agency = agencies[i];
+
+            return (
+              <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  {agency ? (
+                    <AgencyCard
+                      agency={{
+                        ...agency,
+                        rank: i + 1,
+                      }}
+                    />
+                  ) : (
+                    <PlaceholderCard rank={i + 1} />
+                  )}
+                </div>
+              </CarouselItem>
+            );
+          })}
+        </CarouselContent>
+
+        <div className="mt-4 flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">
+            {current} of {count}
+          </span>
+          <div className="flex gap-2">
+            <CarouselPrevious className="bg-white dark:bg-muted/30 static translate-y-0" />
+            <CarouselNext className="bg-white dark:bg-muted/30 static translate-y-0" />
+          </div>
         </div>
-      </div>
-    </Carousel>
+      </Carousel>
+    </>
   );
 }
 
@@ -97,9 +133,9 @@ function AgencyCard({ agency }: { agency: TopRankedAgency }) {
     <Card className="relative overflow-hidden border-0 bg-transparent transition-all duration-300 hover:shadow-soft">
       <div
         className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 hover:opacity-100"
-      // style={{
-      //   background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(91, 154, 255, 0.15), transparent 40%)`,
-      // }}
+        // style={{
+        //   background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(91, 154, 255, 0.15), transparent 40%)`,
+        // }}
       />
       <CardContent className="relative z-10 flex flex-col items-center gap-4 rounded-t-lg bg-white/90 dark:bg-gray-800/90 p-6 backdrop-blur-sm shadow-soft">
         <div className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary dark:bg-primary-light text-sm font-bold text-primary-foreground dark:text-gray-900">
@@ -135,6 +171,37 @@ function AgencyCard({ agency }: { agency: TopRankedAgency }) {
           asChild
         >
           <Link href={`/community/profile/a-${agency.id}`}>View Profile</Link>
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}
+
+function PlaceholderCard({ rank }: { rank: number }) {
+  return (
+    <Card className="relative overflow-hidden border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-soft">
+      <CardContent className="relative z-10 flex flex-col items-center gap-4 rounded-t-lg p-6 text-center">
+        <div className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-bold text-muted-foreground">
+          #{rank}
+        </div>
+        <div className="mt-4 flex flex-col items-center">
+          <div className="mb-3 flex h-20 w-20 items-center justify-center rounded-full border-4 border-dashed border-primary text-2xl font-bold text-primary dark:border-primary-light dark:text-primary-light">
+            ?
+          </div>
+          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
+            No one claimed this spot 😬
+          </h3>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          We’re not mad… just disappointed. Post something. Be legendary.
+        </p>
+      </CardContent>
+      <CardFooter className="p-4">
+        <Button
+          className="w-full bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90 transition-colors duration-200 shadow-md hover:shadow-lg"
+          asChild
+        >
+          <Link href="/community">Steal This Spot</Link>
         </Button>
       </CardFooter>
     </Card>

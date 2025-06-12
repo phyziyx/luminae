@@ -8,6 +8,8 @@ import { CommunityProfileWithStats } from "@/lib/types";
 import EditProfile from "../components/edit-profile";
 import AgencyManager from "@/lib/managers/agencyManager";
 import BadgeManager from "@/lib/managers/badgeManager";
+import { Button } from "@/components/ui/button";
+import { BadgeCheckIcon } from "lucide-react";
 
 const getProfileData = async (id: string) => {
   const isAgency = id.startsWith("a-");
@@ -25,31 +27,45 @@ const getProfileData = async (id: string) => {
     stats: { posts: 0, likes: 0, comments: 0 },
     isAgency,
     badges: [],
+    verified: false,
   };
 
   const badges = await BadgeManager.getRecentBadges(idWithoutPrefix, 5);
 
   if (isAgency) {
-    const foundAgency = await prisma.agency.findUnique({
-      select: {
-        agencyLogo: true,
-        name: true,
-        profile: {
-          include: {
-            profile: true,
+    const [foundAgency, verification] = await Promise.all([
+      prisma.agency.findUnique({
+        select: {
+          agencyLogo: true,
+          name: true,
+          profile: {
+            include: {
+              profile: true,
+            },
+          },
+          _count: {
+            select: {
+              posts: true,
+              comments: true,
+            },
           },
         },
-        _count: {
-          select: {
-            posts: true,
-            comments: true,
-          },
+        where: {
+          id: idWithoutPrefix,
         },
-      },
-      where: {
-        id: idWithoutPrefix,
-      },
-    });
+      }),
+      prisma.agencyVerification.findFirst({
+        select: {
+          status: true,
+        },
+        where: {
+          agencyId: idWithoutPrefix,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+    ]);
 
     if (!foundAgency) return data;
 
@@ -69,6 +85,7 @@ const getProfileData = async (id: string) => {
         posts: foundAgency._count.posts ?? 0,
       },
       badges,
+      verified: !!(verification && verification.status === "APPROVED"),
     };
   } else {
     const foundUser = await prisma.user.findUnique({
@@ -113,9 +130,27 @@ const getProfileData = async (id: string) => {
         posts: foundUser._count.posts ?? 0,
       },
       badges,
+      verified: false,
     };
   }
 };
+
+function VerifyNow() {
+  return (
+    <div className="mb-2 bg-green-800 dark:bg-green-900 w-full rounded-xl p-3 flex flex-row items-center justify-between align-items-center">
+      <div>
+        <p className="text-lg text-white font-bold">You aren't verified yet!</p>
+        <p className="text-sm text-white">
+          Get verified like this agency to unlock exclusive features.
+        </p>
+      </div>
+      <Button className="bg-white text-green-800 dark:text-green-900 font-bold hover:bg-gray-100">
+        <BadgeCheckIcon className="h-6 w-6 text-green-800 fill-green-400 dark:text-primary-light" />
+        Get Verified
+      </Button>
+    </div>
+  );
+}
 
 function CommunityProfile({
   profileData,
@@ -134,6 +169,7 @@ function CommunityProfile({
     content,
     stats,
     badges,
+    verified,
   } = profileData;
 
   return (
@@ -155,13 +191,15 @@ function CommunityProfile({
       <div className="mt-8 grid gap-8 md:grid-cols-3">
         {/* LEFT SECTION (Main Info) */}
         <div className="md:col-span-2">
+          {!isOwner && isAgency && <VerifyNow />}
           <ProfileInfo
             name={name}
             title={title ?? undefined}
             tagline={tagline ?? undefined}
             description={content ?? undefined}
             isAgency={isAgency}
-            verified={false}
+            verified={verified}
+            myself={isOwner}
           />
         </div>
 

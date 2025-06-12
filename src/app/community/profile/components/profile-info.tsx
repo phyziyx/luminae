@@ -2,7 +2,8 @@
 
 import { cn } from "@/lib/utils";
 import { MarkdownRenderer } from "../../components/markdown-renderer";
-import { LucideCheckCircle2 } from "lucide-react";
+import { BadgeCheckIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ProfileInfoProps {
   name: string;
@@ -11,6 +12,32 @@ interface ProfileInfoProps {
   description?: string;
   isAgency: boolean;
   verified?: boolean;
+  myself?: boolean;
+}
+
+function VerificationBadge({
+  isVerified,
+  myself,
+}: {
+  isVerified: boolean;
+  myself?: boolean;
+}) {
+  if (!isVerified) {
+    if (!myself) {
+      return null;
+    }
+
+    return (
+      <Button variant="outline">
+        <BadgeCheckIcon className="h-6 w-6 text-green-500 fill-green-200 dark:fill-green-900 dark:text-primary-light" />
+        Get Verified
+      </Button>
+    );
+  }
+
+  return (
+    <BadgeCheckIcon className="h-6 w-6 text-green-500 fill-green-200 dark:fill-green-900 dark:text-primary-light" />
+  );
 }
 
 export default function ProfileInfo({
@@ -20,6 +47,7 @@ export default function ProfileInfo({
   description,
   isAgency,
   verified = false,
+  myself,
 }: ProfileInfoProps) {
   return (
     <div className="rounded-xl bg-white dark:bg-gray-800 p-6 shadow-soft">
@@ -27,8 +55,8 @@ export default function ProfileInfo({
       <div className="mb-4">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 sm:text-3xl flex items-center gap-2">
           {name}
-          {isAgency && verified && (
-            <LucideCheckCircle2 className="h-6 w-6 text-primary dark:text-primary-light" />
+          {isAgency && (
+            <VerificationBadge isVerified={verified} myself={myself} />
           )}
         </h1>
 
