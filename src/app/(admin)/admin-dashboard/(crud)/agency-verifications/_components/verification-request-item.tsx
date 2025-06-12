@@ -102,7 +102,7 @@ export default function VerificationRequestItem({
               <div className="flex-1 space-y-1">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold text-gray-800 dark:text-gray-100">
-                    {request.agencyName}
+                    {request.agency.name}
                   </h3>
                   {getStatusBadge(request.status)}
                 </div>
@@ -133,7 +133,7 @@ export default function VerificationRequestItem({
                       Full Name
                     </div>
                     <p className="text-gray-800 dark:text-gray-200">
-                      {request.name}
+                      {request.agency.name}
                     </p>
                   </div>
 
@@ -143,7 +143,7 @@ export default function VerificationRequestItem({
                       Email Address
                     </div>
                     <p className="text-gray-800 dark:text-gray-200">
-                      {request.email}
+                      {request.agency.companyEmail}
                     </p>
                   </div>
 
@@ -153,7 +153,7 @@ export default function VerificationRequestItem({
                       Agency ID
                     </div>
                     <p className="text-gray-800 dark:text-gray-200">
-                      {request.agencyId}
+                      {request.agency.id}
                     </p>
                   </div>
 
@@ -222,7 +222,7 @@ export default function VerificationRequestItem({
                   <Separator className="bg-gray-200 dark:bg-gray-700" />
                   <VerificationActions
                     requestId={request.id}
-                    requestName={request.name}
+                    requestName={request.agency.name}
                     onStatusChange={onStatusChange}
                   />
                 </>

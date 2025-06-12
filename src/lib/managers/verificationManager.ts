@@ -1,5 +1,5 @@
 import prisma from "../db";
-import { v7 as uuidv7 } from "uuid";
+import { v7 } from "uuid";
 
 class VerificationManager {
   /**
@@ -48,19 +48,14 @@ class VerificationManager {
   public static async isAgencyBlockedFromVerification(
     agencyId: string
   ): Promise<boolean> {
-    const lastAttempt = await prisma.agencyVerification.findFirst({
+    const lastAttempt = await prisma.agencyVerification.count({
       where: {
         agencyId,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      select: {
-        timesRejected: true,
+        status: "REJECTED",
       },
     });
 
-    return (lastAttempt?.timesRejected ?? 0) >= 3;
+    return lastAttempt >= 3;
   }
 
   /**
@@ -100,39 +95,13 @@ class VerificationManager {
       );
     }
 
-    // Check for last REJECTED request to update
-    const lastRejected = await prisma.agencyVerification.findFirst({
-      where: {
-        agencyId,
-        status: "REJECTED",
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    // Create a new verification request always
 
-    if (lastRejected) {
-      return await prisma.agencyVerification.update({
-        where: { id: lastRejected.id },
-        data: {
-          name,
-          email,
-          message,
-          agencyName: agency.name,
-          status: "PENDING",
-        },
-      });
-    }
-
-    // Otherwise, create a new one
     return await prisma.agencyVerification.create({
       data: {
-        id: uuidv7(),
-        name,
-        email,
+        id: v7(),
         message,
         agencyId,
-        agencyName: agency.name,
         status: "PENDING",
       },
     });

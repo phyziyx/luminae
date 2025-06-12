@@ -31,7 +31,7 @@ export function useUpdateVerificationStatus() {
       requestId: string;
       newStatus: "APPROVED" | "REJECTED";
     }) => updateVerificationStatus(requestId, newStatus),
-    onSuccess(data, variables, context) {
+    onSuccess() {
       queryClient.invalidateQueries({
         queryKey: [queryKeys.admin.verification.all],
       });

@@ -164,7 +164,7 @@ export default function TwoColumnLayout() {
   return (
     <div className="grid gap-8 lg:grid-cols-3">
       <div className="lg:col-span-2">
-        <CategorySection
+        {/* <CategorySection
           title="Trending in Design"
           posts={categoryPosts.design}
           category="design"
@@ -173,7 +173,7 @@ export default function TwoColumnLayout() {
           title="Trending in Development"
           posts={categoryPosts.development}
           category="development"
-        />
+        /> */}
       </div>
       <div className="space-y-8">
         <SidebarSection title="Top Contributors This Week">

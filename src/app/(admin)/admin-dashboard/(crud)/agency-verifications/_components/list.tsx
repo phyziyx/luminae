@@ -99,13 +99,6 @@ function AgencyVerificationList() {
           <strong>Page:</strong> {page} / {data.meta.totalPages}
         </span>
 
-        {data.meta.totalPages > 0 && (
-          <span>
-            <strong>Showing:</strong> {data.items[0].id} -{" "}
-            {data.items[data.items.length - 1].id} of {data.meta.total} records
-          </span>
-        )}
-
         <Button
           onClick={() => {
             startTransition(() =>

@@ -39,6 +39,7 @@ export type CommunityProfileWithStats = CommunityProfile & {
     comments: number;
     likes: number;
   };
+  verified: boolean;
 };
 
 export type CommentOwner =
@@ -179,11 +180,7 @@ export type PaginatedQueryResponse<T> = {
 
 export type AgencyVerificationRequest = {
   id: string;
-  name: string;
-  email: string;
   message: string;
-  agencyId: string;
-  agencyName: string;
   status: $Enums.VerificationStatus;
   createdAt: Date;
   updatedAt: Date;
@@ -192,6 +189,7 @@ export type AgencyVerificationRequest = {
     url: string;
     size: number;
   };
+  agency: Pick<Agency, "id" | "name" | "agencyLogo" | "companyEmail">;
 };
 
 export type AgencyVerificationResponse =

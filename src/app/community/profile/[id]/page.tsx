@@ -26,29 +26,43 @@ const getProfileData = async (id: string) => {
     stats: { posts: 0, likes: 0, comments: 0 },
     isAgency,
     badges: [],
+    verified: false,
   };
 
   if (isAgency) {
-    const foundAgency = await prisma.agency.findUnique({
-      select: {
-        agencyLogo: true,
-        name: true,
-        profile: {
-          include: {
-            profile: true,
+    const [foundAgency, verification] = await Promise.all([
+      prisma.agency.findUnique({
+        select: {
+          agencyLogo: true,
+          name: true,
+          profile: {
+            include: {
+              profile: true,
+            },
+          },
+          _count: {
+            select: {
+              posts: true,
+              comments: true,
+            },
           },
         },
-        _count: {
-          select: {
-            posts: true,
-            comments: true,
-          },
+        where: {
+          id: idWithoutPrefix,
         },
-      },
-      where: {
-        id: idWithoutPrefix,
-      },
-    });
+      }),
+      prisma.agencyVerification.findFirst({
+        select: {
+          status: true,
+        },
+        where: {
+          agencyId: idWithoutPrefix,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+    ]);
 
     if (!foundAgency) return data;
 
@@ -68,6 +82,7 @@ const getProfileData = async (id: string) => {
         posts: foundAgency._count.posts ?? 0,
       },
       badges: [],
+      verified: !!(verification && verification.status === "APPROVED"),
     };
   } else {
     const foundUser = await prisma.user.findUnique({
@@ -112,6 +127,7 @@ const getProfileData = async (id: string) => {
         posts: foundUser._count.posts ?? 0,
       },
       badges: [],
+      verified: false,
     };
   }
 };
@@ -149,6 +165,7 @@ function CommunityProfile({
     isAgency,
     content,
     stats,
+    verified,
   } = profileData;
 
   return (
@@ -177,7 +194,7 @@ function CommunityProfile({
             tagline={tagline ?? undefined}
             description={content ?? undefined}
             isAgency={isAgency}
-            verified={false}
+            verified={verified}
             myself={isOwner}
           />
         </div>

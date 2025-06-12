@@ -161,6 +161,7 @@ export default function VerticalTimeline() {
                     width={600}
                     height={400}
                     className="w-full h-auto rounded-xl object-cover animate-subtle-float"
+                    unoptimized
                   />
                 </div>
               </div>

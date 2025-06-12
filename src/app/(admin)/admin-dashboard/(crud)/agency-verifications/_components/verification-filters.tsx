@@ -111,12 +111,6 @@ export default function VerificationFilters({
             </Select>
           </div>
         </div>
-
-        {/* Showing "X" results, remove if you think it's unncessary or a hassle */}
-
-        {/* <div className="mt-4 text-sm text-gray-600 dark:text-gray-300">
-          Showing {requests.length} request{requests.length !== 1 ? "s" : ""}
-        </div> */}
       </CardContent>
     </Card>
   );

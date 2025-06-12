@@ -67,25 +67,9 @@ export async function GET(request: NextRequest) {
           : {}),
         ...(filter !== "ALL" ? { status: filter as VerificationStatus } : {}),
       },
-      // omit: {
-      //   agencyId: true,
-      // },
-      // include: {
-      //   agency: {
-      //     select: {
-      //       id: true,
-      //       name: true,
-      //       agencyLogo: true,
-      //     },
-      //   },
-      // },
       select: {
         id: true,
-        name: true,
-        email: true,
         message: true,
-        agencyName: true,
-        agencyId: true,
         notes: true,
         status: true,
         createdAt: true,
@@ -95,6 +79,7 @@ export async function GET(request: NextRequest) {
             id: true,
             name: true,
             agencyLogo: true,
+            companyEmail: true,
           },
         },
       },
