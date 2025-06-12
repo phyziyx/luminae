@@ -97,7 +97,7 @@ export default function BadgesSection({ badges }: BadgesSectionProps) {
                 </Card>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Earned for outstanding contributions</p>
+                <p>{badgeDetails[badge.key].name}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
