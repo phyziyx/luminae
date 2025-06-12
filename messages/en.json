@@ -17,6 +17,8 @@
   "NEXT": "Next",
   "WORKING_HARD": "We're working hard to bring you an amazing community experience. Stay tuned for updates, and thank you for your patience!",
 
+  "NO_AGENCY": "No agency found!",
+
   "FULL_NAME": "Full Name",
 
   "WORKSPACE": "Workspace",
@@ -389,5 +391,9 @@
   "PROFILE": {
     "HEADER": "Profile",
     "DESCRIPTION": "Manage your profile information and security settings."
+  },
+
+  "AGENCY_VERIFICATIONS": {
+    "HEADER": "Agency Verifications"
   }
 }

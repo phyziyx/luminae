@@ -36,6 +36,7 @@ import {
   NetworkIcon,
   SquareTerminalIcon,
   UserCog2Icon,
+  ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -83,6 +84,12 @@ const data: NavData = {
       title: "Packages",
       url: "/admin-dashboard/packages",
       icon: NetworkIcon,
+      items: [],
+    },
+    {
+      title: "Agency Verification",
+      url: "/admin-dashboard/agency-verifications",
+      icon: ShieldCheck,
       items: [],
     },
     // {

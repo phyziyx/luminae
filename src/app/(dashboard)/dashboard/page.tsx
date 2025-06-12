@@ -31,6 +31,11 @@ const Dashboard = async () => {
 
   if (agencyMember && !isAgencyAdmin(agencyMember.role)) {
     redirect("/dashboard/workspace");
+    return;
+  }
+
+  if (!agencyMember) {
+    return <div>{t("NO_AGENCY")}</div>;
   }
 
   // const currentYear = new Date().getFullYear();

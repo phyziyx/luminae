@@ -9,6 +9,7 @@ import {
   Agency,
   Tag,
   AgencyFile,
+  AgencyVerification,
 } from "@prisma/client";
 
 export type TopRankedAgency = {
@@ -38,6 +39,7 @@ export type CommunityProfileWithStats = CommunityProfile & {
     comments: number;
     likes: number;
   };
+  verified: boolean;
 };
 
 export type CommentOwner =
@@ -162,3 +164,33 @@ export type CategoryPostWithBookmark = CategoryPost & {
 };
 
 export type AgencyFilesResponse = InfiniteQueryResponse<AgencyFile>;
+
+export type PaginationMeta = {
+  total: number;
+  totalPages: number;
+  currentPage: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+};
+
+export type PaginatedQueryResponse<T> = {
+  items: T[];
+  meta: PaginationMeta;
+};
+
+export type AgencyVerificationRequest = {
+  id: string;
+  message: string;
+  status: $Enums.VerificationStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  attachment?: {
+    name: string;
+    url: string;
+    size: number;
+  };
+  agency: Pick<Agency, "id" | "name" | "agencyLogo" | "companyEmail">;
+};
+
+export type AgencyVerificationResponse =
+  PaginatedQueryResponse<AgencyVerificationRequest>;

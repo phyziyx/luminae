@@ -150,15 +150,16 @@ model Agency {
   state   String
   country String
 
-  agencyMembers AgencyMember[]
-  workspaces    Workspace[]
-  invitations   Invitation[]
-  clients       Client[]
-  subscription  Subscription?
-  posts         AgencyPost[]
-  comments      AgencyComment[]
-  profile       AgencyProfile?
-  agencyFiles   AgencyFile[]
+  agencyMembers       AgencyMember[]
+  workspaces          Workspace[]
+  invitations         Invitation[]
+  clients             Client[]
+  subscription        Subscription?
+  posts               AgencyPost[]
+  comments            AgencyComment[]
+  profile             AgencyProfile?
+  agencyFiles         AgencyFile[]
+  agencyVerifications AgencyVerification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -586,4 +587,26 @@ model AgencyFile {
   @@id([key])
   @@index([agencyId, key])
   @@map("agencyfiles")
+}
+
+model AgencyVerification {
+  id       String             @id @default(uuid())
+  agencyId String
+  message  String
+  status   VerificationStatus @default(PENDING)
+  notes    String?            @db.Text
+
+  agency Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([agencyId])
+  @@map("agencyverification")
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

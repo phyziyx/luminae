@@ -11,7 +11,11 @@ import { v7 } from "uuid";
 import { isAgencyAdmin } from "../utils";
 import PackageManager from "./packageManager";
 import { sendEmail } from "@/lib/email";
-import { AgencyFilesResponse, TopRankedAgency } from "../types";
+import {
+  AgencyFilesResponse,
+  AgencyVerificationResponse,
+  TopRankedAgency,
+} from "../types";
 
 type CreateAgency = Omit<
   Agency,
@@ -728,6 +732,29 @@ export async function fetchAgencyFiles({
   }
 
   const data: AgencyFilesResponse = await response.json();
+  return data;
+}
+
+export async function fetchAgencyVerificationApps({
+  query = "",
+  page = 1,
+  filter = "ALL",
+}: {
+  query: string;
+  page: number;
+  filter: "ALL" | "PENDING" | "APPROVED" | "REJECTED";
+}) {
+  const response = await fetch(
+    `/api/agency/verification?page=${page}` +
+      (query ? `&query=${encodeURIComponent(query)}` : "") +
+      `&filter=${filter}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch agency verification apps");
+  }
+
+  const data: AgencyVerificationResponse = await response.json();
   return data;
 }
 
