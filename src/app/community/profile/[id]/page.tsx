@@ -30,8 +30,6 @@ const getProfileData = async (id: string) => {
     verified: false,
   };
 
-  const badges = await BadgeManager.getRecentBadges(idWithoutPrefix, 6);
-
   if (isAgency) {
     const [foundAgency, verification] = await Promise.all([
       prisma.agency.findUnique({
@@ -84,7 +82,9 @@ const getProfileData = async (id: string) => {
         likes: 0,
         posts: foundAgency._count.posts ?? 0,
       },
-      badges,
+      badges: foundAgency.profile?.profileId
+        ? await BadgeManager.getRecentBadges(foundAgency.profile?.profileId, 6)
+        : [],
       verified: !!(verification && verification.status === "APPROVED"),
     };
   } else {
@@ -129,7 +129,9 @@ const getProfileData = async (id: string) => {
           (foundUser._count.likes ?? 0) + (foundUser._count.commentLikes ?? 0),
         posts: foundUser._count.posts ?? 0,
       },
-      badges,
+      badges: foundUser.profile?.profileId
+        ? await BadgeManager.getRecentBadges(foundUser.profile?.profileId, 6)
+        : [],
       verified: false,
     };
   }

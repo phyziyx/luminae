@@ -592,7 +592,7 @@ model AgencyFile {
 
 model Badge {
   id           String         @unique @default(uuid())
-  key          String         @unique
+  key          String
   icon         String
   ProfileBadge ProfileBadge[]
 
@@ -610,7 +610,7 @@ model ProfileBadge {
   badge   Badge   @relation(fields: [badgeId], references: [id])
 
   @@id([profileId, badgeId])
-  @@unique([profileId, badgeId])
+  @@unique([profileId])
   @@map("profilebadge")
 }
 

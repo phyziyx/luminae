@@ -9,11 +9,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { BadgeKey, SimpleBadge } from "@/lib/types";
+import { JSX } from "react";
 
 interface BadgeItem {
   id: number;
   name: string;
-  icon: string;
+  icon: JSX.Element;
   color: string;
 }
 
@@ -22,57 +23,27 @@ interface BadgesSectionProps {
 }
 
 const badgeDetails: Record<BadgeKey, BadgeItem> = {
-  "1_post": {
+  FIRST_WORD: {
     id: 1,
     name: "First Post",
-    icon: "Award",
+    icon: <Award />,
     color: "blue",
   },
-  "5_post": {
+  OUT_OF_SHADOWS: {
     id: 2,
-    name: "Five Posts",
-    icon: "ThumbsUp",
+    name: "3 Posts",
+    icon: <ThumbsUp />,
     color: "green",
   },
-  "50_posts": {
+  VERIFIED: {
     id: 3,
-    name: "Fifty Posts",
-    icon: "Star",
+    name: "Verified Contributor",
+    icon: <Star />,
     color: "amber",
   },
 };
 
 function BadgeChip({ badge }: { badge: SimpleBadge }) {
-  return (
-    <div
-      className={`flex items-center gap-2 px-3 py-1 rounded-full ${
-        badgeDetails[badge.key].color
-      }`}
-    >
-      <div className="h-6 w-6">{badgeDetails[badge.key].icon}</div>
-      <span className="text-sm font-medium">
-        {badgeDetails[badge.key].name}
-      </span>
-    </div>
-  );
-}
-
-export default function BadgesSection({ badges }: BadgesSectionProps) {
-  const getIconComponent = (iconName: string) => {
-    switch (iconName) {
-      case "Award":
-        return <Award className="h-6 w-6" />;
-      case "ThumbsUp":
-        return <ThumbsUp className="h-6 w-6" />;
-      case "Star":
-        return <Star className="h-6 w-6" />;
-      case "CheckCircle":
-        return <CheckCircle className="h-6 w-6" />;
-      default:
-        return <Award className="h-6 w-6" />;
-    }
-  };
-
   const getBadgeColor = (color: string) => {
     switch (color) {
       case "blue":
@@ -88,6 +59,21 @@ export default function BadgesSection({ badges }: BadgesSectionProps) {
     }
   };
 
+  return (
+    <div
+      className={`flex flex-col align-middle justify-center items-center gap-2 px-3 py-1 rounded-lg w-[100px] h-[100px] ${getBadgeColor(
+        badgeDetails[badge.key].color
+      )}`}
+    >
+      <div className="h-6 w-6">{badgeDetails[badge.key].icon}</div>
+      <span className="text-sm font-medium">
+        {badgeDetails[badge.key].name}
+      </span>
+    </div>
+  );
+}
+
+export default function BadgesSection({ badges }: BadgesSectionProps) {
   return (
     <div className="rounded-xl bg-white dark:bg-gray-800 p-6 shadow-soft">
       <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-100">

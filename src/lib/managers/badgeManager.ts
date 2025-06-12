@@ -38,14 +38,24 @@ class BadgeManager {
       return;
     }
 
+    // Check if the badge key exists in the Badge table
+    const badgeExists = await prisma.badge.findUnique({
+      where: { key },
+    });
+
+    if (!badgeExists) {
+      console.error(`Badge with key ${key} does not exist.`);
+      return;
+    }
+
     await prisma.profileBadge.upsert({
       where: {
-        profileId_badgeId: { profileId, badgeId: key },
+        profileId_badgeId: { profileId, badgeId: badgeExists.id },
       },
       update: {},
       create: {
         profileId,
-        badgeId: key,
+        badgeId: badgeExists.id,
       },
     });
   }
