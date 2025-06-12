@@ -30,6 +30,37 @@ class PostManager {
     return await prisma.post.count();
   }
 
+  public static async getCountForProfile(profileId: string) {
+    return await prisma.post.count({
+      where: {
+        OR: [
+          {
+            agencyPosts: {
+              some: {
+                agency: {
+                  profile: {
+                    profileId,
+                  },
+                },
+              },
+            },
+          },
+          {
+            userPosts: {
+              some: {
+                user: {
+                  profile: {
+                    profileId,
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+    });
+  }
+
   public static async findTrending() {
     const postIds = await prisma.$queryRaw<
       Array<{

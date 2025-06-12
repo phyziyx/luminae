@@ -1,8 +1,43 @@
 import prisma from "../db";
 import { BadgeKey, SimpleBadge } from "../types";
 
+type AwardBadgeTo =
+  | {
+      userId: string;
+    }
+  | {
+      agencyId: string;
+    }
+  | {
+      profileId: string;
+    };
+
 class BadgeManager {
-  public static async awardAchievement(profileId: string, key: BadgeKey) {
+  public static async awardAchievement(to: AwardBadgeTo, key: BadgeKey) {
+    let profileId: string | undefined;
+
+    if ("profileId" in to) {
+      profileId = to.profileId;
+    } else if ("userId" in to) {
+      const profile = await prisma.userProfile.findUnique({
+        where: { userId: to.userId },
+        select: { profileId: true },
+      });
+
+      profileId = profile?.profileId;
+    } else if ("agencyId" in to) {
+      const profile = await prisma.agencyProfile.findUnique({
+        where: { agencyId: to.agencyId },
+        select: { profileId: true },
+      });
+
+      profileId = profile?.profileId;
+    }
+
+    if (!profileId) {
+      return;
+    }
+
     await prisma.profileBadge.upsert({
       where: {
         profileId_badgeId: { profileId, badgeId: key },

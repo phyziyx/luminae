@@ -30,7 +30,7 @@ const getProfileData = async (id: string) => {
     verified: false,
   };
 
-  const badges = await BadgeManager.getRecentBadges(idWithoutPrefix, 5);
+  const badges = await BadgeManager.getRecentBadges(idWithoutPrefix, 6);
 
   if (isAgency) {
     const [foundAgency, verification] = await Promise.all([

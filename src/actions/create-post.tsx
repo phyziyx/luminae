@@ -4,6 +4,7 @@ import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
 import { backendClient } from "@/lib/edgestore/edgestore";
 import { createPostSchema, CreatePostSchema } from "@/lib/forms";
+import BadgeManager from "@/lib/managers/badgeManager";
 import PostManager from "@/lib/managers/postManager";
 
 export default async function onCreatePost(values: CreatePostSchema) {
@@ -108,6 +109,29 @@ export default async function onCreatePost(values: CreatePostSchema) {
       },
       values.tags
     );
+
+    // Let us now count how many posts the user has created, so we can award them a badge if they have created enough posts.
+    const count = await PostManager.getCountForProfile(user.id);
+    if (count >= 3) {
+      BadgeManager.awardAchievement(
+        agencyId
+          ? { agencyId }
+          : {
+              userId: user.id,
+            },
+        "OUT_OF_SHADOWS"
+      );
+    }
+    if (count >= 1) {
+      BadgeManager.awardAchievement(
+        agencyId
+          ? { agencyId }
+          : {
+              userId: user.id,
+            },
+        "FIRST_WORD"
+      );
+    }
 
     error = "";
     return {
