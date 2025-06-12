@@ -1,4 +1,5 @@
 import prisma from "../db";
+import { v7 as uuidv7 } from "uuid";
 
 class VerificationManager {
   /**
@@ -126,6 +127,7 @@ class VerificationManager {
     // Otherwise, create a new one
     return await prisma.agencyVerification.create({
       data: {
+        id: uuidv7(),
         name,
         email,
         message,
