@@ -1,13 +1,6 @@
 "use client";
 
-import { Award, CheckCircle, Star, ThumbsUp } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Award, Star, ThumbsUp } from "lucide-react";
 import { BadgeKey, SimpleBadge } from "@/lib/types";
 import { JSX } from "react";
 
@@ -81,27 +74,13 @@ export default function BadgesSection({ badges }: BadgesSectionProps) {
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {badges.length === 0 && (
+        {badges.length === 0 ? (
           <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-gray-500 dark:text-gray-400">
             No badges earned yet.
           </div>
+        ) : (
+          badges.map((badge) => <BadgeChip key={badge.key} badge={badge} />)
         )}
-        {badges.map((badge) => (
-          <TooltipProvider key={badge.key}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Card className="overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
-                  <CardContent className="p-4 flex flex-col items-center text-center">
-                    <BadgeChip badge={badge} />
-                  </CardContent>
-                </Card>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{badgeDetails[badge.key].name}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        ))}
       </div>
     </div>
   );

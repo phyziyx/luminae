@@ -7,9 +7,7 @@ export default async function ProfilePage() {
 
   if (!user) {
     redirect("/community");
+  } else {
+    redirect("/community/profile/" + user.id);
   }
-
-  redirect("/community/profile/" + user.id);
-
-  return null;
 }
