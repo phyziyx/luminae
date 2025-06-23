@@ -1,12 +1,13 @@
-import { betterAuth, BetterAuthOptions } from "better-auth";
+import { betterAuth, BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import prisma from "@/lib/db";
 // import { v7 } from "uuid";
 // import { sendEmail } from "@/lib/email";
-import { admin, openAPI } from "better-auth/plugins";
+import { admin, createAuthMiddleware, openAPI } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 import { cache } from "react";
 import { headers } from "next/headers";
+import { v7 } from "uuid";
 
 export const getSession = cache(async () => {
   return await auth.api.getSession({
@@ -83,6 +84,25 @@ export const auth = betterAuth({
         };
       },
     },
+  },
+  hooks: {
+    after: createAuthMiddleware(async (ctx) => {
+      if (!ctx.path.startsWith("/sign-up")) return;
+
+      const newSession = ctx.context.newSession;
+      if (!newSession?.user) return;
+
+      await prisma.profile.create({
+        data: {
+          id: v7(),
+          userProfile: {
+            create: {
+              userId: newSession.user.id,
+            },
+          },
+        },
+      });
+    }),
   },
 } satisfies BetterAuthOptions);
 

@@ -542,8 +542,9 @@ model Profile {
   userProfile   UserProfile?
   agencyProfile AgencyProfile?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  ProfileBadge ProfileBadge[]
 
   @@index([id])
   @@map("profile")
@@ -587,6 +588,29 @@ model AgencyFile {
   @@id([key])
   @@index([agencyId, key])
   @@map("agencyfiles")
+}
+
+model Badge {
+  id           String         @unique @default(uuid())
+  key          String
+  icon         String
+  ProfileBadge ProfileBadge[]
+
+  @@index([id, key])
+  @@map("badge")
+}
+
+model ProfileBadge {
+  id        String   @default(uuid())
+  profileId String
+  badgeId   String
+  createdAt DateTime @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id])
+  badge   Badge   @relation(fields: [badgeId], references: [id])
+
+  @@id([profileId, badgeId])
+  @@map("profilebadge")
 }
 
 model AgencyVerification {

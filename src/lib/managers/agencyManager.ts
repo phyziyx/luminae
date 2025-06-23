@@ -47,6 +47,17 @@ class AgencyManager {
         },
       });
 
+      await prisma.profile.create({
+        data: {
+          id: v7(),
+          agencyProfile: {
+            create: {
+              agencyId: createdAgency.id,
+            },
+          },
+        },
+      });
+
       if (createdAgency && ownerEmail) {
         await prisma.agencyMember.upsert({
           where: {

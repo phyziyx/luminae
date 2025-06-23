@@ -7,6 +7,7 @@ import { getSession } from "@/lib/auth/auth";
 import { CommunityProfileWithStats } from "@/lib/types";
 import EditProfile from "../components/edit-profile";
 import AgencyManager from "@/lib/managers/agencyManager";
+import BadgeManager from "@/lib/managers/badgeManager";
 import { Button } from "@/components/ui/button";
 import { BadgeCheckIcon } from "lucide-react";
 
@@ -81,7 +82,9 @@ const getProfileData = async (id: string) => {
         likes: 0,
         posts: foundAgency._count.posts ?? 0,
       },
-      badges: [],
+      badges: foundAgency.profile?.profileId
+        ? await BadgeManager.getRecentBadges(foundAgency.profile?.profileId, 6)
+        : [],
       verified: !!(verification && verification.status === "APPROVED"),
     };
   } else {
@@ -126,7 +129,9 @@ const getProfileData = async (id: string) => {
           (foundUser._count.likes ?? 0) + (foundUser._count.commentLikes ?? 0),
         posts: foundUser._count.posts ?? 0,
       },
-      badges: [],
+      badges: foundUser.profile?.profileId
+        ? await BadgeManager.getRecentBadges(foundUser.profile?.profileId, 6)
+        : [],
       verified: false,
     };
   }
@@ -165,6 +170,7 @@ function CommunityProfile({
     isAgency,
     content,
     stats,
+    badges,
     verified,
   } = profileData;
 
@@ -202,34 +208,7 @@ function CommunityProfile({
         {/* RIGHT SIDEBAR */}
         <div className="space-y-8">
           <StatsOverview stats={stats} />
-          <BadgesSection
-            badges={[
-              {
-                id: 1,
-                name: isAgency ? "Top Agency" : "Top Contributor",
-                icon: "Award",
-                color: "blue",
-              },
-              {
-                id: 2,
-                name: isAgency ? "Content Expert" : "Helpful Member",
-                icon: "ThumbsUp",
-                color: "green",
-              },
-              {
-                id: 3,
-                name: isAgency ? "Community Partner" : "Rising Star",
-                icon: "Star",
-                color: "amber",
-              },
-              {
-                id: 4,
-                name: isAgency ? "Verified Business" : "Problem Solver",
-                icon: "CheckCircle",
-                color: "indigo",
-              },
-            ]}
-          />
+          <BadgesSection badges={badges} />
         </div>
       </div>
     </>

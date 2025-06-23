@@ -4,98 +4,42 @@ import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
 import { backendClient } from "@/lib/edgestore/edgestore";
 import { createPostSchema, CreatePostSchema } from "@/lib/forms";
+import BadgeManager from "@/lib/managers/badgeManager";
 import PostManager from "@/lib/managers/postManager";
 
 export default async function onCreatePost(values: CreatePostSchema) {
   const session = await getSession();
   const user = session?.user;
 
-  let error = "An error occurred while creating comment...";
-
   if (!user) {
-    error = "A user who is not authenticated tried to submit a comment...";
-    return { error };
+    return {
+      error: "A user who is not authenticated tried to submit a comment...",
+    };
   }
 
-  const validatedFields = createPostSchema.safeParse(values);
-  if (!validatedFields.success) {
-    error = "Invalid fields provided.";
-    return { error };
+  const validation = createPostSchema.safeParse(values);
+  if (!validation.success) {
+    return { error: "Invalid fields provided." };
   }
 
   try {
     const category = await prisma.category.findFirst({
-      select: {
-        id: true,
-      },
-      where: {
-        name: values.category,
-      },
+      select: { id: true },
+      where: { name: values.category },
     });
+    if (!category) return { error: "Category not found" };
 
-    if (!category) {
-      error = "Category not found";
-      return { error };
-    }
+    const agencyId = values.asAgency
+      ? (
+          await prisma.agencyMember.findFirst({
+            select: { agencyId: true },
+            where: { user: { id: user.id } },
+          })
+        )?.agencyId
+      : undefined;
 
-    let agencyId: string | undefined = undefined;
-    if (values.asAgency) {
-      // If the comment is being posted as an agency.
-      agencyId = (
-        await prisma.agencyMember.findFirst({
-          select: {
-            agencyId: true,
-          },
-          where: {
-            user: {
-              id: user.id,
-            },
-          },
-        })
-      )?.agencyId;
-    }
+    const fileUrl = await uploadFile(values.image, agencyId || user.id);
 
-    const file = values.image as File | FileList | null;
-    let fileUrl: string | null = null;
-    if (file) {
-      const fileToStore =
-        file instanceof File ? file : file instanceof FileList ? file[0] : null;
-
-      if (fileToStore) {
-        const bytes = await fileToStore.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        const fileBlob = new Blob([buffer], { type: fileToStore.type });
-
-        try {
-          const response = await backendClient.publicFiles.upload({
-            content: {
-              blob: fileBlob,
-              extension: fileToStore.type,
-            },
-            options: {
-              manualFileName: undefined,
-              replaceTargetUrl: `post-${agencyId ? "agency" : "user"}`,
-              temporary: false,
-            },
-            ctx: {
-              userId: (agencyId ? agencyId : user.id) as string,
-              userRole: "visitor",
-            },
-            input: {
-              type: "post",
-            },
-          });
-
-          fileUrl = response.url;
-        } catch (uploadError) {
-          console.error("File upload failed:", uploadError);
-          error = "An error occurred while uploading the file.";
-          return { error };
-        }
-      }
-    }
-
-    // We can now create the post!
     const post = await PostManager.create(
       {
         categoryId: category.id,
@@ -103,24 +47,87 @@ export default async function onCreatePost(values: CreatePostSchema) {
         title: values.title,
         image: fileUrl,
       },
-      {
-        ...(agencyId ? { agencyId } : { userId: user.id }),
-      },
+      agencyId ? { agencyId } : { userId: user.id },
       values.tags
     );
 
-    error = "";
+    await handlePostBadge(agencyId, user.id);
+
     return {
-      error,
+      error: "",
       post: `/community/${values.category}/${post.id}`,
     };
   } catch (err) {
-    console.log(err);
+    console.error("Post creation failed:", err);
+    return { error: "An error occurred while creating post..." };
+  }
+}
 
-    error = "An error occurred while creating post...";
+async function uploadFile(
+  fileInput: File | FileList | null,
+  ownerId: string
+): Promise<string | null> {
+  if (!fileInput) return null;
+
+  const file =
+    fileInput instanceof File
+      ? fileInput
+      : fileInput instanceof FileList
+      ? fileInput[0]
+      : null;
+  if (!file) return null;
+
+  const bytes = await file.arrayBuffer();
+  const buffer = Buffer.from(bytes);
+  const fileBlob = new Blob([buffer], { type: file.type });
+
+  try {
+    const response = await backendClient.publicFiles.upload({
+      content: {
+        blob: fileBlob,
+        extension: file.type,
+      },
+      options: {
+        replaceTargetUrl: `post-${ownerId}`,
+        temporary: false,
+      },
+      ctx: {
+        userId: ownerId,
+        userRole: "visitor",
+      },
+      input: {
+        type: "post",
+      },
+    });
+
+    return response.url;
+  } catch (err) {
+    console.error("File upload failed:", err);
+    throw new Error("File upload error");
+  }
+}
+
+async function handlePostBadge(
+  agencyId: string | undefined,
+  userId: string
+): Promise<void> {
+  const profile = await prisma.profile.findFirst({
+    where: agencyId
+      ? { agencyProfile: { agencyId } }
+      : { userProfile: { userId } },
+    select: { id: true },
+  });
+
+  if (!profile) return;
+
+  const count = await PostManager.getCountForProfile(profile.id);
+  const target = agencyId ? { agencyId } : { userId };
+
+  if (count >= 3) {
+    BadgeManager.awardAchievement(target, "OUT_OF_SHADOWS");
   }
 
-  return {
-    error,
-  };
+  if (count >= 1) {
+    BadgeManager.awardAchievement(target, "FIRST_WORD");
+  }
 }

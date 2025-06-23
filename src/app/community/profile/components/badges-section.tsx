@@ -1,41 +1,42 @@
 "use client";
 
-import { Award, CheckCircle, Star, ThumbsUp } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Award, Star, ThumbsUp } from "lucide-react";
+import { BadgeKey, SimpleBadge } from "@/lib/types";
+import { JSX } from "react";
 
 interface BadgeItem {
   id: number;
   name: string;
-  icon: string;
+  icon: JSX.Element;
   color: string;
 }
 
 interface BadgesSectionProps {
-  badges: BadgeItem[];
+  badges: SimpleBadge[];
 }
 
-export default function BadgesSection({ badges }: BadgesSectionProps) {
-  const getIconComponent = (iconName: string) => {
-    switch (iconName) {
-      case "Award":
-        return <Award className="h-6 w-6" />;
-      case "ThumbsUp":
-        return <ThumbsUp className="h-6 w-6" />;
-      case "Star":
-        return <Star className="h-6 w-6" />;
-      case "CheckCircle":
-        return <CheckCircle className="h-6 w-6" />;
-      default:
-        return <Award className="h-6 w-6" />;
-    }
-  };
+const badgeDetails: Record<BadgeKey, BadgeItem> = {
+  FIRST_WORD: {
+    id: 1,
+    name: "First Post",
+    icon: <Award />,
+    color: "blue",
+  },
+  OUT_OF_SHADOWS: {
+    id: 2,
+    name: "3 Posts",
+    icon: <ThumbsUp />,
+    color: "green",
+  },
+  VERIFIED: {
+    id: 3,
+    name: "Verified Contributor",
+    icon: <Star />,
+    color: "amber",
+  },
+};
 
+function BadgeChip({ badge }: { badge: SimpleBadge }) {
   const getBadgeColor = (color: string) => {
     switch (color) {
       case "blue":
@@ -52,42 +53,34 @@ export default function BadgesSection({ badges }: BadgesSectionProps) {
   };
 
   return (
+    <div
+      className={`flex flex-col align-middle justify-center items-center gap-2 px-3 py-1 rounded-lg w-[100px] h-[100px] ${getBadgeColor(
+        badgeDetails[badge.key].color
+      )}`}
+    >
+      <div className="h-6 w-6">{badgeDetails[badge.key].icon}</div>
+      <span className="text-sm font-medium">
+        {badgeDetails[badge.key].name}
+      </span>
+    </div>
+  );
+}
+
+export default function BadgesSection({ badges }: BadgesSectionProps) {
+  return (
     <div className="rounded-xl bg-white dark:bg-gray-800 p-6 shadow-soft">
       <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-100">
         Badges & Achievements
       </h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {badges.length === 0 && (
+        {badges.length === 0 ? (
           <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center text-gray-500 dark:text-gray-400">
             No badges earned yet.
           </div>
+        ) : (
+          badges.map((badge) => <BadgeChip key={badge.key} badge={badge} />)
         )}
-        {badges.map((badge) => (
-          <TooltipProvider key={badge.id}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Card className="overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow">
-                  <CardContent className="p-4 flex flex-col items-center text-center">
-                    <div
-                      className={`p-3 rounded-full mb-2 ${getBadgeColor(
-                        badge.color
-                      )}`}
-                    >
-                      {getIconComponent(badge.icon)}
-                    </div>
-                    <span className="font-medium text-gray-800 dark:text-gray-200">
-                      {badge.name}
-                    </span>
-                  </CardContent>
-                </Card>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Earned for outstanding contributions</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        ))}
       </div>
     </div>
   );

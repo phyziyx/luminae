@@ -15,7 +15,7 @@ import { Icons } from "@/components/ui/icons";
 import { useTranslations } from "next-intl";
 import Logo from "@/components/logo";
 import { PasswordInput } from "@/components/ui/password-input";
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import {
   Form,
   FormControl,
@@ -89,9 +89,13 @@ export default function SignInPage() {
 
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit((e) => {
-            return handleSubmit(e);
-          })}
+          onSubmit={() =>
+            startTransition(() => {
+              form.handleSubmit((e) => {
+                return handleSubmit(e);
+              });
+            })
+          }
           className="space-y-4"
         >
           <Card className="w-full sm:w-96 bg-white dark:bg-muted/30">

@@ -1,5 +1,6 @@
 import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
+import BadgeManager from "@/lib/managers/badgeManager";
 import { AgencyVerificationResponse, InfiniteQueryResponse } from "@/lib/types";
 import { VerificationStatus } from "@prisma/client";
 import { NextResponse, type NextRequest } from "next/server";
@@ -23,6 +24,15 @@ export async function POST(request: NextRequest) {
       where: { id, status: "PENDING" },
       data: { status },
     });
+
+    if (status === "APPROVED") {
+      BadgeManager.awardAchievement(
+        {
+          agencyId: updatedVerification.agencyId,
+        },
+        "VERIFIED"
+      ).catch((err) => console.error("Failed to award VERIFIED badge:", err));
+    }
 
     return NextResponse.json(updatedVerification);
   } catch (error) {

@@ -39,6 +39,7 @@ export type CommunityProfileWithStats = CommunityProfile & {
     comments: number;
     likes: number;
   };
+  badges: SimpleBadge[];
   verified: boolean;
 };
 
@@ -164,6 +165,14 @@ export type CategoryPostWithBookmark = CategoryPost & {
 };
 
 export type AgencyFilesResponse = InfiniteQueryResponse<AgencyFile>;
+
+export type BadgeKey = "FIRST_WORD" | "OUT_OF_SHADOWS" | "VERIFIED";
+
+export type SimpleBadge = {
+  icon: string;
+  key: BadgeKey;
+  createdAt: number;
+};
 
 export type PaginationMeta = {
   total: number;

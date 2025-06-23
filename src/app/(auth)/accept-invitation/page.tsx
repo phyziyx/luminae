@@ -38,7 +38,7 @@ export default function Page() {
   const t = useTranslations();
 
   const router = useRouter();
-  const token = useSearchParams().get("invite");
+  const token = useSearchParams()?.get("invite");
 
   const form = useForm<InvitationRegistrationSchema>({
     resolver: zodResolver(invitationRegistrationSchema),
