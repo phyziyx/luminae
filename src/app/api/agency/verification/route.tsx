@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
           agencyId: updatedVerification.agencyId,
         },
         "VERIFIED"
-      );
+      ).catch((err) => console.error("Failed to award VERIFIED badge:", err));
     }
 
     return NextResponse.json(updatedVerification);

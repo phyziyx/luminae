@@ -39,8 +39,8 @@ class BadgeManager {
     }
 
     // Check if the badge key exists in the Badge table
-    const badgeExists = await prisma.badge.findUnique({
-      where: { key },
+    const badgeExists = await prisma.badge.findFirst({
+      where: { key: key as unknown as string },
     });
 
     if (!badgeExists) {
