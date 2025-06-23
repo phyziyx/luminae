@@ -610,7 +610,6 @@ model ProfileBadge {
   badge   Badge   @relation(fields: [badgeId], references: [id])
 
   @@id([profileId, badgeId])
-  @@unique([profileId])
   @@map("profilebadge")
 }
 
