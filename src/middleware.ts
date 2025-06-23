@@ -8,14 +8,14 @@ const authRoutes = ["/sign-in", "/sign-up", "/accept-invitation"];
 const passwordRoutes = ["/forgot-password", "/reset-password"];
 const adminRoutes = ["/admin-dashboard"];
 
-const getSession = cache(async (request: NextRequest) => {
+const getSession = async (request: NextRequest) => {
   return await betterFetch<Session>("/api/auth/get-session", {
     baseURL: process.env.BETTER_AUTH_URL,
     headers: {
       cookie: request.headers.get("cookie") || "",
     },
   });
-});
+};
 
 export default async function middleware(request: NextRequest) {
   const pathName = request.nextUrl.pathname;

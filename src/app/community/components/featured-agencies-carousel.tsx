@@ -130,15 +130,9 @@ export default function FeaturedAgenciesCarousel({
 
 function AgencyCard({ agency }: { agency: TopRankedAgency }) {
   return (
-    <Card className="relative overflow-hidden border-0 bg-transparent transition-all duration-300 hover:shadow-soft">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 hover:opacity-100"
-        // style={{
-        //   background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(91, 154, 255, 0.15), transparent 40%)`,
-        // }}
-      />
-      <CardContent className="relative z-10 flex flex-col items-center gap-4 rounded-t-lg bg-white/90 dark:bg-gray-800/90 p-6 backdrop-blur-sm shadow-soft">
-        <div className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary dark:bg-primary-light text-sm font-bold text-primary-foreground dark:text-gray-900">
+    <Card className="select-none bg-white/90 dark:bg-gray-800/90 relative overflow-hidden border-0 transition-all duration-300 hover:shadow-soft h-[300px]">
+      <CardContent className="relative z-10 flex flex-col items-center gap-4 rounded-t-lg p-6 backdrop-blur-sm shadow-soft">
+        <div className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary dark:bg-primary-light text-sm font-bold text-primary-foreground dark:text-gray-900 ">
           #{agency.rank || "0"}
         </div>
         <div className="mt-4 flex flex-col items-center">
@@ -165,7 +159,7 @@ function AgencyCard({ agency }: { agency: TopRankedAgency }) {
           </div> */}
         </div>
       </CardContent>
-      <CardFooter className="bg-white/90 dark:bg-gray-800/90 p-4 backdrop-blur-sm shadow-soft">
+      <CardFooter className="bg-white/90 dark:bg-gray-800/90 p-4 backdrop-blur-sm shadow-soft bottom-0 absolute w-full">
         <Button
           className="w-full bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90 transition-colors duration-200 shadow-md hover:shadow-lg"
           asChild
@@ -179,7 +173,7 @@ function AgencyCard({ agency }: { agency: TopRankedAgency }) {
 
 function PlaceholderCard({ rank }: { rank: number }) {
   return (
-    <Card className="relative overflow-hidden border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-soft">
+    <Card className="select-none relative overflow-hidden border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-soft h-[300px]">
       <CardContent className="relative z-10 flex flex-col items-center gap-4 rounded-t-lg p-6 text-center">
         <div className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-bold text-muted-foreground">
           #{rank}
@@ -196,7 +190,7 @@ function PlaceholderCard({ rank }: { rank: number }) {
           We’re not mad… just disappointed. Post something. Be legendary.
         </p>
       </CardContent>
-      <CardFooter className="p-4">
+      <CardFooter className="p-4 bottom-0 absolute w-full">
         <Button
           className="w-full bg-primary hover:bg-primary/90 dark:bg-primary-light dark:text-gray-900 dark:hover:bg-primary-light/90 transition-colors duration-200 shadow-md hover:shadow-lg"
           asChild

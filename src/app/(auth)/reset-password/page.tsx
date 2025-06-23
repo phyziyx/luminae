@@ -53,7 +53,7 @@ function ResetPassword() {
   const router = useRouter();
   const { toast } = useToast();
   const searchParams = useSearchParams();
-  const error = searchParams.get("error");
+  const error = searchParams?.get("error") || null;
 
   const [pending, setPending] = useState<boolean>(false);
 
