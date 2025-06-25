@@ -166,7 +166,12 @@ export type CategoryPostWithBookmark = CategoryPost & {
 
 export type AgencyFilesResponse = InfiniteQueryResponse<AgencyFile>;
 
-export type BadgeKey = "FIRST_WORD" | "OUT_OF_SHADOWS" | "VERIFIED";
+export type BadgeKey =
+  | "FIRST_WORD"
+  | "OUT_OF_SHADOWS"
+  | "VERIFIED"
+  | "CHATTER_BOX"
+  | "LIKEABLE_ENOUGH";
 
 export type SimpleBadge = {
   icon: string;

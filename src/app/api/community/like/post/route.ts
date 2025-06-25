@@ -1,6 +1,7 @@
 import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
 import { postLikeSchema } from "@/lib/forms";
+import BadgeManager from "@/lib/managers/badgeManager";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -87,6 +88,8 @@ export async function POST(request: NextRequest) {
     },
   });
 
+  await handlePostBadge(postId);
+
   return NextResponse.json(
     {
       message: "Post like updated successfully.",
@@ -95,4 +98,35 @@ export async function POST(request: NextRequest) {
       status: 200,
     }
   );
+}
+
+async function handlePostBadge(postId: string) {
+  // Reward the poster of the post with a badge when they receive >= 10 likes
+  const likeCount = await prisma.likes.count({
+    where: {
+      postId,
+      type: "LIKE",
+    },
+  });
+
+  if (likeCount >= 10) {
+    // Award the "Likeable Enough" badge
+    const post = await prisma.post.findUnique({
+      select: {
+        agencyPosts: true,
+        userPosts: true,
+      },
+      where: { id: postId },
+    });
+
+    if (post) {
+      await BadgeManager.awardAchievement(
+        {
+          agencyId: post.agencyPosts[0]?.agencyId,
+          userId: post.userPosts[0]?.userId,
+        },
+        "LIKEABLE_ENOUGH"
+      );
+    }
+  }
 }

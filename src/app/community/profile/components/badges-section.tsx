@@ -34,6 +34,18 @@ const badgeDetails: Record<BadgeKey, BadgeItem> = {
     icon: <Star />,
     color: "amber",
   },
+  CHATTER_BOX: {
+    id: 4,
+    name: "Chatter Box",
+    icon: <Award />,
+    color: "indigo",
+  },
+  LIKEABLE_ENOUGH: {
+    id: 5,
+    name: "Likeable Enough",
+    icon: <ThumbsUp />,
+    color: "yellow",
+  },
 };
 
 function BadgeChip({ badge }: { badge: SimpleBadge }) {
