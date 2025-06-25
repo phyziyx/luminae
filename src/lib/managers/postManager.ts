@@ -30,6 +30,37 @@ class PostManager {
     return await prisma.post.count();
   }
 
+  public static async getCommentCountForProfile(profileId: string) {
+    return await prisma.comment.count({
+      where: {
+        OR: [
+          {
+            agencyComments: {
+              some: {
+                agency: {
+                  profile: {
+                    profileId,
+                  },
+                },
+              },
+            },
+          },
+          {
+            userComments: {
+              some: {
+                user: {
+                  profile: {
+                    profileId,
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+    });
+  }
+
   public static async getCountForProfile(profileId: string) {
     return await prisma.post.count({
       where: {

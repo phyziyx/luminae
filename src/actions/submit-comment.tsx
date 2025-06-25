@@ -3,23 +3,22 @@
 import { getSession } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
 import { commentFormSchema, CommentFormSchema } from "@/lib/forms";
+import BadgeManager from "@/lib/managers/badgeManager";
 import PostManager from "@/lib/managers/postManager";
 
 export default async function onSubmitComment(values: CommentFormSchema) {
   const session = await getSession();
   const user = session?.user;
 
-  let error = "An error occurred while creating comment...";
-
   if (!user) {
-    error = "A user who is not authenticated tried to submit a comment...";
-    return { error };
+    return {
+      error: "A user who is not authenticated tried to submit a comment...",
+    };
   }
 
   const validatedFields = commentFormSchema.safeParse(values);
   if (!validatedFields.success) {
-    error = "Invalid fields provided.";
-    return { error };
+    return { error: "Invalid fields provided." };
   }
 
   try {
@@ -31,8 +30,7 @@ export default async function onSubmitComment(values: CommentFormSchema) {
     const post = await PostManager.doesPostExist(values.postId);
 
     if (!post) {
-      error = "Post not found";
-      return { error };
+      return { error: "Post not found" };
     }
 
     if (values.parentId) {
@@ -44,8 +42,7 @@ export default async function onSubmitComment(values: CommentFormSchema) {
       const parentComment = await PostManager.doesCommentExist(values.parentId);
 
       if (!parentComment) {
-        error = "Parent comment not found";
-        return { error };
+        return { error: "Parent comment not found" };
       }
     }
 
@@ -78,18 +75,36 @@ export default async function onSubmitComment(values: CommentFormSchema) {
       }
     );
 
-    error = "";
+    await handleCommentBadge(agencyId, user.id);
+
     return {
-      error,
       comment,
     };
   } catch (err) {
     console.log(err);
 
-    error = "An error occurred while creating comment...";
+    return {
+      error: "An error occurred while creating comment...",
+    };
   }
+}
 
-  return {
-    error,
-  };
+async function handleCommentBadge(
+  agencyId: string | undefined,
+  userId: string
+): Promise<void> {
+  const profile = await prisma.profile.findFirst({
+    where: agencyId
+      ? { agencyProfile: { agencyId } }
+      : { userProfile: { userId } },
+  });
+
+  if (!profile) return;
+
+  const count = await PostManager.getCommentCountForProfile(profile.id);
+  const target = agencyId ? { agencyId } : { userId };
+
+  if (count >= 1) {
+    BadgeManager.awardAchievement(target, "CHATTER_BOX");
+  }
 }
