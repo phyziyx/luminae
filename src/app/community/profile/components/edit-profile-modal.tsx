@@ -81,7 +81,8 @@ function ProfileImage({
   const deletePicture = async () => {
     try {
       const response = await fetch(
-        "/api/profile" + (isAgency ? "?agency=true" : ""),
+        `${process.env.NEXT_PUBLIC_URL}/api/profile` +
+          (isAgency ? "?agency=true" : ""),
         {
           method: "DELETE",
         }
@@ -110,7 +111,8 @@ function ProfileImage({
 
     try {
       const response = await fetch(
-        "/api/profile" + (isAgency ? "?agency=true" : ""),
+        `${process.env.NEXT_PUBLIC_URL}/api/profile` +
+          (isAgency ? "?agency=true" : ""),
         {
           method: "POST",
           body: formData,
@@ -216,7 +218,8 @@ function BannerImage({ src, isAgency }: { src: string; isAgency: boolean }) {
   const deletePicture = async () => {
     try {
       const response = await fetch(
-        "/api/banner" + (isAgency ? "?agency=true" : ""),
+        `${process.env.NEXT_PUBLIC_URL}/api/banner` +
+          (isAgency ? "?agency=true" : ""),
         {
           method: "DELETE",
         }
@@ -245,7 +248,8 @@ function BannerImage({ src, isAgency }: { src: string; isAgency: boolean }) {
 
     try {
       const response = await fetch(
-        "/api/banner" + (isAgency ? "?agency=true" : ""),
+        `${process.env.NEXT_PUBLIC_URL}/api/banner` +
+          (isAgency ? "?agency=true" : ""),
         {
           method: "POST",
           body: formData,

@@ -67,13 +67,16 @@ export default function PostContent({
         type,
         postId: post.id,
       };
-      return await fetch("/api/community/like/post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      return await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/community/like/post`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
     },
   });
 

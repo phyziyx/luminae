@@ -35,10 +35,13 @@ export function FileUploadModal({ isOpen, onClose }: FileUploadModalProps) {
       const formData = new FormData();
       formData.append("file", selectedFile);
 
-      const response = await fetch("/api/agency/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/agency/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to upload file");

@@ -30,8 +30,9 @@ interface FileCardProps {
 
 const getFileSize = (size: number) => {
   const i = Math.floor(Math.log(size) / Math.log(1024));
-  return `${(size / Math.pow(1024, i)).toFixed(2)} ${["B", "KB", "MB", "GB"][i]
-    }`;
+  return `${(size / Math.pow(1024, i)).toFixed(2)} ${
+    ["B", "KB", "MB", "GB"][i]
+  }`;
 };
 
 export function FileCard({ file, view = "list" }: FileCardProps) {
@@ -46,13 +47,16 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
     setActionPending(true);
 
     try {
-      const response = await fetch("/api/agency/download", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ key }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/agency/download`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ key }),
+        }
+      );
 
       // if (!response.ok) {
       //   throw new Error("Failed to download file");
@@ -86,10 +90,13 @@ export function FileCard({ file, view = "list" }: FileCardProps) {
     setActionPending(true);
 
     try {
-      const response = await fetch("/api/agency/upload", {
-        method: "DELETE",
-        body: JSON.stringify({ key }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/agency/upload`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ key }),
+        }
+      );
 
       // if (!response.ok) {
       //   throw new Error("Failed to delete file");

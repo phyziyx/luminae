@@ -30,7 +30,7 @@ function useSearchQuery({
     queryFn: async ({ pageParam }) => {
       const response = await fetch(
         `/api/community/search?query=${query}&sort=${sort}` +
-        (pageParam ? `&cursor=${pageParam}` : "")
+          (pageParam ? `&cursor=${pageParam}` : "")
       );
       return response.json();
     },
@@ -42,13 +42,13 @@ function useSearchQuery({
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
-  const query = searchParams.get("query");
+  const query = searchParams?.get("query") || null;
 
   // Get a new searchParams string by merging the current
   // searchParams with a provided key/value pair
   const createQueryString = useCallback(
     (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(searchParams?.toString());
       params.set(name, value);
 
       return params.toString();

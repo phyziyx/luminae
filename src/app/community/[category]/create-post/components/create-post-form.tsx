@@ -59,7 +59,9 @@ export default function CreatePostForm({ category }: { category: string }) {
   const { data } = useQuery({
     queryKey: ["canPostAsAgency"],
     queryFn: async () => {
-      const response = await fetch("/api/community/agency-status");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/community/agency-status`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch agency status");
       }

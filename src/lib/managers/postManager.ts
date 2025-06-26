@@ -521,7 +521,7 @@ export async function fetchCategoryPosts({
   sortType?: "latest" | "comments";
 }) {
   const response = await fetch(
-    `/api/community/category?id=${category}` +
+    `${process.env.NEXT_PUBLIC_URL}/api/community/category?id=${category}` +
       (pageParam ? `&cursor=${pageParam}` : "") +
       (sortType ? `&sortType=${sortType}` : "")
   );
