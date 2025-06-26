@@ -61,6 +61,8 @@ export default function SignInPage() {
   });
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (isPending) return;
+
     await authClient.signIn.email(
       {
         email: data.emailAddress,
@@ -75,7 +77,10 @@ export default function SignInPage() {
           router.push("/dashboard");
         },
         onError: (ctx) => {
-          console.error(ctx.error.message);
+          form.setError("root", {
+            type: 'custom',
+            message: ctx.error.message || "An error occurred while signing in.",
+          })
         },
       }
     );
@@ -89,13 +94,9 @@ export default function SignInPage() {
 
       <Form {...form}>
         <form
-          onSubmit={() =>
-            startTransition(() => {
-              form.handleSubmit((e) => {
-                return handleSubmit(e);
-              });
-            })
-          }
+          onSubmit={form.handleSubmit((e) => {
+            return handleSubmit(e);
+          })}
           className="space-y-4"
         >
           <Card className="w-full sm:w-96 bg-white dark:bg-muted/30">
@@ -155,6 +156,10 @@ export default function SignInPage() {
                   </FormItem>
                 )}
               />
+
+              <FormMessage className="block text-sm text-destructive">
+                {form.formState.errors.root?.message}
+              </FormMessage>
             </CardContent>
             <CardFooter>
               <div className="grid w-full gap-y-4">
@@ -354,6 +359,6 @@ export default function SignInPage() {
                   </Card>
                 </SignIn.Strategy>
               </SignIn.Step> */}
-    </div>
+    </div >
   );
 }

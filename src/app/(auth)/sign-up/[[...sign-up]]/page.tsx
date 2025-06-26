@@ -77,6 +77,8 @@ export default function SignUpPage() {
   });
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
+    if (isPending) return;
+
     const { data: result, error } = await authClient.signUp.email(
       {
         email: data.emailAddress,
@@ -90,14 +92,12 @@ export default function SignUpPage() {
         },
         onError: (ctx) => {
           console.error("Signup error:", ctx.error.message);
-          toast({
-            title: "Signup error",
-            description: ctx.error.message || "",
-            variant: "destructive",
+          form.setError("root", {
+            type: "custom",
+            message: ctx.error.message || "An error occurred while signing up.",
           });
         },
         onSuccess: () => {
-          console.log("Signup success");
           toast({
             title: "Signup success",
             description: "success",
@@ -207,6 +207,10 @@ export default function SignUpPage() {
                   </FormItem>
                 )}
               />
+
+              <FormMessage className="block text-sm text-destructive">
+                {form.formState.errors.root?.message}
+              </FormMessage>
             </CardContent>
             <CardFooter>
               <div className="grid w-full gap-y-4">
