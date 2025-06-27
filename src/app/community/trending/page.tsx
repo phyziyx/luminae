@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
@@ -11,7 +13,7 @@ import TrendingPostsList from "../components/trending-posts-list";
 export default async function CategoryPage() {
   const queryClient = getQueryClient();
 
-  queryClient.prefetchInfiniteQuery<CategoryPostsResponse>({
+  void queryClient.prefetchInfiniteQuery<CategoryPostsResponse>({
     queryKey: queryKeys.community.trending({
       sortBy: "latest",
     }),

@@ -107,22 +107,25 @@ const PricingCard = ({ data, isAnnual }: PricingCardProps) => {
 
         <CardFooter>
           <ul className="flex flex-col gap-5 mt-8">
-            {data.features.map((feature, index) => (
-              <li key={index} className="text-sm flex items-center gap-4">
-                <CheckIcon className="h-6 w-6" />
-                <span>
-                  {feature.maxLimit === 0 ||
-                  (feature.maxLimit && feature.maxLimit === -1)
-                    ? t(`PACKAGE_FEATURES.ACCESS`, {
-                        FEATURE_CODE: t(`PACKAGE_FEATURES.${feature.code}`),
-                      })
-                    : t(`PACKAGE_FEATURES.QUANTITY`, {
-                        QUANTITY: feature.maxLimit,
-                        FEATURE_CODE: t(`PACKAGE_FEATURES.${feature.code}`),
-                      })}
-                </span>
-              </li>
-            ))}
+            {data.features
+              .filter((f) => f.maxLimit !== null || f.maxLimit === undefined)
+              .map((feature, index) => (
+                <li key={index} className="text-sm flex items-center gap-4">
+                  <CheckIcon className="h-6 w-6" />
+                  <span>
+                    {!feature.maxLimit ||
+                    feature.maxLimit === 0 ||
+                    feature.maxLimit === -1
+                      ? t(`PACKAGE_FEATURES.ACCESS`, {
+                          FEATURE_CODE: t(`PACKAGE_FEATURES.${feature.code}`),
+                        })
+                      : t(`PACKAGE_FEATURES.QUANTITY`, {
+                          QUANTITY: feature.maxLimit,
+                          FEATURE_CODE: t(`PACKAGE_FEATURES.${feature.code}`),
+                        })}
+                  </span>
+                </li>
+              ))}
           </ul>
         </CardFooter>
       </Card>

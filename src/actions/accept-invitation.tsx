@@ -11,12 +11,9 @@ import { revalidatePath } from "next/cache";
 export default async function onAcceptInvite(
   values: InvitationRegistrationSchema
 ) {
-  let error = "An error occurred while accepting the invitation";
-
   const validatedFields = invitationRegistrationSchema.safeParse(values);
   if (!validatedFields.success) {
-    error = "Invalid fields provided.";
-    return { error };
+    return { error: "Invalid fields provided." };
   }
 
   const { name, password, invitationId } = validatedFields.data;
@@ -29,9 +26,7 @@ export default async function onAcceptInvite(
     });
 
     if (!invitation) {
-      error = "Invitation not found";
-
-      return { error };
+      return { error: "Invitation not found" };
     }
 
     await UserManager.createUser({
@@ -40,17 +35,14 @@ export default async function onAcceptInvite(
       name,
       password,
     });
-
-    error = "";
   } catch (err) {
-    error = "An error occurred while accepting the invitation";
-    console.error(err);
+    return { error: "An error occurred while accepting the invitation." };
   }
 
   // revalidate the cache
   revalidatePath("/");
 
   return {
-    error,
+    error: null,
   };
 }
