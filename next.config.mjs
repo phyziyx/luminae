@@ -17,7 +17,8 @@ const nextConfig = {
 			}
 		]
 	},
-	reactStrictMode: true
+	reactStrictMode: true,
+	output: 'standalone'
 };
 
 export default withNextIntl(nextConfig);

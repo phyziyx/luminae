@@ -36,13 +36,16 @@ export default function Comment({
         commentId: comment.id,
       };
 
-      return await fetch("/api/community/like/comment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      return await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/community/like/comment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
     },
   });
 

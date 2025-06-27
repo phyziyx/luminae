@@ -5,13 +5,16 @@ async function updateVerificationStatus(
   requestId: string,
   newStatus: "APPROVED" | "REJECTED"
 ) {
-  const response = await fetch(`/api/agency/verification`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id: requestId, status: newStatus }),
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_URL}/api/agency/verification`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: requestId, status: newStatus }),
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Failed to update verification status");

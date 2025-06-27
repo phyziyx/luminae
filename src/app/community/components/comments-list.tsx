@@ -57,12 +57,15 @@ export default function CommentsList({ postId }: { postId: string }) {
   );
   const { isPending: isDeleting, mutate: deleteComment } = useMutation({
     mutationFn: async (commentId: string) => {
-      return await fetch(`/api/community/comments?id=${commentId}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      return await fetch(
+        `${process.env.NEXT_PUBLIC_URL}/api/community/comments?id=${commentId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
     },
     onSuccess() {
       queryClient.setQueryData<InfiniteData<PostComment>>(

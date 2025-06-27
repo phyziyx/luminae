@@ -736,7 +736,9 @@ export async function fetchAgencyFiles({
     .map((query) => `${query.key}=${query.value}`)
     .join("&");
 
-  const response = await fetch(`/api/agency/upload?${queryString}`);
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_URL}/api/agency/upload?${queryString}`
+  );
 
   if (!response.ok) {
     throw new Error("Failed to fetch agency files");
