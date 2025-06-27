@@ -1,4 +1,9 @@
-import { InfiniteData, isServer, QueryClient } from "@tanstack/react-query";
+import {
+  defaultShouldDehydrateQuery,
+  InfiniteData,
+  isServer,
+  QueryClient,
+} from "@tanstack/react-query";
 import { FileType } from "./r2";
 
 // Query key factories
@@ -76,6 +81,12 @@ function makeQueryClient() {
         // If needed, we can set this on a per-query basis.
         refetchOnWindowFocus: false,
         refetchOnReconnect: false,
+      },
+      dehydrate: {
+        // include queries with pending status in the dehydrated state
+        shouldDehydrateQuery: (query) =>
+          defaultShouldDehydrateQuery(query) ||
+          query.state.status === "pending",
       },
     },
   });
