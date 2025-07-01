@@ -11,14 +11,8 @@ export async function GET(request: NextRequest) {
   }
 
   const agencyMember = await AgencyManager.findUserAgency(user.email);
-  if (!agencyMember) {
-    return NextResponse.json(
-      { error: "Not part of any agency" },
-      { status: 403 }
-    );
-  }
 
   return NextResponse.json({
-    canPostAsAgency: agencyMember.agencyId !== null,
+    canPostAsAgency: !!agencyMember?.agencyId,
   });
 }
