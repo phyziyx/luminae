@@ -49,7 +49,7 @@ model Account {
   accessTokenExpiresAt  DateTime?
   refreshTokenExpiresAt DateTime?
   scope                 String?
-  idToken               String?
+  idToken               String?   @db.Text
   password              String?
 
   createdAt DateTime @default(now())
@@ -91,7 +91,7 @@ model User {
 model Verification {
   id         String   @id @default(uuid())
   identifier String
-  value      String
+  value      String   @db.Text
   expiresAt  DateTime
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
