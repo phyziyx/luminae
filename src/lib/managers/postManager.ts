@@ -30,6 +30,31 @@ class PostManager {
     return await prisma.post.count();
   }
 
+  public static async getTrendingContributors() {
+    return await prisma.$queryRaw<
+      Array<{
+        userName: string;
+        totalCount: number;
+      }>
+    >`SELECT 
+          u.name AS userName,
+          IFNULL(p.postsCount, 0) + IFNULL(c.commentsCount, 0) AS totalCount
+      FROM 
+          user u
+      LEFT JOIN (
+          SELECT userId, COUNT(*) AS postsCount
+          FROM userpost
+          GROUP BY userId
+      ) p ON p.userId = u.id
+      LEFT JOIN (
+          SELECT userId, COUNT(*) AS commentsCount
+          FROM usercomment
+          GROUP BY userId
+      ) c ON c.userId = u.id
+      ORDER BY totalCount DESC
+      LIMIT 5;`;
+  }
+
   public static async getCommentCountForProfile(profileId: string) {
     return await prisma.comment.count({
       where: {
@@ -348,6 +373,245 @@ class PostManager {
         id,
       },
     });
+  }
+
+  public static async getPostComments({
+    postId,
+    cursorId,
+  }: {
+    postId: string;
+    cursorId?: string | undefined;
+  }) {
+    console.log("\n\t Fetching post comments \t\n");
+
+    const takeLimit = 10;
+
+    const comments = await prisma.comment.findMany({
+      take: takeLimit,
+      skip: cursorId ? 1 : undefined,
+      cursor: cursorId
+        ? {
+            id: cursorId,
+          }
+        : undefined,
+      select: {
+        id: true,
+        parentId: true,
+        postId: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        agencyComments: {
+          select: {
+            agencyId: true,
+            agency: {
+              select: {
+                id: true,
+                name: true,
+                agencyLogo: true,
+              },
+            },
+          },
+        },
+        userComments: {
+          select: {
+            userId: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              },
+            },
+          },
+        },
+        likes: {
+          select: {
+            commentId: true,
+            type: true,
+            userId: true,
+          },
+        },
+        // children: {
+        //   include: {
+        //     author: {
+        //       select: {
+        //         id: true,
+        //         name: true,
+        //         image: true,
+        //       },
+        //     },
+        //     likes: {
+        //       select: {
+        //         commentId: true,
+        //         type: true,
+        //         userId: true,
+        //       },
+        //     },
+        //   },
+        // },
+      },
+      where: {
+        postId: postId,
+        // parentId: null,
+        // deletedAt: null,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    const totalComments = await prisma.comment.count({
+      where: {
+        postId: postId,
+        // parentId: null,
+        // deletedAt: null,
+      },
+    });
+
+    const nextCursor = totalComments > takeLimit ? comments.at(-1)?.id : null;
+
+    return {
+      items: comments,
+      nextCursor,
+    } satisfies PostCommentResponse;
+  }
+
+  public static async getCategoryPosts({
+    categoryId,
+    cursorId,
+    sortType = "latest",
+  }: {
+    categoryId: string;
+    cursorId?: string | undefined;
+    sortType?: "latest" | "comments";
+  }): Promise<CategoryPostsResponse> {
+    console.log("\n\t Fetching category posts \t\n");
+
+    if (!categoryId) {
+      throw new Error("Category ID is required");
+    }
+
+    const foundCategory = await prisma.category.findUnique({
+      where: {
+        id: categoryId,
+      },
+    });
+
+    if (!foundCategory) {
+      throw new Error(`Category with ID ${categoryId} not found`);
+    }
+
+    const cursor = cursorId ? cursorId : undefined;
+    const takeLimit = 10;
+
+    /*
+    SELECT Post.id, Post.title, Post.content, Post.authorId, Post.createdAt,
+    User.`name`, COUNT(Comment.postId) commentsCount, COUNT(Likes.postId)
+    FROM Post
+    INNER JOIN User ON User.id = Post.authorId
+    LEFT JOIN Comment ON Comment.postId = Post.id AND Comment.deletedAt IS NULL
+    LEFT JOIN Likes ON Likes.postId = Post.id
+    WHERE categoryId = '0195d962-411b-7417-9af1-acee0335c886' AND Post.deletedAt IS NULL
+    ORDER BY Post.id DESC
+    LIMIT 10 OFFSET 0;
+  */
+
+    const posts: CategoryPost[] = await prisma.post.findMany({
+      take: takeLimit,
+      skip: cursor ? 1 : undefined,
+      cursor: cursor
+        ? {
+            id: cursor,
+          }
+        : undefined,
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        image: true,
+        tags: {
+          select: {
+            tag: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        likes: {
+          select: {
+            postId: true,
+            type: true,
+            userId: true,
+          },
+        },
+        _count: {
+          select: {
+            comments: {
+              where: {
+                deletedAt: null,
+              },
+            },
+          },
+        },
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        agencyPosts: {
+          select: {
+            agency: {
+              select: {
+                id: true,
+                name: true,
+                agencyLogo: true,
+              },
+            },
+          },
+        },
+        userPosts: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+              },
+            },
+          },
+        },
+      },
+      where: {
+        categoryId,
+        deletedAt: null,
+      },
+      orderBy: {
+        ...(sortType === "latest"
+          ? { createdAt: "desc" }
+          : {
+              comments: {
+                _count: "desc",
+              },
+            }),
+      },
+    });
+
+    const totalPosts = await prisma.post.count({
+      where: {
+        categoryId,
+        deletedAt: null,
+      },
+    });
+
+    return {
+      items: posts,
+      nextCursor:
+        totalPosts > takeLimit ? posts[posts.length - 1]?.id : undefined,
+    } satisfies CategoryPostsResponse;
   }
 
   public static async getPostById(id: string, userId?: string) {

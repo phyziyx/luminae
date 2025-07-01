@@ -1,3 +1,8 @@
+/**
+ * Unused component for displaying replies to comments.
+ * This component is not currently used in the application.
+ */
+
 import { PostComment } from "@/lib/types";
 import Comment from "./comment";
 
