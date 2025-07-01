@@ -2,7 +2,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import CommentForm from "./comment-form";
 import CommentList from "./comments-list";
 import getQueryClient, { queryKeys } from "@/lib/react-query";
-import { fetchComments } from "@/lib/managers/postManager";
+import PostManager, { fetchComments } from "@/lib/managers/postManager";
 import { getSession } from "@/lib/auth/auth";
 
 export default async function CommentSection({ postId }: { postId: string }) {
@@ -12,8 +12,11 @@ export default async function CommentSection({ postId }: { postId: string }) {
 
   await queryClient.prefetchInfiniteQuery({
     queryKey: queryKeys.community.postComments(postId),
-    queryFn: ({ pageParam }) => {
-      return fetchComments({ postId, pageParam });
+    queryFn: async ({ pageParam }) => {
+      return await PostManager.getPostComments({
+        postId,
+        cursorId: pageParam as string | undefined,
+      });
     },
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage: { nextCursor?: string | null }) =>

@@ -1,4 +1,4 @@
-import Categories from "./components/categories";
+import TwoColumnLayout from "./components/categories";
 import FeaturedAgencies from "./components/featured-agencies";
 import SearchSection from "./components/search-section";
 import TrendingPostsSection from "./components/trending-posts-section";
@@ -10,7 +10,7 @@ export default async function Page() {
         <FeaturedAgencies />
         <SearchSection />
         <TrendingPostsSection />
-        <Categories />
+        <TwoColumnLayout />
       </main>
     </div>
   );

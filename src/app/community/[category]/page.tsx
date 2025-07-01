@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import CategoryPostsList from "../components/category-posts-list";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import getQueryClient, { queryKeys } from "@/lib/react-query";
-import { fetchCategoryPosts } from "@/lib/managers/postManager";
+import PostManager from "@/lib/managers/postManager";
 import prisma from "@/lib/db";
 import { CategoryPostsResponse } from "@/lib/types";
 
@@ -50,10 +50,11 @@ export default async function CategoryPage({
 
   queryClient.prefetchInfiniteQuery<CategoryPostsResponse>({
     queryKey: queryKeys.community.categoryPosts(category),
-    queryFn: ({ pageParam }: { pageParam: unknown }) => {
-      return fetchCategoryPosts({
-        category,
-        pageParam: pageParam as string | undefined,
+    queryFn: async ({ pageParam }: { pageParam: unknown }) => {
+      return await PostManager.getCategoryPosts({
+        categoryId: categoryData.id,
+        cursorId: pageParam as string | undefined,
+        sortType: "latest",
       });
     },
     initialPageParam: undefined as string | undefined,
