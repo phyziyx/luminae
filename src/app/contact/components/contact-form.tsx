@@ -213,12 +213,12 @@ export default function ContactForm() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100">
-                        <SelectItem value="general">General Inquiry</SelectItem>
+                        {/* <SelectItem value="general">General Inquiry</SelectItem>
                         <SelectItem value="support">
                           Technical Support
                         </SelectItem>
                         <SelectItem value="feedback">Feedback</SelectItem>
-                        <SelectItem value="report">Report an Issue</SelectItem>
+                        <SelectItem value="report">Report an Issue</SelectItem> */}
                         <SelectItem value="agency_verification">
                           Agency Verification
                         </SelectItem>
