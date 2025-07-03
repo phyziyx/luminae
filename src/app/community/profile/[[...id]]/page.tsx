@@ -1,15 +1,16 @@
-import ProfileHeader from "../components/profile-header";
-import ProfileInfo from "../components/profile-info";
-import StatsOverview from "../components/stats-overview";
-import BadgesSection from "../components/badges-section";
+import ProfileHeader from "./_components/profile-header";
+import ProfileInfo from "./_components/profile-info";
+import StatsOverview from "./_components/stats-overview";
+import BadgesSection from "./_components/badges-section";
 import prisma from "@/lib/db";
 import { getSession } from "@/lib/auth/auth";
 import { CommunityProfileWithStats } from "@/lib/types";
-import EditProfile from "../components/edit-profile";
+import EditProfile from "./_components/edit-profile";
 import AgencyManager from "@/lib/managers/agencyManager";
 import BadgeManager from "@/lib/managers/badgeManager";
 import { Button } from "@/components/ui/button";
 import { BadgeCheckIcon } from "lucide-react";
+import { redirect } from "next/navigation";
 
 const getProfileData = async (id: string) => {
   const isAgency = id.startsWith("a-");
@@ -218,12 +219,21 @@ function CommunityProfile({
 export default async function ProfilePage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: undefined | string[] }>;
 }) {
-  const { id } = await params;
+  const { id: optionalId } = await params;
   const session = await getSession();
 
   const currentUserId = session?.user?.id ?? null;
+
+  let id: string | undefined = optionalId?.[0];
+  if (currentUserId) {
+    id ||= currentUserId;
+  } else if (!id) {
+    redirect("/community");
+    return;
+  }
+
   const profileData = await getProfileData(id);
   const isAgency = profileData.isAgency;
 

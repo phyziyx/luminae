@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { MarkdownRenderer } from "../../components/markdown-renderer";
+import { MarkdownRenderer } from "../../../components/markdown-renderer";
 import { BadgeCheckIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
